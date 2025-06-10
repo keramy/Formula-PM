@@ -1,0 +1,48 @@
+[
+  {
+    "id": 2001,
+    "name": "Akbank Head Office Renovation",
+    "type": "fit-out",
+    "description": "Complete renovation of Akbank headquarters including modern office spaces and meeting rooms",
+    "status": "active",
+    "priority": "high",
+    "clientName": "Akbank T.A.Ş.",
+    "clientContact": "Mehmet Yılmaz",
+    "clientEmail": "mehmet.yilmaz@akbank.com",
+    "budget": 2500000,
+    "location": "Levent, Istanbul",
+    "startDate": "2024-12-01",
+    "endDate": "2025-06-30",
+    "projectManager": 1008,
+    "teamMembers": [
+      1008,
+      1012,
+      1013
+    ],
+    "progress": 25,
+    "createdAt": "2024-12-01T00:00:00.000Z"
+  },
+  {
+    "id": 2002,
+    "name": "Garanti BBVA Tech Center MEP",
+    "type": "mep",
+    "description": "MEP infrastructure for new technology center including advanced cooling and electrical systems",
+    "status": "active",
+    "priority": "high",
+    "clientName": "Garanti BBVA",
+    "clientContact": "Ayşe Demir",
+    "clientEmail": "ayse.demir@garantibbva.com",
+    "budget": 1800000,
+    "location": "Ataşehir, Istanbul",
+    "startDate": "2024-11-15",
+    "endDate": "2025-05-15",
+    "projectManager": 1007,
+    "teamMembers": [
+      1007,
+      1011,
+      1014
+    ],
+    "progress": 40,
+    "createdAt": "2024-11-15T00:00:00.000Z"
+  }
+]
