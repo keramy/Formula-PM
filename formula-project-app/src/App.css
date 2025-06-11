@@ -1,7 +1,10 @@
+/* Enhanced Construction Project Management Styles */
+
 .App {
   text-align: left;
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 /* Custom scrollbar */
@@ -23,62 +26,134 @@
   background: #555;
 }
 
-/* Animation for cards */
-.project-card, .task-card {
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+/* Enhanced Card Animations */
+.project-card, .task-card, .construction-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
 }
 
-.project-card:hover, .task-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
+.project-card:hover, .task-card:hover, .construction-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
 }
 
-/* Priority colors */
+/* Enhanced Priority Colors with Gradients */
 .priority-low {
   border-left: 4px solid #27ae60 !important;
+  background: linear-gradient(90deg, rgba(39, 174, 96, 0.05) 0%, transparent 100%);
 }
 
 .priority-medium {
   border-left: 4px solid #f39c12 !important;
+  background: linear-gradient(90deg, rgba(243, 156, 18, 0.05) 0%, transparent 100%);
 }
 
 .priority-high {
   border-left: 4px solid #e67e22 !important;
+  background: linear-gradient(90deg, rgba(230, 126, 34, 0.05) 0%, transparent 100%);
 }
 
 .priority-urgent {
   border-left: 4px solid #e74c3c !important;
+  background: linear-gradient(90deg, rgba(231, 76, 60, 0.05) 0%, transparent 100%);
+  animation: urgent-pulse 3s ease-in-out infinite;
 }
 
-/* Status indicators */
+@keyframes urgent-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(231, 76, 60, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+  }
+}
+
+/* Enhanced Status Indicators */
 .status-completed {
   opacity: 0.7;
   text-decoration: line-through;
+  background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(39, 174, 96, 0.05));
 }
 
 .status-overdue {
-  background-color: #fff5f5 !important;
+  background: linear-gradient(135deg, #fff5f5, #ffe6e6) !important;
   border-left: 4px solid #e74c3c !important;
+  animation: overdue-warning 2s ease-in-out infinite alternate;
 }
 
+@keyframes overdue-warning {
+  from {
+    background: linear-gradient(135deg, #fff5f5, #ffe6e6);
+  }
+  to {
+    background: linear-gradient(135deg, #ffe6e6, #fff0f0);
+  }
+}
+
+/* Construction Project Type Indicators */
 .type-fit-out {
-  border-top: 3px solid #e67e22;
+  border-top: 4px solid #e67e22;
+  position: relative;
+}
+
+.type-fit-out::before {
+  content: '🏗️';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 16px;
 }
 
 .type-millwork {
-  border-top: 3px solid #8e44ad;
+  border-top: 4px solid #8e44ad;
+  position: relative;
+}
+
+.type-millwork::before {
+  content: '🪚';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 16px;
 }
 
 .type-electrical {
-  border-top: 3px solid #f1c40f;
+  border-top: 4px solid #f1c40f;
+  position: relative;
+}
+
+.type-electrical::before {
+  content: '⚡';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 16px;
 }
 
 .type-mep {
-  border-top: 3px solid #1abc9c;
+  border-top: 4px solid #1abc9c;
+  position: relative;
+}
+
+.type-mep::before {
+  content: '🔧';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 16px;
 }
 
 .type-management {
-  border-top: 3px solid #37444B;
+  border-top: 4px solid #37444B;
+  position: relative;
+}
+
+.type-management::before {
+  content: '📋';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 16px;
 }
 
 /* Loading animation */
@@ -244,22 +319,256 @@
   }
 }
 
-/* Mobile responsiveness */
+/* Modern Dashboard Cards */
+.dashboard-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Construction Timeline Styles */
+.timeline-item {
+  position: relative;
+  padding: 20px 0;
+  border-left: 3px solid #e9ecef;
+  margin-left: 20px;
+  padding-left: 30px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 25px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #007bff;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+}
+
+.timeline-item.completed::before {
+  background: #28a745;
+  border-color: #28a745;
+}
+
+.timeline-item.in-progress::before {
+  background: #ffc107;
+  border-color: #ffc107;
+  animation: timeline-pulse 2s infinite;
+}
+
+@keyframes timeline-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+  }
+}
+
+/* Construction Progress Bar */
+.construction-progress {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.construction-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  transition: width 0.5s ease;
+  position: relative;
+}
+
+.construction-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Team Member Avatars */
+.team-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  margin-left: -8px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.team-avatar:hover {
+  transform: scale(1.1);
+  z-index: 10;
+  border-color: #007bff;
+}
+
+.team-avatar:first-child {
+  margin-left: 0;
+}
+
+/* Loading States */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Construction Material Cards */
+.material-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  border-left: 4px solid;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.material-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.material-card:hover::before {
+  transform: translateX(100%);
+}
+
+.material-wood {
+  border-left-color: #8B4513;
+}
+
+.material-steel {
+  border-left-color: #708090;
+}
+
+.material-glass {
+  border-left-color: #87CEEB;
+}
+
+.material-concrete {
+  border-left-color: #696969;
+}
+
+/* Mobile Enhancements */
 @media (max-width: 768px) {
   .App {
-    padding: 10px;
+    padding: 8px;
   }
   
   .MuiContainer-root {
-    padding: 8px !important;
-  }
-  
-  .MuiPaper-root {
-    margin-bottom: 16px;
+    padding: 4px !important;
   }
   
   .status-badge, .priority-badge {
     font-size: 10px;
     padding: 3px 8px;
+  }
+  
+  .team-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .dashboard-card {
+    margin-bottom: 12px;
+    border-radius: 12px;
+  }
+  
+  .construction-progress {
+    height: 6px;
+  }
+}
+
+/* Dark Theme Support */
+@media (prefers-color-scheme: dark) {
+  .dashboard-card {
+    background: rgba(30, 30, 30, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  
+  .status-badge {
+    backdrop-filter: blur(20px);
+  }
+  
+  .material-card {
+    background: rgba(40, 40, 40, 0.95);
+    color: #fff;
+  }
+}
+
+/* Accessibility Improvements */
+.status-badge:focus,
+.priority-badge:focus,
+.project-card:focus,
+.task-card:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+  .App {
+    background: white !important;
+  }
+  
+  .project-card,
+  .task-card,
+  .material-card {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #ddd;
   }
 }

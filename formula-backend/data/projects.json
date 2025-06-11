@@ -44,5 +44,17 @@
     ],
     "progress": 40,
     "createdAt": "2024-11-15T00:00:00.000Z"
+  },
+  {
+    "name": "deneme",
+    "type": "management",
+    "startDate": "2025-06-10",
+    "endDate": "2025-06-11",
+    "client": "",
+    "description": "",
+    "id": "proj_1749633037542_723_1",
+    "status": "active",
+    "createdAt": "2025-06-11T09:10:37.542Z",
+    "updatedAt": "2025-06-11T09:10:38.071Z"
   }
 ]

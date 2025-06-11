@@ -73,17 +73,13 @@ function StatsCards({ projects, tasks }) {
         {statCards.map((card, index) => (
           <Grid item xs={12} sm={6} md={2.4} key={index}>
             <Paper
+              className="dashboard-card"
               elevation={3}
               sx={{
                 p: 3,
                 textAlign: 'center',
                 backgroundColor: card.bgColor,
-                border: `2px solid ${card.color}20`,
-                transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: `0 8px 25px ${card.color}30`
-                }
+                border: `2px solid ${card.color}20`
               }}
             >
               <Box sx={{ color: card.color, mb: 1 }}>
@@ -106,25 +102,18 @@ function StatsCards({ projects, tasks }) {
 
       {/* Progress Overview */}
       {totalTasks > 0 && (
-        <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
+        <Paper className="dashboard-card" elevation={3} sx={{ p: 3, mt: 3 }}>
           <Typography variant="h6" gutterBottom>
             Overall Progress
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Box sx={{ width: '100%' }}>
-              <LinearProgress
-                variant="determinate"
-                value={completionPercentage}
-                sx={{
-                  height: 10,
-                  borderRadius: 5,
-                  backgroundColor: '#e0e0e0',
-                  '& .MuiLinearProgress-bar': {
-                    borderRadius: 5,
-                    backgroundColor: completionPercentage === 100 ? '#27ae60' : '#3498db'
-                  }
-                }}
-              />
+              <div className="construction-progress">
+                <div 
+                  className="construction-progress-fill" 
+                  style={{ width: `${completionPercentage}%` }}
+                ></div>
+              </div>
             </Box>
             <Box sx={{ minWidth: 35 }}>
               <Typography variant="body2" color="text.secondary">

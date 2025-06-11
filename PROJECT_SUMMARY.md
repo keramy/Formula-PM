@@ -24,7 +24,8 @@ A comprehensive project management application built with React frontend and Nod
 ### ✅ UI/UX Features
 - **Tabbed Interface**: 5 main sections (Dashboard, Analytics, Team, Projects & Tasks, Timeline)
 - **Responsive Design**: Mobile-friendly layout with Material-UI components
-- **Custom Theme**: Formula International branding with custom colors
+- **Modular Styling System**: Organized theme structure with centralized colors and component overrides
+- **Custom Theme**: Formula International branding with easily customizable colors
 - **Form Validation**: Client-side validation for all forms
 - **File Upload**: Component for task file attachments
 - **Progress Tracking**: Task status and progress indicators
@@ -38,6 +39,7 @@ A comprehensive project management application built with React frontend and Nod
 - **RESTful API**: Full CRUD operations for all entities
 - **Error Handling**: Graceful fallback to localStorage if database fails
 - **Loading States**: User feedback during data operations
+- **Port Configuration**: Backend runs on port 5001, frontend on port 3000 with correct API URL
 
 ## Bug Fixes Completed
 
@@ -48,6 +50,8 @@ A comprehensive project management application built with React frontend and Nod
 4. **Package Scripts**: Added start/dev scripts to backend package.json
 5. **ID Collisions**: Implemented unique ID generator to prevent conflicts
 6. **Express Version**: Downgraded from v5 to v4 for compatibility
+7. **Material-UI Override Issues**: Solved CSS specificity problems with modular theme system
+8. **Port Conflicts**: Resolved backend port conflicts by running on port 5001 with proper frontend configuration
 
 ## File Structure
 ```
@@ -68,6 +72,14 @@ formula-project-app/
 │   ├── context/             # State Management
 │   │   ├── NotificationContext.js
 │   │   └── index.js
+│   ├── theme/               # Modular Styling System
+│   │   ├── index.js         # Main theme configuration
+│   │   ├── colors.js        # Centralized color palette
+│   │   ├── typography.js    # Font and text styles
+│   │   └── components.js    # Material-UI overrides
+│   ├── styles/              # Global Styles
+│   │   ├── globals.css      # CSS variables and utilities
+│   │   └── README.md        # Styling documentation
 │   ├── utils/               # Utilities
 │   │   └── idGenerator.js
 │   ├── services/            # API Services
@@ -90,8 +102,8 @@ formula-backend/
 
 ## Current Status
 - ✅ Application is fully functional and running
-- ✅ Frontend available at http://localhost:3003
-- ✅ Backend API running on http://localhost:5000
+- ✅ Frontend available at http://localhost:3000
+- ✅ Backend API running on http://localhost:5001
 - ✅ Database integrated with company hierarchy pre-loaded
 - ✅ All major bugs resolved
 - ✅ Core features implemented and tested

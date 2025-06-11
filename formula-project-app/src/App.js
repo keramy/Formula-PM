@@ -1,88 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { generateProjectId, generateTaskId, generateMemberId } from './utils/idGenerator';
 import apiService from './services/apiService';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import {
   Grid,
   Paper,
   Box,
-  Tabs,
-  Tab,
   Typography
 } from '@mui/material';
 import { NotificationProvider } from './context';
 import { NotificationContainer } from './components';
-import DashboardLayout from './components/DashboardLayout';
+import ModernDashboardLayout from './components/ModernDashboardLayout';
+import ModernStatsCards from './components/ModernStatsCards';
+import ModernProjectOverview from './components/ModernProjectOverview';
 import ProjectForm from './components/ProjectForm';
 import TaskForm from './components/TaskForm';
 import ProjectsList from './components/ProjectsList';
 import TasksList from './components/TasksList';
-import StatsCards from './components/StatsCards';
 import GanttChart from './components/GanttChart';
 import TeamMemberForm from './components/TeamMemberForm';
 import TeamMembersList from './components/TeamMembersList';
 import AdvancedDashboard from './components/AdvancedDashboard';
+
+// Import the new modular theme
+import { formulaTheme } from './theme';
 import './App.css';
-
-// Custom Formula International Theme
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#37444B',
-      light: '#5a6b73',
-      dark: '#1f2e35',
-      contrastText: '#ffffff'
-    },
-    secondary: {
-      main: '#C0B19E',
-      light: '#d4c7b5',
-      dark: '#a5967e',
-      contrastText: '#37444B'
-    },
-    background: {
-      default: '#f8fafc',
-      paper: '#ffffff'
-    }
-  },
-  typography: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif',
-  },
-  components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          borderRadius: '12px',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-          border: '1px solid #e2e8f0'
-        }
-      }
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: '8px',
-          textTransform: 'none',
-          fontWeight: 500,
-        }
-      }
-    }
-  }
-});
-
-function TabPanel({ children, value, index, ...other }) {
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box>{children}</Box>}
-    </div>
-  );
-}
+import './styles/globals.css';
+import './styles/modern-dashboard.css';
 
 function App() {
   const [projects, setProjects] = useState([]);
@@ -286,9 +231,9 @@ function App() {
   if (loading) {
     return (
       <NotificationProvider>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={formulaTheme}>
           <CssBaseline />
-          <DashboardLayout>
+          <ModernDashboardLayout currentTab={currentTab} onTabChange={handleTabChange}>
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
               <div style={{ textAlign: 'center' }}>
                 <Typography variant="h6">Loading Formula Project Management...</Typography>
@@ -297,17 +242,194 @@ function App() {
                 </Typography>
               </div>
             </Box>
-          </DashboardLayout>
+          </ModernDashboardLayout>
         </ThemeProvider>
       </NotificationProvider>
     );
   }
 
+  const renderTabContent = () => {
+    switch (currentTab) {
+      case 0: // Dashboard
+        return (
+          <>
+            <ModernStatsCards projects={projects} tasks={tasks} teamMembers={teamMembers} />
+            <ModernProjectOverview projects={projects} tasks={tasks} teamMembers={teamMembers} />
+            <Grid container spacing={4} sx={{ mt: 2 }}>
+              <Grid item xs={12} md={6}>
+                <Paper 
+                  elevation={0}
+                  sx={{ 
+                    p: 3, 
+                    backgroundColor: 'white',
+                    border: '1px solid #E9ECEF',
+                    borderRadius: 3
+                  }}
+                >
+                  <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+                    Create New Project
+                  </Typography>
+                  <ProjectForm onSubmit={addProject} />
+                </Paper>
+              </Grid>
+              
+              <Grid item xs={12} md={6}>
+                <Paper 
+                  elevation={0}
+                  sx={{ 
+                    p: 3, 
+                    backgroundColor: 'white',
+                    border: '1px solid #E9ECEF',
+                    borderRadius: 3
+                  }}
+                >
+                  <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+                    Add New Task
+                  </Typography>
+                  <TaskForm 
+                    projects={projects} 
+                    teamMembers={teamMembers}
+                    onSubmit={addTask} 
+                  />
+                </Paper>
+              </Grid>
+            </Grid>
+          </>
+        );
+
+      case 1: // Projects
+        return (
+          <Grid container spacing={4}>
+            <Grid item xs={12}>
+              <Paper 
+                elevation={0}
+                sx={{ 
+                  p: 3, 
+                  backgroundColor: 'white',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: 3
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+                  Active Projects ({projects.length})
+                </Typography>
+                <ProjectsList 
+                  projects={projects}
+                  tasks={tasks}
+                  onDeleteProject={deleteProject}
+                />
+              </Paper>
+            </Grid>
+          </Grid>
+        );
+
+      case 2: // Tasks
+        return (
+          <Grid container spacing={4}>
+            <Grid item xs={12}>
+              <Paper 
+                elevation={0}
+                sx={{ 
+                  p: 3, 
+                  backgroundColor: 'white',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: 3
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+                  Tasks Overview ({tasks.length})
+                </Typography>
+                <TasksList 
+                  tasks={tasks}
+                  projects={projects}
+                  teamMembers={teamMembers}
+                  onUpdateTask={updateTask}
+                  onDeleteTask={deleteTask}
+                />
+              </Paper>
+            </Grid>
+          </Grid>
+        );
+
+      case 3: // Team
+        return (
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={4}>
+              <Paper 
+                elevation={0}
+                sx={{ 
+                  p: 3, 
+                  backgroundColor: 'white',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: 3
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+                  Add Team Member
+                </Typography>
+                <TeamMemberForm 
+                  teamMembers={teamMembers}
+                  onSubmit={addTeamMember} 
+                />
+              </Paper>
+            </Grid>
+            
+            <Grid item xs={12} md={8}>
+              <Paper 
+                elevation={0}
+                sx={{ 
+                  p: 3, 
+                  backgroundColor: 'white',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: 3
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+                  Team Members ({teamMembers.length})
+                </Typography>
+                <TeamMembersList 
+                  teamMembers={teamMembers}
+                  tasks={tasks}
+                  onUpdateMember={updateTeamMember}
+                  onDeleteMember={deleteTeamMember}
+                />
+              </Paper>
+            </Grid>
+          </Grid>
+        );
+
+      case 4: // Timeline & Gantt
+        return (
+          <Paper 
+            elevation={0}
+            sx={{ 
+              p: 3, 
+              backgroundColor: 'white',
+              border: '1px solid #E9ECEF',
+              borderRadius: 3
+            }}
+          >
+            <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+              Project Timeline & Gantt Chart
+            </Typography>
+            <GanttChart 
+              tasks={tasks}
+              projects={projects}
+              teamMembers={teamMembers}
+            />
+          </Paper>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <NotificationProvider>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={formulaTheme}>
         <CssBaseline />
-        <DashboardLayout>
+        <ModernDashboardLayout currentTab={currentTab} onTabChange={handleTabChange}>
           <div style={{ padding: '0' }}>
             {/* Error Alert */}
             {error && (
@@ -320,130 +442,13 @@ function App() {
               </Box>
             )}
             
-            {/* Statistics Cards */}
-            <StatsCards projects={projects} tasks={tasks} teamMembers={teamMembers} />
-
-            {/* Navigation Tabs */}
-            <Paper sx={{ mb: 3, mt: 3 }}>
-              <Tabs 
-                value={currentTab} 
-                onChange={handleTabChange}
-                variant="fullWidth"
-                sx={{ borderBottom: 1, borderColor: 'divider' }}
-              >
-                <Tab label="📊 Dashboard" />
-                <Tab label="📈 Analytics" />
-                <Tab label="👥 Team Management" />
-                <Tab label="📋 Projects & Tasks" />
-                <Tab label="🕐 Timeline" />
-              </Tabs>
-            </Paper>
-
-            {/* Tab Panels */}
-            <TabPanel value={currentTab} index={0}>
-              {/* Dashboard */}
-              <Grid container spacing={4}>
-                <Grid item xs={12} md={6}>
-                  <Paper sx={{ p: 3 }}>
-                    <h3 style={{ margin: '0 0 20px 0' }}>Create New Project</h3>
-                    <ProjectForm onSubmit={addProject} />
-                  </Paper>
-                </Grid>
-                
-                <Grid item xs={12} md={6}>
-                  <Paper sx={{ p: 3 }}>
-                    <h3 style={{ margin: '0 0 20px 0' }}>Add New Task</h3>
-                    <TaskForm 
-                      projects={projects} 
-                      teamMembers={teamMembers}
-                      onSubmit={addTask} 
-                    />
-                  </Paper>
-                </Grid>
-              </Grid>
-            </TabPanel>
-
-            <TabPanel value={currentTab} index={1}>
-              {/* Analytics Dashboard */}
-              <AdvancedDashboard 
-                projects={projects}
-                tasks={tasks}
-                teamMembers={teamMembers}
-              />
-            </TabPanel>
-
-            <TabPanel value={currentTab} index={2}>
-              {/* Team Management */}
-              <Grid container spacing={4}>
-                <Grid item xs={12} md={4}>
-                  <Paper sx={{ p: 3 }}>
-                    <h3 style={{ margin: '0 0 20px 0' }}>Add Team Member</h3>
-                    <TeamMemberForm 
-                      teamMembers={teamMembers}
-                      onSubmit={addTeamMember} 
-                    />
-                  </Paper>
-                </Grid>
-                
-                <Grid item xs={12} md={8}>
-                  <Paper sx={{ p: 3 }}>
-                    <h3 style={{ margin: '0 0 20px 0' }}>Team Members ({teamMembers.length})</h3>
-                    <TeamMembersList 
-                      teamMembers={teamMembers}
-                      tasks={tasks}
-                      onUpdateMember={updateTeamMember}
-                      onDeleteMember={deleteTeamMember}
-                    />
-                  </Paper>
-                </Grid>
-              </Grid>
-            </TabPanel>
-
-            <TabPanel value={currentTab} index={3}>
-              {/* Projects & Tasks */}
-              <Grid container spacing={4}>
-                <Grid item xs={12} md={6}>
-                  <Paper sx={{ p: 3 }}>
-                    <h3 style={{ margin: '0 0 20px 0' }}>Active Projects ({projects.length})</h3>
-                    <ProjectsList 
-                      projects={projects}
-                      tasks={tasks}
-                      onDeleteProject={deleteProject}
-                    />
-                  </Paper>
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                  <Paper sx={{ p: 3 }}>
-                    <h3 style={{ margin: '0 0 20px 0' }}>Tasks Overview ({tasks.length})</h3>
-                    <TasksList 
-                      tasks={tasks}
-                      projects={projects}
-                      teamMembers={teamMembers}
-                      onUpdateTask={updateTask}
-                      onDeleteTask={deleteTask}
-                    />
-                  </Paper>
-                </Grid>
-              </Grid>
-            </TabPanel>
-
-            <TabPanel value={currentTab} index={4}>
-              {/* Timeline */}
-              <Paper sx={{ p: 3 }}>
-                <h3 style={{ margin: '0 0 20px 0' }}>Project Timeline & Gantt Chart</h3>
-                <GanttChart 
-                  tasks={tasks}
-                  projects={projects}
-                  teamMembers={teamMembers}
-                />
-              </Paper>
-            </TabPanel>
+            {/* Tab Content */}
+            {renderTabContent()}
           </div>
 
           {/* Notification Container */}
           <NotificationContainer />
-        </DashboardLayout>
+        </ModernDashboardLayout>
       </ThemeProvider>
     </NotificationProvider>
   );

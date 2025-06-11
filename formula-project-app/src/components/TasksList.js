@@ -151,23 +151,14 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
                         )}
                       </Typography>
                       
-                      <Chip
-                        label={priority.label}
-                        size="small"
-                        sx={{
-                          backgroundColor: priority.bgColor,
-                          color: priority.color,
-                          fontWeight: 'bold'
-                        }}
-                      />
+                      <span className={`priority-badge priority-badge-${task.priority}`}>
+                        {priority.label}
+                      </span>
                       
                       {task.status === 'completed' && (
-                        <Chip
-                          label="Completed"
-                          size="small"
-                          color="success"
-                          icon={<CheckCircle />}
-                        />
+                        <span className="status-badge status-badge-completed">
+                          Completed
+                        </span>
                       )}
                     </Box>
 

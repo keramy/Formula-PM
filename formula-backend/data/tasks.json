@@ -21,7 +21,7 @@
     "projectId": 2001,
     "name": "Material Procurement",
     "description": "Order and coordinate delivery of fit-out materials",
-    "status": "pending",
+    "status": "completed",
     "priority": "high",
     "assignedTo": 1012,
     "startDate": "2024-12-15",
@@ -30,8 +30,8 @@
     "estimatedHours": 80,
     "actualHours": 45,
     "createdAt": "2024-12-15T00:00:00.000Z",
-    "completedAt": null,
-    "updatedAt": "2025-06-10T14:58:52.892Z"
+    "completedAt": "2025-06-11T09:09:36.553Z",
+    "updatedAt": "2025-06-11T09:09:36.667Z"
   },
   {
     "id": 3003,
@@ -74,10 +74,11 @@
     "description": "",
     "files": [],
     "id": "task_1749567556123_838_2",
-    "status": "pending",
+    "status": "completed",
     "progress": 0,
     "createdAt": "2025-06-10T14:59:16.123Z",
-    "updatedAt": "2025-06-10T14:59:16.156Z"
+    "updatedAt": "2025-06-11T09:09:38.180Z",
+    "completedAt": "2025-06-11T09:09:38.064Z"
   },
   {
     "projectId": 2001,
@@ -88,9 +89,36 @@
     "description": "",
     "files": [],
     "id": "task_1749574909442_480_3",
-    "status": "pending",
+    "status": "completed",
     "progress": 0,
     "createdAt": "2025-06-10T17:01:49.442Z",
-    "updatedAt": "2025-06-10T17:01:49.615Z"
+    "updatedAt": "2025-06-11T09:09:35.439Z",
+    "completedAt": "2025-06-11T09:09:34.991Z"
+  },
+  {
+    "projectId": null,
+    "name": "asdw",
+    "assignedTo": 1008,
+    "priority": "urgent",
+    "dueDate": "2025-06-11",
+    "description": "",
+    "files": [
+      {
+        "id": 1749633057966.2727,
+        "name": "Formula Logo.png",
+        "size": 9798,
+        "type": "image/png",
+        "uploadDate": "2025-06-11T09:10:57.966Z",
+        "taskId": 1749633051252,
+        "projectId": "proj_1749633037542_723_1",
+        "url": "blob:http://localhost:3000/14503baa-a99b-4e07-a523-97f0a26e0886",
+        "file": {}
+      }
+    ],
+    "id": "task_1749633059988_469_2",
+    "status": "pending",
+    "progress": 0,
+    "createdAt": "2025-06-11T09:10:59.988Z",
+    "updatedAt": "2025-06-11T09:11:01.452Z"
   }
 ]

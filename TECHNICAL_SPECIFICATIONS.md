@@ -30,9 +30,18 @@
 src/
 ├── components/          # Reusable UI components
 ├── context/            # React Context for state
+├── theme/              # Modular styling system
+│   ├── index.js        # Main theme configuration
+│   ├── colors.js       # Centralized color palette
+│   ├── typography.js   # Font and text styles
+│   └── components.js   # Material-UI overrides
+├── styles/             # Global styles and utilities
+│   ├── globals.css     # CSS variables and overrides
+│   └── README.md       # Styling documentation
 ├── utils/              # Helper functions
 ├── services/           # API communication
 ├── config/             # Configuration files
+├── App.css             # Legacy styles (still functional)
 └── App.js              # Main application entry
 ```
 
@@ -42,6 +51,14 @@ src/
 - **Lists**: ProjectsList, TasksList, TeamMembersList  
 - **Dashboard**: StatsCards, AdvancedDashboard, GanttChart
 - **Utilities**: NotificationContainer, FileUpload
+
+### Styling System Architecture
+- **Theme Provider**: Uses `formulaTheme` from `/src/theme/index.js`
+- **Color Management**: Centralized in `/src/theme/colors.js` with utility functions
+- **Component Overrides**: Material-UI customization in `/src/theme/components.js`
+- **Typography**: Font configuration in `/src/theme/typography.js`
+- **Global Styles**: CSS variables and utilities in `/src/styles/globals.css`
+- **Legacy Support**: Original `App.css` still functional for backward compatibility
 
 ### Backend Architecture
 ```

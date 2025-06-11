@@ -4,29 +4,29 @@
 
 ### 1. Start Backend Server
 ```bash
-cd /home/kerem/new-project/formula-backend
-node server.js
+cd /mnt/c/Users/Kerem/Desktop/formula-pm/formula-backend
+npm start
 ```
-**Result:** Server runs on http://localhost:5000 with database auto-seeding
+**Result:** Server runs on http://localhost:5001 with database auto-seeding
 
 ### 2. Start Frontend Application
 ```bash
-cd /home/kerem/new-project/formula-project-app
-PORT=3003 npm start
+cd /mnt/c/Users/Kerem/Desktop/formula-pm/formula-project-app
+REACT_APP_API_URL=http://localhost:5001/api npm start
 ```
-**Result:** App runs on http://localhost:3003 with team members pre-loaded
+**Result:** App runs on http://localhost:3000 with REACT_APP_API_URL=http://localhost:5001/api
 
 ## Database Status Check
 
 ### Check Team Members Loaded
 ```bash
-curl http://localhost:5000/api/team-members | grep -o '"firstName"' | wc -l
+curl http://localhost:5001/api/team-members | grep -o '"firstName"' | wc -l
 # Should return: 14
 ```
 
 ### Check Sample Projects
 ```bash
-curl http://localhost:5000/api/projects
+curl http://localhost:5001/api/projects
 # Should return Akbank and Garanti BBVA projects
 ```
 
@@ -73,7 +73,7 @@ curl http://localhost:5000/api/projects
 
 ### Database Files
 ```
-/home/kerem/new-project/formula-backend/data/
+/mnt/c/Users/Kerem/Desktop/formula-pm/formula-backend/data/
 ├── teamMembers.json    # 14 Formula employees
 ├── projects.json       # Sample projects
 └── tasks.json          # Sample tasks
@@ -81,39 +81,53 @@ curl http://localhost:5000/api/projects
 
 ### Key Components
 ```
-Frontend: /home/kerem/new-project/formula-project-app/src/
-Backend:  /home/kerem/new-project/formula-backend/
-Docs:     /home/kerem/new-project/*.md
+Frontend: /mnt/c/Users/Kerem/Desktop/formula-pm/formula-project-app/src/
+Backend:  /mnt/c/Users/Kerem/Desktop/formula-pm/formula-backend/
+Docs:     /mnt/c/Users/Kerem/Desktop/formula-pm/*.md
+```
+
+### Styling Files (NEW!)
+```
+/mnt/c/Users/Kerem/Desktop/formula-pm/formula-project-app/src/
+├── theme/
+│   ├── colors.js       # 🎨 Change colors here!
+│   ├── components.js   # Material-UI overrides
+│   ├── typography.js   # Font styles
+│   └── index.js        # Main theme
+├── styles/
+│   ├── globals.css     # Global styles & CSS variables
+│   └── README.md       # Complete styling guide
+└── App.css            # Legacy styles (still works)
 ```
 
 ## Troubleshooting
 
 ### Backend Not Starting
 ```bash
-cd /home/kerem/new-project/formula-backend
+cd /mnt/c/Users/Kerem/Desktop/formula-pm/formula-backend
 npm install  # If dependencies missing
-node server.js
+npm start
 ```
 
 ### Frontend Build Issues
 ```bash
-cd /home/kerem/new-project/formula-project-app
+cd /mnt/c/Users/Kerem/Desktop/formula-pm/formula-project-app
 npm install  # If dependencies missing
-npm start
+HOST=0.0.0.0 npm start
 ```
 
 ### Database Reset
 ```bash
 # Remove database files to reset to initial state
-rm /home/kerem/new-project/formula-backend/data/*.json
+rm /mnt/c/Users/Kerem/Desktop/formula-pm/formula-backend/data/*.json
 # Restart backend server to re-seed
 ```
 
 ### Port Conflicts
 ```bash
 # Check what's running on ports
-lsof -i :5000  # Backend
-lsof -i :3003  # Frontend
+lsof -i :5001  # Backend
+lsof -i :3000  # Frontend
 
 # Kill processes if needed
 kill -9 <PID>
@@ -126,6 +140,37 @@ kill -9 <PID>
 3. **File Upload** - Implement actual file storage
 4. **Real-time Updates** - WebSocket integration
 5. **Advanced Analytics** - Enhanced reporting features
+
+## Quick UI Customization
+
+### Change App Colors
+```javascript
+// Edit src/theme/colors.js
+export const colors = {
+  primary: { main: '#ff6b35' },    // Orange theme
+  secondary: { main: '#2ecc71' }   // Green accent
+}
+```
+
+### Customize Buttons
+```javascript
+// Edit src/theme/components.js
+MuiButton: {
+  styleOverrides: {
+    root: { borderRadius: '20px' }  // Rounded buttons
+  }
+}
+```
+
+### Quick CSS Override
+```css
+/* Edit src/styles/globals.css */
+:root {
+  --formula-primary: #your-color;
+}
+```
+
+📖 **Complete Guide**: See `src/styles/README.md` for detailed styling instructions
 
 ## Development Commands
 

@@ -57,23 +57,23 @@ const projectTypeConfig = {
 const projectStatusConfig = {
   active: {
     label: 'Active',
-    className: 'status-in-review'
+    className: 'in-progress'
   },
   completed: {
     label: 'Completed',
-    className: 'status-approved'
+    className: 'completed'
   },
   'on-hold': {
     label: 'On Hold',
-    className: 'status-pending'
+    className: 'on-hold'
   },
   cancelled: {
     label: 'Cancelled',
-    className: 'status-cancelled'
+    className: 'cancelled'
   },
   archived: {
     label: 'Archived',
-    className: 'status-archived'
+    className: 'cancelled'
   }
 };
 
@@ -147,31 +147,14 @@ function ProjectsList({ projects, tasks, onDeleteProject }) {
         return (
           <Grid item xs={12} md={6} key={project.id}>
             <Card
-              className={`project-card type-${project.type}`}
+              className={`project-card construction-card type-${project.type}`}
               sx={{
                 cursor: 'pointer',
-                borderTop: `4px solid ${typeConfig.color}`,
                 position: 'relative',
-                '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: 3
-                }
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
               }}
               onClick={() => {}}
             >
-              {/* Project Type Icon */}
-              <Box sx={{ 
-                position: 'absolute', 
-                top: '-15px', 
-                right: '12px', 
-                fontSize: '14px' 
-              }}>
-                {project.type === 'fit-out' && '🏗️'}
-                {project.type === 'millwork' && '🪚'}
-                {project.type === 'electrical' && '⚡'}
-                {project.type === 'mep' && '🔧'}
-                {project.type === 'management' && '📊'}
-              </Box>
 
               <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
@@ -191,7 +174,7 @@ function ProjectsList({ projects, tasks, onDeleteProject }) {
                   </Box>
                   
                   {/* Status Badge */}
-                  <span className={`status-badge ${statusConfig.className}`}>
+                  <span className={`status-badge status-badge-${statusConfig.className}`}>
                     {statusConfig.label}
                   </span>
                   
@@ -233,7 +216,7 @@ function ProjectsList({ projects, tasks, onDeleteProject }) {
                   </Typography>
                 )}
 
-                {/* Progress Bar */}
+                {/* Enhanced Progress Bar */}
                 <Box sx={{ mb: 2 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                     <Typography variant="body2" color="text.secondary">
@@ -243,32 +226,25 @@ function ProjectsList({ projects, tasks, onDeleteProject }) {
                       {progress}%
                     </Typography>
                   </Box>
-                  <LinearProgress
-                    variant="determinate"
-                    value={progress}
-                    sx={{
-                      height: 8,
-                      borderRadius: 4,
-                      backgroundColor: '#e0e0e0',
-                      '& .MuiLinearProgress-bar': {
-                        borderRadius: 4,
-                        backgroundColor: progress === 100 ? '#27ae60' : typeConfig.color
-                      }
-                    }}
-                  />
+                  <div className="construction-progress">
+                    <div 
+                      className="construction-progress-fill" 
+                      style={{ width: `${progress}%` }}
+                    ></div>
+                  </div>
                 </Box>
 
                 {/* Task Statistics with Status Badges */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                   <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                    <span className="status-badge status-synced" style={{ fontSize: '11px', padding: '2px 6px' }}>
+                    <span className="status-badge status-badge-todo" style={{ fontSize: '11px', padding: '2px 6px' }}>
                       {stats.total} total
                     </span>
-                    <span className="status-badge status-approved" style={{ fontSize: '11px', padding: '2px 6px' }}>
+                    <span className="status-badge status-badge-completed" style={{ fontSize: '11px', padding: '2px 6px' }}>
                       {stats.completed} done
                     </span>
                     {stats.overdue > 0 && (
-                      <span className="status-badge status-deadline-missed" style={{ fontSize: '11px', padding: '2px 6px' }}>
+                      <span className="status-badge status-badge-cancelled" style={{ fontSize: '11px', padding: '2px 6px' }}>
                         {stats.overdue} overdue
                       </span>
                     )}
