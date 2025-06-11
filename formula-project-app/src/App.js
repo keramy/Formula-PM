@@ -7,7 +7,11 @@ import {
   Grid,
   Paper,
   Box,
-  Typography
+  Typography,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent
 } from '@mui/material';
 import { NotificationProvider } from './context';
 import { NotificationContainer } from './components';
@@ -21,6 +25,8 @@ import TasksList from './components/TasksList';
 import GanttChart from './components/GanttChart';
 import TeamMemberForm from './components/TeamMemberForm';
 import TeamMembersList from './components/TeamMembersList';
+import ClientForm from './components/ClientForm';
+import ClientsList from './components/ClientsList';
 import AdvancedDashboard from './components/AdvancedDashboard';
 
 // Import the new modular theme
@@ -33,9 +39,11 @@ function App() {
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
+  const [clients, setClients] = useState([]);
   const [currentTab, setCurrentTab] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [createProjectDialogOpen, setCreateProjectDialogOpen] = useState(false);
 
   // Load data from API on component mount
   useEffect(() => {
@@ -47,15 +55,17 @@ function App() {
       setLoading(true);
       setError(null);
       
-      const [teamMembersData, projectsData, tasksData] = await Promise.all([
+      const [teamMembersData, projectsData, tasksData, clientsData] = await Promise.all([
         apiService.getTeamMembers(),
         apiService.getProjects(),
-        apiService.getTasks()
+        apiService.getTasks(),
+        apiService.getClients()
       ]);
       
       setTeamMembers(teamMembersData);
       setProjects(projectsData);
       setTasks(tasksData);
+      setClients(clientsData);
     } catch (error) {
       console.error('Error loading data:', error);
       setError('Failed to load data from server. Please check if the backend is running.');
@@ -64,10 +74,12 @@ function App() {
       const savedProjects = localStorage.getItem('formula_projects');
       const savedTasks = localStorage.getItem('formula_tasks');
       const savedTeamMembers = localStorage.getItem('formula_team_members');
+      const savedClients = localStorage.getItem('formula_clients');
       
       if (savedProjects) setProjects(JSON.parse(savedProjects));
       if (savedTasks) setTasks(JSON.parse(savedTasks));
       if (savedTeamMembers) setTeamMembers(JSON.parse(savedTeamMembers));
+      if (savedClients) setClients(JSON.parse(savedClients));
     } finally {
       setLoading(false);
     }
@@ -78,12 +90,12 @@ function App() {
       const newProject = {
         ...project,
         id: generateProjectId(),
-        status: 'active',
         createdAt: new Date().toISOString()
       };
       
       const createdProject = await apiService.createProject(newProject);
       setProjects([...projects, createdProject]);
+      setCreateProjectDialogOpen(false);
     } catch (error) {
       console.error('Error creating project:', error);
       setError('Failed to create project');
@@ -173,6 +185,45 @@ function App() {
     }
   };
 
+  // Client functions
+  const addClient = async (client) => {
+    try {
+      const newClient = {
+        ...client,
+        id: Date.now(), // Simple ID generation
+        createdAt: new Date().toISOString()
+      };
+      
+      const createdClient = await apiService.createClient(newClient);
+      setClients([...clients, createdClient]);
+    } catch (error) {
+      console.error('Error creating client:', error);
+      setError('Failed to create client');
+    }
+  };
+
+  const updateClient = async (clientId, updates) => {
+    try {
+      const updatedClient = await apiService.updateClient(clientId, updates);
+      setClients(clients.map(client => 
+        client.id === clientId ? updatedClient : client
+      ));
+    } catch (error) {
+      console.error('Error updating client:', error);
+      setError('Failed to update client');
+    }
+  };
+
+  const deleteClient = async (clientId) => {
+    try {
+      await apiService.deleteClient(clientId);
+      setClients(clients.filter(client => client.id !== clientId));
+    } catch (error) {
+      console.error('Error deleting client:', error);
+      setError('Failed to delete client');
+    }
+  };
+
   // Team Members functions
   const addTeamMember = async (member) => {
     try {
@@ -255,45 +306,6 @@ function App() {
           <>
             <ModernStatsCards projects={projects} tasks={tasks} teamMembers={teamMembers} />
             <ModernProjectOverview projects={projects} tasks={tasks} teamMembers={teamMembers} />
-            <Grid container spacing={4} sx={{ mt: 2 }}>
-              <Grid item xs={12} md={6}>
-                <Paper 
-                  elevation={0}
-                  sx={{ 
-                    p: 3, 
-                    backgroundColor: 'white',
-                    border: '1px solid #E9ECEF',
-                    borderRadius: 3
-                  }}
-                >
-                  <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
-                    Create New Project
-                  </Typography>
-                  <ProjectForm onSubmit={addProject} />
-                </Paper>
-              </Grid>
-              
-              <Grid item xs={12} md={6}>
-                <Paper 
-                  elevation={0}
-                  sx={{ 
-                    p: 3, 
-                    backgroundColor: 'white',
-                    border: '1px solid #E9ECEF',
-                    borderRadius: 3
-                  }}
-                >
-                  <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
-                    Add New Task
-                  </Typography>
-                  <TaskForm 
-                    projects={projects} 
-                    teamMembers={teamMembers}
-                    onSubmit={addTask} 
-                  />
-                </Paper>
-              </Grid>
-            </Grid>
           </>
         );
 
@@ -310,12 +322,27 @@ function App() {
                   borderRadius: 3
                 }}
               >
-                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
-                  Active Projects ({projects.length})
-                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#2C3E50' }}>
+                    Active Projects ({projects.length})
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    onClick={() => setCreateProjectDialogOpen(true)}
+                    sx={{
+                      borderRadius: '20px',
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      px: 3
+                    }}
+                  >
+                    + Create
+                  </Button>
+                </Box>
                 <ProjectsList 
                   projects={projects}
                   tasks={tasks}
+                  clients={clients}
                   onDeleteProject={deleteProject}
                 />
               </Paper>
@@ -323,7 +350,48 @@ function App() {
           </Grid>
         );
 
-      case 2: // Tasks
+      case 2: // My Projects
+        return (
+          <Grid container spacing={4}>
+            <Grid item xs={12}>
+              <Paper 
+                elevation={0}
+                sx={{ 
+                  p: 3, 
+                  backgroundColor: 'white',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: 3
+                }}
+              >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#2C3E50' }}>
+                    My Projects ({projects.filter(p => p.projectManager === 1008).length})
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    onClick={() => setCreateProjectDialogOpen(true)}
+                    sx={{
+                      borderRadius: '20px',
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      px: 3
+                    }}
+                  >
+                    + Create
+                  </Button>
+                </Box>
+                <ProjectsList 
+                  projects={projects.filter(p => p.projectManager === 1008)}
+                  tasks={tasks}
+                  clients={clients}
+                  onDeleteProject={deleteProject}
+                />
+              </Paper>
+            </Grid>
+          </Grid>
+        );
+
+      case 3: // Tasks
         return (
           <Grid container spacing={4}>
             <Grid item xs={12}>
@@ -351,7 +419,7 @@ function App() {
           </Grid>
         );
 
-      case 3: // Team
+      case 4: // Team
         return (
           <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
@@ -398,7 +466,80 @@ function App() {
           </Grid>
         );
 
-      case 4: // Timeline & Gantt
+      case 5: // Clients
+        return (
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={4}>
+              <Paper 
+                elevation={0}
+                sx={{ 
+                  p: 3, 
+                  backgroundColor: 'white',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: 3
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+                  Add New Client
+                </Typography>
+                <ClientForm onSubmit={addClient} />
+              </Paper>
+            </Grid>
+            
+            <Grid item xs={12} md={8}>
+              <Paper 
+                elevation={0}
+                sx={{ 
+                  p: 3, 
+                  backgroundColor: 'white',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: 3
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+                  Clients Database ({clients.length})
+                </Typography>
+                <ClientsList 
+                  clients={clients}
+                  onUpdateClient={updateClient}
+                  onDeleteClient={deleteClient}
+                />
+              </Paper>
+            </Grid>
+          </Grid>
+        );
+
+      case 6: // Procurement
+        return (
+          <Grid container spacing={4}>
+            <Grid item xs={12}>
+              <Paper 
+                elevation={0}
+                sx={{ 
+                  p: 3, 
+                  backgroundColor: 'white',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: 3
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+                  Procurement Management
+                </Typography>
+                <Box sx={{ textAlign: 'center', py: 8 }}>
+                  <Typography variant="h6" color="textSecondary" gutterBottom>
+                    🛒 Procurement Module
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary">
+                    Procurement management features will be available here.
+                    Track orders, manage suppliers, and handle procurement workflows.
+                  </Typography>
+                </Box>
+              </Paper>
+            </Grid>
+          </Grid>
+        );
+
+      case 7: // Timeline & Gantt
         return (
           <Paper 
             elevation={0}
@@ -449,6 +590,19 @@ function App() {
           {/* Notification Container */}
           <NotificationContainer />
         </ModernDashboardLayout>
+
+        {/* Create Project Dialog */}
+        <Dialog 
+          open={createProjectDialogOpen} 
+          onClose={() => setCreateProjectDialogOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>Create New Project</DialogTitle>
+          <DialogContent>
+            <ProjectForm onSubmit={addProject} clients={clients} />
+          </DialogContent>
+        </Dialog>
       </ThemeProvider>
     </NotificationProvider>
   );

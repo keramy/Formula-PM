@@ -4,27 +4,40 @@ import {
   Button,
   MenuItem,
   Box,
-  Alert
+  Alert,
+  FormControl,
+  InputLabel,
+  Select
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const projectTypes = [
-  { value: 'fit-out', label: 'Fit-out' },
+  { value: 'general-contractor', label: 'General Contractor' },
   { value: 'millwork', label: 'Millwork' },
   { value: 'electrical', label: 'Electrical' },
   { value: 'mep', label: 'MEP' },
   { value: 'management', label: 'Management' }
 ];
 
-function ProjectForm({ onSubmit }) {
+const projectStatuses = [
+  { value: 'on-tender', label: 'On Tender' },
+  { value: 'awarded', label: 'Awarded' },
+  { value: 'on-hold', label: 'On Hold' },
+  { value: 'not-awarded', label: 'Not Awarded' },
+  { value: 'active', label: 'Active' },
+  { value: 'completed', label: 'Completed' }
+];
+
+function ProjectForm({ onSubmit, clients = [] }) {
   const [formData, setFormData] = useState({
     name: '',
     type: '',
     startDate: null,
     endDate: null,
-    client: '',
+    clientId: '',
+    status: 'on-tender',
     description: ''
   });
   const [errors, setErrors] = useState({});
@@ -75,6 +88,10 @@ function ProjectForm({ onSubmit }) {
       newErrors.endDate = 'End date is required';
     }
 
+    if (!formData.clientId) {
+      newErrors.clientId = 'Client selection is required';
+    }
+
     if (formData.startDate && formData.endDate && formData.startDate >= formData.endDate) {
       newErrors.endDate = 'End date must be after start date';
     }
@@ -98,7 +115,8 @@ function ProjectForm({ onSubmit }) {
         type: '',
         startDate: null,
         endDate: null,
-        client: '',
+        clientId: '',
+        status: 'on-tender',
         description: ''
       });
       
@@ -171,12 +189,40 @@ function ProjectForm({ onSubmit }) {
           }}
         />
 
-        <TextField
-          label="Client Name"
-          value={formData.client}
-          onChange={handleChange('client')}
-          fullWidth
-        />
+        <FormControl fullWidth required error={!!errors.clientId}>
+          <InputLabel>Client</InputLabel>
+          <Select
+            value={formData.clientId}
+            onChange={handleChange('clientId')}
+            label="Client"
+          >
+            {clients.map((client) => (
+              <MenuItem key={client.id} value={client.id}>
+                {client.companyName}
+              </MenuItem>
+            ))}
+          </Select>
+          {errors.clientId && (
+            <Box sx={{ color: 'error.main', fontSize: '0.75rem', mt: 0.5, ml: 1.75 }}>
+              {errors.clientId}
+            </Box>
+          )}
+        </FormControl>
+
+        <FormControl fullWidth>
+          <InputLabel>Project Status</InputLabel>
+          <Select
+            value={formData.status}
+            onChange={handleChange('status')}
+            label="Project Status"
+          >
+            {projectStatuses.map((status) => (
+              <MenuItem key={status.value} value={status.value}>
+                {status.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         <TextField
           label="Description"

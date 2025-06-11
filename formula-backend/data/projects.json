@@ -46,15 +46,15 @@
     "createdAt": "2024-11-15T00:00:00.000Z"
   },
   {
-    "name": "deneme",
-    "type": "management",
-    "startDate": "2025-06-10",
-    "endDate": "2025-06-11",
-    "client": "",
-    "description": "",
-    "id": "proj_1749633037542_723_1",
-    "status": "active",
-    "createdAt": "2025-06-11T09:10:37.542Z",
-    "updatedAt": "2025-06-11T09:10:38.071Z"
+    "name": "Test Project with Client",
+    "type": "general-contractor",
+    "clientId": 1,
+    "status": "on-tender",
+    "startDate": "2025-06-15",
+    "endDate": "2025-12-15",
+    "description": "Test project with client integration",
+    "id": 2003,
+    "createdAt": "2025-06-11T12:27:01.714Z",
+    "updatedAt": "2025-06-11T12:27:01.714Z"
   }
 ]

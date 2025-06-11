@@ -5,8 +5,6 @@ import {
   CardContent,
   Typography,
   Chip,
-  Button,
-  LinearProgress,
   Grid,
   IconButton
 } from '@mui/material';
@@ -15,15 +13,20 @@ import {
   Carpenter,
   ElectricalServices,
   Engineering,
-  Person,
   CalendarToday,
   Delete,
   Business
 } from '@mui/icons-material';
 
 const projectTypeConfig = {
+  'general-contractor': {
+    label: 'General Contractor',
+    icon: <Build />,
+    color: '#e67e22',
+    bgColor: '#fef5e7'
+  },
   'fit-out': {
-    label: 'Fit-out',
+    label: 'Fit-out (Legacy)',
     icon: <Build />,
     color: '#e67e22',
     bgColor: '#fef5e7'
@@ -55,29 +58,39 @@ const projectTypeConfig = {
 };
 
 const projectStatusConfig = {
-  active: {
-    label: 'Active',
-    className: 'in-progress'
+  'on-tender': {
+    label: 'On Tender',
+    color: '#3498db',
+    bgColor: '#ebf3fd'
   },
-  completed: {
-    label: 'Completed',
-    className: 'completed'
+  awarded: {
+    label: 'Awarded',
+    color: '#27ae60',
+    bgColor: '#eafaf1'
   },
   'on-hold': {
     label: 'On Hold',
-    className: 'on-hold'
+    color: '#f39c12',
+    bgColor: '#fef9e7'
   },
-  cancelled: {
-    label: 'Cancelled',
-    className: 'cancelled'
+  'not-awarded': {
+    label: 'Not Awarded',
+    color: '#e74c3c',
+    bgColor: '#fdedec'
   },
-  archived: {
-    label: 'Archived',
-    className: 'cancelled'
+  active: {
+    label: 'Active',
+    color: '#9b59b6',
+    bgColor: '#f4ecf7'
+  },
+  completed: {
+    label: 'Completed',
+    color: '#2c3e50',
+    bgColor: '#eaeded'
   }
 };
 
-function ProjectsList({ projects, tasks, onDeleteProject }) {
+function ProjectsList({ projects, tasks, clients = [], onDeleteProject }) {
   if (projects.length === 0) {
     return (
       <Box sx={{ textAlign: 'center', py: 4 }}>
@@ -94,6 +107,11 @@ function ProjectsList({ projects, tasks, onDeleteProject }) {
     
     const completedTasks = projectTasks.filter(task => task.status === 'completed').length;
     return Math.round((completedTasks / projectTasks.length) * 100);
+  };
+
+  const getClientName = (clientId) => {
+    const client = clients.find(c => c.id === clientId);
+    return client ? client.companyName : 'No Client Assigned';
   };
 
   const getProjectStats = (projectId) => {
@@ -129,20 +147,31 @@ function ProjectsList({ projects, tasks, onDeleteProject }) {
   };
 
   const getProjectStatus = (project, stats) => {
-    if (stats.total === 0) return 'active';
-    if (stats.completed === stats.total) return 'completed';
-    if (stats.overdue > 0) return 'on-hold';
-    return project.status || 'active';
+    // Use the project's actual status from the form
+    return project.status || 'on-tender';
   };
 
   return (
     <Grid container spacing={3}>
       {projects.map((project) => {
-        const typeConfig = projectTypeConfig[project.type] || projectTypeConfig.construction;
+        // Safe fallback for type config
+        const typeConfig = projectTypeConfig[project.type] || {
+          label: 'General Contractor',
+          icon: <Build />,
+          color: '#e67e22',
+          bgColor: '#fef5e7'
+        };
+        
         const progress = calculateProjectProgress(project.id);
         const stats = getProjectStats(project.id);
         const projectStatus = getProjectStatus(project, stats);
-        const statusConfig = projectStatusConfig[projectStatus] || projectStatusConfig.active;
+        
+        // Safe fallback for status config
+        const statusConfig = projectStatusConfig[projectStatus] || {
+          label: 'On Tender',
+          color: '#3498db',
+          bgColor: '#ebf3fd'
+        };
         
         return (
           <Grid item xs={12} md={6} key={project.id}>
@@ -174,9 +203,15 @@ function ProjectsList({ projects, tasks, onDeleteProject }) {
                   </Box>
                   
                   {/* Status Badge */}
-                  <span className={`status-badge status-badge-${statusConfig.className}`}>
-                    {statusConfig.label}
-                  </span>
+                  <Chip
+                    label={statusConfig.label}
+                    size="small"
+                    sx={{
+                      backgroundColor: statusConfig.bgColor,
+                      color: statusConfig.color,
+                      fontWeight: 'bold'
+                    }}
+                  />
                   
                   <IconButton
                     size="small"
@@ -194,11 +229,11 @@ function ProjectsList({ projects, tasks, onDeleteProject }) {
                   {project.name}
                 </Typography>
 
-                {project.client && (
+                {project.clientId && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                    <Person fontSize="small" color="action" />
+                    <Business fontSize="small" color="action" />
                     <Typography variant="body2" color="text.secondary">
-                      Client: {project.client}
+                      Client: {getClientName(project.clientId)}
                     </Typography>
                   </Box>
                 )}

@@ -3,7 +3,7 @@ import { Box, Container, Typography, IconButton, InputBase, Paper } from '@mui/m
 import { Search as SearchIcon, Notifications as NotificationsIcon } from '@mui/icons-material';
 import ModernSidebar from './ModernSidebar';
 
-const ModernDashboardLayout = ({ children, currentTab, onTabChange, userName = "Alex" }) => {
+const ModernDashboardLayout = ({ children, currentTab, onTabChange, userName = "Kerem" }) => {
   const getPageTitle = () => {
     switch (currentTab) {
       case 0: return 'Dashboard';

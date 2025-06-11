@@ -33,7 +33,14 @@
       "Bash(hostname:*)",
       "Bash(ss:*)",
       "Bash(true)",
-      "Bash(fuser:*)"
+      "Bash(fuser:*)",
+      "Bash(find:*)",
+      "Bash(PORT=5001 npm start)",
+      "Bash(npm --version)",
+      "Bash(./start-servers.sh:*)",
+      "Bash(./verify-system.sh:*)",
+      "Bash(./stop-servers.sh:*)",
+      "Bash(touch:*)"
     ],
     "deny": []
   }

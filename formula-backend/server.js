@@ -5,7 +5,7 @@ const SimpleDB = require('./database');
 const seedData = require('./seedData');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Initialize Database
 const db = new SimpleDB('./data');
@@ -193,6 +193,59 @@ app.delete('/api/projects/:id', (req, res) => {
   } catch (error) {
     console.error('Error deleting project:', error);
     res.status(500).json({ error: 'Failed to delete project' });
+  }
+});
+
+// Clients API endpoints
+app.get('/api/clients', (req, res) => {
+  try {
+    const clients = db.read('clients');
+    res.json(clients);
+  } catch (error) {
+    console.error('Error fetching clients:', error);
+    res.status(500).json({ error: 'Failed to fetch clients' });
+  }
+});
+
+app.post('/api/clients', (req, res) => {
+  try {
+    const newClient = db.insert('clients', req.body);
+    if (newClient) {
+      res.status(201).json(newClient);
+    } else {
+      res.status(500).json({ error: 'Failed to create client' });
+    }
+  } catch (error) {
+    console.error('Error creating client:', error);
+    res.status(500).json({ error: 'Failed to create client' });
+  }
+});
+
+app.put('/api/clients/:id', (req, res) => {
+  try {
+    const updatedClient = db.update('clients', req.params.id, req.body);
+    if (updatedClient) {
+      res.json(updatedClient);
+    } else {
+      res.status(404).json({ error: 'Client not found' });
+    }
+  } catch (error) {
+    console.error('Error updating client:', error);
+    res.status(500).json({ error: 'Failed to update client' });
+  }
+});
+
+app.delete('/api/clients/:id', (req, res) => {
+  try {
+    const deleted = db.delete('clients', req.params.id);
+    if (deleted) {
+      res.json({ message: 'Client deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Client not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting client:', error);
+    res.status(500).json({ error: 'Failed to delete client' });
   }
 });
 

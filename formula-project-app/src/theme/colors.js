@@ -4,10 +4,10 @@
 export const colors = {
   // Primary Brand Colors
   primary: {
-    main: '#37444B',        // Formula International Dark Gray
+    main: '#f1eeea',        // Formula International Dark Gray
     light: '#5a6b73',       // Lighter shade
     dark: '#1f2e35',        // Darker shade
-    contrastText: '#ffffff'
+    contrastText: '#1e3c5d'
   },
   
   // Secondary Brand Colors  

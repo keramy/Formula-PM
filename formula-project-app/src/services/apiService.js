@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
 
 class ApiService {
   async request(endpoint, options = {}) {
@@ -71,6 +71,31 @@ class ApiService {
 
   async deleteProject(id) {
     return this.request(`/projects/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Clients API
+  async getClients() {
+    return this.request('/clients');
+  }
+
+  async createClient(clientData) {
+    return this.request('/clients', {
+      method: 'POST',
+      body: JSON.stringify(clientData),
+    });
+  }
+
+  async updateClient(id, clientData) {
+    return this.request(`/clients/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(clientData),
+    });
+  }
+
+  async deleteClient(id) {
+    return this.request(`/clients/${id}`, {
       method: 'DELETE',
     });
   }

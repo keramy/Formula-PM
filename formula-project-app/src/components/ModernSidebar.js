@@ -17,7 +17,10 @@ import {
   People as TeamIcon,
   Timeline as TimelineIcon,
   Help as HelpIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Person as MyProjectsIcon,
+  ShoppingCart as ProcurementIcon,
+  Business as ClientsIcon
 } from '@mui/icons-material';
 
 const ModernSidebar = ({ currentTab, onTabChange }) => {
@@ -26,9 +29,12 @@ const ModernSidebar = ({ currentTab, onTabChange }) => {
   const menuItems = [
     { id: 0, label: 'Dashboard', icon: <DashboardIcon />, active: true },
     { id: 1, label: 'Projects', icon: <ProjectsIcon /> },
-    { id: 2, label: 'Tasks', icon: <TaskIcon /> },
-    { id: 3, label: 'Team', icon: <TeamIcon /> },
-    { id: 4, label: 'Timeline & Gantt', icon: <TimelineIcon /> }
+    { id: 2, label: 'My Projects', icon: <MyProjectsIcon /> },
+    { id: 3, label: 'Tasks', icon: <TaskIcon /> },
+    { id: 4, label: 'Team', icon: <TeamIcon /> },
+    { id: 5, label: 'Clients', icon: <ClientsIcon /> },
+    { id: 6, label: 'Procurement', icon: <ProcurementIcon /> },
+    { id: 7, label: 'Timeline & Gantt', icon: <TimelineIcon /> }
   ];
 
   const bottomItems = [
@@ -95,7 +101,7 @@ const ModernSidebar = ({ currentTab, onTabChange }) => {
             fontSize: '1.1rem'
           }}
         >
-          FormulaPro
+          Formula Project Management
         </Typography>
       </Box>
 
