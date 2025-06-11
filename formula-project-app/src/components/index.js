@@ -5,3 +5,7 @@ export { default as ModernStatsCards } from './ModernStatsCards';
 export { default as ModernProjectOverview } from './ModernProjectOverview';
 export { default as ClientForm } from './ClientForm';
 export { default as ClientsList } from './ClientsList';
+export { default as ProjectsHeader } from './ProjectsHeader';
+export { default as ProjectsTableView } from './ProjectsTableView';
+export { default as ProjectsFilters } from './ProjectsFilters';
+export { default as ProjectScope } from './ProjectScope';

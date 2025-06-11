@@ -7,8 +7,10 @@
 - **UI Library**: Material-UI (MUI) 7.1.1
 - **State Management**: React Context API
 - **Date Handling**: date-fns 4.1.0
+- **Date Pickers**: @mui/x-date-pickers 6.15.0
 - **Charts**: Recharts 2.15.3
 - **HTTP Client**: Axios 1.9.0
+- **Excel Export**: xlsx 0.18.5, file-saver 2.0.5
 - **Build Tool**: Create React App 5.0.0
 
 ### Backend
@@ -47,10 +49,12 @@ src/
 
 ### Component Structure
 - **App.js**: Main application with routing and state
-- **Forms**: ProjectForm, TaskForm, TeamMemberForm
-- **Lists**: ProjectsList, TasksList, TeamMembersList  
+- **Forms**: ProjectForm, TaskForm, TeamMemberForm, ClientForm
+- **Lists**: ProjectsList, TasksList, TeamMembersList, ClientsList
+- **Enhanced Project Views**: ProjectsHeader, ProjectsTableView, ProjectsFilters
+- **Project Scope Management**: ProjectScope (NEW)
 - **Dashboard**: StatsCards, AdvancedDashboard, GanttChart
-- **Utilities**: NotificationContainer, FileUpload
+- **Utilities**: NotificationContainer, FileUpload, excelExport
 
 ### Styling System Architecture
 - **Theme Provider**: Uses `formulaTheme` from `/src/theme/index.js`
@@ -69,7 +73,9 @@ formula-backend/
 ├── data/               # Database files
 │   ├── teamMembers.json    # 14 Formula employees
 │   ├── projects.json       # Sample projects
-│   └── tasks.json          # Sample tasks
+│   ├── tasks.json          # Sample tasks
+│   ├── clients.json        # Client database
+│   └── scopeItems.json     # Project scope items
 └── package.json        # Dependencies and scripts
 ```
 
@@ -80,12 +86,15 @@ formula-backend/
 {
   id: String,              // Unique identifier (proj_timestamp_random_counter)
   name: String,            // Project name
-  type: String,            // fit-out | millwork | electrical | mep | management
+  type: String,            // general-contractor | fit-out | millwork | electrical | mep | management
   startDate: String,       // ISO date string
   endDate: String,         // ISO date string
-  client: String,          // Client name (optional)
+  clientId: Number,        // Reference to client ID
+  projectManager: Number,  // Reference to team member ID
   description: String,     // Project description (optional)
-  status: String,          // active | completed | paused
+  budget: String,          // Project budget (optional)
+  location: String,        // Project location (optional)
+  status: String,          // on-tender | awarded | on-hold | not-awarded | active | completed
   createdAt: String        // ISO timestamp
 }
 ```
@@ -104,6 +113,32 @@ formula-backend/
   progress: Number,        // 0-100 percentage
   files: Array,            // File attachments (future)
   createdAt: String        // ISO timestamp
+}
+```
+
+### Client Entity
+```javascript
+{
+  id: Number,              // Unique identifier
+  companyName: String,     // Company name
+  contactPersonName: String, // Primary contact name
+  contactPersonTitle: String, // Contact person title
+  email: String,           // Contact email
+  phone: String,           // Contact phone
+  address: String,         // Street address
+  city: String,            // City
+  state: String,           // State/Province
+  country: String,         // Country
+  postalCode: String,      // Postal/ZIP code
+  website: String,         // Company website
+  industry: String,        // Industry type
+  companySize: String,     // Company size category
+  services: Array,         // Required services
+  taxId: String,           // Tax identification
+  notes: String,           // Additional notes
+  status: String,          // active | inactive | potential
+  createdAt: String,       // ISO timestamp
+  updatedAt: String        // ISO timestamp
 }
 ```
 
@@ -131,6 +166,22 @@ formula-backend/
 }
 ```
 
+### Scope Item Entity (NEW)
+```javascript
+{
+  id: String,              // Unique identifier
+  projectId: String,       // Reference to project
+  category: String,        // Predefined category (12 options)
+  description: String,     // Item description
+  unit: String,            // Measurement unit (sqm, lm, pcs, etc.)
+  quantity: Number,        // Item quantity
+  unitPrice: Number,       // Price per unit
+  totalPrice: Number,      // Calculated total (quantity × unitPrice)
+  notes: String,           // Additional notes
+  createdAt: String        // ISO timestamp
+}
+```
+
 ### Notification Entity
 ```javascript
 {
@@ -154,6 +205,23 @@ POST   /api/projects           # Create new project
 GET    /api/projects/:id       # Get project by ID
 PUT    /api/projects/:id       # Update project
 DELETE /api/projects/:id       # Delete project
+```
+
+### Clients API
+```
+GET    /api/clients           # List all clients
+POST   /api/clients           # Create new client
+GET    /api/clients/:id       # Get client by ID
+PUT    /api/clients/:id       # Update client
+DELETE /api/clients/:id       # Delete client
+```
+
+### Scope Items API (NEW)
+```
+GET    /api/projects/:projectId/scope # List project scope items
+POST   /api/projects/:projectId/scope # Create new scope item
+PUT    /api/scope/:id                 # Update scope item
+DELETE /api/scope/:id                 # Delete scope item
 ```
 
 ### Tasks API  
@@ -208,11 +276,15 @@ POST   /api/upload           # File upload (future)
 '/data/teamMembers.json'  // 14 Formula International employees
 '/data/projects.json'     // Active and completed projects
 '/data/tasks.json'        // Task assignments and progress
+'/data/clients.json'      // Client database
+'/data/scopeItems.json'   // Project scope items (NEW)
 
 // LocalStorage Keys (Fallback)
 'formula_projects'        // Projects array backup
 'formula_tasks'          // Tasks array backup
 'formula_team_members'   // Team members array backup
+'formula_clients'        // Clients array backup
+'formula_scope_items'    // Scope items array backup
 ```
 
 ### Database Operations

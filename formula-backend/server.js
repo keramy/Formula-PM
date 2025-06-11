@@ -249,6 +249,65 @@ app.delete('/api/clients/:id', (req, res) => {
   }
 });
 
+// Scope Items API endpoints
+app.get('/api/projects/:projectId/scope', (req, res) => {
+  try {
+    const scopeItems = db.read('scopeItems');
+    const projectScope = scopeItems.filter(item => item.projectId == req.params.projectId);
+    res.json(projectScope);
+  } catch (error) {
+    console.error('Error fetching scope items:', error);
+    res.status(500).json({ error: 'Failed to fetch scope items' });
+  }
+});
+
+app.post('/api/projects/:projectId/scope', (req, res) => {
+  try {
+    const scopeItem = {
+      ...req.body,
+      projectId: req.params.projectId,
+      createdAt: new Date().toISOString()
+    };
+    const newScopeItem = db.insert('scopeItems', scopeItem);
+    if (newScopeItem) {
+      res.status(201).json(newScopeItem);
+    } else {
+      res.status(500).json({ error: 'Failed to create scope item' });
+    }
+  } catch (error) {
+    console.error('Error creating scope item:', error);
+    res.status(500).json({ error: 'Failed to create scope item' });
+  }
+});
+
+app.put('/api/scope/:id', (req, res) => {
+  try {
+    const updatedScopeItem = db.update('scopeItems', req.params.id, req.body);
+    if (updatedScopeItem) {
+      res.json(updatedScopeItem);
+    } else {
+      res.status(404).json({ error: 'Scope item not found' });
+    }
+  } catch (error) {
+    console.error('Error updating scope item:', error);
+    res.status(500).json({ error: 'Failed to update scope item' });
+  }
+});
+
+app.delete('/api/scope/:id', (req, res) => {
+  try {
+    const deleted = db.delete('scopeItems', req.params.id);
+    if (deleted) {
+      res.json({ message: 'Scope item deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Scope item not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting scope item:', error);
+    res.status(500).json({ error: 'Failed to delete scope item' });
+  }
+});
+
 // Tasks API endpoints
 app.get('/api/tasks', (req, res) => {
   try {

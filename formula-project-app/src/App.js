@@ -27,7 +27,12 @@ import TeamMemberForm from './components/TeamMemberForm';
 import TeamMembersList from './components/TeamMembersList';
 import ClientForm from './components/ClientForm';
 import ClientsList from './components/ClientsList';
+import ProjectsHeader from './components/ProjectsHeader';
+import ProjectsTableView from './components/ProjectsTableView';
+import ProjectsFilters from './components/ProjectsFilters';
+import ProjectScope from './components/ProjectScope';
 import AdvancedDashboard from './components/AdvancedDashboard';
+import { exportProjectsToExcel } from './utils/excelExport';
 
 // Import the new modular theme
 import { formulaTheme } from './theme';
@@ -44,6 +49,25 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [createProjectDialogOpen, setCreateProjectDialogOpen] = useState(false);
+  const [scopeDialogOpen, setScopeDialogOpen] = useState(false);
+  const [selectedProjectForScope, setSelectedProjectForScope] = useState(null);
+  
+  // New state for enhanced projects view
+  const [projectsViewMode, setProjectsViewMode] = useState('table');
+  const [projectsSearchTerm, setProjectsSearchTerm] = useState('');
+  const [showProjectsFilters, setShowProjectsFilters] = useState(false);
+  const [projectsFilters, setProjectsFilters] = useState({
+    status: '',
+    type: '',
+    client: '',
+    manager: '',
+    startDateFrom: null,
+    startDateTo: null,
+    endDateFrom: null,
+    endDateTo: null,
+    budgetFrom: '',
+    budgetTo: ''
+  });
 
   // Load data from API on component mount
   useEffect(() => {
@@ -279,6 +303,155 @@ function App() {
     setCurrentTab(newValue);
   };
 
+  // Enhanced Projects Handlers
+  const handleProjectsSearch = (event) => {
+    setProjectsSearchTerm(event.target.value);
+  };
+
+  const handleToggleProjectsFilters = () => {
+    setShowProjectsFilters(!showProjectsFilters);
+  };
+
+  const handleProjectsExport = async () => {
+    try {
+      const result = await exportProjectsToExcel(filteredProjects, clients, teamMembers);
+      if (result.success) {
+        console.log(`Exported ${result.filename} successfully`);
+      } else {
+        setError(`Export failed: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      setError('Failed to export projects');
+    }
+  };
+
+  const handleViewModeChange = (mode) => {
+    setProjectsViewMode(mode);
+  };
+
+  const handleFiltersChange = (newFilters) => {
+    setProjectsFilters(newFilters);
+  };
+
+  const handleClearFilters = () => {
+    setProjectsFilters({
+      status: '',
+      type: '',
+      client: '',
+      manager: '',
+      startDateFrom: null,
+      startDateTo: null,
+      endDateFrom: null,
+      endDateTo: null,
+      budgetFrom: '',
+      budgetTo: ''
+    });
+    setProjectsSearchTerm('');
+  };
+
+  const handleClearFilter = (filterKey) => {
+    if (filterKey === 'all') {
+      handleClearFilters();
+    } else if (filterKey === 'search') {
+      setProjectsSearchTerm('');
+    } else {
+      const newFilters = { ...projectsFilters };
+      if (filterKey.includes('Date')) {
+        newFilters[filterKey] = null;
+      } else {
+        newFilters[filterKey] = '';
+      }
+      setProjectsFilters(newFilters);
+    }
+  };
+
+  const handleManageScope = (project) => {
+    setSelectedProjectForScope(project);
+    setScopeDialogOpen(true);
+  };
+
+  const handleCloseScopeDialog = () => {
+    setScopeDialogOpen(false);
+    setSelectedProjectForScope(null);
+  };
+
+  // Advanced filter logic
+  const filteredProjects = projects.filter(project => {
+    // Search term matching
+    const matchesSearch = !projectsSearchTerm || 
+      project.name.toLowerCase().includes(projectsSearchTerm.toLowerCase()) ||
+      (project.description && project.description.toLowerCase().includes(projectsSearchTerm.toLowerCase()));
+    
+    // Basic filters
+    const matchesStatus = !projectsFilters.status || project.status === projectsFilters.status;
+    const matchesType = !projectsFilters.type || project.type === projectsFilters.type;
+    const matchesClient = !projectsFilters.client || project.clientId == projectsFilters.client;
+    const matchesManager = !projectsFilters.manager || project.projectManager == projectsFilters.manager;
+
+    // Date range filters
+    const projectStartDate = project.startDate ? new Date(project.startDate) : null;
+    const projectEndDate = project.endDate ? new Date(project.endDate) : null;
+    
+    const matchesStartDateFrom = !projectsFilters.startDateFrom || 
+      (projectStartDate && projectStartDate >= projectsFilters.startDateFrom);
+    const matchesStartDateTo = !projectsFilters.startDateTo || 
+      (projectStartDate && projectStartDate <= projectsFilters.startDateTo);
+    const matchesEndDateFrom = !projectsFilters.endDateFrom || 
+      (projectEndDate && projectEndDate >= projectsFilters.endDateFrom);
+    const matchesEndDateTo = !projectsFilters.endDateTo || 
+      (projectEndDate && projectEndDate <= projectsFilters.endDateTo);
+
+    // Budget range filters
+    const projectBudget = project.budget ? parseFloat(project.budget) : 0;
+    const matchesBudgetFrom = !projectsFilters.budgetFrom || 
+      projectBudget >= parseFloat(projectsFilters.budgetFrom);
+    const matchesBudgetTo = !projectsFilters.budgetTo || 
+      projectBudget <= parseFloat(projectsFilters.budgetTo);
+
+    return matchesSearch && 
+           matchesStatus && 
+           matchesType && 
+           matchesClient && 
+           matchesManager &&
+           matchesStartDateFrom &&
+           matchesStartDateTo &&
+           matchesEndDateFrom &&
+           matchesEndDateTo &&
+           matchesBudgetFrom &&
+           matchesBudgetTo;
+  });
+
+  // Get active filters for display
+  const activeFilters = Object.entries(projectsFilters)
+    .filter(([key, value]) => {
+      if (typeof value === 'string') return value !== '';
+      if (value instanceof Date) return true;
+      return value !== null && value !== undefined;
+    })
+    .map(([key, value]) => {
+      let label = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+      let displayValue = value;
+      
+      if (key === 'client') {
+        const client = clients.find(c => c.id == value);
+        displayValue = client ? client.companyName : value;
+      } else if (key === 'manager') {
+        const manager = teamMembers.find(tm => tm.id == value);
+        displayValue = manager ? manager.fullName : value;
+      } else if (key.includes('Date') && value instanceof Date) {
+        displayValue = value.toLocaleDateString();
+      } else if (key.includes('budget') && value) {
+        displayValue = `$${value}`;
+      }
+      
+      return { key, label, value: displayValue };
+    });
+
+  if (projectsSearchTerm) {
+    activeFilters.push({ key: 'search', label: 'Search', value: projectsSearchTerm });
+  }
+
   if (loading) {
     return (
       <NotificationProvider>
@@ -311,8 +484,42 @@ function App() {
 
       case 1: // Projects
         return (
-          <Grid container spacing={4}>
-            <Grid item xs={12}>
+          <Box>
+            <ProjectsHeader
+              searchTerm={projectsSearchTerm}
+              onSearchChange={handleProjectsSearch}
+              onToggleFilters={handleToggleProjectsFilters}
+              onExportProjects={handleProjectsExport}
+              onCreateProject={() => setCreateProjectDialogOpen(true)}
+              viewMode={projectsViewMode}
+              onViewModeChange={handleViewModeChange}
+              activeFilters={activeFilters}
+              onClearFilter={handleClearFilter}
+              projectsCount={projects.length}
+              filteredCount={filteredProjects.length}
+            />
+
+            <ProjectsFilters
+              open={showProjectsFilters}
+              filters={projectsFilters}
+              onFiltersChange={handleFiltersChange}
+              onClearFilters={handleClearFilters}
+              clients={clients}
+              teamMembers={teamMembers}
+              projects={projects}
+            />
+            
+            {projectsViewMode === 'table' ? (
+              <ProjectsTableView
+                projects={filteredProjects}
+                clients={clients}
+                teamMembers={teamMembers}
+                onEditProject={(project) => console.log('Edit project:', project)}
+                onDeleteProject={deleteProject}
+                onViewProject={(project) => console.log('View project:', project)}
+                onManageScope={handleManageScope}
+              />
+            ) : (
               <Paper 
                 elevation={0}
                 sx={{ 
@@ -322,32 +529,15 @@ function App() {
                   borderRadius: 3
                 }}
               >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#2C3E50' }}>
-                    Active Projects ({projects.length})
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    onClick={() => setCreateProjectDialogOpen(true)}
-                    sx={{
-                      borderRadius: '20px',
-                      textTransform: 'none',
-                      fontWeight: 600,
-                      px: 3
-                    }}
-                  >
-                    + Create
-                  </Button>
-                </Box>
                 <ProjectsList 
-                  projects={projects}
+                  projects={filteredProjects}
                   tasks={tasks}
                   clients={clients}
                   onDeleteProject={deleteProject}
                 />
               </Paper>
-            </Grid>
-          </Grid>
+            )}
+          </Box>
         );
 
       case 2: // My Projects
@@ -601,6 +791,26 @@ function App() {
           <DialogTitle>Create New Project</DialogTitle>
           <DialogContent>
             <ProjectForm onSubmit={addProject} clients={clients} />
+          </DialogContent>
+        </Dialog>
+
+        {/* Project Scope Dialog */}
+        <Dialog 
+          open={scopeDialogOpen} 
+          onClose={handleCloseScopeDialog}
+          maxWidth="lg"
+          fullWidth
+          PaperProps={{
+            sx: { height: '90vh' }
+          }}
+        >
+          <DialogContent sx={{ p: 0 }}>
+            {selectedProjectForScope && (
+              <ProjectScope 
+                project={selectedProjectForScope} 
+                onClose={handleCloseScopeDialog}
+              />
+            )}
           </DialogContent>
         </Dialog>
       </ThemeProvider>

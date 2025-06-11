@@ -38,20 +38,37 @@ npm test           # Run React tests
 
 **Backend (Port 5001)**
 - Custom `SimpleDB` class in `database.js` provides ORM-like functionality for JSON files
-- Data files: `teamMembers.json`, `projects.json`, `tasks.json`
+- Data files: `teamMembers.json`, `projects.json`, `tasks.json`, `clients.json`
 - Email service configured with Nodemailer (Gmail SMTP)
 - Auto-seeding with 14 Formula International team members on startup
+- Complete CRUD API for client database management
+- Enhanced project API with filtering support
 
 **Frontend Architecture**
 - Material-UI theming with Formula International branding
 - `AdvancedDashboard.js` - Analytics with Recharts visualizations
 - `GanttChart.js` - Project timeline visualization
+- `ProjectsTableView.js` - Professional sortable table with context menus
+- `ProjectsFilters.js` - Advanced filtering system with date ranges and quick filters
+- `ProjectsHeader.js` - Search, export, and view controls
+- `ClientForm.js` & `ClientsList.js` - Client database management
+- `excelExport.js` - Professional Excel export with multiple sheets
 - `NotificationContext` - Global toast notifications via Context API
 - `apiService.js` - Centralized HTTP client with error handling
+
+**Enhanced Project Management Features (NEW)**
+- `ProjectsHeader.js` - Professional header with search, filters, export, view toggle
+- `ProjectsTableView.js` - Advanced sortable table with context menus and progress bars
+- `ProjectsFilters.js` - Comprehensive filtering system with date ranges and quick presets
+- `ProjectsList.js` - Legacy card view with client integration
+- `ClientForm.js` / `ClientsList.js` - Full client database management
+- `excelExport.js` - Professional Excel export with multiple sheets and formatting
 
 ### Data Relationships
 - Tasks link to Projects via `projectId`
 - Tasks assign to Team Members via `assignedTo` 
+- Projects link to Clients via `clientId`
+- Projects assign to Project Managers via `projectManager`
 - Cascading deletes (project deletion removes related tasks)
 
 ### API Endpoints
@@ -59,6 +76,9 @@ npm test           # Run React tests
 /api/team-members    # CRUD operations
 /api/projects        # CRUD operations  
 /api/tasks          # CRUD operations
+/api/clients        # CRUD operations
+/api/projects/:projectId/scope  # Scope items CRUD (NEW)
+/api/scope/:id      # Individual scope item operations (NEW)
 /api/send-notification  # Email notifications
 /api/health         # Server status
 ```
@@ -69,12 +89,48 @@ npm test           # Run React tests
 
 ## Development Notes
 
+### Enhanced Project Management Features
+Phases 1-4 of the comprehensive project enhancement have been implemented:
+
+**Phase 1: Enhanced Projects List View**
+- Professional table view with sortable columns
+- Card view toggle for different display preferences
+- Context menus with View, Edit, Manage Scope, Delete actions
+- Progress bars and status indicators
+- Client and manager name resolution
+
+**Phase 2: Advanced Filtering & Search System**
+- Real-time search across project names and descriptions
+- Multi-criteria filtering: status, type, client, manager, date ranges, budget ranges
+- Quick filter presets for common searches (Active Projects, On Tender, This Month, etc.)
+- Active filter display with individual clear options
+- Collapsible filter panel with filter count indicators
+
+**Phase 3: Excel Export Functionality**
+- Professional Excel export with formatted columns
+- Multiple sheets: Projects data + Summary analytics
+- Status and type breakdowns in summary sheet
+- Client and manager name resolution in export
+- Timestamp-based filename generation
+
+**Phase 4: Project Scope Management** 🆕
+- Complete scope items management with CRUD operations
+- 12 predefined categories: General Construction, MEP Systems, Electrical, HVAC, Plumbing, Finishes, Millwork, Furniture, Technology, Landscaping, Permits & Fees, Other
+- 10 standard units: sqm, lm, pcs, ls, kg, ton, hour, day, month, lot
+- Automatic budget calculations: Total Price = Quantity × Unit Price
+- Real-time summary analytics with category breakdowns
+- Professional full-screen scope management interface
+- Summary cards showing total items, quantity, and value
+- Context menus for scope item management
+- Integrated with Projects table "Manage Scope" action
+
 ### Database System
 The application uses a custom file-based database unsuitable for production. The `SimpleDB` class in `database.js` provides:
 - Automatic ID generation with timestamp-based unique IDs
 - CRUD operations with error handling
 - Data persistence to JSON files
 - In-memory caching for performance
+- Client database integration with full CRUD support
 
 ### State Management Pattern
 - Local component state with React hooks
@@ -88,7 +144,24 @@ The application uses a custom file-based database unsuitable for production. The
 - No backend tests currently implemented
 
 ### Pre-loaded Data
-System seeds with 14 Formula International team members including management hierarchy from Managing Partners to technical staff, plus sample Akbank and Garanti BBVA projects.
+System seeds with 14 Formula International team members including management hierarchy from Managing Partners to technical staff, plus sample Akbank and Garanti BBVA projects. Client database starts empty and is populated through the UI.
+
+### Project Status & Types
+**Project Statuses:**
+- On Tender (blue) - Projects in bidding phase
+- Awarded (green) - Won projects ready to start
+- On Hold (orange) - Temporarily paused projects
+- Not Awarded (red) - Lost bids
+- Active (purple) - Currently in progress
+- Completed (dark) - Finished projects
+
+**Project Types:**
+- General Contractor - Main construction projects
+- Fit-out - Interior finishing projects
+- MEP - Mechanical, Electrical, Plumbing
+- Electrical - Electrical systems only
+- Millwork - Custom woodwork and furniture
+- Management - Project management services
 
 ## UI Styling System
 
