@@ -27,7 +27,38 @@ class ApiService {
 
   // Team Members API
   async getTeamMembers() {
-    return this.request('/team-members');
+    try {
+      return await this.request('/team-members');
+    } catch (error) {
+      console.warn('Backend unavailable, using demo data');
+      // Demo data for GitHub Pages
+      return [
+        {
+          id: 1001,
+          firstName: "Kubilay",
+          lastName: "Ilgın", 
+          fullName: "Kubilay Ilgın",
+          initials: "KI",
+          email: "kubilay.ilgin@formulaint.com",
+          phone: "+90 212 555 0101",
+          department: "Management",
+          position: "Managing Partner",
+          role: "admin"
+        },
+        {
+          id: 1002,
+          firstName: "Demo",
+          lastName: "User",
+          fullName: "Demo User", 
+          initials: "DU",
+          email: "demo@formulaint.com",
+          phone: "+90 212 555 0102",
+          department: "Engineering",
+          position: "Project Manager",
+          role: "manager"
+        }
+      ];
+    }
   }
 
   async createTeamMember(memberData) {
@@ -52,7 +83,38 @@ class ApiService {
 
   // Projects API
   async getProjects() {
-    return this.request('/projects');
+    try {
+      return await this.request('/projects');
+    } catch (error) {
+      console.warn('Backend unavailable, using demo data');
+      // Demo data for GitHub Pages
+      return [
+        {
+          id: 2001,
+          name: "Akbank Head Office Renovation",
+          description: "Complete renovation of Akbank headquarters building",
+          status: "active",
+          type: "general-contractor",
+          clientId: 3001,
+          startDate: "2024-01-15",
+          endDate: "2024-12-31",
+          budget: 5000000,
+          projectManager: 1001
+        },
+        {
+          id: 2002,
+          name: "Garanti BBVA Branch Fit-out",
+          description: "Interior fit-out for new Garanti BBVA branch",
+          status: "on-tender", 
+          type: "fit-out",
+          clientId: 3002,
+          startDate: "2024-03-01",
+          endDate: "2024-08-15", 
+          budget: 1200000,
+          projectManager: 1002
+        }
+      ];
+    }
   }
 
   async createProject(projectData) {
@@ -77,7 +139,34 @@ class ApiService {
 
   // Clients API
   async getClients() {
-    return this.request('/clients');
+    try {
+      return await this.request('/clients');
+    } catch (error) {
+      console.warn('Backend unavailable, using demo data');
+      // Demo data for GitHub Pages
+      return [
+        {
+          id: 3001,
+          name: "Akbank",
+          industry: "Banking",
+          contactPerson: "Mehmet Öztürk",
+          email: "mehmet.ozturk@akbank.com",
+          phone: "+90 212 555 1000",
+          address: "Levent, Istanbul",
+          status: "active"
+        },
+        {
+          id: 3002,
+          name: "Garanti BBVA",
+          industry: "Banking",
+          contactPerson: "Ayşe Demir", 
+          email: "ayse.demir@garantibbva.com",
+          phone: "+90 212 555 2000",
+          address: "Beşiktaş, Istanbul",
+          status: "active"
+        }
+      ];
+    }
   }
 
   async createClient(clientData) {
@@ -102,7 +191,47 @@ class ApiService {
 
   // Tasks API
   async getTasks() {
-    return this.request('/tasks');
+    try {
+      return await this.request('/tasks');
+    } catch (error) {
+      console.warn('Backend unavailable, using demo data');
+      // Demo data for GitHub Pages
+      return [
+        {
+          id: 4001,
+          title: "Review architectural plans",
+          description: "Complete review of updated architectural drawings",
+          status: "in-progress",
+          priority: "high",
+          projectId: 2001,
+          assignedTo: 1001,
+          dueDate: "2024-12-20",
+          createdAt: "2024-12-01"
+        },
+        {
+          id: 4002,
+          title: "Coordinate with MEP contractors",
+          description: "Schedule meeting with MEP team for system integration",
+          status: "pending",
+          priority: "medium", 
+          projectId: 2001,
+          assignedTo: 1002,
+          dueDate: "2024-12-25",
+          createdAt: "2024-12-05"
+        },
+        {
+          id: 4003,
+          title: "Finalize material specifications",
+          description: "Complete material selection for fit-out project",
+          status: "completed",
+          priority: "low",
+          projectId: 2002,
+          assignedTo: 1001,
+          dueDate: "2024-12-10",
+          createdAt: "2024-11-20"
+        }
+      ];
+    }
   }
 
   async createTask(taskData) {
