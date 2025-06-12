@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/formula-pm/static/css/main.807fbc6a.css",
+    "main.js": "/formula-pm/static/js/main.8489dba5.js",
+    "static/js/453.e6b2b7eb.chunk.js": "/formula-pm/static/js/453.e6b2b7eb.chunk.js",
+    "index.html": "/formula-pm/index.html",
+    "main.807fbc6a.css.map": "/formula-pm/static/css/main.807fbc6a.css.map",
+    "main.8489dba5.js.map": "/formula-pm/static/js/main.8489dba5.js.map",
+    "453.e6b2b7eb.chunk.js.map": "/formula-pm/static/js/453.e6b2b7eb.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.807fbc6a.css",
+    "static/js/main.8489dba5.js"
+  ]
+}
