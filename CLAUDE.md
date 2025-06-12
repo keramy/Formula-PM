@@ -257,3 +257,6 @@ MuiButton: {
 - ✅ **Consistent styling** across all components
 - ✅ **Easy maintenance** with modular structure
 - ✅ **Hot reload** for immediate changes
+```
+
+- to memorize

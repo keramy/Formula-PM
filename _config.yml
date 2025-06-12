@@ -1,0 +1,77 @@
+# Jekyll configuration for Formula Project Management GitHub Pages
+
+# Site settings
+title: "Formula Project Management System"
+description: "Comprehensive project tracking and team management solution for Formula International"
+url: "https://keramy.github.io"
+baseurl: "/Formula-PM"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: jekyll-theme-minimal
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Collections
+collections:
+  docs:
+    output: true
+
+# Kramdown settings
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
+
+# Exclude files from processing
+exclude:
+  - node_modules/
+  - formula-backend/node_modules/
+  - formula-project-app/node_modules/
+  - formula-backend/data/
+  - "*.log"
+  - package.json
+  - package-lock.json
+  - .gitignore
+  - start-servers.sh
+  - stop-servers.sh
+  - verify-system.sh
+
+# Include files
+include:
+  - README.md
+  - TECHNICAL_SPECIFICATIONS.md
+  - PROJECT_SUMMARY.md
+  - DEVELOPMENT_ROADMAP.md
+  - BUG_FIXES_LOG.md
+  - RELEASE_NOTES.md
+
+# Sass configuration
+sass:
+  style: compressed
+
+# SEO settings
+author: "Formula International"
+logo: "/assets/images/logo.png"
+
+# Social
+github_username: keramy
+
+# Navigation
+navigation:
+  - name: "Home"
+    link: "/"
+  - name: "Documentation"
+    link: "/README.html"
+  - name: "Technical Specs"
+    link: "/TECHNICAL_SPECIFICATIONS.html"
+  - name: "Release Notes"
+    link: "/RELEASE_NOTES.html"

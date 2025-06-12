@@ -1,3 +1,8 @@
+---
+layout: default
+title: Bug Fixes Log
+---
+
 # Bug Fixes Log - Formula Project Management
 
 ## Summary
@@ -27,14 +32,14 @@ Warning: renderInput is deprecated. Use slotProps.textField instead.
 
 // NEW (Fixed)
 <DatePicker
-  slotProps={{
+  slotProps={{% raw %}{{
     textField: {
       error: !!errors.startDate,
       helperText: errors.startDate,
       fullWidth: true,
       required: true
     }
-  }}
+  }}{% endraw %}
 />
 ```
 
@@ -257,10 +262,10 @@ import { Container, AppBar, Toolbar, Typography, Box } from '@mui/material';
 
 const DashboardLayout = ({ children }) => {
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ mb: 3 }}>
+    <Box sx={{% raw %}{{ flexGrow: 1 }}{% endraw %}}>
+      <AppBar position="static" sx={{% raw %}{{ mb: 3 }}{% endraw %}}>
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" component="div" sx={{% raw %}{{ flexGrow: 1 }}{% endraw %}}>
             Formula Project Management
           </Typography>
         </Toolbar>
@@ -317,8 +322,8 @@ if (typeof renderedValue === 'object' && renderedValue !== null && !React.isVali
   // Handle avatar objects
   if (renderedValue.hasOwnProperty('fallback') || renderedValue.hasOwnProperty('bgColor')) {
     return (
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Avatar sx={{ backgroundColor: renderedValue.bgColor }}>
+      <Box sx={{% raw %}{{ display: 'flex', alignItems: 'center', gap: 1 }}{% endraw %}}>
+        <Avatar sx={{% raw %}{{ backgroundColor: renderedValue.bgColor }}{% endraw %}}>
           {renderedValue.fallback}
         </Avatar>
         {renderedValue.text && <Typography>{renderedValue.text}</Typography>}
@@ -330,7 +335,7 @@ if (typeof renderedValue === 'object' && renderedValue !== null && !React.isVali
     return (
       <Chip
         label={renderedValue.label}
-        sx={{ backgroundColor: renderedValue.bgColor, color: renderedValue.color }}
+        sx={{% raw %}{{ backgroundColor: renderedValue.bgColor, color: renderedValue.color }}{% endraw %}
       />
     );
   }
