@@ -9,3 +9,6 @@ export { default as ProjectsHeader } from './ProjectsHeader';
 export { default as ProjectsTableView } from './ProjectsTableView';
 export { default as ProjectsFilters } from './ProjectsFilters';
 export { default as ProjectScope } from './ProjectScope';
+export { default as EnhancedProjectScope } from './EnhancedProjectScope';
+export { default as EnhancedScopeItemForm } from './EnhancedScopeItemForm';
+export { default as ScopeImportDialog } from './ScopeImportDialog';

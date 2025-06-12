@@ -132,6 +132,97 @@ class ApiService {
       body: JSON.stringify(notificationData),
     });
   }
+
+  // Scope Items API methods
+  async getScopeItems(projectId) {
+    try {
+      const response = await this.request(`/scope-items/${projectId}`);
+      return response;
+    } catch (error) {
+      console.error('Error fetching scope items:', error);
+      // Fallback to localStorage
+      const stored = localStorage.getItem(`scope_items_${projectId}`);
+      return stored ? JSON.parse(stored) : [];
+    }
+  }
+
+  async createScopeItem(scopeItem) {
+    try {
+      const response = await this.request('/scope-items', {
+        method: 'POST',
+        body: JSON.stringify(scopeItem)
+      });
+      
+      // Also save to localStorage as backup
+      const projectId = scopeItem.projectId;
+      const existing = await this.getScopeItems(projectId);
+      const updated = [...existing, response];
+      localStorage.setItem(`scope_items_${projectId}`, JSON.stringify(updated));
+      
+      return response;
+    } catch (error) {
+      console.error('Error creating scope item:', error);
+      
+      // Fallback to localStorage
+      const projectId = scopeItem.projectId;
+      const existing = await this.getScopeItems(projectId);
+      const newItem = { ...scopeItem, id: Date.now() };
+      const updated = [...existing, newItem];
+      localStorage.setItem(`scope_items_${projectId}`, JSON.stringify(updated));
+      
+      return newItem;
+    }
+  }
+
+  async updateScopeItem(scopeItemId, updates) {
+    try {
+      const response = await this.request(`/scope-items/${scopeItemId}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates)
+      });
+      return response;
+    } catch (error) {
+      console.error('Error updating scope item:', error);
+      
+      // Fallback to localStorage
+      const projectId = updates.projectId;
+      if (projectId) {
+        const existing = await this.getScopeItems(projectId);
+        const updated = existing.map(item => 
+          item.id === scopeItemId ? { ...item, ...updates } : item
+        );
+        localStorage.setItem(`scope_items_${projectId}`, JSON.stringify(updated));
+        return { ...updates, id: scopeItemId };
+      }
+      
+      throw error;
+    }
+  }
+
+  async deleteScopeItem(scopeItemId) {
+    try {
+      await this.request(`/scope-items/${scopeItemId}`, {
+        method: 'DELETE'
+      });
+      return true;
+    } catch (error) {
+      console.error('Error deleting scope item:', error);
+      
+      // Fallback to localStorage - we need to find which project this belongs to
+      // This is a limitation of the localStorage fallback approach
+      const projects = await this.getProjects();
+      for (const project of projects) {
+        const items = await this.getScopeItems(project.id);
+        const filtered = items.filter(item => item.id !== scopeItemId);
+        if (filtered.length !== items.length) {
+          localStorage.setItem(`scope_items_${project.id}`, JSON.stringify(filtered));
+          return true;
+        }
+      }
+      
+      throw error;
+    }
+  }
 }
 
 export default new ApiService();

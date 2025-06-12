@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Box,
   Card,
@@ -16,7 +16,8 @@ import {
   TextField,
   MenuItem,
   Divider,
-  Badge
+  Badge,
+  LinearProgress
 } from '@mui/material';
 import {
   Edit,
@@ -28,8 +29,12 @@ import {
   Star,
   AccountTree,
   AccessTime,
-  Visibility
+  Visibility,
+  Edit as EditIcon
 } from '@mui/icons-material';
+import UnifiedHeader from './UnifiedHeader';
+import UnifiedFilters from './UnifiedFilters';
+import UnifiedTableView from './UnifiedTableView';
 
 const roles = [
   { value: 'project_manager', label: 'Project Manager', color: '#e74c3c', level: 5 },
@@ -48,22 +53,159 @@ const departments = [
   { value: 'client', label: 'Client' }
 ];
 
-function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember }) {
+function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, onAddMember }) {
   const [editDialog, setEditDialog] = useState(false);
   const [viewDialog, setViewDialog] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [editFormData, setEditFormData] = useState({});
+  
+  // Enhanced view state
+  const [searchValue, setSearchValue] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState('card');
+  const [sortBy, setSortBy] = useState('roleLevel');
+  const [sortDirection, setSortDirection] = useState('desc');
+  const [filters, setFilters] = useState({
+    role: '',
+    department: '',
+    status: '',
+    level: ''
+  });
 
-  if (teamMembers.length === 0) {
-    return (
-      <Box sx={{ textAlign: 'center', py: 4 }}>
-        <Person sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
-        <Typography variant="body1" color="text.secondary">
-          No team members added yet. Add your first team member to get started!
-        </Typography>
-      </Box>
-    );
-  }
+  // Filter configuration for team members
+  const filterConfig = [
+    {
+      key: 'role',
+      label: 'Role',
+      type: 'select',
+      options: roles
+    },
+    {
+      key: 'department',
+      label: 'Department',
+      type: 'select',
+      options: departments
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'select',
+      options: [
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' }
+      ]
+    },
+    {
+      key: 'level',
+      label: 'Level',
+      type: 'select',
+      options: [
+        { value: '1', label: 'Level 1' },
+        { value: '2', label: 'Level 2' },
+        { value: '3', label: 'Level 3' },
+        { value: '4', label: 'Level 4' },
+        { value: '5', label: 'Level 5' },
+        { value: '6', label: 'Level 6' },
+        { value: '7', label: 'Level 7' },
+        { value: '8', label: 'Level 8' },
+        { value: '9', label: 'Level 9' },
+        { value: '10', label: 'Level 10' }
+      ]
+    }
+  ];
+
+  // Quick filters for team members
+  const quickFilters = [
+    { key: 'managers', label: 'Managers', filters: { role: 'project_manager' } },
+    { key: 'senior', label: 'Senior Staff', filters: { role: 'senior' } },
+    { key: 'active', label: 'Active Members', filters: { status: 'active' } },
+    { key: 'management', label: 'Management', filters: { department: 'management' } },
+    { key: 'construction', label: 'Construction', filters: { department: 'construction' } }
+  ];
+
+  // Table columns configuration
+  const tableColumns = [
+    {
+      key: 'member',
+      label: 'Member',
+      sortable: true,
+      type: 'avatar',
+      render: (value, row) => ({
+        fallback: row.initials,
+        bgColor: row.roleColor,
+        text: row.fullName
+      })
+    },
+    {
+      key: 'role',
+      label: 'Role',
+      type: 'chip',
+      render: (value, row) => {
+        const roleConfig = roles.find(r => r.value === value);
+        return {
+          label: roleConfig ? roleConfig.label : value,
+          color: row.roleColor,
+          bgColor: `${row.roleColor}20`
+        };
+      }
+    },
+    {
+      key: 'department',
+      label: 'Department',
+      render: (value) => {
+        const deptConfig = departments.find(d => d.value === value);
+        return deptConfig ? deptConfig.label : value;
+      }
+    },
+    {
+      key: 'email',
+      label: 'Email',
+      type: 'email'
+    },
+    {
+      key: 'phone',
+      label: 'Phone',
+      type: 'phone'
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'chip',
+      render: (value) => ({
+        label: value === 'active' ? 'Active' : 'Inactive',
+        color: value === 'active' ? '#27ae60' : '#e74c3c',
+        bgColor: value === 'active' ? '#eafaf1' : '#fdf2f2'
+      })
+    },
+    {
+      key: 'tasks',
+      label: 'Task Completion',
+      type: 'progress',
+      render: (value, row) => {
+        const stats = getMemberStats(row.id);
+        return stats.completionRate;
+      }
+    }
+  ];
+
+  // Table actions
+  const tableActions = [
+    {
+      key: 'view',
+      label: 'View Details',
+      icon: <Visibility />
+    },
+    {
+      key: 'edit',
+      label: 'Edit Member',
+      icon: <EditIcon />
+    },
+    {
+      key: 'delete',
+      label: 'Delete Member',
+      icon: <Delete />
+    }
+  ];
 
   const getMemberStats = (memberId) => {
     const memberTasks = tasks.filter(task => task.assignedTo === memberId);
@@ -144,37 +286,255 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember })
     });
   };
 
+  // Filter and sort team members
+  const filteredAndSortedMembers = useMemo(() => {
+    let filtered = teamMembers.filter(member => {
+      // Search filter
+      const searchLower = searchValue.toLowerCase();
+      const matchesSearch = !searchValue || 
+        member.fullName.toLowerCase().includes(searchLower) ||
+        member.email.toLowerCase().includes(searchLower) ||
+        member.position?.toLowerCase().includes(searchLower);
+
+      // Role filter
+      const matchesRole = !filters.role || member.role === filters.role;
+
+      // Department filter
+      const matchesDepartment = !filters.department || member.department === filters.department;
+
+      // Status filter
+      const matchesStatus = !filters.status || member.status === filters.status;
+
+      // Level filter
+      const matchesLevel = !filters.level || member.level?.toString() === filters.level;
+
+      return matchesSearch && matchesRole && matchesDepartment && matchesStatus && matchesLevel;
+    });
+
+    // Sort members
+    filtered.sort((a, b) => {
+      let aValue, bValue;
+
+      switch (sortBy) {
+        case 'member':
+        case 'fullName':
+          aValue = a.fullName.toLowerCase();
+          bValue = b.fullName.toLowerCase();
+          break;
+        case 'roleLevel':
+          aValue = a.level || 0;
+          bValue = b.level || 0;
+          break;
+        case 'role':
+          aValue = a.role;
+          bValue = b.role;
+          break;
+        case 'department':
+          aValue = a.department;
+          bValue = b.department;
+          break;
+        case 'email':
+          aValue = a.email.toLowerCase();
+          bValue = b.email.toLowerCase();
+          break;
+        case 'status':
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return filtered;
+  }, [teamMembers, searchValue, filters, sortBy, sortDirection]);
+
+  // Get active filters for display
+  const activeFilters = Object.entries(filters)
+    .filter(([key, value]) => value !== '')
+    .map(([key, value]) => {
+      let label = key.charAt(0).toUpperCase() + key.slice(1);
+      let displayValue = value;
+      
+      if (key === 'role') {
+        const role = roles.find(r => r.value === value);
+        displayValue = role ? role.label : value;
+      } else if (key === 'department') {
+        const dept = departments.find(d => d.value === value);
+        displayValue = dept ? dept.label : value;
+      }
+      
+      return { key, label, value: displayValue };
+    });
+
+  // Event handlers
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      role: '',
+      department: '',
+      status: '',
+      level: ''
+    });
+  };
+
+  const handleClearFilter = (key) => {
+    setFilters(prev => ({ ...prev, [key]: '' }));
+  };
+
+  const handleApplyQuickFilter = (quickFilter) => {
+    setFilters(prev => ({ ...prev, ...quickFilter.filters }));
+  };
+
+  const handleSort = (column, direction) => {
+    setSortBy(column);
+    setSortDirection(direction);
+  };
+
+  const handleRowAction = (action, member) => {
+    switch (action) {
+      case 'view':
+        handleView(member);
+        break;
+      case 'edit':
+        handleEdit(member);
+        break;
+      case 'delete':
+        handleDelete(member);
+        break;
+    }
+  };
+
+  const handleExport = () => {
+    const { exportTeamMembersToExcel } = require('../utils/excelExport');
+    exportTeamMembersToExcel(filteredAndSortedMembers, tasks);
+  };
+
   // Sort members by role level (highest first) then by name
   const sortedMembers = [...teamMembers].sort((a, b) => {
-    if (a.roleLevel !== b.roleLevel) {
-      return b.roleLevel - a.roleLevel;
+    if (a.level !== b.level) {
+      return b.level - a.level;
     }
     return a.fullName.localeCompare(b.fullName);
   });
 
+  // Empty state
+  if (teamMembers.length === 0) {
+    return (
+      <Box>
+        <UnifiedHeader
+          title="Team Members"
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+          activeFiltersCount={activeFilters.length}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          onExport={handleExport}
+          onAdd={onAddMember}
+          addButtonText="Add Member"
+          activeFilters={activeFilters}
+          onClearFilter={handleClearFilter}
+        />
+        <Box sx={{ textAlign: 'center', py: 4 }}>
+          <Person sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+          <Typography variant="body1" color="text.secondary">
+            No team members added yet. Add your first team member to get started!
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Box>
-      <Grid container spacing={3}>
-        {sortedMembers.map((member) => {
+      {/* Unified Header */}
+      <UnifiedHeader
+        title="Team Members"
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        showFilters={showFilters}
+        onToggleFilters={() => setShowFilters(!showFilters)}
+        activeFiltersCount={activeFilters.length}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        onExport={handleExport}
+        onAdd={onAddMember}
+        addButtonText="Add Member"
+        activeFilters={activeFilters}
+        onClearFilter={handleClearFilter}
+      />
+
+      {/* Unified Filters */}
+      <UnifiedFilters
+        show={showFilters}
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onClearFilters={handleClearFilters}
+        onApplyQuickFilter={handleApplyQuickFilter}
+        filterConfig={filterConfig}
+        quickFilters={quickFilters}
+      />
+
+      {/* Table View */}
+      {viewMode === 'table' && (
+        <UnifiedTableView
+          data={filteredAndSortedMembers}
+          columns={tableColumns}
+          onSort={handleSort}
+          sortBy={sortBy}
+          sortDirection={sortDirection}
+          onRowAction={handleRowAction}
+          actions={tableActions}
+          emptyStateMessage="No team members match your filters"
+          emptyStateIcon={Person}
+        />
+      )}
+
+      {/* Card View */}
+      {viewMode === 'card' && (
+        <Grid container spacing={3}>
+          {filteredAndSortedMembers.length === 0 ? (
+            <Grid item xs={12}>
+              <Box sx={{ textAlign: 'center', py: 4 }}>
+                <Person sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+                <Typography variant="body1" color="text.secondary">
+                  No team members match your filters
+                </Typography>
+              </Box>
+            </Grid>
+          ) : (
+            filteredAndSortedMembers.map((member) => {
           const stats = getMemberStats(member.id);
           const reportsCount = getReportsCount(member.id);
           const roleInfo = roles.find(r => r.value === member.role);
           const deptInfo = departments.find(d => d.value === member.department);
           
           return (
-            <Grid item xs={12} md={6} lg={4} key={member.id}>
-              <Card
-                sx={{
-                  position: 'relative',
-                  borderTop: `4px solid ${member.roleColor}`,
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: 3
-                  },
-                  transition: 'all 0.2s ease-in-out'
-                }}
+              <Grid item xs={12} sm={6} md={4} lg={3} key={member.id}>
+                <Card
+                  sx={{
+                    height: 320,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    position: 'relative',
+                    borderTop: `4px solid ${member.roleColor}`,
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: 3
+                    },
+                    transition: 'all 0.2s ease-in-out'
+                  }}
               >
-                <CardContent>
+                  <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 2 }}>
                   {/* Header */}
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
                     <Badge
@@ -311,9 +671,11 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember })
                 </CardContent>
               </Card>
             </Grid>
-          );
-        })}
-      </Grid>
+            );
+            })
+          )}
+        </Grid>
+      )}
 
       {/* Edit Dialog */}
       <Dialog open={editDialog} onClose={() => setEditDialog(false)} maxWidth="sm" fullWidth>

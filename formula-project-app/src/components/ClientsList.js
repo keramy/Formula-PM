@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Box,
   Card,
@@ -28,17 +28,34 @@ import {
   Phone as PhoneIcon,
   LocationOn as LocationIcon,
   Language as WebsiteIcon,
-  Person as PersonIcon
+  Person as PersonIcon,
+  Visibility as ViewIcon
 } from '@mui/icons-material';
 import { useNotification } from '../context';
 import ClientForm from './ClientForm';
+import UnifiedHeader from './UnifiedHeader';
+import UnifiedFilters from './UnifiedFilters';
+import UnifiedTableView from './UnifiedTableView';
 
-const ClientsList = ({ clients, onUpdateClient, onDeleteClient }) => {
+const ClientsList = ({ clients, onUpdateClient, onDeleteClient, onAddClient }) => {
   const { showNotification } = useNotification();
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedClient, setSelectedClient] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  
+  // Enhanced view state
+  const [searchValue, setSearchValue] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState('card');
+  const [sortBy, setSortBy] = useState('companyName');
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [filters, setFilters] = useState({
+    status: '',
+    industry: '',
+    companySize: '',
+    services: []
+  });
 
   const handleMenuOpen = (event, client) => {
     setAnchorEl(event.currentTarget);
@@ -95,39 +112,392 @@ const ClientsList = ({ clients, onUpdateClient, onDeleteClient }) => {
       .toUpperCase();
   };
 
+  // Filter configuration for clients
+  const filterConfig = [
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'select',
+      options: [
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' },
+        { value: 'potential', label: 'Potential' }
+      ]
+    },
+    {
+      key: 'industry',
+      label: 'Industry',
+      type: 'select',
+      options: [
+        { value: 'construction', label: 'Construction' },
+        { value: 'finance', label: 'Finance' },
+        { value: 'technology', label: 'Technology' },
+        { value: 'healthcare', label: 'Healthcare' },
+        { value: 'retail', label: 'Retail' },
+        { value: 'manufacturing', label: 'Manufacturing' },
+        { value: 'education', label: 'Education' },
+        { value: 'government', label: 'Government' },
+        { value: 'hospitality', label: 'Hospitality' },
+        { value: 'real_estate', label: 'Real Estate' },
+        { value: 'automotive', label: 'Automotive' },
+        { value: 'other', label: 'Other' }
+      ]
+    },
+    {
+      key: 'companySize',
+      label: 'Company Size',
+      type: 'select',
+      options: [
+        { value: 'startup', label: 'Startup (1-10)' },
+        { value: 'small', label: 'Small (11-50)' },
+        { value: 'medium', label: 'Medium (51-200)' },
+        { value: 'large', label: 'Large (201-1000)' },
+        { value: 'enterprise', label: 'Enterprise (1000+)' }
+      ]
+    },
+    {
+      key: 'services',
+      label: 'Services Required',
+      type: 'multiselect',
+      options: [
+        { value: 'general-contractor', label: 'General Contractor' },
+        { value: 'fit-out', label: 'Fit-out' },
+        { value: 'mep', label: 'MEP' },
+        { value: 'electrical', label: 'Electrical' },
+        { value: 'millwork', label: 'Millwork' },
+        { value: 'management', label: 'Project Management' }
+      ]
+    }
+  ];
+
+  // Quick filters for clients
+  const quickFilters = [
+    { key: 'active', label: 'Active Clients', filters: { status: 'active' } },
+    { key: 'potential', label: 'Potential Clients', filters: { status: 'potential' } },
+    { key: 'construction', label: 'Construction', filters: { industry: 'construction' } },
+    { key: 'finance', label: 'Finance', filters: { industry: 'finance' } },
+    { key: 'large', label: 'Large Companies', filters: { companySize: 'large' } }
+  ];
+
+  // Table columns configuration
+  const tableColumns = [
+    {
+      key: 'company',
+      label: 'Company',
+      sortable: true,
+      type: 'avatar',
+      render: (value, row) => ({
+        fallback: getCompanyInitials(row.companyName),
+        bgColor: '#E67E22',
+        text: row.companyName
+      })
+    },
+    {
+      key: 'contactPersonName',
+      label: 'Contact Person',
+      sortable: true
+    },
+    {
+      key: 'contactPersonTitle',
+      label: 'Title',
+      sortable: true
+    },
+    {
+      key: 'industry',
+      label: 'Industry',
+      render: (value) => {
+        const industryConfig = filterConfig.find(f => f.key === 'industry');
+        const option = industryConfig?.options.find(opt => opt.value === value);
+        return option ? option.label : value;
+      }
+    },
+    {
+      key: 'email',
+      label: 'Email',
+      type: 'email'
+    },
+    {
+      key: 'phone',
+      label: 'Phone',
+      type: 'phone'
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'chip',
+      render: (value) => ({
+        label: value.charAt(0).toUpperCase() + value.slice(1),
+        color: getStatusColor(value),
+        bgColor: `${getStatusColor(value)}20`
+      })
+    }
+  ];
+
+  // Table actions
+  const tableActions = [
+    {
+      key: 'view',
+      label: 'View Details',
+      icon: <ViewIcon />
+    },
+    {
+      key: 'edit',
+      label: 'Edit Client',
+      icon: <EditIcon />
+    },
+    {
+      key: 'delete',
+      label: 'Delete Client',
+      icon: <DeleteIcon />
+    }
+  ];
+
+  // Filter and sort clients
+  const filteredAndSortedClients = useMemo(() => {
+    let filtered = clients.filter(client => {
+      // Search filter
+      const searchLower = searchValue.toLowerCase();
+      const matchesSearch = !searchValue || 
+        client.companyName.toLowerCase().includes(searchLower) ||
+        client.contactPersonName.toLowerCase().includes(searchLower) ||
+        client.email.toLowerCase().includes(searchLower) ||
+        client.industry?.toLowerCase().includes(searchLower);
+
+      // Status filter
+      const matchesStatus = !filters.status || client.status === filters.status;
+
+      // Industry filter
+      const matchesIndustry = !filters.industry || client.industry === filters.industry;
+
+      // Company size filter
+      const matchesCompanySize = !filters.companySize || client.companySize === filters.companySize;
+
+      // Services filter
+      const matchesServices = !filters.services.length || 
+        (client.services && filters.services.some(service => client.services.includes(service)));
+
+      return matchesSearch && matchesStatus && matchesIndustry && matchesCompanySize && matchesServices;
+    });
+
+    // Sort clients
+    filtered.sort((a, b) => {
+      let aValue, bValue;
+
+      switch (sortBy) {
+        case 'company':
+        case 'companyName':
+          aValue = a.companyName.toLowerCase();
+          bValue = b.companyName.toLowerCase();
+          break;
+        case 'contactPersonName':
+          aValue = a.contactPersonName.toLowerCase();
+          bValue = b.contactPersonName.toLowerCase();
+          break;
+        case 'industry':
+          aValue = a.industry || '';
+          bValue = b.industry || '';
+          break;
+        case 'status':
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return filtered;
+  }, [clients, searchValue, filters, sortBy, sortDirection]);
+
+  // Get active filters for display
+  const activeFilters = Object.entries(filters)
+    .filter(([key, value]) => {
+      if (Array.isArray(value)) return value.length > 0;
+      return value !== '';
+    })
+    .map(([key, value]) => {
+      let label = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+      let displayValue = value;
+      
+      if (key === 'industry' || key === 'status' || key === 'companySize') {
+        const config = filterConfig.find(f => f.key === key);
+        const option = config?.options.find(opt => opt.value === value);
+        displayValue = option ? option.label : value;
+      } else if (Array.isArray(value)) {
+        const config = filterConfig.find(f => f.key === key);
+        displayValue = value.map(v => {
+          const option = config?.options.find(opt => opt.value === v);
+          return option ? option.label : v;
+        }).join(', ');
+      }
+      
+      return { key, label, value: displayValue };
+    });
+
+  // Event handlers
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      status: '',
+      industry: '',
+      companySize: '',
+      services: []
+    });
+  };
+
+  const handleClearFilter = (key) => {
+    if (key === 'services') {
+      setFilters(prev => ({ ...prev, [key]: [] }));
+    } else {
+      setFilters(prev => ({ ...prev, [key]: '' }));
+    }
+  };
+
+  const handleApplyQuickFilter = (quickFilter) => {
+    setFilters(prev => ({ ...prev, ...quickFilter.filters }));
+  };
+
+  const handleSort = (column, direction) => {
+    setSortBy(column);
+    setSortDirection(direction);
+  };
+
+  const handleRowAction = (action, client) => {
+    setSelectedClient(client);
+    switch (action) {
+      case 'view':
+        // Handle view action - could open a detailed view
+        console.log('View client:', client);
+        break;
+      case 'edit':
+        setEditDialogOpen(true);
+        break;
+      case 'delete':
+        setDeleteDialogOpen(true);
+        break;
+    }
+  };
+
+  const handleExport = () => {
+    const { exportClientsToExcel } = require('../utils/excelExport');
+    exportClientsToExcel(filteredAndSortedClients);
+  };
+
+  // Empty state
   if (clients.length === 0) {
     return (
-      <Box sx={{ textAlign: 'center', py: 8 }}>
-        <BusinessIcon sx={{ fontSize: 64, color: '#BDC3C7', mb: 2 }} />
-        <Typography variant="h6" color="textSecondary" gutterBottom>
-          No Clients Found
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Start by adding your first client to manage their information and projects.
-        </Typography>
+      <Box>
+        <UnifiedHeader
+          title="Clients"
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+          activeFiltersCount={activeFilters.length}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          onExport={handleExport}
+          onAdd={onAddClient}
+          addButtonText="Add Client"
+          activeFilters={activeFilters}
+          onClearFilter={handleClearFilter}
+        />
+        <Box sx={{ textAlign: 'center', py: 8 }}>
+          <BusinessIcon sx={{ fontSize: 64, color: '#BDC3C7', mb: 2 }} />
+          <Typography variant="h6" color="textSecondary" gutterBottom>
+            No Clients Found
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            Start by adding your first client to manage their information and projects.
+          </Typography>
+        </Box>
       </Box>
     );
   }
 
   return (
-    <>
-      <Grid container spacing={3}>
-        {clients.map((client) => (
-          <Grid item xs={12} md={6} lg={4} key={client.id}>
-            <Card
-              elevation={0}
-              sx={{
-                border: '1px solid #E9ECEF',
-                borderRadius: 3,
-                height: '100%',
-                transition: 'all 0.2s ease-in-out',
-                '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 8px 25px rgba(0,0,0,0.1)'
-                }
-              }}
+    <Box>
+      {/* Unified Header */}
+      <UnifiedHeader
+        title="Clients"
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        showFilters={showFilters}
+        onToggleFilters={() => setShowFilters(!showFilters)}
+        activeFiltersCount={activeFilters.length}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        onExport={handleExport}
+        onAdd={onAddClient}
+        addButtonText="Add Client"
+        activeFilters={activeFilters}
+        onClearFilter={handleClearFilter}
+      />
+
+      {/* Unified Filters */}
+      <UnifiedFilters
+        show={showFilters}
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onClearFilters={handleClearFilters}
+        onApplyQuickFilter={handleApplyQuickFilter}
+        filterConfig={filterConfig}
+        quickFilters={quickFilters}
+      />
+
+      {/* Table View */}
+      {viewMode === 'table' && (
+        <UnifiedTableView
+          data={filteredAndSortedClients}
+          columns={tableColumns}
+          onSort={handleSort}
+          sortBy={sortBy}
+          sortDirection={sortDirection}
+          onRowAction={handleRowAction}
+          actions={tableActions}
+          emptyStateMessage="No clients match your filters"
+          emptyStateIcon={BusinessIcon}
+        />
+      )}
+
+      {/* Card View */}
+      {viewMode === 'card' && (
+        <Grid container spacing={3}>
+          {filteredAndSortedClients.length === 0 ? (
+            <Grid item xs={12}>
+              <Box sx={{ textAlign: 'center', py: 4 }}>
+                <BusinessIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+                <Typography variant="body1" color="text.secondary">
+                  No clients match your filters
+                </Typography>
+              </Box>
+            </Grid>
+          ) : (
+            filteredAndSortedClients.map((client) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={client.id}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    border: '1px solid #E9ECEF',
+                    borderRadius: 3,
+                    height: 320,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transition: 'all 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 8px 25px rgba(0,0,0,0.1)'
+                    }
+                  }}
             >
-              <CardContent sx={{ p: 3 }}>
+                  <CardContent sx={{ p: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                 {/* Header with Company Info */}
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
                   <Avatar
@@ -304,10 +674,12 @@ const ClientsList = ({ clients, onUpdateClient, onDeleteClient }) => {
                   </Box>
                 )}
               </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+                </Card>
+              </Grid>
+            ))
+          )}
+        </Grid>
+      )}
 
       {/* Context Menu */}
       <Menu
@@ -372,7 +744,7 @@ const ClientsList = ({ clients, onUpdateClient, onDeleteClient }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Box>
   );
 };
 

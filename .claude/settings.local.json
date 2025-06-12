@@ -40,7 +40,11 @@
       "Bash(./start-servers.sh:*)",
       "Bash(./verify-system.sh:*)",
       "Bash(./stop-servers.sh:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "Bash(timeout 10s npm start)",
+      "Bash(test:*)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)"
     ],
     "deny": []
   }

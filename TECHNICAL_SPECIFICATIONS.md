@@ -50,9 +50,10 @@ src/
 ### Component Structure
 - **App.js**: Main application with routing and state
 - **Forms**: ProjectForm, TaskForm, TeamMemberForm, ClientForm
-- **Lists**: ProjectsList, TasksList, TeamMembersList, ClientsList
+- **Lists**: ProjectsList, TasksList (Enhanced), TeamMembersList (Enhanced), ClientsList (Enhanced)
 - **Enhanced Project Views**: ProjectsHeader, ProjectsTableView, ProjectsFilters
-- **Project Scope Management**: ProjectScope (NEW)
+- **Project Scope Management**: ProjectScope (Legacy), EnhancedProjectScope, EnhancedScopeItemForm, ScopeImportDialog
+- **Unified Components**: UnifiedHeader, UnifiedFilters, UnifiedTableView (Error-protected)
 - **Dashboard**: StatsCards, AdvancedDashboard, GanttChart
 - **Utilities**: NotificationContainer, FileUpload, excelExport
 
@@ -216,12 +217,16 @@ PUT    /api/clients/:id       # Update client
 DELETE /api/clients/:id       # Delete client
 ```
 
-### Scope Items API (NEW)
+### Scope Items API (Enhanced)
 ```
 GET    /api/projects/:projectId/scope # List project scope items
 POST   /api/projects/:projectId/scope # Create new scope item
 PUT    /api/scope/:id                 # Update scope item
 DELETE /api/scope/:id                 # Delete scope item
+GET    /api/scope-items/:projectId    # Enhanced scope items endpoint
+POST   /api/scope-items               # Bulk scope item creation
+PUT    /api/scope-items/:id           # Enhanced scope item updates
+DELETE /api/scope-items/:id           # Enhanced scope item deletion
 ```
 
 ### Tasks API  

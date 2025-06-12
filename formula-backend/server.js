@@ -366,6 +366,81 @@ app.post('/api/upload', (req, res) => {
   res.json({ message: 'File upload endpoint - implement file storage' });
 });
 
+// Scope Items routes
+app.get('/api/scope-items/:projectId', (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const scopeItems = db.read('scopeItems').filter(item => item.projectId == projectId);
+    res.json(scopeItems);
+  } catch (error) {
+    console.error('Error fetching scope items:', error);
+    res.status(500).json({ error: 'Failed to fetch scope items' });
+  }
+});
+
+app.post('/api/scope-items', (req, res) => {
+  try {
+    const scopeItem = req.body;
+    const newItem = {
+      ...scopeItem,
+      id: scopeItem.id || Date.now(),
+      createdAt: scopeItem.createdAt || new Date().toISOString()
+    };
+    
+    const scopeItems = db.read('scopeItems');
+    scopeItems.push(newItem);
+    db.write('scopeItems', scopeItems);
+    
+    res.status(201).json(newItem);
+  } catch (error) {
+    console.error('Error creating scope item:', error);
+    res.status(500).json({ error: 'Failed to create scope item' });
+  }
+});
+
+app.put('/api/scope-items/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    const scopeItems = db.read('scopeItems');
+    const index = scopeItems.findIndex(item => item.id == id);
+    
+    if (index === -1) {
+      return res.status(404).json({ error: 'Scope item not found' });
+    }
+    
+    scopeItems[index] = {
+      ...scopeItems[index],
+      ...updates,
+      updatedAt: new Date().toISOString()
+    };
+    
+    db.write('scopeItems', scopeItems);
+    res.json(scopeItems[index]);
+  } catch (error) {
+    console.error('Error updating scope item:', error);
+    res.status(500).json({ error: 'Failed to update scope item' });
+  }
+});
+
+app.delete('/api/scope-items/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const scopeItems = db.read('scopeItems');
+    const filteredItems = scopeItems.filter(item => item.id != id);
+    
+    if (filteredItems.length === scopeItems.length) {
+      return res.status(404).json({ error: 'Scope item not found' });
+    }
+    
+    db.write('scopeItems', filteredItems);
+    res.json({ message: 'Scope item deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting scope item:', error);
+    res.status(500).json({ error: 'Failed to delete scope item' });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -30,7 +30,7 @@ import ClientsList from './components/ClientsList';
 import ProjectsHeader from './components/ProjectsHeader';
 import ProjectsTableView from './components/ProjectsTableView';
 import ProjectsFilters from './components/ProjectsFilters';
-import ProjectScope from './components/ProjectScope';
+import EnhancedProjectScope from './components/EnhancedProjectScope';
 import AdvancedDashboard from './components/AdvancedDashboard';
 import { exportProjectsToExcel } from './utils/excelExport';
 
@@ -603,6 +603,7 @@ function App() {
                   teamMembers={teamMembers}
                   onUpdateTask={updateTask}
                   onDeleteTask={deleteTask}
+                  onAddTask={() => {/* Handle add task - will show form */}}
                 />
               </Paper>
             </Grid>
@@ -650,6 +651,7 @@ function App() {
                   tasks={tasks}
                   onUpdateMember={updateTeamMember}
                   onDeleteMember={deleteTeamMember}
+                  onAddMember={() => {/* Handle add member - will show form */}}
                 />
               </Paper>
             </Grid>
@@ -693,6 +695,7 @@ function App() {
                   clients={clients}
                   onUpdateClient={updateClient}
                   onDeleteClient={deleteClient}
+                  onAddClient={() => {/* Handle add client - will show form */}}
                 />
               </Paper>
             </Grid>
@@ -806,7 +809,7 @@ function App() {
         >
           <DialogContent sx={{ p: 0 }}>
             {selectedProjectForScope && (
-              <ProjectScope 
+              <EnhancedProjectScope 
                 project={selectedProjectForScope} 
                 onClose={handleCloseScopeDialog}
               />

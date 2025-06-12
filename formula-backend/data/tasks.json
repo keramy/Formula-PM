@@ -38,7 +38,7 @@
     "projectId": 2002,
     "name": "HVAC System Design",
     "description": "Design heating, ventilation, and air conditioning systems for tech center",
-    "status": "pending",
+    "status": "completed",
     "priority": "high",
     "assignedTo": 1011,
     "startDate": "2024-11-15",
@@ -47,8 +47,8 @@
     "estimatedHours": 120,
     "actualHours": 118,
     "createdAt": "2024-11-15T00:00:00.000Z",
-    "completedAt": null,
-    "updatedAt": "2025-06-10T14:58:54.617Z"
+    "completedAt": "2025-06-12T09:34:53.015Z",
+    "updatedAt": "2025-06-12T09:34:53.099Z"
   },
   {
     "id": 3004,
