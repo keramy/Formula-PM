@@ -49,7 +49,7 @@ const priorityConfig = {
   }
 };
 
-function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTask, onAddTask }) {
+function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTask, onAddTask, onViewTask, onEditTask }) {
   const [searchValue, setSearchValue] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState('card');
@@ -372,12 +372,10 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
   const handleRowAction = (action, task) => {
     switch (action) {
       case 'view':
-        // Handle view action
-        console.log('View task:', task);
+        onViewTask && onViewTask(task);
         break;
       case 'edit':
-        // Handle edit action
-        console.log('Edit task:', task);
+        onEditTask && onEditTask(task);
         break;
       case 'complete':
         onUpdateTask(task.id, { 

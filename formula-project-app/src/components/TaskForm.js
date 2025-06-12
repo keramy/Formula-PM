@@ -19,15 +19,24 @@ const priorityLevels = [
   { value: 'urgent', label: 'Urgent', color: '#e74c3c' }
 ];
 
-function TaskForm({ projects, teamMembers = [], onSubmit }) {
-  const [formData, setFormData] = useState({
-    projectId: '',
-    name: '',
-    assignedTo: '',
-    priority: 'medium',
-    dueDate: null,
-    description: ''
-  });
+function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) {
+  const [formData, setFormData] = useState(
+    initialTask ? {
+      projectId: initialTask.projectId || '',
+      name: initialTask.name || '',
+      assignedTo: initialTask.assignedTo || '',
+      priority: initialTask.priority || 'medium',
+      dueDate: initialTask.dueDate ? new Date(initialTask.dueDate) : null,
+      description: initialTask.description || ''
+    } : {
+      projectId: '',
+      name: '',
+      assignedTo: '',
+      priority: 'medium',
+      dueDate: null,
+      description: ''
+    }
+  );
   const [taskFiles, setTaskFiles] = useState([]);
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
@@ -85,23 +94,32 @@ function TaskForm({ projects, teamMembers = [], onSubmit }) {
     event.preventDefault();
     
     if (validateForm()) {
-      onSubmit({
+      const submitData = {
         ...formData,
         projectId: parseInt(formData.projectId),
         assignedTo: parseInt(formData.assignedTo),
         dueDate: formData.dueDate.toISOString().split('T')[0],
         files: taskFiles
-      });
+      };
       
-      setFormData({
-        projectId: '',
-        name: '',
-        assignedTo: '',
-        priority: 'medium',
-        dueDate: null,
-        description: ''
-      });
-      setTaskFiles([]);
+      if (initialTask) {
+        submitData.id = initialTask.id;
+      }
+      
+      onSubmit(submitData);
+      
+      // Only clear form if creating new task
+      if (!initialTask) {
+        setFormData({
+          projectId: '',
+          name: '',
+          assignedTo: '',
+          priority: 'medium',
+          dueDate: null,
+          description: ''
+        });
+        setTaskFiles([]);
+      }
       
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);

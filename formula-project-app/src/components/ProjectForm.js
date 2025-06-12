@@ -30,16 +30,26 @@ const projectStatuses = [
   { value: 'completed', label: 'Completed' }
 ];
 
-function ProjectForm({ onSubmit, clients = [] }) {
-  const [formData, setFormData] = useState({
-    name: '',
-    type: '',
-    startDate: null,
-    endDate: null,
-    clientId: '',
-    status: 'on-tender',
-    description: ''
-  });
+function ProjectForm({ onSubmit, clients = [], initialProject = null }) {
+  const [formData, setFormData] = useState(
+    initialProject ? {
+      name: initialProject.name || '',
+      type: initialProject.type || '',
+      startDate: initialProject.startDate ? new Date(initialProject.startDate) : null,
+      endDate: initialProject.endDate ? new Date(initialProject.endDate) : null,
+      clientId: initialProject.clientId || '',
+      status: initialProject.status || 'on-tender',
+      description: initialProject.description || ''
+    } : {
+      name: '',
+      type: '',
+      startDate: null,
+      endDate: null,
+      clientId: '',
+      status: 'on-tender',
+      description: ''
+    }
+  );
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
 
@@ -104,21 +114,30 @@ function ProjectForm({ onSubmit, clients = [] }) {
     event.preventDefault();
     
     if (validateForm()) {
-      onSubmit({
+      const submitData = {
         ...formData,
         startDate: formData.startDate.toISOString().split('T')[0],
         endDate: formData.endDate.toISOString().split('T')[0]
-      });
+      };
       
-      setFormData({
-        name: '',
-        type: '',
-        startDate: null,
-        endDate: null,
-        clientId: '',
-        status: 'on-tender',
-        description: ''
-      });
+      if (initialProject) {
+        submitData.id = initialProject.id;
+      }
+      
+      onSubmit(submitData);
+      
+      // Only clear form if creating new project
+      if (!initialProject) {
+        setFormData({
+          name: '',
+          type: '',
+          startDate: null,
+          endDate: null,
+          clientId: '',
+          status: 'on-tender',
+          description: ''
+        });
+      }
       
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);

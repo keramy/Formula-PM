@@ -27,7 +27,7 @@ import TeamMemberForm from './components/TeamMemberForm';
 import TeamMembersList from './components/TeamMembersList';
 import ClientForm from './components/ClientForm';
 import ClientsList from './components/ClientsList';
-import ProjectsHeader from './components/ProjectsHeader';
+import UnifiedHeader from './components/UnifiedHeader';
 import ProjectsTableView from './components/ProjectsTableView';
 import ProjectsFilters from './components/ProjectsFilters';
 import EnhancedProjectScope from './components/EnhancedProjectScope';
@@ -49,8 +49,18 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [createProjectDialogOpen, setCreateProjectDialogOpen] = useState(false);
+  const [editProjectDialogOpen, setEditProjectDialogOpen] = useState(false);
+  const [viewProjectDialogOpen, setViewProjectDialogOpen] = useState(false);
+  const [selectedProjectForEdit, setSelectedProjectForEdit] = useState(null);
+  const [selectedProjectForView, setSelectedProjectForView] = useState(null);
   const [scopeDialogOpen, setScopeDialogOpen] = useState(false);
   const [selectedProjectForScope, setSelectedProjectForScope] = useState(null);
+  const [addTeamMemberDialogOpen, setAddTeamMemberDialogOpen] = useState(false);
+  const [addClientDialogOpen, setAddClientDialogOpen] = useState(false);
+  const [editTaskDialogOpen, setEditTaskDialogOpen] = useState(false);
+  const [viewTaskDialogOpen, setViewTaskDialogOpen] = useState(false);
+  const [selectedTaskForEdit, setSelectedTaskForEdit] = useState(null);
+  const [selectedTaskForView, setSelectedTaskForView] = useState(null);
   
   // New state for enhanced projects view
   const [projectsViewMode, setProjectsViewMode] = useState('table');
@@ -126,6 +136,18 @@ function App() {
     }
   };
 
+  const updateProject = async (project) => {
+    try {
+      const updatedProject = await apiService.updateProject(project.id, project);
+      setProjects(projects.map(p => p.id === project.id ? updatedProject : p));
+      setEditProjectDialogOpen(false);
+      setSelectedProjectForEdit(null);
+    } catch (error) {
+      console.error('Error updating project:', error);
+      setError('Failed to update project');
+    }
+  };
+
   const addTask = async (task) => {
     try {
       const newTask = {
@@ -156,6 +178,18 @@ function App() {
     } catch (error) {
       console.error('Error creating task:', error);
       setError('Failed to create task');
+    }
+  };
+
+  const updateTaskWithForm = async (task) => {
+    try {
+      const updatedTask = await apiService.updateTask(task.id, task);
+      setTasks(tasks.map(t => t.id === task.id ? updatedTask : t));
+      setEditTaskDialogOpen(false);
+      setSelectedTaskForEdit(null);
+    } catch (error) {
+      console.error('Error updating task:', error);
+      setError('Failed to update task');
     }
   };
 
@@ -198,6 +232,26 @@ function App() {
     }
   };
 
+  const handleViewTask = (task) => {
+    setSelectedTaskForView(task);
+    setViewTaskDialogOpen(true);
+  };
+
+  const handleEditTask = (task) => {
+    setSelectedTaskForEdit(task);
+    setEditTaskDialogOpen(true);
+  };
+
+  const handleCloseEditTaskDialog = () => {
+    setEditTaskDialogOpen(false);
+    setSelectedTaskForEdit(null);
+  };
+
+  const handleCloseViewTaskDialog = () => {
+    setViewTaskDialogOpen(false);
+    setSelectedTaskForView(null);
+  };
+
   const deleteProject = async (projectId) => {
     try {
       await apiService.deleteProject(projectId);
@@ -220,10 +274,15 @@ function App() {
       
       const createdClient = await apiService.createClient(newClient);
       setClients([...clients, createdClient]);
+      setAddClientDialogOpen(false);
     } catch (error) {
       console.error('Error creating client:', error);
       setError('Failed to create client');
     }
+  };
+
+  const handleAddClient = () => {
+    setAddClientDialogOpen(true);
   };
 
   const updateClient = async (clientId, updates) => {
@@ -258,10 +317,15 @@ function App() {
       
       const createdMember = await apiService.createTeamMember(newMember);
       setTeamMembers([...teamMembers, createdMember]);
+      setAddTeamMemberDialogOpen(false);
     } catch (error) {
       console.error('Error creating team member:', error);
       setError('Failed to create team member');
     }
+  };
+
+  const handleAddTeamMember = () => {
+    setAddTeamMemberDialogOpen(true);
   };
 
   const updateTeamMember = async (memberId, updates) => {
@@ -304,9 +368,6 @@ function App() {
   };
 
   // Enhanced Projects Handlers
-  const handleProjectsSearch = (event) => {
-    setProjectsSearchTerm(event.target.value);
-  };
 
   const handleToggleProjectsFilters = () => {
     setShowProjectsFilters(!showProjectsFilters);
@@ -369,6 +430,26 @@ function App() {
   const handleManageScope = (project) => {
     setSelectedProjectForScope(project);
     setScopeDialogOpen(true);
+  };
+
+  const handleEditProject = (project) => {
+    setSelectedProjectForEdit(project);
+    setEditProjectDialogOpen(true);
+  };
+
+  const handleViewProject = (project) => {
+    setSelectedProjectForView(project);
+    setViewProjectDialogOpen(true);
+  };
+
+  const handleCloseEditDialog = () => {
+    setEditProjectDialogOpen(false);
+    setSelectedProjectForEdit(null);
+  };
+
+  const handleCloseViewDialog = () => {
+    setViewProjectDialogOpen(false);
+    setSelectedProjectForView(null);
   };
 
   const handleCloseScopeDialog = () => {
@@ -485,18 +566,21 @@ function App() {
       case 1: // Projects
         return (
           <Box>
-            <ProjectsHeader
-              searchTerm={projectsSearchTerm}
-              onSearchChange={handleProjectsSearch}
+            <UnifiedHeader
+              title="Projects"
+              searchValue={projectsSearchTerm}
+              onSearchChange={setProjectsSearchTerm}
+              showFilters={showProjectsFilters}
               onToggleFilters={handleToggleProjectsFilters}
-              onExportProjects={handleProjectsExport}
-              onCreateProject={() => setCreateProjectDialogOpen(true)}
+              activeFiltersCount={activeFilters.length}
               viewMode={projectsViewMode}
               onViewModeChange={handleViewModeChange}
+              onExport={handleProjectsExport}
+              onAdd={() => setCreateProjectDialogOpen(true)}
+              addButtonText="New Project"
+              exportButtonText="Export"
               activeFilters={activeFilters}
               onClearFilter={handleClearFilter}
-              projectsCount={projects.length}
-              filteredCount={filteredProjects.length}
             />
 
             <ProjectsFilters
@@ -514,9 +598,9 @@ function App() {
                 projects={filteredProjects}
                 clients={clients}
                 teamMembers={teamMembers}
-                onEditProject={(project) => console.log('Edit project:', project)}
+                onEditProject={handleEditProject}
                 onDeleteProject={deleteProject}
-                onViewProject={(project) => console.log('View project:', project)}
+                onViewProject={handleViewProject}
                 onManageScope={handleManageScope}
               />
             ) : (
@@ -604,6 +688,8 @@ function App() {
                   onUpdateTask={updateTask}
                   onDeleteTask={deleteTask}
                   onAddTask={() => {/* Handle add task - will show form */}}
+                  onViewTask={handleViewTask}
+                  onEditTask={handleEditTask}
                 />
               </Paper>
             </Grid>
@@ -612,94 +698,23 @@ function App() {
 
       case 4: // Team
         return (
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
-              <Paper 
-                elevation={0}
-                sx={{ 
-                  p: 3, 
-                  backgroundColor: 'white',
-                  border: '1px solid #E9ECEF',
-                  borderRadius: 3
-                }}
-              >
-                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
-                  Add Team Member
-                </Typography>
-                <TeamMemberForm 
-                  teamMembers={teamMembers}
-                  onSubmit={addTeamMember} 
-                />
-              </Paper>
-            </Grid>
-            
-            <Grid item xs={12} md={8}>
-              <Paper 
-                elevation={0}
-                sx={{ 
-                  p: 3, 
-                  backgroundColor: 'white',
-                  border: '1px solid #E9ECEF',
-                  borderRadius: 3
-                }}
-              >
-                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
-                  Team Members ({teamMembers.length})
-                </Typography>
-                <TeamMembersList 
-                  teamMembers={teamMembers}
-                  tasks={tasks}
-                  onUpdateMember={updateTeamMember}
-                  onDeleteMember={deleteTeamMember}
-                  onAddMember={() => {/* Handle add member - will show form */}}
-                />
-              </Paper>
-            </Grid>
-          </Grid>
+          <TeamMembersList 
+            teamMembers={teamMembers}
+            tasks={tasks}
+            onUpdateMember={updateTeamMember}
+            onDeleteMember={deleteTeamMember}
+            onAddMember={handleAddTeamMember}
+          />
         );
 
       case 5: // Clients
         return (
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
-              <Paper 
-                elevation={0}
-                sx={{ 
-                  p: 3, 
-                  backgroundColor: 'white',
-                  border: '1px solid #E9ECEF',
-                  borderRadius: 3
-                }}
-              >
-                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
-                  Add New Client
-                </Typography>
-                <ClientForm onSubmit={addClient} />
-              </Paper>
-            </Grid>
-            
-            <Grid item xs={12} md={8}>
-              <Paper 
-                elevation={0}
-                sx={{ 
-                  p: 3, 
-                  backgroundColor: 'white',
-                  border: '1px solid #E9ECEF',
-                  borderRadius: 3
-                }}
-              >
-                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
-                  Clients Database ({clients.length})
-                </Typography>
-                <ClientsList 
-                  clients={clients}
-                  onUpdateClient={updateClient}
-                  onDeleteClient={deleteClient}
-                  onAddClient={() => {/* Handle add client - will show form */}}
-                />
-              </Paper>
-            </Grid>
-          </Grid>
+          <ClientsList 
+            clients={clients}
+            onUpdateClient={updateClient}
+            onDeleteClient={deleteClient}
+            onAddClient={handleAddClient}
+          />
         );
 
       case 6: // Procurement
@@ -797,6 +812,64 @@ function App() {
           </DialogContent>
         </Dialog>
 
+        {/* Edit Project Dialog */}
+        <Dialog 
+          open={editProjectDialogOpen} 
+          onClose={handleCloseEditDialog}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>Edit Project</DialogTitle>
+          <DialogContent>
+            {selectedProjectForEdit && (
+              <ProjectForm 
+                onSubmit={updateProject} 
+                clients={clients} 
+                initialProject={selectedProjectForEdit}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* View Project Dialog */}
+        <Dialog 
+          open={viewProjectDialogOpen} 
+          onClose={handleCloseViewDialog}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>Project Details</DialogTitle>
+          <DialogContent>
+            {selectedProjectForView && (
+              <Box sx={{ py: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  {selectedProjectForView.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" paragraph>
+                  {selectedProjectForView.description || 'No description provided'}
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>Type:</strong> {selectedProjectForView.type}
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>Status:</strong> {selectedProjectForView.status}
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>Start Date:</strong> {new Date(selectedProjectForView.startDate).toLocaleDateString()}
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>End Date:</strong> {new Date(selectedProjectForView.endDate).toLocaleDateString()}
+                </Typography>
+                {selectedProjectForView.clientId && (
+                  <Typography variant="body2" paragraph>
+                    <strong>Client:</strong> {clients.find(c => c.id === selectedProjectForView.clientId)?.companyName || 'Unknown'}
+                  </Typography>
+                )}
+              </Box>
+            )}
+          </DialogContent>
+        </Dialog>
+
         {/* Project Scope Dialog */}
         <Dialog 
           open={scopeDialogOpen} 
@@ -813,6 +886,97 @@ function App() {
                 project={selectedProjectForScope} 
                 onClose={handleCloseScopeDialog}
               />
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Add Team Member Dialog */}
+        <Dialog 
+          open={addTeamMemberDialogOpen} 
+          onClose={() => setAddTeamMemberDialogOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>Add Team Member</DialogTitle>
+          <DialogContent>
+            <TeamMemberForm 
+              teamMembers={teamMembers}
+              onSubmit={addTeamMember} 
+            />
+          </DialogContent>
+        </Dialog>
+
+        {/* Add Client Dialog */}
+        <Dialog 
+          open={addClientDialogOpen} 
+          onClose={() => setAddClientDialogOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>Add New Client</DialogTitle>
+          <DialogContent>
+            <ClientForm onSubmit={addClient} />
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Task Dialog */}
+        <Dialog 
+          open={editTaskDialogOpen} 
+          onClose={handleCloseEditTaskDialog}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>Edit Task</DialogTitle>
+          <DialogContent>
+            {selectedTaskForEdit && (
+              <TaskForm 
+                projects={projects}
+                teamMembers={teamMembers}
+                onSubmit={updateTaskWithForm}
+                initialTask={selectedTaskForEdit}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* View Task Dialog */}
+        <Dialog 
+          open={viewTaskDialogOpen} 
+          onClose={handleCloseViewTaskDialog}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>Task Details</DialogTitle>
+          <DialogContent>
+            {selectedTaskForView && (
+              <Box sx={{ py: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  {selectedTaskForView.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" paragraph>
+                  {selectedTaskForView.description || 'No description provided'}
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>Project:</strong> {projects.find(p => p.id === selectedTaskForView.projectId)?.name || 'Unknown'}
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>Assigned To:</strong> {teamMembers.find(tm => tm.id === selectedTaskForView.assignedTo)?.fullName || 'Unassigned'}
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>Priority:</strong> {selectedTaskForView.priority}
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>Status:</strong> {selectedTaskForView.status}
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>Due Date:</strong> {new Date(selectedTaskForView.dueDate).toLocaleDateString()}
+                </Typography>
+                {selectedTaskForView.progress !== undefined && (
+                  <Typography variant="body2" paragraph>
+                    <strong>Progress:</strong> {selectedTaskForView.progress}%
+                  </Typography>
+                )}
+              </Box>
             )}
           </DialogContent>
         </Dialog>
