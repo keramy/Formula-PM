@@ -34,16 +34,30 @@ kramdown:
 # Exclude files from processing
 exclude:
   - node_modules/
-  - formula-backend/node_modules/
-  - formula-project-app/node_modules/
-  - formula-backend/data/
+  - "*/node_modules/"
+  - "**/node_modules/"
+  - formula-backend/
+  - formula-project-app/
   - "*.log"
+  - "**/*.log"
   - package.json
   - package-lock.json
+  - "*/package.json"
+  - "*/package-lock.json"
   - .gitignore
+  - "**/.gitignore"
   - start-servers.sh
   - stop-servers.sh
   - verify-system.sh
+  - debug-projects.js
+  - test-frontend.html
+  - .claude/
+  - "**/build/"
+  - "**/dist/"
+  - "**/data/"
+  - "**/.env*"
+  - "**/*.tmp"
+  - "**/*.temp"
 
 # Include files
 include:
