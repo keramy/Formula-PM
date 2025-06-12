@@ -353,7 +353,9 @@ const ClientsList = ({ clients, onUpdateClient, onDeleteClient, onAddClient }) =
   };
 
   const handleClearFilter = (key) => {
-    if (key === 'services') {
+    if (key === 'all') {
+      handleClearFilters();
+    } else if (key === 'services') {
       setFilters(prev => ({ ...prev, [key]: [] }));
     } else {
       setFilters(prev => ({ ...prev, [key]: '' }));

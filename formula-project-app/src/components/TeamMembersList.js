@@ -386,7 +386,11 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, o
   };
 
   const handleClearFilter = (key) => {
-    setFilters(prev => ({ ...prev, [key]: '' }));
+    if (key === 'all') {
+      handleClearFilters();
+    } else {
+      setFilters(prev => ({ ...prev, [key]: '' }));
+    }
   };
 
   const handleApplyQuickFilter = (quickFilter) => {

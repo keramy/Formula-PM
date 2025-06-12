@@ -152,16 +152,18 @@
     "position": "Director of Technical Office",
     "role": "team_lead",
     "level": 7,
-    "department": "mep",
+    "department": "management",
     "reportsTo": "1001,1002,1003,1004",
     "status": "active",
     "permissions": [
       "manage_team_tasks",
       "view_team_reports"
     ],
-    "roleColor": "#f39c12",
+    "roleColor": "#e67e22",
     "hourlyRate": 160,
-    "notes": "Director of Technical Office - MEP Department"
+    "notes": "Director of Technical Office - MEP Department",
+    "roleLevel": 4,
+    "updatedAt": "2025-06-12T17:30:52.602Z"
   },
   {
     "id": 1008,

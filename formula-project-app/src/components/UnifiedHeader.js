@@ -172,7 +172,7 @@ const UnifiedHeader = ({
 
       {/* Active Filters Display */}
       {activeFilters.length > 0 && (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2, alignItems: 'center' }}>
           <Typography variant="body2" color="text.secondary" sx={{ mr: 1, alignSelf: 'center' }}>
             Active filters:
           </Typography>
@@ -186,6 +186,21 @@ const UnifiedHeader = ({
               variant="outlined"
             />
           ))}
+          {activeFilters.length > 1 && (
+            <Button
+              size="small"
+              onClick={() => onClearFilter && onClearFilter('all')}
+              sx={{ 
+                color: 'error.main',
+                textTransform: 'none',
+                fontSize: '0.75rem',
+                minWidth: 'auto',
+                px: 1
+              }}
+            >
+              Clear All
+            </Button>
+          )}
         </Box>
       )}
     </Box>

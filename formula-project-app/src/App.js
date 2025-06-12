@@ -30,6 +30,7 @@ import ClientsList from './components/ClientsList';
 import UnifiedHeader from './components/UnifiedHeader';
 import ProjectsTableView from './components/ProjectsTableView';
 import ProjectsFilters from './components/ProjectsFilters';
+import MyProjectsList from './components/MyProjectsList';
 import EnhancedProjectScope from './components/EnhancedProjectScope';
 import AdvancedDashboard from './components/AdvancedDashboard';
 import { exportProjectsToExcel } from './utils/excelExport';
@@ -626,43 +627,17 @@ function App() {
 
       case 2: // My Projects
         return (
-          <Grid container spacing={4}>
-            <Grid item xs={12}>
-              <Paper 
-                elevation={0}
-                sx={{ 
-                  p: 3, 
-                  backgroundColor: 'white',
-                  border: '1px solid #E9ECEF',
-                  borderRadius: 3
-                }}
-              >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#2C3E50' }}>
-                    My Projects ({projects.filter(p => p.projectManager === 1008).length})
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    onClick={() => setCreateProjectDialogOpen(true)}
-                    sx={{
-                      borderRadius: '20px',
-                      textTransform: 'none',
-                      fontWeight: 600,
-                      px: 3
-                    }}
-                  >
-                    + Create
-                  </Button>
-                </Box>
-                <ProjectsList 
-                  projects={projects.filter(p => p.projectManager === 1008)}
-                  tasks={tasks}
-                  clients={clients}
-                  onDeleteProject={deleteProject}
-                />
-              </Paper>
-            </Grid>
-          </Grid>
+          <MyProjectsList 
+            projects={projects}
+            tasks={tasks}
+            clients={clients}
+            teamMembers={teamMembers}
+            onDeleteProject={deleteProject}
+            onEditProject={handleEditProject}
+            onViewProject={handleViewProject}
+            onManageScope={handleManageScope}
+            currentUserId={1008} // This would come from authentication in a real app
+          />
         );
 
       case 3: // Tasks
