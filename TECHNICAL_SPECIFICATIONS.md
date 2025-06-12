@@ -24,6 +24,7 @@
 - **Implementation**: JSON-based file system
 - **Location**: `/formula-backend/data/` directory
 - **Backup**: LocalStorage fallback for offline operation
+- **GitHub Pages**: Demo data fallbacks in API service for standalone deployment
 
 ## Architecture Overview
 
@@ -414,6 +415,51 @@ REACT_APP_ENVIRONMENT=development
 - Integration tests for API endpoints  
 - Component testing with React Testing Library
 - End-to-end testing with Cypress
+
+## GitHub Pages Deployment Architecture
+
+### Deployment Strategy
+- **Dual-Mode Architecture**: Static site generator + React SPA
+- **Landing Page**: Professional showcase (`index.html`)
+- **Application**: Full React app (`app.html`) with demo data
+- **Asset Management**: Optimized bundles served via GitHub CDN
+
+### Demo Data Implementation
+```javascript
+// API Service with Fallback Pattern
+async getTeamMembers() {
+  try {
+    return await this.request('/team-members');
+  } catch (error) {
+    console.warn('Backend unavailable, using demo data');
+    return [/* comprehensive demo data */];
+  }
+}
+```
+
+### Demo Data Contents
+- **Team Members**: 2 employees (Kubilay Ilgın - Managing Partner, Demo User - Project Manager)
+- **Projects**: 2 Formula International projects (Akbank renovation, Garanti BBVA fit-out)
+- **Tasks**: 3 realistic tasks with different statuses and priorities
+- **Clients**: 2 banking sector clients (Akbank, Garanti BBVA)
+- **Categories**: Full scope item categorization (12 predefined categories)
+
+### Build Configuration
+```json
+{
+  "homepage": "https://keramy.github.io/formula-pm",
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  }
+}
+```
+
+### Asset Path Management
+- **Development**: `/static/js/main.[hash].js`
+- **GitHub Pages**: Relative paths for proper serving
+- **Bundle Size**: 449.28 kB gzipped main bundle
+- **Optimization**: Code splitting with 453.e6b2b7eb.chunk.js
 
 ## Error Handling
 
