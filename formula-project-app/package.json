@@ -2,6 +2,7 @@
   "name": "formula-project-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://keramy.github.io/formula-pm",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -27,7 +28,9 @@
     "start": "node node_modules/react-scripts/bin/react-scripts.js start",
     "build": "node node_modules/react-scripts/bin/react-scripts.js build",
     "test": "node node_modules/react-scripts/bin/react-scripts.js test",
-    "eject": "node node_modules/react-scripts/bin/react-scripts.js eject"
+    "eject": "node node_modules/react-scripts/bin/react-scripts.js eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -51,5 +54,8 @@
     "transformIgnorePatterns": [
       "node_modules/(?!(date-fns|@mui/x-date-pickers)/)"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
