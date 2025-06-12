@@ -31,7 +31,7 @@ import {
 } from '@mui/icons-material';
 import EnhancedScopeItemForm from './EnhancedScopeItemForm';
 import ScopeImportDialog from './ScopeImportDialog';
-import apiService from '../services/apiService';
+import apiService from '../../../services/api/apiService';
 
 const EnhancedProjectScope = ({ project, onClose }) => {
   const [scopeItems, setScopeItems] = useState([]);

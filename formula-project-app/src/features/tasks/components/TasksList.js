@@ -22,9 +22,9 @@ import {
   Edit as EditIcon,
   Visibility as ViewIcon
 } from '@mui/icons-material';
-import UnifiedHeader from './UnifiedHeader';
-import UnifiedFilters from './UnifiedFilters';
-import UnifiedTableView from './UnifiedTableView';
+import UnifiedHeader from '../../../components/ui/UnifiedHeader';
+import UnifiedFilters from '../../../components/ui/UnifiedFilters';
+import UnifiedTableView from '../../../components/ui/UnifiedTableView';
 
 const priorityConfig = {
   low: {
@@ -396,7 +396,7 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
   };
 
   const handleExport = () => {
-    const { exportTasksToExcel } = require('../utils/excelExport');
+    const { exportTasksToExcel } = require('../../../services/export/excelExport');
     exportTasksToExcel(filteredAndSortedTasks, projects, teamMembers);
   };
 

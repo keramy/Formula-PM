@@ -12,7 +12,7 @@ import {
   OutlinedInput,
   Typography
 } from '@mui/material';
-import { useNotification } from '../context';
+import { useNotification } from '../../../context';
 
 const ClientForm = ({ onSubmit, initialData, onCancel }) => {
   const { showNotification } = useNotification();

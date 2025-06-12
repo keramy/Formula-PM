@@ -2,9 +2,9 @@
   {
     "id": 2001,
     "name": "Akbank Head Office Renovation",
-    "type": "fit-out",
+    "type": "management",
     "description": "Complete renovation of Akbank headquarters including modern office spaces and meeting rooms",
-    "status": "active",
+    "status": "completed",
     "priority": "high",
     "clientName": "Akbank T.A.Ş.",
     "clientContact": "Mehmet Yılmaz",
@@ -20,7 +20,9 @@
       1013
     ],
     "progress": 25,
-    "createdAt": "2024-12-01T00:00:00.000Z"
+    "createdAt": "2024-12-01T00:00:00.000Z",
+    "clientId": 1,
+    "updatedAt": "2025-06-12T18:33:23.018Z"
   },
   {
     "id": 2002,

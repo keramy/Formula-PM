@@ -4,8 +4,8 @@ import {
   Typography
 } from '@mui/material';
 import { Assignment } from '@mui/icons-material';
-import UnifiedHeader from './UnifiedHeader';
-import UnifiedFilters from './UnifiedFilters';
+import UnifiedHeader from '../../../components/ui/UnifiedHeader';
+import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import ProjectsList from './ProjectsList';
 import ProjectsTableView from './ProjectsTableView';
 

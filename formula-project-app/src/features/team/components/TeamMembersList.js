@@ -32,9 +32,9 @@ import {
   Visibility,
   Edit as EditIcon
 } from '@mui/icons-material';
-import UnifiedHeader from './UnifiedHeader';
-import UnifiedFilters from './UnifiedFilters';
-import UnifiedTableView from './UnifiedTableView';
+import UnifiedHeader from '../../../components/ui/UnifiedHeader';
+import UnifiedFilters from '../../../components/ui/UnifiedFilters';
+import UnifiedTableView from '../../../components/ui/UnifiedTableView';
 
 const roles = [
   { value: 'project_manager', label: 'Project Manager', color: '#e74c3c', level: 5 },
@@ -417,7 +417,7 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, o
   };
 
   const handleExport = () => {
-    const { exportTeamMembersToExcel } = require('../utils/excelExport');
+    const { exportTeamMembersToExcel } = require('../../../services/export/excelExport');
     exportTeamMembersToExcel(filteredAndSortedMembers, tasks);
   };
 

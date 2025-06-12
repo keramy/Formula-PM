@@ -31,11 +31,11 @@ import {
   Person as PersonIcon,
   Visibility as ViewIcon
 } from '@mui/icons-material';
-import { useNotification } from '../context';
+import { useNotification } from '../../../context';
 import ClientForm from './ClientForm';
-import UnifiedHeader from './UnifiedHeader';
-import UnifiedFilters from './UnifiedFilters';
-import UnifiedTableView from './UnifiedTableView';
+import UnifiedHeader from '../../../components/ui/UnifiedHeader';
+import UnifiedFilters from '../../../components/ui/UnifiedFilters';
+import UnifiedTableView from '../../../components/ui/UnifiedTableView';
 
 const ClientsList = ({ clients, onUpdateClient, onDeleteClient, onAddClient }) => {
   const { showNotification } = useNotification();
@@ -388,7 +388,7 @@ const ClientsList = ({ clients, onUpdateClient, onDeleteClient, onAddClient }) =
   };
 
   const handleExport = () => {
-    const { exportClientsToExcel } = require('../utils/excelExport');
+    const { exportClientsToExcel } = require('../../../services/export/excelExport');
     exportClientsToExcel(filteredAndSortedClients);
   };
 

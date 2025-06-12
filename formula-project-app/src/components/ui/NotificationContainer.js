@@ -1,6 +1,6 @@
 // src/components/NotificationContainer.js
 import React from 'react';
-import { useNotification } from '../context/NotificationContext';
+import { useNotification } from '../../context/NotificationContext';
 import './NotificationContainer.css';
 
 const NotificationContainer = () => {

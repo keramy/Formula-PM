@@ -1,6 +1,6 @@
 // src/contexts/NotificationContext.js
 import React, { createContext, useState, useContext, useCallback } from 'react';
-import { generateNotificationId } from '../utils/idGenerator';
+import { generateNotificationId } from '../utils/generators/idGenerator';
 
 const NotificationContext = createContext();
 

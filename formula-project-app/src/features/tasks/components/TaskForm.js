@@ -10,7 +10,7 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import FileUpload from './FileUpload';
+import FileUpload from '../../../components/common/FileUpload';
 
 const priorityLevels = [
   { value: 'low', label: 'Low', color: '#27ae60' },

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { generateProjectId, generateTaskId, generateMemberId } from './utils/idGenerator';
-import apiService from './services/apiService';
+import React, { useState, useEffect, Suspense, lazy, useCallback } from 'react';
+import { generateProjectId, generateTaskId, generateMemberId } from '../utils/generators/idGenerator';
+import apiService from '../services/api/apiService';
+import { useFormulaData, useFilteredData, useActiveFilters } from '../hooks/useFormula';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import {
@@ -11,44 +12,58 @@ import {
   Button,
   Dialog,
   DialogTitle,
-  DialogContent
+  DialogContent,
+  CircularProgress
 } from '@mui/material';
-import { NotificationProvider } from './context';
-import { NotificationContainer } from './components';
-import ModernDashboardLayout from './components/ModernDashboardLayout';
-import ModernStatsCards from './components/ModernStatsCards';
-import ModernProjectOverview from './components/ModernProjectOverview';
-import ProjectForm from './components/ProjectForm';
-import TaskForm from './components/TaskForm';
-import ProjectsList from './components/ProjectsList';
-import TasksList from './components/TasksList';
-import GanttChart from './components/GanttChart';
-import TeamMemberForm from './components/TeamMemberForm';
-import TeamMembersList from './components/TeamMembersList';
-import ClientForm from './components/ClientForm';
-import ClientsList from './components/ClientsList';
-import UnifiedHeader from './components/UnifiedHeader';
-import ProjectsTableView from './components/ProjectsTableView';
-import ProjectsFilters from './components/ProjectsFilters';
-import MyProjectsList from './components/MyProjectsList';
-import EnhancedProjectScope from './components/EnhancedProjectScope';
-import AdvancedDashboard from './components/AdvancedDashboard';
-import { exportProjectsToExcel } from './utils/excelExport';
-
-// Import the new modular theme
-import { formulaTheme } from './theme';
+import { NotificationProvider } from '../context';
+import NotificationContainer from '../components/ui/NotificationContainer';
+import ModernDashboardLayout from '../components/layout/ModernDashboardLayout';
+import ModernStatsCards from '../components/charts/ModernStatsCards';
+import UnifiedHeader from '../components/ui/UnifiedHeader';
+import { exportProjectsToExcel } from '../services/export/excelExport';
+import { formulaTheme } from '../theme';
 import './App.css';
-import './styles/globals.css';
-import './styles/modern-dashboard.css';
+import '../styles/globals.css';
+import '../styles/modern-dashboard.css';
+
+// Lazy load heavy components for better performance
+const ModernProjectOverview = lazy(() => import('../features/dashboard/components/ModernProjectOverview'));
+const ProjectForm = lazy(() => import('../features/projects/components/ProjectForm'));
+const TaskForm = lazy(() => import('../features/tasks/components/TaskForm'));
+const ProjectsList = lazy(() => import('../features/projects/components/ProjectsList'));
+const TasksList = lazy(() => import('../features/tasks/components/TasksList'));
+const GanttChart = lazy(() => import('../components/charts/GanttChart'));
+const TeamMemberForm = lazy(() => import('../features/team/components/TeamMemberForm'));
+const TeamMembersList = lazy(() => import('../features/team/components/TeamMembersList'));
+const ClientForm = lazy(() => import('../features/clients/components/ClientForm'));
+const ClientsList = lazy(() => import('../features/clients/components/ClientsList'));
+const ProjectsTableView = lazy(() => import('../features/projects/components/ProjectsTableView'));
+const ProjectsFilters = lazy(() => import('../features/projects/components/ProjectsFilters'));
+const MyProjectsList = lazy(() => import('../features/projects/components/MyProjectsList'));
+const EnhancedProjectScope = lazy(() => import('../features/projects/components/EnhancedProjectScope'));
+const AdvancedDashboard = lazy(() => import('../components/charts/AdvancedDashboard'));
+
 
 function App() {
-  const [projects, setProjects] = useState([]);
-  const [tasks, setTasks] = useState([]);
-  const [teamMembers, setTeamMembers] = useState([]);
-  const [clients, setClients] = useState([]);
+  // Use custom hook for data management
+  const {
+    projects,
+    tasks,
+    teamMembers,
+    clients,
+    loading,
+    error,
+    stats,
+    lookups,
+    setProjects,
+    setTasks,
+    setTeamMembers,
+    setClients,
+    setError,
+    loadAllData
+  } = useFormulaData();
+
   const [currentTab, setCurrentTab] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [createProjectDialogOpen, setCreateProjectDialogOpen] = useState(false);
   const [editProjectDialogOpen, setEditProjectDialogOpen] = useState(false);
   const [viewProjectDialogOpen, setViewProjectDialogOpen] = useState(false);
@@ -80,45 +95,6 @@ function App() {
     budgetTo: ''
   });
 
-  // Load data from API on component mount
-  useEffect(() => {
-    loadAllData();
-  }, []);
-
-  const loadAllData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const [teamMembersData, projectsData, tasksData, clientsData] = await Promise.all([
-        apiService.getTeamMembers(),
-        apiService.getProjects(),
-        apiService.getTasks(),
-        apiService.getClients()
-      ]);
-      
-      setTeamMembers(teamMembersData);
-      setProjects(projectsData);
-      setTasks(tasksData);
-      setClients(clientsData);
-    } catch (error) {
-      console.error('Error loading data:', error);
-      setError('Failed to load data from server. Please check if the backend is running.');
-      
-      // Fallback to localStorage if API fails
-      const savedProjects = localStorage.getItem('formula_projects');
-      const savedTasks = localStorage.getItem('formula_tasks');
-      const savedTeamMembers = localStorage.getItem('formula_team_members');
-      const savedClients = localStorage.getItem('formula_clients');
-      
-      if (savedProjects) setProjects(JSON.parse(savedProjects));
-      if (savedTasks) setTasks(JSON.parse(savedTasks));
-      if (savedTeamMembers) setTeamMembers(JSON.parse(savedTeamMembers));
-      if (savedClients) setClients(JSON.parse(savedClients));
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const addProject = async (project) => {
     try {
@@ -458,81 +434,9 @@ function App() {
     setSelectedProjectForScope(null);
   };
 
-  // Advanced filter logic
-  const filteredProjects = projects.filter(project => {
-    // Search term matching
-    const matchesSearch = !projectsSearchTerm || 
-      project.name.toLowerCase().includes(projectsSearchTerm.toLowerCase()) ||
-      (project.description && project.description.toLowerCase().includes(projectsSearchTerm.toLowerCase()));
-    
-    // Basic filters
-    const matchesStatus = !projectsFilters.status || project.status === projectsFilters.status;
-    const matchesType = !projectsFilters.type || project.type === projectsFilters.type;
-    const matchesClient = !projectsFilters.client || project.clientId == projectsFilters.client;
-    const matchesManager = !projectsFilters.manager || project.projectManager == projectsFilters.manager;
-
-    // Date range filters
-    const projectStartDate = project.startDate ? new Date(project.startDate) : null;
-    const projectEndDate = project.endDate ? new Date(project.endDate) : null;
-    
-    const matchesStartDateFrom = !projectsFilters.startDateFrom || 
-      (projectStartDate && projectStartDate >= projectsFilters.startDateFrom);
-    const matchesStartDateTo = !projectsFilters.startDateTo || 
-      (projectStartDate && projectStartDate <= projectsFilters.startDateTo);
-    const matchesEndDateFrom = !projectsFilters.endDateFrom || 
-      (projectEndDate && projectEndDate >= projectsFilters.endDateFrom);
-    const matchesEndDateTo = !projectsFilters.endDateTo || 
-      (projectEndDate && projectEndDate <= projectsFilters.endDateTo);
-
-    // Budget range filters
-    const projectBudget = project.budget ? parseFloat(project.budget) : 0;
-    const matchesBudgetFrom = !projectsFilters.budgetFrom || 
-      projectBudget >= parseFloat(projectsFilters.budgetFrom);
-    const matchesBudgetTo = !projectsFilters.budgetTo || 
-      projectBudget <= parseFloat(projectsFilters.budgetTo);
-
-    return matchesSearch && 
-           matchesStatus && 
-           matchesType && 
-           matchesClient && 
-           matchesManager &&
-           matchesStartDateFrom &&
-           matchesStartDateTo &&
-           matchesEndDateFrom &&
-           matchesEndDateTo &&
-           matchesBudgetFrom &&
-           matchesBudgetTo;
-  });
-
-  // Get active filters for display
-  const activeFilters = Object.entries(projectsFilters)
-    .filter(([key, value]) => {
-      if (typeof value === 'string') return value !== '';
-      if (value instanceof Date) return true;
-      return value !== null && value !== undefined;
-    })
-    .map(([key, value]) => {
-      let label = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
-      let displayValue = value;
-      
-      if (key === 'client') {
-        const client = clients.find(c => c.id == value);
-        displayValue = client ? client.companyName : value;
-      } else if (key === 'manager') {
-        const manager = teamMembers.find(tm => tm.id == value);
-        displayValue = manager ? manager.fullName : value;
-      } else if (key.includes('Date') && value instanceof Date) {
-        displayValue = value.toLocaleDateString();
-      } else if (key.includes('budget') && value) {
-        displayValue = `$${value}`;
-      }
-      
-      return { key, label, value: displayValue };
-    });
-
-  if (projectsSearchTerm) {
-    activeFilters.push({ key: 'search', label: 'Search', value: projectsSearchTerm });
-  }
+  // Use custom filtering hook for better performance
+  const filteredProjects = useFilteredData(projects, projectsFilters, projectsSearchTerm);
+  const activeFilters = useActiveFilters(projectsFilters, projectsSearchTerm, clients, teamMembers);
 
   if (loading) {
     return (
@@ -554,142 +458,159 @@ function App() {
     );
   }
 
+  // Loading component for lazy-loaded components
+  const LoadingFallback = () => (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
+      <CircularProgress size={40} />
+    </Box>
+  );
+
   const renderTabContent = () => {
     switch (currentTab) {
       case 0: // Dashboard
         return (
-          <>
+          <Suspense fallback={<LoadingFallback />}>
             <ModernStatsCards projects={projects} tasks={tasks} teamMembers={teamMembers} />
             <ModernProjectOverview projects={projects} tasks={tasks} teamMembers={teamMembers} />
-          </>
+          </Suspense>
         );
 
       case 1: // Projects
         return (
-          <Box>
-            <UnifiedHeader
-              title="Projects"
-              searchValue={projectsSearchTerm}
-              onSearchChange={setProjectsSearchTerm}
-              showFilters={showProjectsFilters}
-              onToggleFilters={handleToggleProjectsFilters}
-              activeFiltersCount={activeFilters.length}
-              viewMode={projectsViewMode}
-              onViewModeChange={handleViewModeChange}
-              onExport={handleProjectsExport}
-              onAdd={() => setCreateProjectDialogOpen(true)}
-              addButtonText="New Project"
-              exportButtonText="Export"
-              activeFilters={activeFilters}
-              onClearFilter={handleClearFilter}
-            />
+          <Suspense fallback={<LoadingFallback />}>
+            <Box>
+              <UnifiedHeader
+                title="Projects"
+                searchValue={projectsSearchTerm}
+                onSearchChange={setProjectsSearchTerm}
+                showFilters={showProjectsFilters}
+                onToggleFilters={handleToggleProjectsFilters}
+                activeFiltersCount={activeFilters.length}
+                viewMode={projectsViewMode}
+                onViewModeChange={handleViewModeChange}
+                onExport={handleProjectsExport}
+                onAdd={() => setCreateProjectDialogOpen(true)}
+                addButtonText="New Project"
+                exportButtonText="Export"
+                activeFilters={activeFilters}
+                onClearFilter={handleClearFilter}
+              />
 
-            <ProjectsFilters
-              open={showProjectsFilters}
-              filters={projectsFilters}
-              onFiltersChange={handleFiltersChange}
-              onClearFilters={handleClearFilters}
-              clients={clients}
-              teamMembers={teamMembers}
-              projects={projects}
-            />
-            
-            {projectsViewMode === 'table' ? (
-              <ProjectsTableView
-                projects={filteredProjects}
+              <ProjectsFilters
+                open={showProjectsFilters}
+                filters={projectsFilters}
+                onFiltersChange={handleFiltersChange}
+                onClearFilters={handleClearFilters}
                 clients={clients}
                 teamMembers={teamMembers}
-                onEditProject={handleEditProject}
-                onDeleteProject={deleteProject}
-                onViewProject={handleViewProject}
-                onManageScope={handleManageScope}
+                projects={projects}
               />
-            ) : (
-              <Paper 
-                elevation={0}
-                sx={{ 
-                  p: 3, 
-                  backgroundColor: 'white',
-                  border: '1px solid #E9ECEF',
-                  borderRadius: 3
-                }}
-              >
-                <ProjectsList 
+              
+              {projectsViewMode === 'table' ? (
+                <ProjectsTableView
                   projects={filteredProjects}
-                  tasks={tasks}
                   clients={clients}
+                  teamMembers={teamMembers}
+                  onEditProject={handleEditProject}
                   onDeleteProject={deleteProject}
+                  onViewProject={handleViewProject}
+                  onManageScope={handleManageScope}
                 />
-              </Paper>
-            )}
-          </Box>
+              ) : (
+                <Paper 
+                  elevation={0}
+                  sx={{ 
+                    p: 3, 
+                    backgroundColor: 'white',
+                    border: '1px solid #E9ECEF',
+                    borderRadius: 3
+                  }}
+                >
+                  <ProjectsList 
+                    projects={filteredProjects}
+                    tasks={tasks}
+                    clients={clients}
+                    onDeleteProject={deleteProject}
+                  />
+                </Paper>
+              )}
+            </Box>
+          </Suspense>
         );
 
       case 2: // My Projects
         return (
-          <MyProjectsList 
-            projects={projects}
-            tasks={tasks}
-            clients={clients}
-            teamMembers={teamMembers}
-            onDeleteProject={deleteProject}
-            onEditProject={handleEditProject}
-            onViewProject={handleViewProject}
-            onManageScope={handleManageScope}
-            currentUserId={1008} // This would come from authentication in a real app
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <MyProjectsList 
+              projects={projects}
+              tasks={tasks}
+              clients={clients}
+              teamMembers={teamMembers}
+              onDeleteProject={deleteProject}
+              onEditProject={handleEditProject}
+              onViewProject={handleViewProject}
+              onManageScope={handleManageScope}
+              currentUserId={1008} // This would come from authentication in a real app
+            />
+          </Suspense>
         );
 
       case 3: // Tasks
         return (
-          <Grid container spacing={4}>
-            <Grid item xs={12}>
-              <Paper 
-                elevation={0}
-                sx={{ 
-                  p: 3, 
-                  backgroundColor: 'white',
-                  border: '1px solid #E9ECEF',
-                  borderRadius: 3
-                }}
-              >
-                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
-                  Tasks Overview ({tasks.length})
-                </Typography>
-                <TasksList 
-                  tasks={tasks}
-                  projects={projects}
-                  teamMembers={teamMembers}
-                  onUpdateTask={updateTask}
-                  onDeleteTask={deleteTask}
-                  onAddTask={() => {/* Handle add task - will show form */}}
-                  onViewTask={handleViewTask}
-                  onEditTask={handleEditTask}
-                />
-              </Paper>
+          <Suspense fallback={<LoadingFallback />}>
+            <Grid container spacing={4}>
+              <Grid item xs={12}>
+                <Paper 
+                  elevation={0}
+                  sx={{ 
+                    p: 3, 
+                    backgroundColor: 'white',
+                    border: '1px solid #E9ECEF',
+                    borderRadius: 3
+                  }}
+                >
+                  <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+                    Tasks Overview ({tasks.length})
+                  </Typography>
+                  <TasksList 
+                    tasks={tasks}
+                    projects={projects}
+                    teamMembers={teamMembers}
+                    onUpdateTask={updateTask}
+                    onDeleteTask={deleteTask}
+                    onAddTask={() => {/* Handle add task - will show form */}}
+                    onViewTask={handleViewTask}
+                    onEditTask={handleEditTask}
+                  />
+                </Paper>
+              </Grid>
             </Grid>
-          </Grid>
+          </Suspense>
         );
 
       case 4: // Team
         return (
-          <TeamMembersList 
-            teamMembers={teamMembers}
-            tasks={tasks}
-            onUpdateMember={updateTeamMember}
-            onDeleteMember={deleteTeamMember}
-            onAddMember={handleAddTeamMember}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <TeamMembersList 
+              teamMembers={teamMembers}
+              tasks={tasks}
+              onUpdateMember={updateTeamMember}
+              onDeleteMember={deleteTeamMember}
+              onAddMember={handleAddTeamMember}
+            />
+          </Suspense>
         );
 
       case 5: // Clients
         return (
-          <ClientsList 
-            clients={clients}
-            onUpdateClient={updateClient}
-            onDeleteClient={deleteClient}
-            onAddClient={handleAddClient}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <ClientsList 
+              clients={clients}
+              onUpdateClient={updateClient}
+              onDeleteClient={deleteClient}
+              onAddClient={handleAddClient}
+            />
+          </Suspense>
         );
 
       case 6: // Procurement
@@ -724,24 +645,26 @@ function App() {
 
       case 7: // Timeline & Gantt
         return (
-          <Paper 
-            elevation={0}
-            sx={{ 
-              p: 3, 
-              backgroundColor: 'white',
-              border: '1px solid #E9ECEF',
-              borderRadius: 3
-            }}
-          >
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
-              Project Timeline & Gantt Chart
-            </Typography>
-            <GanttChart 
-              tasks={tasks}
-              projects={projects}
-              teamMembers={teamMembers}
-            />
-          </Paper>
+          <Suspense fallback={<LoadingFallback />}>
+            <Paper 
+              elevation={0}
+              sx={{ 
+                p: 3, 
+                backgroundColor: 'white',
+                border: '1px solid #E9ECEF',
+                borderRadius: 3
+              }}
+            >
+              <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+                Project Timeline & Gantt Chart
+              </Typography>
+              <GanttChart 
+                tasks={tasks}
+                projects={projects}
+                teamMembers={teamMembers}
+              />
+            </Paper>
+          </Suspense>
         );
 
       default:
@@ -783,7 +706,9 @@ function App() {
         >
           <DialogTitle>Create New Project</DialogTitle>
           <DialogContent>
-            <ProjectForm onSubmit={addProject} clients={clients} />
+            <Suspense fallback={<LoadingFallback />}>
+              <ProjectForm onSubmit={addProject} clients={clients} />
+            </Suspense>
           </DialogContent>
         </Dialog>
 
@@ -796,13 +721,15 @@ function App() {
         >
           <DialogTitle>Edit Project</DialogTitle>
           <DialogContent>
-            {selectedProjectForEdit && (
-              <ProjectForm 
-                onSubmit={updateProject} 
-                clients={clients} 
-                initialProject={selectedProjectForEdit}
-              />
-            )}
+            <Suspense fallback={<LoadingFallback />}>
+              {selectedProjectForEdit && (
+                <ProjectForm 
+                  onSubmit={updateProject} 
+                  clients={clients} 
+                  initialProject={selectedProjectForEdit}
+                />
+              )}
+            </Suspense>
           </DialogContent>
         </Dialog>
 
@@ -856,12 +783,14 @@ function App() {
           }}
         >
           <DialogContent sx={{ p: 0 }}>
-            {selectedProjectForScope && (
-              <EnhancedProjectScope 
-                project={selectedProjectForScope} 
-                onClose={handleCloseScopeDialog}
-              />
-            )}
+            <Suspense fallback={<LoadingFallback />}>
+              {selectedProjectForScope && (
+                <EnhancedProjectScope 
+                  project={selectedProjectForScope} 
+                  onClose={handleCloseScopeDialog}
+                />
+              )}
+            </Suspense>
           </DialogContent>
         </Dialog>
 
@@ -874,10 +803,12 @@ function App() {
         >
           <DialogTitle>Add Team Member</DialogTitle>
           <DialogContent>
-            <TeamMemberForm 
-              teamMembers={teamMembers}
-              onSubmit={addTeamMember} 
-            />
+            <Suspense fallback={<LoadingFallback />}>
+              <TeamMemberForm 
+                teamMembers={teamMembers}
+                onSubmit={addTeamMember} 
+              />
+            </Suspense>
           </DialogContent>
         </Dialog>
 
@@ -890,7 +821,9 @@ function App() {
         >
           <DialogTitle>Add New Client</DialogTitle>
           <DialogContent>
-            <ClientForm onSubmit={addClient} />
+            <Suspense fallback={<LoadingFallback />}>
+              <ClientForm onSubmit={addClient} />
+            </Suspense>
           </DialogContent>
         </Dialog>
 
@@ -903,14 +836,16 @@ function App() {
         >
           <DialogTitle>Edit Task</DialogTitle>
           <DialogContent>
-            {selectedTaskForEdit && (
-              <TaskForm 
-                projects={projects}
-                teamMembers={teamMembers}
-                onSubmit={updateTaskWithForm}
-                initialTask={selectedTaskForEdit}
-              />
-            )}
+            <Suspense fallback={<LoadingFallback />}>
+              {selectedTaskForEdit && (
+                <TaskForm 
+                  projects={projects}
+                  teamMembers={teamMembers}
+                  onSubmit={updateTaskWithForm}
+                  initialTask={selectedTaskForEdit}
+                />
+              )}
+            </Suspense>
           </DialogContent>
         </Dialog>
 
