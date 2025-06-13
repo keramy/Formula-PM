@@ -92,104 +92,122 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-      <Grid container spacing={3}>
-        {/* Description */}
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Description"
-            required
-            value={formData.description}
-            onChange={handleChange('description')}
-            placeholder="Enter item description..."
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  📝
-                </InputAdornment>
-              )
-            }}
-          />
-        </Grid>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        {/* 1. Description */}
+        <TextField
+          fullWidth
+          label="1. Description"
+          required
+          value={formData.description}
+          onChange={handleChange('description')}
+          placeholder="Enter item description..."
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                📝
+              </InputAdornment>
+            )
+          }}
+        />
 
-        {/* Quantity and Unit Price */}
-        <Grid item xs={12} md={6}>
-          <TextField
-            fullWidth
-            label="Quantity"
-            required
-            type="number"
-            value={formData.quantity}
-            onChange={handleChange('quantity')}
-            inputProps={{ step: 'any', min: 0 }}
-          />
-        </Grid>
+        {/* 2. Category */}
+        <FormControl fullWidth>
+          <InputLabel>2. Category</InputLabel>
+          <Select
+            value={formData.category}
+            onChange={handleChange('category')}
+            label="2. Category"
+            displayEmpty
+          >
+            <MenuItem value="">
+              <em>Select Category</em>
+            </MenuItem>
+            {categories.map(category => (
+              <MenuItem key={category} value={category}>
+                {category}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-        <Grid item xs={12} md={6}>
-          <TextField
-            fullWidth
-            label="Unit Price"
-            required
-            type="number"
-            value={formData.unitPrice}
-            onChange={handleChange('unitPrice')}
-            inputProps={{ step: 'any', min: 0 }}
-            InputProps={{
-              startAdornment: <InputAdornment position="start">$</InputAdornment>
-            }}
-          />
-        </Grid>
+        {/* 3. Quantity */}
+        <TextField
+          fullWidth
+          label="3. Quantity"
+          required
+          type="number"
+          value={formData.quantity}
+          onChange={handleChange('quantity')}
+          inputProps={{ step: 'any', min: 0 }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                📊
+              </InputAdornment>
+            )
+          }}
+        />
+
+        {/* 4. Unit */}
+        <FormControl fullWidth>
+          <InputLabel>4. Unit</InputLabel>
+          <Select
+            value={formData.unit}
+            onChange={handleChange('unit')}
+            label="4. Unit"
+          >
+            {unitOptions.map(unit => (
+              <MenuItem key={unit} value={unit}>
+                {unit}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* 5. Unit Price */}
+        <TextField
+          fullWidth
+          label="5. Unit Price"
+          required
+          type="number"
+          value={formData.unitPrice}
+          onChange={handleChange('unitPrice')}
+          inputProps={{ step: 'any', min: 0 }}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">💰 $</InputAdornment>
+          }}
+        />
 
         {/* Total Price Display */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2, backgroundColor: '#F8F9FA', border: '1px solid #E9ECEF' }}>
-            <Typography variant="h6" sx={{ color: '#27AE60', fontWeight: 600 }}>
-              Total Price: ${totalPrice.toLocaleString()}
-            </Typography>
-          </Paper>
-        </Grid>
+        <Paper sx={{ p: 3, backgroundColor: '#F8F9FA', border: '2px solid #27AE60', borderRadius: 2 }}>
+          <Typography variant="h5" sx={{ color: '#27AE60', fontWeight: 700, textAlign: 'center' }}>
+            Total Price: ${totalPrice.toLocaleString()}
+          </Typography>
+        </Paper>
 
-        {/* Unit and Category */}
-        <Grid item xs={12} md={6}>
-          <FormControl fullWidth>
-            <InputLabel>Unit</InputLabel>
-            <Select
-              value={formData.unit}
-              onChange={handleChange('unit')}
-              label="Unit"
-            >
-              {unitOptions.map(unit => (
-                <MenuItem key={unit} value={unit}>
-                  {unit}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
+        {/* 6. Notes */}
+        <TextField
+          fullWidth
+          label="6. Notes (Optional)"
+          multiline
+          rows={3}
+          value={formData.notes}
+          onChange={handleChange('notes')}
+          placeholder="Additional notes or specifications..."
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1 }}>
+                📋
+              </InputAdornment>
+            )
+          }}
+        />
 
-        <Grid item xs={12} md={6}>
-          <FormControl fullWidth>
-            <InputLabel>Category</InputLabel>
-            <Select
-              value={formData.category}
-              onChange={handleChange('category')}
-              label="Category"
-              displayEmpty
-            >
-              <MenuItem value="">
-                <em>Select Category</em>
-              </MenuItem>
-              {categories.map(category => (
-                <MenuItem key={category} value={category}>
-                  {category}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        {/* File Upload */}
-        <Grid item xs={12}>
+        {/* 7. File Attachments */}
+        <Box>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#2C3E50' }}>
+            7. File Attachments (Optional)
+          </Typography>
           <Box sx={{ 
             border: '2px dashed #E9ECEF', 
             borderRadius: 2, 
@@ -215,65 +233,52 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
                   fontWeight: 600
                 }}
               >
-                Choose File
+                📎 Choose File
               </Button>
             </label>
             {formData.attachments && (
               <Typography variant="body2" sx={{ mt: 1, color: '#27AE60' }}>
-                Attached: {formData.attachments}
+                ✅ Attached: {formData.attachments}
               </Typography>
             )}
             <Typography variant="caption" display="block" sx={{ mt: 1, color: '#6C757D' }}>
               Upload specifications, drawings, or other relevant files
             </Typography>
           </Box>
-        </Grid>
-
-        {/* Notes */}
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Notes"
-            multiline
-            rows={3}
-            value={formData.notes}
-            onChange={handleChange('notes')}
-            placeholder="Additional notes or specifications..."
-          />
-        </Grid>
+        </Box>
 
         {/* Action Buttons */}
-        <Grid item xs={12}>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
-            <Button
-              variant="outlined"
-              onClick={onCancel}
-              sx={{ 
-                borderRadius: '20px',
-                textTransform: 'none',
-                fontWeight: 600
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ 
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4, pt: 3, borderTop: '1px solid #E9ECEF' }}>
+          <Button
+            variant="outlined"
+            onClick={onCancel}
+            sx={{ 
+              borderRadius: '20px',
+              textTransform: 'none',
+              fontWeight: 600,
+              px: 4
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{ 
                 borderRadius: '20px',
                 textTransform: 'none',
                 fontWeight: 600,
                 backgroundColor: '#27AE60',
+                px: 4,
                 '&:hover': {
                   backgroundColor: '#229954'
                 }
               }}
             >
-              {item ? 'Update Item' : 'Add Item'}
+              {item ? '✅ Update Item' : '➕ Add Item'}
             </Button>
           </Box>
-        </Grid>
-      </Grid>
+      </Box>
     </Box>
   );
 };

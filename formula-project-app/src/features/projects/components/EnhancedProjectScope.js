@@ -32,6 +32,7 @@ import {
 import EnhancedScopeItemForm from './EnhancedScopeItemForm';
 import ScopeImportDialog from './ScopeImportDialog';
 import apiService from '../../../services/api/apiService';
+import PageWrapper from '../../../components/layout/PageWrapper';
 
 const EnhancedProjectScope = ({ project, onClose }) => {
   const [scopeItems, setScopeItems] = useState([]);
@@ -163,59 +164,38 @@ const EnhancedProjectScope = ({ project, onClose }) => {
   const totalValue = scopeItems.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
-      <Box sx={{ 
-        p: 3, 
-        borderBottom: '1px solid #E9ECEF',
-        backgroundColor: '#F8F9FA'
-      }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h5" sx={{ fontWeight: 600, color: '#2C3E50' }}>
-            {project.name} - Project Scope
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={<ImportIcon />}
-              onClick={() => setImportDialogOpen(true)}
-              sx={{ 
-                borderRadius: '20px',
-                textTransform: 'none',
-                fontWeight: 600
-              }}
-            >
-              Import Excel
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={() => setAddDialogOpen(true)}
-              sx={{ 
-                borderRadius: '20px',
-                textTransform: 'none',
-                fontWeight: 600,
-                backgroundColor: '#27AE60',
-                '&:hover': {
-                  backgroundColor: '#229954'
-                }
-              }}
-            >
-              Add
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={onClose}
-              sx={{ 
-                borderRadius: '20px',
-                textTransform: 'none',
-                fontWeight: 600
-              }}
-            >
-              Close
-            </Button>
-          </Box>
-        </Box>
+    <PageWrapper
+      pageType="project-scope"
+      pageTitle="Scope Management"
+      pageData={{
+        projectId: project.id,
+        projectName: project.name,
+        status: project.status,
+        type: project.type
+      }}
+      subtitle={`${totalItems} items • $${totalValue.toLocaleString()} total value`}
+      actions={[
+        {
+          icon: <ImportIcon />,
+          label: 'Import Excel',
+          onClick: () => setImportDialogOpen(true),
+          color: 'default'
+        },
+        {
+          icon: <AddIcon />,
+          label: 'Add Item',
+          onClick: () => setAddDialogOpen(true),
+          color: 'primary'
+        }
+      ]}
+      onNavigate={(path) => {
+        if (path === '/projects') {
+          onClose();
+        }
+      }}
+      contentPadding={0}
+    >
+      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       </Box>
 
       {/* Summary Cards */}
@@ -460,7 +440,8 @@ const EnhancedProjectScope = ({ project, onClose }) => {
           {notification.message}
         </Alert>
       </Snackbar>
-    </Box>
+      </Box>
+    </PageWrapper>
   );
 };
 

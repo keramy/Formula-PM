@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogContent
 } from '@mui/material';
-import { NotificationProvider } from '../context';
+import { NotificationProvider, NavigationProvider } from '../context';
 import NotificationContainer from '../components/ui/NotificationContainer';
 import ModernDashboardLayout from '../components/layout/ModernDashboardLayout';
 import ModernStatsCards from '../components/charts/ModernStatsCards';
@@ -27,11 +27,17 @@ import ProjectForm from '../features/projects/components/ProjectForm';
 import TaskForm from '../features/tasks/components/TaskForm';
 import ProjectsList from '../features/projects/components/ProjectsList';
 import TasksList from '../features/tasks/components/TasksList';
+import EnhancedTasksList from '../features/tasks/components/EnhancedTasksList';
 import GanttChart from '../components/charts/GanttChart';
 import TeamMemberForm from '../features/team/components/TeamMemberForm';
 import TeamMembersList from '../features/team/components/TeamMembersList';
 import ClientForm from '../features/clients/components/ClientForm';
 import ClientsList from '../features/clients/components/ClientsList';
+import ProjectFormPage from '../features/projects/components/ProjectFormPage';
+import TaskFormPage from '../features/tasks/components/TaskFormPage';
+import TeamMemberFormPage from '../features/team/components/TeamMemberFormPage';
+import ClientFormPage from '../features/clients/components/ClientFormPage';
+import ScopeItemFormPage from '../features/projects/components/ScopeItemFormPage';
 import ProjectsTableView from '../features/projects/components/ProjectsTableView';
 import ProjectsFilters from '../features/projects/components/ProjectsFilters';
 import MyProjectsList from '../features/projects/components/MyProjectsList';
@@ -86,6 +92,16 @@ function App() {
   const [globalSearch, setGlobalSearch] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
   
+  // Full-page navigation state
+  const [currentPage, setCurrentPage] = useState('main');
+  const [currentFormData, setCurrentFormData] = useState(null);
+  
+  // Navigation helpers
+  const navigateToMain = () => {
+    setCurrentPage('main');
+    setCurrentFormData(null);
+  };
+  
   // New state for enhanced projects view
   const [projectsViewMode, setProjectsViewMode] = useState(
     localStorage.getItem('projectsViewMode') || 'board'
@@ -125,7 +141,7 @@ function App() {
       
       const createdProject = await apiService.createProject(newProject);
       setProjects([...projects, createdProject]);
-      setCreateProjectDialogOpen(false);
+      navigateToMain();
     } catch (error) {
       console.error('Error creating project:', error);
       setError('Failed to create project');
@@ -161,7 +177,7 @@ function App() {
       
       const createdTask = await apiService.createTask(newTask);
       setTasks([...tasks, createdTask]);
-      setAddTaskDialogOpen(false);
+      navigateToMain();
       
       // Log task assignment (for demo)
       if (task.assignedTo) {
@@ -240,8 +256,8 @@ function App() {
   };
 
   const handleEditTask = (task) => {
-    setSelectedTaskForEdit(task);
-    setEditTaskDialogOpen(true);
+    setCurrentPage('edit-task');
+    setCurrentFormData(task);
   };
 
   const handleCloseEditTaskDialog = () => {
@@ -319,7 +335,7 @@ function App() {
       
       const createdMember = await apiService.createTeamMember(newMember);
       setTeamMembers([...teamMembers, createdMember]);
-      setAddTeamMemberDialogOpen(false);
+      navigateToMain();
     } catch (error) {
       console.error('Error creating team member:', error);
       setError('Failed to create team member');
@@ -327,11 +343,13 @@ function App() {
   };
 
   const handleAddTeamMember = () => {
-    setAddTeamMemberDialogOpen(true);
+    setCurrentPage('add-team-member');
+    setCurrentFormData(null);
   };
 
   const handleAddTask = () => {
-    setAddTaskDialogOpen(true);
+    setCurrentPage('add-task');
+    setCurrentFormData(null);
   };
 
   const handleViewTeamMemberDetail = (member) => {
@@ -567,29 +585,82 @@ function App() {
   if (loading) {
     return (
       <NotificationProvider>
-        <ThemeProvider theme={formulaTheme}>
-          <CssBaseline />
-          <ModernDashboardLayout 
-            currentTab={currentTab} 
-            onTabChange={handleTabChange}
-            globalSearch={globalSearch}
-            onGlobalSearchChange={handleGlobalSearchChange}
-            onSearchSubmit={handleSearchSubmit}
-          >
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
-              <div style={{ textAlign: 'center' }}>
-                <Typography variant="h6">Loading Formula Project Management...</Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  Fetching team members and project data
-                </Typography>
-              </div>
-            </Box>
-          </ModernDashboardLayout>
-        </ThemeProvider>
+        <NavigationProvider>
+          <ThemeProvider theme={formulaTheme}>
+            <CssBaseline />
+            <ModernDashboardLayout 
+              currentTab={currentTab} 
+              onTabChange={handleTabChange}
+              globalSearch={globalSearch}
+              onGlobalSearchChange={handleGlobalSearchChange}
+              onSearchSubmit={handleSearchSubmit}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <Typography variant="h6">Loading Formula Project Management...</Typography>
+                  <Typography variant="body2" sx={{ mt: 1 }}>
+                    Fetching team members and project data
+                  </Typography>
+                </div>
+              </Box>
+            </ModernDashboardLayout>
+          </ThemeProvider>
+        </NavigationProvider>
       </NotificationProvider>
     );
   }
 
+
+  const renderFullPageContent = () => {
+    switch (currentPage) {
+      case 'add-task':
+        return (
+          <TaskFormPage
+            projects={projects}
+            teamMembers={teamMembers}
+            onSubmit={addTask}
+            onCancel={navigateToMain}
+            isEdit={false}
+          />
+        );
+        
+      case 'edit-task':
+        return (
+          <TaskFormPage
+            task={currentFormData}
+            projects={projects}
+            teamMembers={teamMembers}
+            onSubmit={updateTaskWithForm}
+            onCancel={navigateToMain}
+            isEdit={true}
+          />
+        );
+        
+      case 'add-project':
+        return (
+          <ProjectFormPage
+            clients={clients}
+            onSubmit={addProject}
+            onCancel={navigateToMain}
+            isEdit={false}
+          />
+        );
+        
+      case 'add-team-member':
+        return (
+          <TeamMemberFormPage
+            teamMembers={teamMembers}
+            onSubmit={addTeamMember}
+            onCancel={navigateToMain}
+            isEdit={false}
+          />
+        );
+        
+      case 'main':
+      default:
+        return renderTabContent();
+    }
+  };
 
   const renderTabContent = () => {
     switch (currentTab) {
@@ -611,7 +682,10 @@ function App() {
               ]}
               searchValue={projectsSearchTerm}
               onSearchChange={setProjectsSearchTerm}
-              onAdd={() => setCreateProjectDialogOpen(true)}
+              onAdd={() => {
+                setCurrentPage('add-project');
+                setCurrentFormData(null);
+              }}
               isStarred={false}
               onToggleStar={() => {}}
               teamMembers={teamMembers.slice(0, 5)}
@@ -723,58 +797,27 @@ function App() {
             onEditProject={handleEditProject}
             onViewProject={handleViewProject}
             onManageScope={handleManageScope}
+            onViewTask={handleViewTask}
+            onEditTask={handleEditTask}
+            onUpdateTask={updateTask}
             currentUserId={1008} // This would come from authentication in a real app
           />
         );
 
       case 3: // Tasks
         return (
-          <Box>
-            <UnifiedHeader
-              title="Tasks"
-              searchValue=""
-              onSearchChange={() => {}}
-              showFilters={false}
-              onToggleFilters={() => {}}
-              activeFiltersCount={0}
-              viewMode={tasksViewMode}
-              onViewModeChange={handleTasksViewModeChange}
-              onExport={() => {}}
-              onAdd={handleAddTask}
-              addButtonText="New Task"
-              activeFilters={[]}
-              onClearFilter={() => {}}
-            />
-
-            <Grid container spacing={4}>
-              <Grid item xs={12}>
-                <Paper 
-                  elevation={0}
-                  sx={{ 
-                    p: 3, 
-                    backgroundColor: 'white',
-                    border: '1px solid #E9ECEF',
-                    borderRadius: 3
-                  }}
-                >
-                  <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
-                    Tasks Overview ({tasks.length})
-                  </Typography>
-                  <TasksList 
-                    tasks={tasks}
-                    projects={projects}
-                    teamMembers={teamMembers}
-                    onUpdateTask={updateTask}
-                    onDeleteTask={deleteTask}
-                    onAddTask={handleAddTask}
-                    onViewTask={handleViewTask}
-                    onEditTask={handleEditTask}
-                    viewMode={tasksViewMode}
-                  />
-                </Paper>
-              </Grid>
-            </Grid>
-          </Box>
+          <EnhancedTasksList 
+            tasks={tasks}
+            projects={projects}
+            teamMembers={teamMembers}
+            onUpdateTask={updateTask}
+            onDeleteTask={deleteTask}
+            onAddTask={handleAddTask}
+            onViewTask={handleViewTask}
+            onEditTask={handleEditTask}
+            viewMode={tasksViewMode}
+            onViewModeChange={handleTasksViewModeChange}
+          />
         );
 
       case 4: // Team
@@ -870,15 +913,16 @@ function App() {
 
   return (
     <NotificationProvider>
-      <ThemeProvider theme={formulaTheme}>
-        <CssBaseline />
-        <ModernDashboardLayout 
-          currentTab={currentTab} 
-          onTabChange={handleTabChange}
-          globalSearch={globalSearch}
-          onGlobalSearchChange={handleGlobalSearchChange}
-          onSearchSubmit={handleSearchSubmit}
-        >
+      <NavigationProvider>
+        <ThemeProvider theme={formulaTheme}>
+          <CssBaseline />
+          <ModernDashboardLayout 
+            currentTab={currentTab} 
+            onTabChange={handleTabChange}
+            globalSearch={globalSearch}
+            onGlobalSearchChange={handleGlobalSearchChange}
+            onSearchSubmit={handleSearchSubmit}
+          >
           <div style={{ padding: '0' }}>
             {/* Error Alert */}
             {error && (
@@ -892,12 +936,14 @@ function App() {
             )}
             
             {/* Tab Content */}
-            {renderTabContent()}
+            {renderFullPageContent()}
           </div>
 
           {/* Notification Container */}
           <NotificationContainer />
         </ModernDashboardLayout>
+        </ThemeProvider>
+      </NavigationProvider>
 
         {/* Create Project Dialog */}
         <Dialog 
@@ -1108,7 +1154,6 @@ function App() {
           onSelectResult={handleSearchResultSelect}
           results={getSearchResults()}
         />
-      </ThemeProvider>
     </NotificationProvider>
   );
 }

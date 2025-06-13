@@ -162,16 +162,6 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, o
       }
     },
     {
-      key: 'email',
-      label: 'Email',
-      type: 'email'
-    },
-    {
-      key: 'phone',
-      label: 'Phone',
-      type: 'phone'
-    },
-    {
       key: 'status',
       label: 'Status',
       type: 'chip',

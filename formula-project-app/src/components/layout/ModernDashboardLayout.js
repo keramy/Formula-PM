@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Container, Typography, IconButton, InputBase, Paper } from '@mui/material';
 import { Search as SearchIcon, Notifications as NotificationsIcon } from '@mui/icons-material';
 import ModernSidebar from './ModernSidebar';
@@ -12,6 +12,15 @@ const ModernDashboardLayout = ({
   onGlobalSearchChange,
   onSearchSubmit
 }) => {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+    localStorage.getItem('sidebarCollapsed') === 'true'
+  );
+  
+  const handleToggleSidebar = () => {
+    const newCollapsed = !sidebarCollapsed;
+    setSidebarCollapsed(newCollapsed);
+    localStorage.setItem('sidebarCollapsed', newCollapsed.toString());
+  };
   const getPageTitle = () => {
     switch (currentTab) {
       case 0: return 'Dashboard';
@@ -37,15 +46,21 @@ const ModernDashboardLayout = ({
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F8F9FA' }}>
       {/* Sidebar */}
-      <ModernSidebar currentTab={currentTab} onTabChange={onTabChange} />
+      <ModernSidebar 
+        currentTab={currentTab} 
+        onTabChange={onTabChange} 
+        isCollapsed={sidebarCollapsed}
+        onToggleCollapse={handleToggleSidebar}
+      />
       
       {/* Main Content */}
       <Box
         sx={{
           flexGrow: 1,
-          marginLeft: '250px', // Width of sidebar
+          marginLeft: sidebarCollapsed ? '70px' : '250px',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          transition: 'margin-left 0.3s ease-in-out'
         }}
       >
         {/* Top Header */}

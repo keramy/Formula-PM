@@ -1,9 +1,28 @@
 import React, { useState, useMemo } from 'react';
 import {
   Box,
-  Typography
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+  Chip,
+  Avatar,
+  IconButton,
+  LinearProgress,
+  Paper,
+  Divider
 } from '@mui/material';
-import { Assignment } from '@mui/icons-material';
+import { 
+  Assignment, 
+  CheckCircle,
+  Flag,
+  Warning,
+  PriorityHigh,
+  Schedule,
+  PlayArrow,
+  Visibility as ViewIcon,
+  Edit as EditIcon
+} from '@mui/icons-material';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import ProjectsList from './ProjectsList';
@@ -18,6 +37,9 @@ const MyProjectsList = ({
   onEditProject,
   onViewProject,
   onManageScope,
+  onViewTask,
+  onEditTask,
+  onUpdateTask,
   currentUserId = 1008 // Default to a specific user ID
 }) => {
   const [searchValue, setSearchValue] = useState('');
@@ -37,6 +59,9 @@ const MyProjectsList = ({
 
   // Filter projects to only show user's projects
   const myProjects = projects.filter(p => p.projectManager === currentUserId);
+  
+  // Filter tasks assigned to the current user
+  const myTasks = tasks.filter(t => t.assignedTo === currentUserId);
 
   // Filter configuration
   const filterConfig = [
@@ -227,11 +252,47 @@ const MyProjectsList = ({
     console.log('Export my projects:', filteredAndSortedProjects);
   };
 
-  if (myProjects.length === 0) {
+  // Task helper functions
+  const priorityConfig = {
+    low: { label: 'Low', color: '#27ae60', bgColor: '#eafaf1', icon: <Flag /> },
+    medium: { label: 'Medium', color: '#f39c12', bgColor: '#fef9e7', icon: <Flag /> },
+    high: { label: 'High', color: '#e67e22', bgColor: '#fef5e7', icon: <Warning /> },
+    urgent: { label: 'Urgent', color: '#e74c3c', bgColor: '#fdf2f2', icon: <PriorityHigh /> }
+  };
+
+  const statusConfig = {
+    pending: { label: 'To Do', color: '#f39c12', bgColor: '#fef9e7', icon: <Schedule /> },
+    'in-progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb', icon: <PlayArrow /> },
+    'in_progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb', icon: <PlayArrow /> },
+    completed: { label: 'Done', color: '#27ae60', bgColor: '#eafaf1', icon: <CheckCircle /> }
+  };
+
+  const getProjectName = (projectId) => {
+    const project = projects.find(p => p.id === projectId);
+    return project ? project.name : 'Unknown Project';
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+    });
+  };
+
+  const isOverdue = (task) => {
+    if (task.status === 'completed') return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return new Date(task.dueDate) < today;
+  };
+
+  if (myProjects.length === 0 && myTasks.length === 0) {
     return (
       <Box>
         <UnifiedHeader
-          title="My Projects"
+          title="My Work"
           searchValue={searchValue}
           onSearchChange={setSearchValue}
           showFilters={showFilters}
@@ -240,14 +301,14 @@ const MyProjectsList = ({
           viewMode={viewMode}
           onViewModeChange={setViewMode}
           onExport={handleExport}
-          showAdd={false} // No add button for My Projects
+          showAdd={false} // No add button for My Work
           activeFilters={activeFilters}
           onClearFilter={handleClearFilter}
         />
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <Assignment sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
           <Typography variant="body1" color="text.secondary">
-            No projects assigned to you yet.
+            No projects or tasks assigned to you yet.
           </Typography>
         </Box>
       </Box>
@@ -258,7 +319,8 @@ const MyProjectsList = ({
     <Box>
       {/* Unified Header */}
       <UnifiedHeader
-        title={`My Projects (${filteredAndSortedProjects.length})`}
+        title={`My Work`}
+        subtitle={`${filteredAndSortedProjects.length} projects • ${myTasks.length} tasks`}
         searchValue={searchValue}
         onSearchChange={setSearchValue}
         showFilters={showFilters}
@@ -267,7 +329,7 @@ const MyProjectsList = ({
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         onExport={handleExport}
-        showAdd={false} // No add button for My Projects
+        showAdd={false} // No add button for My Work
         activeFilters={activeFilters}
         onClearFilter={handleClearFilter}
       />
@@ -283,27 +345,164 @@ const MyProjectsList = ({
         quickFilters={quickFilters}
       />
 
-      {/* Table View */}
-      {viewMode === 'table' && (
-        <ProjectsTableView
-          projects={filteredAndSortedProjects}
-          clients={clients}
-          teamMembers={teamMembers}
-          onEditProject={onEditProject}
-          onDeleteProject={onDeleteProject}
-          onViewProject={onViewProject}
-          onManageScope={onManageScope}
-        />
+      {/* My Tasks Section */}
+      {myTasks.length > 0 && (
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#2C3E50' }}>
+            📋 My Tasks ({myTasks.length})
+          </Typography>
+          <Grid container spacing={2}>
+            {myTasks.slice(0, 6).map((task) => {
+              const priority = priorityConfig[task.priority] || priorityConfig.medium;
+              const status = statusConfig[task.status] || statusConfig.pending;
+              const taskOverdue = isOverdue(task);
+              
+              return (
+                <Grid item xs={12} sm={6} md={4} key={task.id}>
+                  <Card
+                    elevation={0}
+                    sx={{
+                      border: '1px solid #E9ECEF',
+                      borderRadius: 2,
+                      borderLeft: `4px solid ${priority.color}`,
+                      '&:hover': {
+                        boxShadow: 2,
+                        transform: 'translateY(-2px)'
+                      },
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <CardContent sx={{ p: 2 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                        <Typography variant="body1" sx={{ fontWeight: 600, flex: 1 }}>
+                          {task.name}
+                        </Typography>
+                        <Chip
+                          size="small"
+                          label={status.label}
+                          sx={{
+                            backgroundColor: status.bgColor,
+                            color: status.color,
+                            fontWeight: 600,
+                            ml: 1
+                          }}
+                        />
+                      </Box>
+                      
+                      {task.description && (
+                        <Typography variant="body2" color="textSecondary" sx={{ mb: 1.5 }}>
+                          {task.description}
+                        </Typography>
+                      )}
+                      
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                        <Chip
+                          size="small"
+                          label={getProjectName(task.projectId)}
+                          sx={{ backgroundColor: '#F8F9FA', color: '#7F8C8D' }}
+                        />
+                        <Chip
+                          size="small"
+                          label={priority.label}
+                          sx={{
+                            backgroundColor: priority.bgColor,
+                            color: priority.color,
+                            fontWeight: 600
+                          }}
+                        />
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography 
+                          variant="caption" 
+                          sx={{ 
+                            color: taskOverdue ? '#e74c3c' : 'text.secondary',
+                            fontWeight: taskOverdue ? 600 : 400
+                          }}
+                        >
+                          Due: {formatDate(task.dueDate)}
+                          {taskOverdue && ' (Overdue)'}
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                          <IconButton
+                            size="small"
+                            onClick={() => onViewTask && onViewTask(task)}
+                            sx={{ color: '#3498db' }}
+                          >
+                            <ViewIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            onClick={() => onEditTask && onEditTask(task)}
+                            sx={{ color: '#f39c12' }}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
+                      </Box>
+                      
+                      {task.progress !== undefined && task.progress > 0 && (
+                        <Box sx={{ mt: 1 }}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={task.progress}
+                            sx={{ 
+                              height: 6,
+                              borderRadius: 3,
+                              backgroundColor: '#E9ECEF'
+                            }}
+                          />
+                          <Typography variant="caption" sx={{ mt: 0.5, display: 'block' }}>
+                            {task.progress}% complete
+                          </Typography>
+                        </Box>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
+              );
+            })}
+          </Grid>
+          {myTasks.length > 6 && (
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <Typography variant="body2" color="textSecondary">
+                Showing 6 of {myTasks.length} tasks. View all tasks in the Tasks section.
+              </Typography>
+            </Box>
+          )}
+        </Box>
       )}
 
-      {/* Card View */}
-      {viewMode === 'card' && (
-        <ProjectsList 
-          projects={filteredAndSortedProjects}
-          tasks={tasks}
-          clients={clients}
-          onDeleteProject={onDeleteProject}
-        />
+      {/* My Projects Section */}
+      {myProjects.length > 0 && (
+        <Box>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#2C3E50' }}>
+            🎯 My Projects ({filteredAndSortedProjects.length})
+          </Typography>
+
+          {/* Projects Table View */}
+          {viewMode === 'table' && (
+            <ProjectsTableView
+              projects={filteredAndSortedProjects}
+              clients={clients}
+              teamMembers={teamMembers}
+              onEditProject={onEditProject}
+              onDeleteProject={onDeleteProject}
+              onViewProject={onViewProject}
+              onManageScope={onManageScope}
+            />
+          )}
+
+          {/* Projects Card View */}
+          {viewMode === 'card' && (
+            <ProjectsList 
+              projects={filteredAndSortedProjects}
+              tasks={tasks}
+              clients={clients}
+              onDeleteProject={onDeleteProject}
+            />
+          )}
+        </Box>
       )}
     </Box>
   );
