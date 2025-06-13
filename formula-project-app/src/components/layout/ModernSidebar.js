@@ -26,15 +26,35 @@ import {
 const ModernSidebar = ({ currentTab, onTabChange }) => {
   const theme = useTheme();
 
-  const menuItems = [
-    { id: 0, label: 'Dashboard', icon: <DashboardIcon />, active: true },
-    { id: 1, label: 'Projects', icon: <ProjectsIcon /> },
-    { id: 2, label: 'My Projects', icon: <MyProjectsIcon /> },
-    { id: 3, label: 'Tasks', icon: <TaskIcon /> },
-    { id: 4, label: 'Team', icon: <TeamIcon /> },
-    { id: 5, label: 'Clients', icon: <ClientsIcon /> },
-    { id: 6, label: 'Procurement', icon: <ProcurementIcon /> },
-    { id: 7, label: 'Timeline & Gantt', icon: <TimelineIcon /> }
+  const menuGroups = [
+    {
+      title: 'Overview',
+      items: [
+        { id: 0, label: 'Dashboard', icon: <DashboardIcon />, description: 'Project overview and stats' }
+      ]
+    },
+    {
+      title: 'Projects',
+      items: [
+        { id: 1, label: 'All Projects', icon: <ProjectsIcon />, description: 'All company projects' },
+        { id: 2, label: 'My Projects', icon: <MyProjectsIcon />, description: 'Projects I manage' }
+      ]
+    },
+    {
+      title: 'Work',
+      items: [
+        { id: 3, label: 'Tasks', icon: <TaskIcon />, description: 'Task management' },
+        { id: 7, label: 'Timeline', icon: <TimelineIcon />, description: 'Gantt charts and timelines' }
+      ]
+    },
+    {
+      title: 'Resources',
+      items: [
+        { id: 4, label: 'Team', icon: <TeamIcon />, description: 'Team member management' },
+        { id: 5, label: 'Clients', icon: <ClientsIcon />, description: 'Client database' },
+        { id: 6, label: 'Procurement', icon: <ProcurementIcon />, description: 'Purchase and suppliers' }
+      ]
+    }
   ];
 
   const bottomItems = [
@@ -105,44 +125,71 @@ const ModernSidebar = ({ currentTab, onTabChange }) => {
         </Typography>
       </Box>
 
-      {/* Main Navigation */}
+      {/* Grouped Navigation */}
       <Box sx={{ flex: 1, px: 2 }}>
-        <List sx={{ padding: 0 }}>
-          {menuItems.map((item) => (
-            <ListItem key={item.id} disablePadding sx={{ mb: 0.5 }}>
-              <ListItemButton
-                onClick={() => handleItemClick(item.id)}
-                sx={{
-                  borderRadius: 2,
-                  mx: 1,
-                  py: 1.5,
-                  backgroundColor: currentTab === item.id ? '#E67E22' : 'transparent',
-                  color: currentTab === item.id ? 'white' : '#BDC3C7',
-                  '&:hover': {
-                    backgroundColor: currentTab === item.id ? '#D35400' : 'rgba(255, 255, 255, 0.08)'
-                  },
-                  transition: 'all 0.2s ease-in-out'
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    color: 'inherit',
-                    minWidth: 40
-                  }}
-                >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.label}
-                  primaryTypographyProps={{
-                    fontSize: '0.9rem',
-                    fontWeight: currentTab === item.id ? 600 : 400
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+        {menuGroups.map((group, groupIndex) => (
+          <Box key={group.title} sx={{ mb: 3 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'rgba(255, 255, 255, 0.6)',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                letterSpacing: 1,
+                px: 2,
+                mb: 1,
+                display: 'block',
+                fontSize: '0.7rem'
+              }}
+            >
+              {group.title}
+            </Typography>
+            
+            <List sx={{ padding: 0 }}>
+              {group.items.map((item) => (
+                <ListItem key={item.id} disablePadding sx={{ mb: 0.5 }}>
+                  <ListItemButton
+                    onClick={() => handleItemClick(item.id)}
+                    sx={{
+                      borderRadius: 2,
+                      mx: 1,
+                      py: 1.5,
+                      backgroundColor: currentTab === item.id ? '#E67E22' : 'transparent',
+                      color: currentTab === item.id ? 'white' : '#BDC3C7',
+                      '&:hover': {
+                        backgroundColor: currentTab === item.id ? '#D35400' : 'rgba(255, 255, 255, 0.08)',
+                        color: currentTab === item.id ? 'white' : '#ECF0F1'
+                      },
+                      transition: 'all 0.2s ease-in-out'
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        color: 'inherit',
+                        minWidth: 40
+                      }}
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.label}
+                      secondary={item.description}
+                      primaryTypographyProps={{
+                        fontSize: '0.9rem',
+                        fontWeight: currentTab === item.id ? 600 : 400
+                      }}
+                      secondaryTypographyProps={{
+                        fontSize: '0.75rem',
+                        color: currentTab === item.id ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.5)',
+                        display: 'none' // Show on hover or when active
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        ))}
       </Box>
 
       {/* Bottom Section */}

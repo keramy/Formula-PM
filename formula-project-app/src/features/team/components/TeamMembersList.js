@@ -35,6 +35,8 @@ import {
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';
+import OptionsMenu from '../../../components/ui/OptionsMenu';
+import { exportTeamMembersToExcel } from '../../../services/export/excelExport';
 
 const roles = [
   { value: 'project_manager', label: 'Project Manager', color: '#e74c3c', level: 5 },
@@ -53,7 +55,7 @@ const departments = [
   { value: 'client', label: 'Client' }
 ];
 
-function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, onAddMember }) {
+function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, onAddMember, onViewMemberDetail, viewMode: propViewMode, onViewModeChange: propOnViewModeChange }) {
   const [editDialog, setEditDialog] = useState(false);
   const [viewDialog, setViewDialog] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
@@ -62,7 +64,7 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, o
   // Enhanced view state
   const [searchValue, setSearchValue] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState('card');
+  const [viewMode, setViewMode] = useState(propViewMode || 'card');
   const [sortBy, setSortBy] = useState('roleLevel');
   const [sortDirection, setSortDirection] = useState('desc');
   const [filters, setFilters] = useState({
@@ -133,7 +135,9 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, o
       render: (value, row) => ({
         fallback: row.initials,
         bgColor: row.roleColor,
-        text: row.fullName
+        text: row.fullName,
+        clickable: true,
+        onClick: () => onViewMemberDetail && onViewMemberDetail(row)
       })
     },
     {
@@ -417,7 +421,6 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, o
   };
 
   const handleExport = () => {
-    const { exportTeamMembersToExcel } = require('../../../services/export/excelExport');
     exportTeamMembersToExcel(filteredAndSortedMembers, tasks);
   };
 
@@ -469,7 +472,10 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, o
         onToggleFilters={() => setShowFilters(!showFilters)}
         activeFiltersCount={activeFilters.length}
         viewMode={viewMode}
-        onViewModeChange={setViewMode}
+        onViewModeChange={(mode) => {
+          setViewMode(mode);
+          if (propOnViewModeChange) propOnViewModeChange(mode);
+        }}
         onExport={handleExport}
         onAdd={onAddMember}
         addButtonText="Add Member"
@@ -570,7 +576,20 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, o
                     </Badge>
                     
                     <Box sx={{ ml: 2, flex: 1 }}>
-                      <Typography variant="h6" component="h3">
+                      <Typography 
+                        variant="h6" 
+                        component="h3"
+                        sx={{
+                          cursor: 'pointer',
+                          color: '#3498db',
+                          textDecoration: 'none',
+                          '&:hover': {
+                            textDecoration: 'underline',
+                            color: '#2980b9'
+                          }
+                        }}
+                        onClick={() => onViewMemberDetail && onViewMemberDetail(member)}
+                      >
                         {member.fullName}
                       </Typography>
                       <Chip
@@ -588,17 +607,39 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, o
                       </Typography>
                     </Box>
 
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                      <IconButton size="small" onClick={() => handleView(member)}>
-                        <Visibility fontSize="small" />
-                      </IconButton>
-                      <IconButton size="small" onClick={() => handleEdit(member)}>
-                        <Edit fontSize="small" />
-                      </IconButton>
-                      <IconButton size="small" color="error" onClick={() => handleDelete(member)}>
-                        <Delete fontSize="small" />
-                      </IconButton>
-                    </Box>
+                    <OptionsMenu
+                      options={[
+                        {
+                          action: 'view',
+                          label: 'View Details',
+                          icon: 'view'
+                        },
+                        {
+                          action: 'edit',
+                          label: 'Edit Member',
+                          icon: 'edit'
+                        },
+                        { divider: true },
+                        {
+                          action: 'delete',
+                          label: 'Delete Member',
+                          icon: 'delete'
+                        }
+                      ]}
+                      onAction={(action) => {
+                        switch (action) {
+                          case 'view':
+                            handleView(member);
+                            break;
+                          case 'edit':
+                            handleEdit(member);
+                            break;
+                          case 'delete':
+                            handleDelete(member);
+                            break;
+                        }
+                      }}
+                    />
                   </Box>
 
                   {/* Contact Info */}

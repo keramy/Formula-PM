@@ -121,7 +121,23 @@ const UnifiedTableView = ({
               >
                 {renderedValue.fallback || '?'}
               </Avatar>
-              {renderedValue.text && <Typography variant="body2">{renderedValue.text}</Typography>}
+              {renderedValue.text && (
+                <Typography 
+                  variant="body2"
+                  sx={{
+                    cursor: renderedValue.clickable ? 'pointer' : 'default',
+                    color: renderedValue.clickable ? '#3498db' : 'inherit',
+                    textDecoration: 'none',
+                    '&:hover': renderedValue.clickable ? {
+                      textDecoration: 'underline',
+                      color: '#2980b9'
+                    } : {}
+                  }}
+                  onClick={renderedValue.clickable ? renderedValue.onClick : undefined}
+                >
+                  {renderedValue.text}
+                </Typography>
+              )}
             </Box>
           );
         }
@@ -132,10 +148,15 @@ const UnifiedTableView = ({
             <Chip
               label={renderedValue.label || 'Unknown'}
               size="small"
+              icon={renderedValue.icon || null}
               sx={{
                 backgroundColor: renderedValue.bgColor || 'grey.100',
                 color: renderedValue.color || 'text.primary',
-                fontWeight: 500
+                fontWeight: 500,
+                '& .MuiChip-icon': {
+                  color: renderedValue.color || 'text.primary',
+                  fontSize: '16px'
+                }
               }}
             />
           );
@@ -183,10 +204,15 @@ const UnifiedTableView = ({
           <Chip
             label={value.label || value}
             size="small"
+            icon={value.icon || null}
             sx={{
               backgroundColor: value.bgColor || 'grey.100',
               color: value.color || 'text.primary',
-              fontWeight: 500
+              fontWeight: 500,
+              '& .MuiChip-icon': {
+                color: value.color || 'text.primary',
+                fontSize: '16px'
+              }
             }}
           />
         );

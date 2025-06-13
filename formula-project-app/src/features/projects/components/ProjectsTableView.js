@@ -265,14 +265,22 @@ const ProjectsTableView = ({
                         {project.name.substring(0, 2).toUpperCase()}
                       </Avatar>
                       <Box>
-                        <Typography variant="body2" sx={{ fontWeight: 600, color: '#2C3E50' }}>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            fontWeight: 600, 
+                            color: '#3498db',
+                            cursor: 'pointer',
+                            textDecoration: 'none',
+                            '&:hover': {
+                              textDecoration: 'underline',
+                              color: '#2980b9'
+                            }
+                          }}
+                          onClick={() => onManageScope && onManageScope(project)}
+                        >
                           {project.name}
                         </Typography>
-                        {project.description && (
-                          <Typography variant="caption" color="textSecondary" sx={{ display: 'block' }}>
-                            {project.description.substring(0, 50)}...
-                          </Typography>
-                        )}
                       </Box>
                     </Box>
                   </TableCell>

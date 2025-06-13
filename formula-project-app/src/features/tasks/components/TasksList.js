@@ -20,32 +20,42 @@ import {
   Warning,
   Undo,
   Edit as EditIcon,
-  Visibility as ViewIcon
+  Visibility as ViewIcon,
+  Schedule,
+  PlayArrow,
+  Flag,
+  Error,
+  PriorityHigh
 } from '@mui/icons-material';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';
+import { exportTasksToExcel } from '../../../services/export/excelExport';
 
 const priorityConfig = {
   low: {
     label: 'Low',
     color: '#27ae60',
-    bgColor: '#eafaf1'
+    bgColor: '#eafaf1',
+    icon: <Flag />
   },
   medium: {
     label: 'Medium',
     color: '#f39c12',
-    bgColor: '#fef9e7'
+    bgColor: '#fef9e7',
+    icon: <Flag />
   },
   high: {
     label: 'High',
     color: '#e67e22',
-    bgColor: '#fef5e7'
+    bgColor: '#fef5e7',
+    icon: <Warning />
   },
   urgent: {
     label: 'Urgent',
     color: '#e74c3c',
-    bgColor: '#fdf2f2'
+    bgColor: '#fdf2f2',
+    icon: <PriorityHigh />
   }
 };
 
@@ -160,7 +170,8 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
         return {
           label: config.label,
           color: config.color,
-          bgColor: config.bgColor
+          bgColor: config.bgColor,
+          icon: config.icon
         };
       }
     },
@@ -170,16 +181,17 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
       type: 'chip',
       render: (value) => {
         const statusConfig = {
-          pending: { label: 'Pending', color: '#f39c12', bgColor: '#fef9e7' },
-          'in-progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb' },
-          'in_progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb' },
-          completed: { label: 'Completed', color: '#27ae60', bgColor: '#eafaf1' }
+          pending: { label: 'Pending', color: '#f39c12', bgColor: '#fef9e7', icon: <Schedule /> },
+          'in-progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb', icon: <PlayArrow /> },
+          'in_progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb', icon: <PlayArrow /> },
+          completed: { label: 'Completed', color: '#27ae60', bgColor: '#eafaf1', icon: <CheckCircle /> }
         };
         const config = statusConfig[value || 'pending'] || statusConfig.pending;
         return {
           label: config.label,
           color: config.color,
-          bgColor: config.bgColor
+          bgColor: config.bgColor,
+          icon: config.icon
         };
       }
     },
@@ -396,7 +408,6 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
   };
 
   const handleExport = () => {
-    const { exportTasksToExcel } = require('../../../services/export/excelExport');
     exportTasksToExcel(filteredAndSortedTasks, projects, teamMembers);
   };
 
@@ -557,11 +568,16 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
                             <Chip
                               label={priority.label}
                               size="small"
+                              icon={priority.icon}
                               sx={{
                                 backgroundColor: priority.bgColor,
                                 color: priority.color,
                                 fontWeight: 600,
-                                fontSize: '0.75rem'
+                                fontSize: '0.75rem',
+                                '& .MuiChip-icon': {
+                                  color: priority.color,
+                                  fontSize: '14px'
+                                }
                               }}
                             />
                           </Box>
@@ -629,10 +645,15 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
                               <Chip
                                 label="Completed"
                                 size="small"
+                                icon={<CheckCircle />}
                                 sx={{
                                   backgroundColor: '#eafaf1',
                                   color: '#27ae60',
-                                  fontWeight: 600
+                                  fontWeight: 600,
+                                  '& .MuiChip-icon': {
+                                    color: '#27ae60',
+                                    fontSize: '14px'
+                                  }
                                 }}
                               />
                             ) : (

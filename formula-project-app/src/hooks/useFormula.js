@@ -54,7 +54,8 @@ export const useFormulaData = () => {
   // Memoized computed values to prevent unnecessary re-calculations
   const stats = useMemo(() => ({
     totalProjects: projects.length,
-    activeProjects: projects.filter(p => p.status === 'Active').length,
+    activeProjects: projects.filter(p => p.status === 'active').length,
+    completedProjects: projects.filter(p => p.status === 'completed').length,
     totalTasks: tasks.length,
     completedTasks: tasks.filter(t => t.status === 'completed').length,
     pendingTasks: tasks.filter(t => t.status === 'pending').length,

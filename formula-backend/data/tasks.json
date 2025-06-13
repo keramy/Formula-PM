@@ -103,5 +103,19 @@
     "progress": 0,
     "createdAt": "2025-06-11T09:10:59.988Z",
     "updatedAt": "2025-06-11T09:11:01.452Z"
+  },
+  {
+    "projectId": 2001,
+    "name": "deneme2",
+    "assignedTo": 1008,
+    "priority": "urgent",
+    "dueDate": "2025-06-13",
+    "description": "Yeni app ile ilgili denemeler yapılması",
+    "files": [],
+    "id": "task_1749817337502_770_1",
+    "status": "pending",
+    "progress": 0,
+    "createdAt": "2025-06-13T12:22:17.502Z",
+    "updatedAt": "2025-06-13T12:22:18.347Z"
   }
 ]

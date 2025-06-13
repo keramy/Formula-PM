@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy, useCallback } from 'react';
+import React, { useState } from 'react';
 import { generateProjectId, generateTaskId, generateMemberId } from '../utils/generators/idGenerator';
 import apiService from '../services/api/apiService';
 import { useFormulaData, useFilteredData, useActiveFilters } from '../hooks/useFormula';
@@ -9,11 +9,9 @@ import {
   Paper,
   Box,
   Typography,
-  Button,
   Dialog,
   DialogTitle,
-  DialogContent,
-  CircularProgress
+  DialogContent
 } from '@mui/material';
 import { NotificationProvider } from '../context';
 import NotificationContainer from '../components/ui/NotificationContainer';
@@ -22,26 +20,31 @@ import ModernStatsCards from '../components/charts/ModernStatsCards';
 import UnifiedHeader from '../components/ui/UnifiedHeader';
 import { exportProjectsToExcel } from '../services/export/excelExport';
 import { formulaTheme } from '../theme';
+
+// Direct imports to avoid chunk loading issues
+import ModernProjectOverview from '../features/dashboard/components/ModernProjectOverview';
+import ProjectForm from '../features/projects/components/ProjectForm';
+import TaskForm from '../features/tasks/components/TaskForm';
+import ProjectsList from '../features/projects/components/ProjectsList';
+import TasksList from '../features/tasks/components/TasksList';
+import GanttChart from '../components/charts/GanttChart';
+import TeamMemberForm from '../features/team/components/TeamMemberForm';
+import TeamMembersList from '../features/team/components/TeamMembersList';
+import ClientForm from '../features/clients/components/ClientForm';
+import ClientsList from '../features/clients/components/ClientsList';
+import ProjectsTableView from '../features/projects/components/ProjectsTableView';
+import ProjectsFilters from '../features/projects/components/ProjectsFilters';
+import MyProjectsList from '../features/projects/components/MyProjectsList';
+import EnhancedProjectScope from '../features/projects/components/EnhancedProjectScope';
+import TeamMemberDetail from '../features/team/components/TeamMemberDetail';
+import GlobalSearchResults from '../components/ui/GlobalSearchResults';
+import BoardView from '../components/views/BoardView';
+import EnhancedTabSystem from '../components/layout/EnhancedTabSystem';
+import EnhancedHeader from '../components/layout/EnhancedHeader';
+
 import './App.css';
 import '../styles/globals.css';
 import '../styles/modern-dashboard.css';
-
-// Lazy load heavy components for better performance
-const ModernProjectOverview = lazy(() => import('../features/dashboard/components/ModernProjectOverview'));
-const ProjectForm = lazy(() => import('../features/projects/components/ProjectForm'));
-const TaskForm = lazy(() => import('../features/tasks/components/TaskForm'));
-const ProjectsList = lazy(() => import('../features/projects/components/ProjectsList'));
-const TasksList = lazy(() => import('../features/tasks/components/TasksList'));
-const GanttChart = lazy(() => import('../components/charts/GanttChart'));
-const TeamMemberForm = lazy(() => import('../features/team/components/TeamMemberForm'));
-const TeamMembersList = lazy(() => import('../features/team/components/TeamMembersList'));
-const ClientForm = lazy(() => import('../features/clients/components/ClientForm'));
-const ClientsList = lazy(() => import('../features/clients/components/ClientsList'));
-const ProjectsTableView = lazy(() => import('../features/projects/components/ProjectsTableView'));
-const ProjectsFilters = lazy(() => import('../features/projects/components/ProjectsFilters'));
-const MyProjectsList = lazy(() => import('../features/projects/components/MyProjectsList'));
-const EnhancedProjectScope = lazy(() => import('../features/projects/components/EnhancedProjectScope'));
-const AdvancedDashboard = lazy(() => import('../components/charts/AdvancedDashboard'));
 
 
 function App() {
@@ -73,13 +76,29 @@ function App() {
   const [selectedProjectForScope, setSelectedProjectForScope] = useState(null);
   const [addTeamMemberDialogOpen, setAddTeamMemberDialogOpen] = useState(false);
   const [addClientDialogOpen, setAddClientDialogOpen] = useState(false);
+  const [addTaskDialogOpen, setAddTaskDialogOpen] = useState(false);
   const [editTaskDialogOpen, setEditTaskDialogOpen] = useState(false);
   const [viewTaskDialogOpen, setViewTaskDialogOpen] = useState(false);
   const [selectedTaskForEdit, setSelectedTaskForEdit] = useState(null);
   const [selectedTaskForView, setSelectedTaskForView] = useState(null);
+  const [teamMemberDetailOpen, setTeamMemberDetailOpen] = useState(false);
+  const [selectedMemberForDetail, setSelectedMemberForDetail] = useState(null);
+  const [globalSearch, setGlobalSearch] = useState('');
+  const [showSearchResults, setShowSearchResults] = useState(false);
   
   // New state for enhanced projects view
-  const [projectsViewMode, setProjectsViewMode] = useState('table');
+  const [projectsViewMode, setProjectsViewMode] = useState(
+    localStorage.getItem('projectsViewMode') || 'board'
+  );
+  const [tasksViewMode, setTasksViewMode] = useState(
+    localStorage.getItem('tasksViewMode') || 'table'
+  );
+  const [teamViewMode, setTeamViewMode] = useState(
+    localStorage.getItem('teamViewMode') || 'card'
+  );
+  const [clientsViewMode, setClientsViewMode] = useState(
+    localStorage.getItem('clientsViewMode') || 'card'
+  );
   const [projectsSearchTerm, setProjectsSearchTerm] = useState('');
   const [showProjectsFilters, setShowProjectsFilters] = useState(false);
   const [projectsFilters, setProjectsFilters] = useState({
@@ -115,6 +134,11 @@ function App() {
 
   const updateProject = async (project) => {
     try {
+      // Automatically set progress to 100% if project is marked as completed
+      if (project.status === 'completed' && project.progress !== 100) {
+        project.progress = 100;
+      }
+      
       const updatedProject = await apiService.updateProject(project.id, project);
       setProjects(projects.map(p => p.id === project.id ? updatedProject : p));
       setEditProjectDialogOpen(false);
@@ -137,6 +161,7 @@ function App() {
       
       const createdTask = await apiService.createTask(newTask);
       setTasks([...tasks, createdTask]);
+      setAddTaskDialogOpen(false);
       
       // Log task assignment (for demo)
       if (task.assignedTo) {
@@ -305,6 +330,91 @@ function App() {
     setAddTeamMemberDialogOpen(true);
   };
 
+  const handleAddTask = () => {
+    setAddTaskDialogOpen(true);
+  };
+
+  const handleViewTeamMemberDetail = (member) => {
+    setSelectedMemberForDetail(member);
+    setTeamMemberDetailOpen(true);
+  };
+
+  const handleCloseTeamMemberDetail = () => {
+    setTeamMemberDetailOpen(false);
+    setSelectedMemberForDetail(null);
+  };
+
+  // Global search functionality
+  const handleGlobalSearchChange = (value) => {
+    setGlobalSearch(value);
+    if (value.trim().length > 0) {
+      setShowSearchResults(true);
+    } else {
+      setShowSearchResults(false);
+    }
+  };
+
+  const handleSearchSubmit = () => {
+    if (globalSearch.trim().length > 0) {
+      setShowSearchResults(true);
+    }
+  };
+
+  const handleSearchResultSelect = (type, item) => {
+    setShowSearchResults(false);
+    setGlobalSearch('');
+    
+    switch (type) {
+      case 'project':
+        setCurrentTab(1); // Switch to Projects tab
+        // You could add additional logic here to highlight the selected project
+        break;
+      case 'task':
+        setCurrentTab(3); // Switch to Tasks tab
+        break;
+      case 'teamMember':
+        setCurrentTab(4); // Switch to Team tab
+        setSelectedMemberForDetail(item);
+        setTeamMemberDetailOpen(true);
+        break;
+    }
+  };
+
+  const getSearchResults = () => {
+    if (!globalSearch.trim()) {
+      return { projects: [], tasks: [], teamMembers: [] };
+    }
+
+    const searchTerm = globalSearch.toLowerCase();
+    
+    const filteredProjects = projects.filter(project =>
+      project.name.toLowerCase().includes(searchTerm) ||
+      project.description?.toLowerCase().includes(searchTerm) ||
+      project.type.toLowerCase().includes(searchTerm) ||
+      project.status.toLowerCase().includes(searchTerm)
+    );
+
+    const filteredTasks = tasks.filter(task =>
+      task.name.toLowerCase().includes(searchTerm) ||
+      task.description?.toLowerCase().includes(searchTerm) ||
+      task.status.toLowerCase().includes(searchTerm) ||
+      task.priority.toLowerCase().includes(searchTerm)
+    );
+
+    const filteredTeamMembers = teamMembers.filter(member =>
+      member.fullName.toLowerCase().includes(searchTerm) ||
+      member.email.toLowerCase().includes(searchTerm) ||
+      member.role.toLowerCase().includes(searchTerm) ||
+      member.department.toLowerCase().includes(searchTerm)
+    );
+
+    return {
+      projects: filteredProjects,
+      tasks: filteredTasks,
+      teamMembers: filteredTeamMembers
+    };
+  };
+
   const updateTeamMember = async (memberId, updates) => {
     try {
       const updatedMember = await apiService.updateTeamMember(memberId, updates);
@@ -366,6 +476,22 @@ function App() {
 
   const handleViewModeChange = (mode) => {
     setProjectsViewMode(mode);
+    localStorage.setItem('projectsViewMode', mode);
+  };
+
+  const handleTasksViewModeChange = (mode) => {
+    setTasksViewMode(mode);
+    localStorage.setItem('tasksViewMode', mode);
+  };
+
+  const handleTeamViewModeChange = (mode) => {
+    setTeamViewMode(mode);
+    localStorage.setItem('teamViewMode', mode);
+  };
+
+  const handleClientsViewModeChange = (mode) => {
+    setClientsViewMode(mode);
+    localStorage.setItem('clientsViewMode', mode);
   };
 
   const handleFiltersChange = (newFilters) => {
@@ -443,7 +569,13 @@ function App() {
       <NotificationProvider>
         <ThemeProvider theme={formulaTheme}>
           <CssBaseline />
-          <ModernDashboardLayout currentTab={currentTab} onTabChange={handleTabChange}>
+          <ModernDashboardLayout 
+            currentTab={currentTab} 
+            onTabChange={handleTabChange}
+            globalSearch={globalSearch}
+            onGlobalSearchChange={handleGlobalSearchChange}
+            onSearchSubmit={handleSearchSubmit}
+          >
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
               <div style={{ textAlign: 'center' }}>
                 <Typography variant="h6">Loading Formula Project Management...</Typography>
@@ -458,106 +590,162 @@ function App() {
     );
   }
 
-  // Loading component for lazy-loaded components
-  const LoadingFallback = () => (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
-      <CircularProgress size={40} />
-    </Box>
-  );
 
   const renderTabContent = () => {
     switch (currentTab) {
       case 0: // Dashboard
         return (
-          <Suspense fallback={<LoadingFallback />}>
+          <>
             <ModernStatsCards projects={projects} tasks={tasks} teamMembers={teamMembers} />
             <ModernProjectOverview projects={projects} tasks={tasks} teamMembers={teamMembers} />
-          </Suspense>
+          </>
         );
 
       case 1: // Projects
         return (
-          <Suspense fallback={<LoadingFallback />}>
-            <Box>
-              <UnifiedHeader
-                title="Projects"
-                searchValue={projectsSearchTerm}
-                onSearchChange={setProjectsSearchTerm}
-                showFilters={showProjectsFilters}
-                onToggleFilters={handleToggleProjectsFilters}
-                activeFiltersCount={activeFilters.length}
-                viewMode={projectsViewMode}
-                onViewModeChange={handleViewModeChange}
-                onExport={handleProjectsExport}
-                onAdd={() => setCreateProjectDialogOpen(true)}
-                addButtonText="New Project"
-                exportButtonText="Export"
-                activeFilters={activeFilters}
-                onClearFilter={handleClearFilter}
-              />
+          <Box>
+            <EnhancedHeader
+              title="All Projects"
+              breadcrumbs={[
+                { label: 'Projects', href: '/projects' }
+              ]}
+              searchValue={projectsSearchTerm}
+              onSearchChange={setProjectsSearchTerm}
+              onAdd={() => setCreateProjectDialogOpen(true)}
+              isStarred={false}
+              onToggleStar={() => {}}
+              teamMembers={teamMembers.slice(0, 5)}
+              subtitle={`${filteredProjects.length} active projects`}
+            />
 
-              <ProjectsFilters
-                open={showProjectsFilters}
-                filters={projectsFilters}
-                onFiltersChange={handleFiltersChange}
-                onClearFilters={handleClearFilters}
-                clients={clients}
+            {/* Enhanced Tab System */}
+            <EnhancedTabSystem
+              currentView={projectsViewMode}
+              onViewChange={handleViewModeChange}
+              onFilterToggle={handleToggleProjectsFilters}
+              onExport={handleProjectsExport}
+              hasActiveFilters={activeFilters.length > 0}
+              activeFiltersCount={activeFilters.length}
+              title="Projects"
+            />
+
+            <ProjectsFilters
+              open={showProjectsFilters}
+              filters={projectsFilters}
+              onFiltersChange={handleFiltersChange}
+              onClearFilters={handleClearFilters}
+              clients={clients}
+              teamMembers={teamMembers}
+              projects={projects}
+            />
+            
+            {/* Conditional View Rendering */}
+            {projectsViewMode === 'board' && (
+              <BoardView
+                tasks={tasks}
+                onTaskUpdate={updateTask}
                 teamMembers={teamMembers}
                 projects={projects}
               />
-              
-              {projectsViewMode === 'table' ? (
-                <ProjectsTableView
+            )}
+
+            {projectsViewMode === 'table' && (
+              <ProjectsTableView
+                projects={filteredProjects}
+                clients={clients}
+                teamMembers={teamMembers}
+                onEditProject={handleEditProject}
+                onDeleteProject={deleteProject}
+                onViewProject={handleViewProject}
+                onManageScope={handleManageScope}
+              />
+            )}
+
+            {projectsViewMode === 'list' && (
+              <Paper 
+                elevation={0}
+                sx={{ 
+                  p: 3, 
+                  backgroundColor: 'white',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: 3
+                }}
+              >
+                <ProjectsList 
                   projects={filteredProjects}
+                  tasks={tasks}
                   clients={clients}
-                  teamMembers={teamMembers}
-                  onEditProject={handleEditProject}
                   onDeleteProject={deleteProject}
-                  onViewProject={handleViewProject}
                   onManageScope={handleManageScope}
                 />
-              ) : (
-                <Paper 
-                  elevation={0}
-                  sx={{ 
-                    p: 3, 
-                    backgroundColor: 'white',
-                    border: '1px solid #E9ECEF',
-                    borderRadius: 3
-                  }}
-                >
-                  <ProjectsList 
-                    projects={filteredProjects}
-                    tasks={tasks}
-                    clients={clients}
-                    onDeleteProject={deleteProject}
-                  />
-                </Paper>
-              )}
-            </Box>
-          </Suspense>
+              </Paper>
+            )}
+
+            {projectsViewMode === 'gantt' && (
+              <Paper 
+                elevation={0}
+                sx={{ 
+                  p: 3, 
+                  backgroundColor: 'white',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: 3
+                }}
+              >
+                <GanttChart 
+                  tasks={tasks}
+                  projects={projects}
+                  teamMembers={teamMembers}
+                />
+              </Paper>
+            )}
+
+            {projectsViewMode === 'calendar' && (
+              <Box sx={{ p: 3, textAlign: 'center' }}>
+                <Typography variant="h6" color="textSecondary">
+                  📅 Calendar View Coming Soon
+                </Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                  We're working on an amazing calendar interface for your projects.
+                </Typography>
+              </Box>
+            )}
+          </Box>
         );
 
       case 2: // My Projects
         return (
-          <Suspense fallback={<LoadingFallback />}>
-            <MyProjectsList 
-              projects={projects}
-              tasks={tasks}
-              clients={clients}
-              teamMembers={teamMembers}
-              onDeleteProject={deleteProject}
-              onEditProject={handleEditProject}
-              onViewProject={handleViewProject}
-              onManageScope={handleManageScope}
-              currentUserId={1008} // This would come from authentication in a real app
-            />
-          </Suspense>
+          <MyProjectsList 
+            projects={projects}
+            tasks={tasks}
+            clients={clients}
+            teamMembers={teamMembers}
+            onDeleteProject={deleteProject}
+            onEditProject={handleEditProject}
+            onViewProject={handleViewProject}
+            onManageScope={handleManageScope}
+            currentUserId={1008} // This would come from authentication in a real app
+          />
         );
 
       case 3: // Tasks
         return (
-          <Suspense fallback={<LoadingFallback />}>
+          <Box>
+            <UnifiedHeader
+              title="Tasks"
+              searchValue=""
+              onSearchChange={() => {}}
+              showFilters={false}
+              onToggleFilters={() => {}}
+              activeFiltersCount={0}
+              viewMode={tasksViewMode}
+              onViewModeChange={handleTasksViewModeChange}
+              onExport={() => {}}
+              onAdd={handleAddTask}
+              addButtonText="New Task"
+              activeFilters={[]}
+              onClearFilter={() => {}}
+            />
+
             <Grid container spacing={4}>
               <Grid item xs={12}>
                 <Paper 
@@ -578,39 +766,49 @@ function App() {
                     teamMembers={teamMembers}
                     onUpdateTask={updateTask}
                     onDeleteTask={deleteTask}
-                    onAddTask={() => {/* Handle add task - will show form */}}
+                    onAddTask={handleAddTask}
                     onViewTask={handleViewTask}
                     onEditTask={handleEditTask}
+                    viewMode={tasksViewMode}
                   />
                 </Paper>
               </Grid>
             </Grid>
-          </Suspense>
+          </Box>
         );
 
       case 4: // Team
-        return (
-          <Suspense fallback={<LoadingFallback />}>
-            <TeamMembersList 
-              teamMembers={teamMembers}
-              tasks={tasks}
-              onUpdateMember={updateTeamMember}
-              onDeleteMember={deleteTeamMember}
-              onAddMember={handleAddTeamMember}
-            />
-          </Suspense>
+        return teamMemberDetailOpen ? (
+          <TeamMemberDetail
+            member={selectedMemberForDetail}
+            tasks={tasks}
+            projects={projects}
+            teamMembers={teamMembers}
+            onClose={handleCloseTeamMemberDetail}
+          />
+        ) : (
+          <TeamMembersList 
+            teamMembers={teamMembers}
+            tasks={tasks}
+            onUpdateMember={updateTeamMember}
+            onDeleteMember={deleteTeamMember}
+            onAddMember={handleAddTeamMember}
+            onViewMemberDetail={handleViewTeamMemberDetail}
+            viewMode={teamViewMode}
+            onViewModeChange={handleTeamViewModeChange}
+          />
         );
 
       case 5: // Clients
         return (
-          <Suspense fallback={<LoadingFallback />}>
-            <ClientsList 
-              clients={clients}
-              onUpdateClient={updateClient}
-              onDeleteClient={deleteClient}
-              onAddClient={handleAddClient}
-            />
-          </Suspense>
+          <ClientsList 
+            clients={clients}
+            onUpdateClient={updateClient}
+            onDeleteClient={deleteClient}
+            onAddClient={handleAddClient}
+            viewMode={clientsViewMode}
+            onViewModeChange={handleClientsViewModeChange}
+          />
         );
 
       case 6: // Procurement
@@ -645,26 +843,24 @@ function App() {
 
       case 7: // Timeline & Gantt
         return (
-          <Suspense fallback={<LoadingFallback />}>
-            <Paper 
-              elevation={0}
-              sx={{ 
-                p: 3, 
-                backgroundColor: 'white',
-                border: '1px solid #E9ECEF',
-                borderRadius: 3
-              }}
-            >
-              <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
-                Project Timeline & Gantt Chart
-              </Typography>
-              <GanttChart 
-                tasks={tasks}
-                projects={projects}
-                teamMembers={teamMembers}
-              />
-            </Paper>
-          </Suspense>
+          <Paper 
+            elevation={0}
+            sx={{ 
+              p: 3, 
+              backgroundColor: 'white',
+              border: '1px solid #E9ECEF',
+              borderRadius: 3
+            }}
+          >
+            <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
+              Project Timeline & Gantt Chart
+            </Typography>
+            <GanttChart 
+              tasks={tasks}
+              projects={projects}
+              teamMembers={teamMembers}
+            />
+          </Paper>
         );
 
       default:
@@ -676,7 +872,13 @@ function App() {
     <NotificationProvider>
       <ThemeProvider theme={formulaTheme}>
         <CssBaseline />
-        <ModernDashboardLayout currentTab={currentTab} onTabChange={handleTabChange}>
+        <ModernDashboardLayout 
+          currentTab={currentTab} 
+          onTabChange={handleTabChange}
+          globalSearch={globalSearch}
+          onGlobalSearchChange={handleGlobalSearchChange}
+          onSearchSubmit={handleSearchSubmit}
+        >
           <div style={{ padding: '0' }}>
             {/* Error Alert */}
             {error && (
@@ -706,9 +908,7 @@ function App() {
         >
           <DialogTitle>Create New Project</DialogTitle>
           <DialogContent>
-            <Suspense fallback={<LoadingFallback />}>
-              <ProjectForm onSubmit={addProject} clients={clients} />
-            </Suspense>
+            <ProjectForm onSubmit={addProject} clients={clients} />
           </DialogContent>
         </Dialog>
 
@@ -721,15 +921,13 @@ function App() {
         >
           <DialogTitle>Edit Project</DialogTitle>
           <DialogContent>
-            <Suspense fallback={<LoadingFallback />}>
-              {selectedProjectForEdit && (
-                <ProjectForm 
-                  onSubmit={updateProject} 
-                  clients={clients} 
-                  initialProject={selectedProjectForEdit}
-                />
-              )}
-            </Suspense>
+            {selectedProjectForEdit && (
+              <ProjectForm 
+                onSubmit={updateProject} 
+                clients={clients} 
+                initialProject={selectedProjectForEdit}
+              />
+            )}
           </DialogContent>
         </Dialog>
 
@@ -783,14 +981,12 @@ function App() {
           }}
         >
           <DialogContent sx={{ p: 0 }}>
-            <Suspense fallback={<LoadingFallback />}>
-              {selectedProjectForScope && (
-                <EnhancedProjectScope 
-                  project={selectedProjectForScope} 
-                  onClose={handleCloseScopeDialog}
-                />
-              )}
-            </Suspense>
+            {selectedProjectForScope && (
+              <EnhancedProjectScope 
+                project={selectedProjectForScope} 
+                onClose={handleCloseScopeDialog}
+              />
+            )}
           </DialogContent>
         </Dialog>
 
@@ -803,12 +999,10 @@ function App() {
         >
           <DialogTitle>Add Team Member</DialogTitle>
           <DialogContent>
-            <Suspense fallback={<LoadingFallback />}>
-              <TeamMemberForm 
-                teamMembers={teamMembers}
-                onSubmit={addTeamMember} 
-              />
-            </Suspense>
+            <TeamMemberForm 
+              teamMembers={teamMembers}
+              onSubmit={addTeamMember} 
+            />
           </DialogContent>
         </Dialog>
 
@@ -821,9 +1015,7 @@ function App() {
         >
           <DialogTitle>Add New Client</DialogTitle>
           <DialogContent>
-            <Suspense fallback={<LoadingFallback />}>
-              <ClientForm onSubmit={addClient} />
-            </Suspense>
+            <ClientForm onSubmit={addClient} />
           </DialogContent>
         </Dialog>
 
@@ -836,16 +1028,32 @@ function App() {
         >
           <DialogTitle>Edit Task</DialogTitle>
           <DialogContent>
-            <Suspense fallback={<LoadingFallback />}>
-              {selectedTaskForEdit && (
-                <TaskForm 
-                  projects={projects}
-                  teamMembers={teamMembers}
-                  onSubmit={updateTaskWithForm}
-                  initialTask={selectedTaskForEdit}
-                />
-              )}
-            </Suspense>
+            {selectedTaskForEdit && (
+              <TaskForm 
+                projects={projects}
+                teamMembers={teamMembers}
+                onSubmit={updateTaskWithForm}
+                initialTask={selectedTaskForEdit}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Add Task Dialog */}
+        <Dialog 
+          open={addTaskDialogOpen} 
+          onClose={() => setAddTaskDialogOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>Add New Task</DialogTitle>
+          <DialogContent>
+            <TaskForm 
+              projects={projects}
+              teamMembers={teamMembers}
+              onSubmit={addTask}
+              onCancel={() => setAddTaskDialogOpen(false)}
+            />
           </DialogContent>
         </Dialog>
 
@@ -890,6 +1098,16 @@ function App() {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Global Search Results */}
+        <GlobalSearchResults
+          open={showSearchResults}
+          searchTerm={globalSearch}
+          onSearchChange={handleGlobalSearchChange}
+          onClose={() => setShowSearchResults(false)}
+          onSelectResult={handleSearchResultSelect}
+          results={getSearchResults()}
+        />
       </ThemeProvider>
     </NotificationProvider>
   );

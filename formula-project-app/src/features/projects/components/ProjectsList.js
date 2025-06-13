@@ -91,7 +91,7 @@ const projectStatusConfig = {
   }
 };
 
-function ProjectsList({ projects, tasks, clients = [], onDeleteProject }) {
+function ProjectsList({ projects, tasks, clients = [], onDeleteProject, onManageScope }) {
   if (projects.length === 0) {
     return (
       <Box sx={{ textAlign: 'center', py: 4 }}>
@@ -226,7 +226,24 @@ function ProjectsList({ projects, tasks, clients = [], onDeleteProject }) {
                   </IconButton>
                 </Box>
 
-                <Typography variant="h6" component="h3" gutterBottom>
+                <Typography 
+                  variant="h6" 
+                  component="h3" 
+                  gutterBottom
+                  sx={{
+                    color: '#3498db',
+                    cursor: 'pointer',
+                    textDecoration: 'none',
+                    '&:hover': {
+                      textDecoration: 'underline',
+                      color: '#2980b9'
+                    }
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onManageScope && onManageScope(project);
+                  }}
+                >
                   {project.name}
                 </Typography>
 
@@ -246,11 +263,6 @@ function ProjectsList({ projects, tasks, clients = [], onDeleteProject }) {
                   </Typography>
                 </Box>
 
-                {project.description && (
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    {project.description}
-                  </Typography>
-                )}
 
                 {/* Enhanced Progress Bar */}
                 <Box sx={{ mb: 2 }}>

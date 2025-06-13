@@ -36,8 +36,9 @@ import ClientForm from './ClientForm';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';
+import { exportClientsToExcel } from '../../../services/export/excelExport';
 
-const ClientsList = ({ clients, onUpdateClient, onDeleteClient, onAddClient }) => {
+const ClientsList = ({ clients, onUpdateClient, onDeleteClient, onAddClient, viewMode: propViewMode, onViewModeChange: propOnViewModeChange }) => {
   const { showNotification } = useNotification();
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -258,10 +259,10 @@ const ClientsList = ({ clients, onUpdateClient, onDeleteClient, onAddClient }) =
       // Search filter
       const searchLower = searchValue.toLowerCase();
       const matchesSearch = !searchValue || 
-        client.companyName.toLowerCase().includes(searchLower) ||
-        client.contactPersonName.toLowerCase().includes(searchLower) ||
-        client.email.toLowerCase().includes(searchLower) ||
-        client.industry?.toLowerCase().includes(searchLower);
+        (client.companyName || '').toLowerCase().includes(searchLower) ||
+        (client.contactPersonName || '').toLowerCase().includes(searchLower) ||
+        (client.email || '').toLowerCase().includes(searchLower) ||
+        (client.industry || '').toLowerCase().includes(searchLower);
 
       // Status filter
       const matchesStatus = !filters.status || client.status === filters.status;
@@ -286,20 +287,20 @@ const ClientsList = ({ clients, onUpdateClient, onDeleteClient, onAddClient }) =
       switch (sortBy) {
         case 'company':
         case 'companyName':
-          aValue = a.companyName.toLowerCase();
-          bValue = b.companyName.toLowerCase();
+          aValue = (a.companyName || '').toLowerCase();
+          bValue = (b.companyName || '').toLowerCase();
           break;
         case 'contactPersonName':
-          aValue = a.contactPersonName.toLowerCase();
-          bValue = b.contactPersonName.toLowerCase();
+          aValue = (a.contactPersonName || '').toLowerCase();
+          bValue = (b.contactPersonName || '').toLowerCase();
           break;
         case 'industry':
           aValue = a.industry || '';
           bValue = b.industry || '';
           break;
         case 'status':
-          aValue = a.status;
-          bValue = b.status;
+          aValue = a.status || '';
+          bValue = b.status || '';
           break;
         default:
           return 0;
@@ -384,11 +385,13 @@ const ClientsList = ({ clients, onUpdateClient, onDeleteClient, onAddClient }) =
       case 'delete':
         setDeleteDialogOpen(true);
         break;
+      default:
+        console.log('Unknown action:', action);
+        break;
     }
   };
 
   const handleExport = () => {
-    const { exportClientsToExcel } = require('../../../services/export/excelExport');
     exportClientsToExcel(filteredAndSortedClients);
   };
 

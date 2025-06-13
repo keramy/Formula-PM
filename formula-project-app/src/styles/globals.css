@@ -198,3 +198,119 @@ body {
   .no-print { display: none !important; }
   .MuiPaper-root { box-shadow: none !important; border: 1px solid #ddd !important; }
 }
+
+/* Enhanced ClickUp-style animations */
+.board-card {
+  transition: all 0.2s ease-in-out;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid #e1e5e9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.board-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.tab-system {
+  background: linear-gradient(90deg, #f8f9fa 0%, #ffffff 100%);
+  border-bottom: 1px solid #e1e5e9;
+}
+
+/* Custom scrollbar for board view */
+.board-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.board-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.board-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.board-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Enhanced card animations */
+.kanban-card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.kanban-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Enhanced tab animations */
+.enhanced-tab {
+  transition: all 0.2s ease-in-out;
+  position: relative;
+}
+
+.enhanced-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: #3498db;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.enhanced-tab:hover::after,
+.enhanced-tab.active::after {
+  width: 100%;
+}
+
+/* Smooth loading animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* Enhanced drag animations */
+.dragging {
+  transform: rotate(5deg) !important;
+  z-index: 1000;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2) !important;
+}
+
+.drag-preview {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+/* Column highlight during drag */
+.column-highlight {
+  background: rgba(52, 152, 219, 0.1);
+  border: 2px dashed #3498db;
+}
+
+/* Enhanced button animations */
+.action-button {
+  transition: all 0.2s ease-in-out;
+}
+
+.action-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

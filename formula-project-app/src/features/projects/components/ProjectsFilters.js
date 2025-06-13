@@ -71,6 +71,12 @@ const ProjectsFilters = ({
       color: '#3498db'
     },
     { 
+      label: 'Completed', 
+      filters: { status: 'completed' },
+      icon: <StatusIcon />,
+      color: '#2c3e50'
+    },
+    { 
       label: 'This Month', 
       filters: { 
         startDateFrom: new Date(new Date().getFullYear(), new Date().getMonth(), 1),

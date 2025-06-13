@@ -3,7 +3,15 @@ import { Box, Container, Typography, IconButton, InputBase, Paper } from '@mui/m
 import { Search as SearchIcon, Notifications as NotificationsIcon } from '@mui/icons-material';
 import ModernSidebar from './ModernSidebar';
 
-const ModernDashboardLayout = ({ children, currentTab, onTabChange, userName = "Kerem" }) => {
+const ModernDashboardLayout = ({ 
+  children, 
+  currentTab, 
+  onTabChange, 
+  userName = "Kerem",
+  globalSearch = '',
+  onGlobalSearchChange,
+  onSearchSubmit
+}) => {
   const getPageTitle = () => {
     switch (currentTab) {
       case 0: return 'Dashboard';
@@ -82,6 +90,10 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, userName = "
             {/* Search Bar */}
             <Paper
               component="form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (onSearchSubmit) onSearchSubmit();
+              }}
               sx={{
                 p: '2px 4px',
                 display: 'flex',
@@ -98,6 +110,8 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, userName = "
                 sx={{ ml: 1, flex: 1, fontSize: '0.9rem' }}
                 placeholder="Search projects, tasks, team..."
                 inputProps={{ 'aria-label': 'search' }}
+                value={globalSearch}
+                onChange={(e) => onGlobalSearchChange && onGlobalSearchChange(e.target.value)}
               />
             </Paper>
 
