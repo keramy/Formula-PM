@@ -1,14 +1,280 @@
 const express = require('express');
 const cors = require('cors');
+const http = require('http');
+const socketIo = require('socket.io');
 const nodemailer = require('nodemailer');
 const SimpleDB = require('./database');
 const seedData = require('./seedData');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: ["http://localhost:3000", "https://keramy.github.io"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+  }
+});
 const PORT = process.env.PORT || 5001;
 
 // Initialize Database
 const db = new SimpleDB('./data');
+
+// Store connected users and their presence
+const connectedUsers = new Map();
+const userPresence = new Map();
+
+// Activity log for real-time updates
+const activityLog = [];
+const MAX_ACTIVITIES = 100; // Keep last 100 activities
+
+// Utility function to broadcast activity
+function broadcastActivity(activity) {
+  // Add to activity log
+  const activityEntry = {
+    id: Date.now(),
+    ...activity,
+    timestamp: new Date().toISOString()
+  };
+  
+  activityLog.unshift(activityEntry);
+  if (activityLog.length > MAX_ACTIVITIES) {
+    activityLog.pop();
+  }
+  
+  // Broadcast to all connected clients
+  io.emit('activity', activityEntry);
+  
+  // Log for debugging
+  console.log('📡 Activity broadcast:', activityEntry);
+}
+
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log('👤 User connected:', socket.id);
+  
+  // Handle user authentication/identification
+  socket.on('authenticate', (userData) => {
+    const user = {
+      socketId: socket.id,
+      userId: userData.userId,
+      userName: userData.userName || 'Anonymous',
+      email: userData.email,
+      joinedAt: new Date().toISOString()
+    };
+    
+    connectedUsers.set(socket.id, user);
+    userPresence.set(userData.userId, {
+      ...user,
+      status: 'online',
+      lastActivity: new Date().toISOString()
+    });
+    
+    console.log(`✅ User authenticated: ${user.userName} (${user.email})`);
+    
+    // Broadcast user joined
+    socket.broadcast.emit('userJoined', user);
+    
+    // Send current presence to the new user
+    socket.emit('presenceUpdate', Array.from(userPresence.values()));
+    
+    // Send recent activities to the new user
+    socket.emit('activityHistory', activityLog.slice(0, 20)); // Last 20 activities
+  });
+  
+  // Handle joining specific rooms (projects, tasks, etc.)
+  socket.on('joinRoom', (roomData) => {
+    const { roomType, roomId, userId } = roomData;
+    const roomName = `${roomType}-${roomId}`;
+    
+    socket.join(roomName);
+    console.log(`📍 User ${userId} joined room: ${roomName}`);
+    
+    // Notify others in the room
+    socket.to(roomName).emit('userJoinedRoom', {
+      userId,
+      userName: connectedUsers.get(socket.id)?.userName,
+      roomType,
+      roomId
+    });
+  });
+  
+  // Handle leaving rooms
+  socket.on('leaveRoom', (roomData) => {
+    const { roomType, roomId, userId } = roomData;
+    const roomName = `${roomType}-${roomId}`;
+    
+    socket.leave(roomName);
+    console.log(`📍 User ${userId} left room: ${roomName}`);
+    
+    // Notify others in the room
+    socket.to(roomName).emit('userLeftRoom', {
+      userId,
+      userName: connectedUsers.get(socket.id)?.userName,
+      roomType,
+      roomId
+    });
+  });
+  
+  // Handle real-time data updates
+  socket.on('dataUpdate', (updateData) => {
+    const user = connectedUsers.get(socket.id);
+    if (!user) return;
+    
+    const { type, action, data, roomId } = updateData;
+    
+    // Broadcast to specific room or all users
+    const targetRoom = roomId ? `${type}-${roomId}` : null;
+    const target = targetRoom ? socket.to(targetRoom) : socket.broadcast;
+    
+    target.emit('dataUpdated', {
+      type,
+      action,
+      data,
+      user: {
+        id: user.userId,
+        name: user.userName
+      },
+      timestamp: new Date().toISOString()
+    });
+    
+    // Log activity
+    broadcastActivity({
+      type: 'data_update',
+      action,
+      entityType: type,
+      entityId: data.id,
+      userId: user.userId,
+      userName: user.userName,
+      description: `${user.userName} ${action} ${type} "${data.name || data.title}"`
+    });
+  });
+  
+  // Handle typing indicators
+  socket.on('typing', (typingData) => {
+    const user = connectedUsers.get(socket.id);
+    if (!user) return;
+    
+    const { roomType, roomId, isTyping } = typingData;
+    const roomName = `${roomType}-${roomId}`;
+    
+    socket.to(roomName).emit('userTyping', {
+      userId: user.userId,
+      userName: user.userName,
+      isTyping
+    });
+  });
+  
+  // Handle cursor/presence updates
+  socket.on('cursorUpdate', (cursorData) => {
+    const user = connectedUsers.get(socket.id);
+    if (!user) return;
+    
+    const { roomType, roomId, position, element } = cursorData;
+    const roomName = `${roomType}-${roomId}`;
+    
+    socket.to(roomName).emit('cursorMoved', {
+      userId: user.userId,
+      userName: user.userName,
+      position,
+      element
+    });
+  });
+  
+  // Handle comments/messages
+  socket.on('newComment', (commentData) => {
+    const user = connectedUsers.get(socket.id);
+    if (!user) return;
+    
+    const { entityType, entityId, message } = commentData;
+    const comment = {
+      id: Date.now(),
+      entityType,
+      entityId,
+      message,
+      userId: user.userId,
+      userName: user.userName,
+      createdAt: new Date().toISOString()
+    };
+    
+    // Broadcast to relevant room
+    const roomName = `${entityType}-${entityId}`;
+    io.to(roomName).emit('commentAdded', comment);
+    
+    // Log activity
+    broadcastActivity({
+      type: 'comment',
+      action: 'added',
+      entityType,
+      entityId,
+      userId: user.userId,
+      userName: user.userName,
+      description: `${user.userName} commented on ${entityType}`,
+      metadata: { message: message.substring(0, 50) + '...' }
+    });
+  });
+  
+  // Handle heartbeat/keep-alive
+  socket.on('heartbeat', () => {
+    const user = connectedUsers.get(socket.id);
+    if (user && userPresence.has(user.userId)) {
+      const presence = userPresence.get(user.userId);
+      presence.lastActivity = new Date().toISOString();
+      userPresence.set(user.userId, presence);
+    }
+  });
+  
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    const user = connectedUsers.get(socket.id);
+    
+    if (user) {
+      console.log(`👋 User disconnected: ${user.userName}`);
+      
+      // Update presence
+      const presence = userPresence.get(user.userId);
+      if (presence) {
+        presence.status = 'offline';
+        presence.lastActivity = new Date().toISOString();
+        userPresence.set(user.userId, presence);
+      }
+      
+      // Remove from connected users
+      connectedUsers.delete(socket.id);
+      
+      // Broadcast user left
+      socket.broadcast.emit('userLeft', user);
+      
+      // Broadcast updated presence
+      io.emit('presenceUpdate', Array.from(userPresence.values()));
+    } else {
+      console.log('👋 Anonymous user disconnected:', socket.id);
+    }
+  });
+});
+
+// API endpoint to get current activities
+app.get('/api/activities', (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 20;
+    const activities = activityLog.slice(0, limit);
+    res.json(activities);
+  } catch (error) {
+    console.error('Error fetching activities:', error);
+    res.status(500).json({ error: 'Failed to fetch activities' });
+  }
+});
+
+// API endpoint to get user presence
+app.get('/api/presence', (req, res) => {
+  try {
+    const presence = Array.from(userPresence.values());
+    res.json(presence);
+  } catch (error) {
+    console.error('Error fetching presence:', error);
+    res.status(500).json({ error: 'Failed to fetch presence' });
+  }
+});
 
 // Initialize database with seed data
 function initializeDatabase() {
@@ -153,6 +419,23 @@ app.post('/api/projects', (req, res) => {
   try {
     const newProject = db.insert('projects', req.body);
     if (newProject) {
+      // Broadcast real-time update
+      io.emit('dataUpdated', {
+        type: 'projects',
+        action: 'created',
+        data: newProject,
+        timestamp: new Date().toISOString()
+      });
+      
+      // Log activity
+      broadcastActivity({
+        type: 'project',
+        action: 'created',
+        entityType: 'project',
+        entityId: newProject.id,
+        description: `New project "${newProject.name}" was created`
+      });
+      
       res.status(201).json(newProject);
     } else {
       res.status(500).json({ error: 'Failed to create project' });
@@ -167,6 +450,26 @@ app.put('/api/projects/:id', (req, res) => {
   try {
     const updatedProject = db.update('projects', req.params.id, req.body);
     if (updatedProject) {
+      // Broadcast real-time update
+      io.emit('dataUpdated', {
+        type: 'projects',
+        action: 'updated',
+        data: updatedProject,
+        timestamp: new Date().toISOString()
+      });
+      
+      // Broadcast to project-specific room
+      io.to(`project-${updatedProject.id}`).emit('projectUpdated', updatedProject);
+      
+      // Log activity
+      broadcastActivity({
+        type: 'project',
+        action: 'updated',
+        entityType: 'project',
+        entityId: updatedProject.id,
+        description: `Project "${updatedProject.name}" was updated`
+      });
+      
       res.json(updatedProject);
     } else {
       res.status(404).json({ error: 'Project not found' });
@@ -335,8 +638,47 @@ app.post('/api/tasks', (req, res) => {
 
 app.put('/api/tasks/:id', (req, res) => {
   try {
+    const oldTask = db.read('tasks').find(t => t.id == req.params.id);
     const updatedTask = db.update('tasks', req.params.id, req.body);
     if (updatedTask) {
+      // Broadcast real-time update
+      io.emit('dataUpdated', {
+        type: 'tasks',
+        action: 'updated',
+        data: updatedTask,
+        timestamp: new Date().toISOString()
+      });
+      
+      // Broadcast to task-specific room
+      io.to(`task-${updatedTask.id}`).emit('taskUpdated', updatedTask);
+      
+      // Broadcast to project room
+      io.to(`project-${updatedTask.projectId}`).emit('projectTaskUpdated', updatedTask);
+      
+      // Special handling for status changes
+      if (oldTask && oldTask.status !== updatedTask.status) {
+        io.emit('taskStatusChanged', {
+          taskId: updatedTask.id,
+          oldStatus: oldTask.status,
+          newStatus: updatedTask.status,
+          taskName: updatedTask.name
+        });
+      }
+      
+      // Log activity
+      broadcastActivity({
+        type: 'task',
+        action: 'updated',
+        entityType: 'task',
+        entityId: updatedTask.id,
+        description: `Task "${updatedTask.name}" was updated`,
+        metadata: {
+          projectId: updatedTask.projectId,
+          status: updatedTask.status,
+          assignedTo: updatedTask.assignedTo
+        }
+      });
+      
       res.json(updatedTask);
     } else {
       res.status(404).json({ error: 'Task not found' });
@@ -452,9 +794,10 @@ app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`🚀 Formula Project Management API running on port ${PORT}`);
   console.log(`📧 Email service configured: ${process.env.EMAIL_USER ? 'Yes' : 'No (set EMAIL_USER and EMAIL_PASS)'}`);
+  console.log(`🔗 WebSocket server ready for real-time connections`);
   
   // Initialize database with seed data
   initializeDatabase();

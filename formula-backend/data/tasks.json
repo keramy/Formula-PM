@@ -25,13 +25,14 @@
     "priority": "high",
     "assignedTo": 1011,
     "startDate": "2024-11-15",
-    "dueDate": "2024-12-15",
+    "dueDate": "2025-12-16",
     "progress": 100,
     "estimatedHours": 120,
     "actualHours": 118,
     "createdAt": "2024-11-15T00:00:00.000Z",
     "completedAt": "2025-06-12T09:34:53.015Z",
-    "updatedAt": "2025-06-12T09:34:53.099Z"
+    "updatedAt": "2025-06-14T12:42:15.296Z",
+    "files": []
   },
   {
     "id": 3004,

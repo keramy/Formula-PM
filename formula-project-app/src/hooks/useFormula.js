@@ -1,8 +1,27 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import apiService from '../services/api/apiService';
 
-// Custom hook for managing Formula app data with optimizations
-export const useFormulaData = () => {
+// MIGRATION NOTE: This hook is being phased out in favor of React Query hooks
+// For new components, use useQueryMigration from './useQueryMigration' instead
+// This hook will be maintained for backward compatibility during the migration period
+
+// Check if React Query is available and should be used
+const shouldUseReactQuery = process.env.REACT_APP_USE_REACT_QUERY !== 'false';
+
+// TODO: Re-enable React Query migration when ready
+// let useQueryMigration = null;
+// if (shouldUseReactQuery) {
+//   try {
+//     // Dynamically import the new hook if available
+//     const queryMigrationModule = require('./useQueryMigration');
+//     useQueryMigration = queryMigrationModule.useQueryMigration;
+//   } catch (error) {
+//     console.warn('React Query migration hook not available, falling back to legacy implementation');
+//   }
+// }
+
+// Legacy hook implementation (will be deprecated)
+export const useFormulaDataLegacy = () => {
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -102,6 +121,16 @@ export const useFormulaData = () => {
   };
 };
 
+// Main hook that uses legacy implementation for now
+// TODO: Migrate to React Query hooks when ready
+export const useFormulaData = () => {
+  // For now, just use the legacy implementation to avoid hook rule violations
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Using legacy implementation for data fetching');
+  }
+  return useFormulaDataLegacy();
+};
+
 // Custom hook for filtering with debouncing
 export const useFilteredData = (data, filters, searchTerm, debounceMs = 300) => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
@@ -162,10 +191,10 @@ export const useActiveFilters = (filters, searchTerm, clients = [], teamMembers 
         let displayValue = value;
         
         if (key === 'client') {
-          const client = clients.find(c => c.id == value);
+          const client = clients.find(c => c.id === value);
           displayValue = client ? client.companyName : value;
         } else if (key === 'manager' || key === 'assignedTo') {
-          const member = teamMembers.find(tm => tm.id == value);
+          const member = teamMembers.find(tm => tm.id === value);
           displayValue = member ? member.fullName : value;
         } else if (key.includes('Date') && value instanceof Date) {
           displayValue = value.toLocaleDateString();

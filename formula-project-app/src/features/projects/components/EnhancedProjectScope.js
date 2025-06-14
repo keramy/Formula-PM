@@ -196,7 +196,6 @@ const EnhancedProjectScope = ({ project, onClose }) => {
       contentPadding={0}
     >
       <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      </Box>
 
       {/* Summary Cards */}
       <Box sx={{ p: 3 }}>
