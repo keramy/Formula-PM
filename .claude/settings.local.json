@@ -57,7 +57,8 @@
       "Bash(npx eslint:*)",
       "Bash(PORT=3000 npm start)",
       "Bash(npx webpack-bundle-analyzer:*)",
-      "Bash(timeout 30s find node_modules -type f -name \"*.js\")"
+      "Bash(timeout 30s find node_modules -type f -name \"*.js\")",
+      "Bash(sed:*)"
     ],
     "deny": []
   }
