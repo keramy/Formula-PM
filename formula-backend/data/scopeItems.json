@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "description": "item 1",
+    "quantity": "30",
+    "unitPrice": "500",
+    "unit": "pcs",
+    "category": "Demolition",
+    "notes": "1",
+    "attachments": null,
+    "id": 1749905291401,
+    "projectId": 2001,
+    "createdAt": "2025-06-14T12:48:11.401Z",
+    "totalPrice": 15000
+  }
+]
