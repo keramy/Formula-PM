@@ -58,7 +58,9 @@
       "Bash(PORT=3000 npm start)",
       "Bash(npx webpack-bundle-analyzer:*)",
       "Bash(timeout 30s find node_modules -type f -name \"*.js\")",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(./scripts/start-servers.sh:*)",
+      "Bash(./scripts/stop-servers.sh:*)"
     ],
     "deny": []
   }

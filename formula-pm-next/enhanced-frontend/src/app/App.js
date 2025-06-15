@@ -1,8 +1,7 @@
-import React, { useState, Suspense } from 'react';
+import React, { useState } from 'react';
 import { generateProjectId, generateTaskId, generateMemberId } from '../utils/generators/idGenerator';
 import apiService from '../services/api/apiService';
 import { useFormulaData, useFilteredData, useActiveFilters } from '../hooks/useFormula';
-import { useEnhancedSearch } from '../hooks/useEnhancedSearch';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import {
@@ -16,50 +15,42 @@ import {
 } from '@mui/material';
 import { NotificationProvider, NavigationProvider } from '../context';
 import NotificationContainer from '../components/ui/NotificationContainer';
-
-// React Query imports
-import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import queryClient from '../services/queryClient';
 import ModernDashboardLayout from '../components/layout/ModernDashboardLayout';
 import ModernStatsCards from '../components/charts/ModernStatsCards';
 import UnifiedHeader from '../components/ui/UnifiedHeader';
-// Import lightweight components directly
-import EnhancedTabSystem from '../components/layout/EnhancedTabSystem';
-import EnhancedHeader from '../components/layout/EnhancedHeader';
-// Import performance and error handling components
-import ErrorBoundary from '../components/common/ErrorBoundary';
-import { LoadingFallback, ListSkeleton, ProjectCardSkeleton, TaskRowSkeleton, TeamMemberSkeleton, FormSkeleton } from '../components/common/LoadingFallback';
-import './App.css';
-import '../styles/globals.css';
-import '../styles/modern-dashboard.css';
 import { exportProjectsToExcel } from '../services/export/excelExport';
 import { formulaTheme } from '../theme';
 
-// Lazy load heavy components for better performance
-const ModernProjectOverview = React.lazy(() => import('../features/dashboard/components/ModernProjectOverview'));
-const ProjectForm = React.lazy(() => import('../features/projects/components/ProjectForm'));
-const TaskForm = React.lazy(() => import('../features/tasks/components/TaskForm'));
-const ProjectsList = React.lazy(() => import('../features/projects/components/ProjectsList'));
-const EnhancedTasksView = React.lazy(() => import('../features/tasks/components/EnhancedTasksView'));
-const EnhancedTasksList = React.lazy(() => import('../features/tasks/components/EnhancedTasksList'));
-const GanttChart = React.lazy(() => import('../components/charts/GanttChart'));
-const TeamMemberForm = React.lazy(() => import('../features/team/components/TeamMemberForm'));
-const TeamMembersList = React.lazy(() => import('../features/team/components/TeamMembersList'));
-const ClientForm = React.lazy(() => import('../features/clients/components/ClientForm'));
-const ClientsList = React.lazy(() => import('../features/clients/components/ClientsList'));
-const ProjectFormPage = React.lazy(() => import('../features/projects/components/ProjectFormPage'));
-const TaskFormPage = React.lazy(() => import('../features/tasks/components/TaskFormPage'));
-const TeamMemberFormPage = React.lazy(() => import('../features/team/components/TeamMemberFormPage'));
-const ClientFormPage = React.lazy(() => import('../features/clients/components/ClientFormPage'));
-const ScopeItemFormPage = React.lazy(() => import('../features/projects/components/ScopeItemFormPage'));
-const ProjectsTableView = React.lazy(() => import('../features/projects/components/ProjectsTableView'));
-const ProjectsFilters = React.lazy(() => import('../features/projects/components/ProjectsFilters'));
-const MyProjectsList = React.lazy(() => import('../features/projects/components/MyProjectsList'));
-const EnhancedProjectScope = React.lazy(() => import('../features/projects/components/EnhancedProjectScope'));
-const TeamMemberDetail = React.lazy(() => import('../features/team/components/TeamMemberDetail'));
-const GlobalSearchResults = React.lazy(() => import('../components/ui/GlobalSearchResults'));
-const BoardView = React.lazy(() => import('../components/views/BoardView'));
+// Direct imports to avoid chunk loading issues
+import ModernProjectOverview from '../features/dashboard/components/ModernProjectOverview';
+import ProjectForm from '../features/projects/components/ProjectForm';
+import TaskForm from '../features/tasks/components/TaskForm';
+import ProjectsList from '../features/projects/components/ProjectsList';
+import TasksList from '../features/tasks/components/TasksList';
+import EnhancedTasksList from '../features/tasks/components/EnhancedTasksList';
+import GanttChart from '../components/charts/GanttChart';
+import TeamMemberForm from '../features/team/components/TeamMemberForm';
+import TeamMembersList from '../features/team/components/TeamMembersList';
+import ClientForm from '../features/clients/components/ClientForm';
+import ClientsList from '../features/clients/components/ClientsList';
+import ProjectFormPage from '../features/projects/components/ProjectFormPage';
+import TaskFormPage from '../features/tasks/components/TaskFormPage';
+import TeamMemberFormPage from '../features/team/components/TeamMemberFormPage';
+import ClientFormPage from '../features/clients/components/ClientFormPage';
+import ScopeItemFormPage from '../features/projects/components/ScopeItemFormPage';
+import ProjectsTableView from '../features/projects/components/ProjectsTableView';
+import ProjectsFilters from '../features/projects/components/ProjectsFilters';
+import MyProjectsList from '../features/projects/components/MyProjectsList';
+import EnhancedProjectScope from '../features/projects/components/EnhancedProjectScope';
+import TeamMemberDetail from '../features/team/components/TeamMemberDetail';
+import GlobalSearchResults from '../components/ui/GlobalSearchResults';
+import BoardView from '../components/views/BoardView';
+import EnhancedTabSystem from '../components/layout/EnhancedTabSystem';
+import EnhancedHeader from '../components/layout/EnhancedHeader';
+
+import './App.css';
+import '../styles/globals.css';
+import '../styles/modern-dashboard.css';
 
 
 function App() {
@@ -99,18 +90,6 @@ function App() {
   const [teamMemberDetailOpen, setTeamMemberDetailOpen] = useState(false);
   const [selectedMemberForDetail, setSelectedMemberForDetail] = useState(null);
   const [globalSearch, setGlobalSearch] = useState('');
-
-  // Enhanced search with debouncing
-  const {
-    searchTerm,
-    setSearchTerm,
-    searchResults,
-    suggestions,
-    quickFilters,
-    clearSearch,
-    isSearching,
-    hasResults
-  } = useEnhancedSearch(projects, tasks, teamMembers, clients);
   const [showSearchResults, setShowSearchResults] = useState(false);
   
   // Full-page navigation state
@@ -383,10 +362,9 @@ function App() {
     setSelectedMemberForDetail(null);
   };
 
-  // Global search functionality (now with debouncing)
+  // Global search functionality
   const handleGlobalSearchChange = (value) => {
     setGlobalSearch(value);
-    setSearchTerm(value); // Update debounced search term
     if (value.trim().length > 0) {
       setShowSearchResults(true);
     } else {
@@ -395,7 +373,7 @@ function App() {
   };
 
   const handleSearchSubmit = () => {
-    if (searchTerm.trim().length > 0) {
+    if (globalSearch.trim().length > 0) {
       setShowSearchResults(true);
     }
   };
@@ -420,12 +398,38 @@ function App() {
     }
   };
 
-  // Get search results (now using debounced search)
   const getSearchResults = () => {
+    if (!globalSearch.trim()) {
+      return { projects: [], tasks: [], teamMembers: [] };
+    }
+
+    const searchTerm = globalSearch.toLowerCase();
+    
+    const filteredProjects = projects.filter(project =>
+      project.name.toLowerCase().includes(searchTerm) ||
+      project.description?.toLowerCase().includes(searchTerm) ||
+      project.type.toLowerCase().includes(searchTerm) ||
+      project.status.toLowerCase().includes(searchTerm)
+    );
+
+    const filteredTasks = tasks.filter(task =>
+      task.name.toLowerCase().includes(searchTerm) ||
+      task.description?.toLowerCase().includes(searchTerm) ||
+      task.status.toLowerCase().includes(searchTerm) ||
+      task.priority.toLowerCase().includes(searchTerm)
+    );
+
+    const filteredTeamMembers = teamMembers.filter(member =>
+      member.fullName.toLowerCase().includes(searchTerm) ||
+      member.email.toLowerCase().includes(searchTerm) ||
+      member.role.toLowerCase().includes(searchTerm) ||
+      member.department.toLowerCase().includes(searchTerm)
+    );
+
     return {
-      projects: searchResults.projects,
-      tasks: searchResults.tasks,
-      teamMembers: searchResults.teamMembers
+      projects: filteredProjects,
+      tasks: filteredTasks,
+      teamMembers: filteredTeamMembers
     };
   };
 
@@ -611,61 +615,45 @@ function App() {
     switch (currentPage) {
       case 'add-task':
         return (
-          <ErrorBoundary fallbackMessage="Failed to load task form">
-            <Suspense fallback={<FormSkeleton />}>
-              <TaskFormPage
-                projects={projects}
-                teamMembers={teamMembers}
-                onSubmit={addTask}
-                onCancel={navigateToMain}
-                isEdit={false}
-              />
-            </Suspense>
-          </ErrorBoundary>
+          <TaskFormPage
+            projects={projects}
+            teamMembers={teamMembers}
+            onSubmit={addTask}
+            onCancel={navigateToMain}
+            isEdit={false}
+          />
         );
         
       case 'edit-task':
         return (
-          <ErrorBoundary fallbackMessage="Failed to load task form">
-            <Suspense fallback={<FormSkeleton />}>
-              <TaskFormPage
-                task={currentFormData}
-                projects={projects}
-                teamMembers={teamMembers}
-                onSubmit={updateTaskWithForm}
-                onCancel={navigateToMain}
-                isEdit={true}
-              />
-            </Suspense>
-          </ErrorBoundary>
+          <TaskFormPage
+            task={currentFormData}
+            projects={projects}
+            teamMembers={teamMembers}
+            onSubmit={updateTaskWithForm}
+            onCancel={navigateToMain}
+            isEdit={true}
+          />
         );
         
       case 'add-project':
         return (
-          <ErrorBoundary fallbackMessage="Failed to load project form">
-            <Suspense fallback={<FormSkeleton />}>
-              <ProjectFormPage
-                clients={clients}
-                onSubmit={addProject}
-                onCancel={navigateToMain}
-                isEdit={false}
-              />
-            </Suspense>
-          </ErrorBoundary>
+          <ProjectFormPage
+            clients={clients}
+            onSubmit={addProject}
+            onCancel={navigateToMain}
+            isEdit={false}
+          />
         );
         
       case 'add-team-member':
         return (
-          <ErrorBoundary fallbackMessage="Failed to load team member form">
-            <Suspense fallback={<FormSkeleton />}>
-              <TeamMemberFormPage
-                teamMembers={teamMembers}
-                onSubmit={addTeamMember}
-                onCancel={navigateToMain}
-                isEdit={false}
-              />
-            </Suspense>
-          </ErrorBoundary>
+          <TeamMemberFormPage
+            teamMembers={teamMembers}
+            onSubmit={addTeamMember}
+            onCancel={navigateToMain}
+            isEdit={false}
+          />
         );
         
       case 'main':
@@ -678,14 +666,10 @@ function App() {
     switch (currentTab) {
       case 0: // Dashboard
         return (
-          <ErrorBoundary fallbackMessage="Failed to load dashboard">
-            <>
-              <ModernStatsCards projects={projects} tasks={tasks} teamMembers={teamMembers} />
-              <Suspense fallback={<LoadingFallback message="Loading project overview..." />}>
-                <ModernProjectOverview projects={projects} tasks={tasks} teamMembers={teamMembers} />
-              </Suspense>
-            </>
-          </ErrorBoundary>
+          <>
+            <ModernStatsCards projects={projects} tasks={tasks} teamMembers={teamMembers} />
+            <ModernProjectOverview projects={projects} tasks={tasks} teamMembers={teamMembers} />
+          </>
         );
 
       case 1: // Projects
@@ -719,46 +703,36 @@ function App() {
               title="Projects"
             />
 
-            <Suspense fallback={<LoadingFallback message="Loading filters..." />}>
-              <ProjectsFilters
-                open={showProjectsFilters}
-                filters={projectsFilters}
-                onFiltersChange={handleFiltersChange}
-                onClearFilters={handleClearFilters}
-                clients={clients}
-                teamMembers={teamMembers}
-                projects={projects}
-              />
-            </Suspense>
+            <ProjectsFilters
+              open={showProjectsFilters}
+              filters={projectsFilters}
+              onFiltersChange={handleFiltersChange}
+              onClearFilters={handleClearFilters}
+              clients={clients}
+              teamMembers={teamMembers}
+              projects={projects}
+            />
             
             {/* Conditional View Rendering */}
             {projectsViewMode === 'board' && (
-              <ErrorBoundary fallbackMessage="Failed to load board view">
-                <Suspense fallback={<LoadingFallback message="Loading board view..." />}>
-                  <BoardView
-                    tasks={tasks}
-                    onTaskUpdate={updateTask}
-                    teamMembers={teamMembers}
-                    projects={projects}
-                  />
-                </Suspense>
-              </ErrorBoundary>
+              <BoardView
+                tasks={tasks}
+                onTaskUpdate={updateTask}
+                teamMembers={teamMembers}
+                projects={projects}
+              />
             )}
 
             {projectsViewMode === 'table' && (
-              <ErrorBoundary fallbackMessage="Failed to load table view">
-                <Suspense fallback={<ListSkeleton SkeletonComponent={ProjectCardSkeleton} count={4} />}>
-                  <ProjectsTableView
-                    projects={filteredProjects}
-                    clients={clients}
-                    teamMembers={teamMembers}
-                    onEditProject={handleEditProject}
-                    onDeleteProject={deleteProject}
-                    onViewProject={handleViewProject}
-                    onManageScope={handleManageScope}
-                  />
-                </Suspense>
-              </ErrorBoundary>
+              <ProjectsTableView
+                projects={filteredProjects}
+                clients={clients}
+                teamMembers={teamMembers}
+                onEditProject={handleEditProject}
+                onDeleteProject={deleteProject}
+                onViewProject={handleViewProject}
+                onManageScope={handleManageScope}
+              />
             )}
 
             {projectsViewMode === 'list' && (
@@ -771,17 +745,13 @@ function App() {
                   borderRadius: 3
                 }}
               >
-                <ErrorBoundary fallbackMessage="Failed to load projects list">
-                  <Suspense fallback={<ListSkeleton SkeletonComponent={ProjectCardSkeleton} count={4} />}>
-                    <ProjectsList 
-                      projects={filteredProjects}
-                      tasks={tasks}
-                      clients={clients}
-                      onDeleteProject={deleteProject}
-                      onManageScope={handleManageScope}
-                    />
-                  </Suspense>
-                </ErrorBoundary>
+                <ProjectsList 
+                  projects={filteredProjects}
+                  tasks={tasks}
+                  clients={clients}
+                  onDeleteProject={deleteProject}
+                  onManageScope={handleManageScope}
+                />
               </Paper>
             )}
 
@@ -795,15 +765,11 @@ function App() {
                   borderRadius: 3
                 }}
               >
-                <ErrorBoundary fallbackMessage="Failed to load Gantt chart">
-                  <Suspense fallback={<LoadingFallback message="Loading Gantt chart..." />}>
-                    <GanttChart 
-                      tasks={tasks}
-                      projects={projects}
-                      teamMembers={teamMembers}
-                    />
-                  </Suspense>
-                </ErrorBoundary>
+                <GanttChart 
+                  tasks={tasks}
+                  projects={projects}
+                  teamMembers={teamMembers}
+                />
               </Paper>
             )}
 
@@ -822,88 +788,70 @@ function App() {
 
       case 2: // My Projects
         return (
-          <ErrorBoundary fallbackMessage="Failed to load your projects">
-            <Suspense fallback={<ListSkeleton SkeletonComponent={ProjectCardSkeleton} count={3} />}>
-              <MyProjectsList 
-                projects={projects}
-                tasks={tasks}
-                clients={clients}
-                teamMembers={teamMembers}
-                onDeleteProject={deleteProject}
-                onEditProject={handleEditProject}
-                onViewProject={handleViewProject}
-                onManageScope={handleManageScope}
-                onViewTask={handleViewTask}
-                onEditTask={handleEditTask}
-                onUpdateTask={updateTask}
-                currentUserId={1008} // This would come from authentication in a real app
-              />
-            </Suspense>
-          </ErrorBoundary>
+          <MyProjectsList 
+            projects={projects}
+            tasks={tasks}
+            clients={clients}
+            teamMembers={teamMembers}
+            onDeleteProject={deleteProject}
+            onEditProject={handleEditProject}
+            onViewProject={handleViewProject}
+            onManageScope={handleManageScope}
+            onViewTask={handleViewTask}
+            onEditTask={handleEditTask}
+            onUpdateTask={updateTask}
+            currentUserId={1008} // This would come from authentication in a real app
+          />
         );
 
       case 3: // Tasks
         return (
-          <ErrorBoundary fallbackMessage="Failed to load tasks">
-            <Suspense fallback={<ListSkeleton SkeletonComponent={TaskRowSkeleton} count={5} />}>
-              <EnhancedTasksView 
-                tasks={tasks}
-                projects={projects}
-                teamMembers={teamMembers}
-                onUpdateTask={updateTask}
-                onDeleteTask={deleteTask}
-                onAddTask={handleAddTask}
-                onViewTask={handleViewTask}
-                onEditTask={handleEditTask}
-              />
-            </Suspense>
-          </ErrorBoundary>
+          <EnhancedTasksList 
+            tasks={tasks}
+            projects={projects}
+            teamMembers={teamMembers}
+            onUpdateTask={updateTask}
+            onDeleteTask={deleteTask}
+            onAddTask={handleAddTask}
+            onViewTask={handleViewTask}
+            onEditTask={handleEditTask}
+            viewMode={tasksViewMode}
+            onViewModeChange={handleTasksViewModeChange}
+          />
         );
 
       case 4: // Team
         return teamMemberDetailOpen ? (
-          <ErrorBoundary fallbackMessage="Failed to load team member details">
-            <Suspense fallback={<LoadingFallback message="Loading member details..." />}>
-              <TeamMemberDetail
-                member={selectedMemberForDetail}
-                tasks={tasks}
-                projects={projects}
-                teamMembers={teamMembers}
-                onClose={handleCloseTeamMemberDetail}
-              />
-            </Suspense>
-          </ErrorBoundary>
+          <TeamMemberDetail
+            member={selectedMemberForDetail}
+            tasks={tasks}
+            projects={projects}
+            teamMembers={teamMembers}
+            onClose={handleCloseTeamMemberDetail}
+          />
         ) : (
-          <ErrorBoundary fallbackMessage="Failed to load team members">
-            <Suspense fallback={<ListSkeleton SkeletonComponent={TeamMemberSkeleton} count={4} />}>
-              <TeamMembersList 
-                teamMembers={teamMembers}
-                tasks={tasks}
-                onUpdateMember={updateTeamMember}
-                onDeleteMember={deleteTeamMember}
-                onAddMember={handleAddTeamMember}
-                onViewMemberDetail={handleViewTeamMemberDetail}
-                viewMode={teamViewMode}
-                onViewModeChange={handleTeamViewModeChange}
-              />
-            </Suspense>
-          </ErrorBoundary>
+          <TeamMembersList 
+            teamMembers={teamMembers}
+            tasks={tasks}
+            onUpdateMember={updateTeamMember}
+            onDeleteMember={deleteTeamMember}
+            onAddMember={handleAddTeamMember}
+            onViewMemberDetail={handleViewTeamMemberDetail}
+            viewMode={teamViewMode}
+            onViewModeChange={handleTeamViewModeChange}
+          />
         );
 
       case 5: // Clients
         return (
-          <ErrorBoundary fallbackMessage="Failed to load clients">
-            <Suspense fallback={<ListSkeleton SkeletonComponent={ProjectCardSkeleton} count={4} />}>
-              <ClientsList 
-                clients={clients}
-                onUpdateClient={updateClient}
-                onDeleteClient={deleteClient}
-                onAddClient={handleAddClient}
-                viewMode={clientsViewMode}
-                onViewModeChange={handleClientsViewModeChange}
-              />
-            </Suspense>
-          </ErrorBoundary>
+          <ClientsList 
+            clients={clients}
+            onUpdateClient={updateClient}
+            onDeleteClient={deleteClient}
+            onAddClient={handleAddClient}
+            viewMode={clientsViewMode}
+            onViewModeChange={handleClientsViewModeChange}
+          />
         );
 
       case 6: // Procurement
@@ -950,15 +898,11 @@ function App() {
             <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#2C3E50' }}>
               Project Timeline & Gantt Chart
             </Typography>
-            <ErrorBoundary fallbackMessage="Failed to load timeline chart">
-              <Suspense fallback={<LoadingFallback message="Loading timeline chart..." />}>
-                <GanttChart 
-                  tasks={tasks}
-                  projects={projects}
-                  teamMembers={teamMembers}
-                />
-              </Suspense>
-            </ErrorBoundary>
+            <GanttChart 
+              tasks={tasks}
+              projects={projects}
+              teamMembers={teamMembers}
+            />
           </Paper>
         );
 
@@ -968,18 +912,17 @@ function App() {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <NotificationProvider>
-        <NavigationProvider>
-          <ThemeProvider theme={formulaTheme}>
-            <CssBaseline />
-            <ModernDashboardLayout 
-              currentTab={currentTab} 
-              onTabChange={handleTabChange}
-              globalSearch={globalSearch}
-              onGlobalSearchChange={handleGlobalSearchChange}
-              onSearchSubmit={handleSearchSubmit}
-            >
+    <NotificationProvider>
+      <NavigationProvider>
+        <ThemeProvider theme={formulaTheme}>
+          <CssBaseline />
+          <ModernDashboardLayout 
+            currentTab={currentTab} 
+            onTabChange={handleTabChange}
+            globalSearch={globalSearch}
+            onGlobalSearchChange={handleGlobalSearchChange}
+            onSearchSubmit={handleSearchSubmit}
+          >
           <div style={{ padding: '0' }}>
             {/* Error Alert */}
             {error && (
@@ -999,6 +942,8 @@ function App() {
           {/* Notification Container */}
           <NotificationContainer />
         </ModernDashboardLayout>
+        </ThemeProvider>
+      </NavigationProvider>
 
         {/* Create Project Dialog */}
         <Dialog 
@@ -1009,9 +954,7 @@ function App() {
         >
           <DialogTitle>Create New Project</DialogTitle>
           <DialogContent>
-            <Suspense fallback={<FormSkeleton />}>
-              <ProjectForm onSubmit={addProject} clients={clients} />
-            </Suspense>
+            <ProjectForm onSubmit={addProject} clients={clients} />
           </DialogContent>
         </Dialog>
 
@@ -1025,13 +968,11 @@ function App() {
           <DialogTitle>Edit Project</DialogTitle>
           <DialogContent>
             {selectedProjectForEdit && (
-              <Suspense fallback={<FormSkeleton />}>
-                <ProjectForm 
-                  onSubmit={updateProject} 
-                  clients={clients} 
-                  initialProject={selectedProjectForEdit}
-                />
-              </Suspense>
+              <ProjectForm 
+                onSubmit={updateProject} 
+                clients={clients} 
+                initialProject={selectedProjectForEdit}
+              />
             )}
           </DialogContent>
         </Dialog>
@@ -1087,12 +1028,10 @@ function App() {
         >
           <DialogContent sx={{ p: 0 }}>
             {selectedProjectForScope && (
-              <Suspense fallback={<LoadingFallback message="Loading project scope..." />}>
-                <EnhancedProjectScope 
-                  project={selectedProjectForScope} 
-                  onClose={handleCloseScopeDialog}
-                />
-              </Suspense>
+              <EnhancedProjectScope 
+                project={selectedProjectForScope} 
+                onClose={handleCloseScopeDialog}
+              />
             )}
           </DialogContent>
         </Dialog>
@@ -1106,12 +1045,10 @@ function App() {
         >
           <DialogTitle>Add Team Member</DialogTitle>
           <DialogContent>
-            <Suspense fallback={<FormSkeleton />}>
-              <TeamMemberForm 
-                teamMembers={teamMembers}
-                onSubmit={addTeamMember} 
-              />
-            </Suspense>
+            <TeamMemberForm 
+              teamMembers={teamMembers}
+              onSubmit={addTeamMember} 
+            />
           </DialogContent>
         </Dialog>
 
@@ -1124,9 +1061,7 @@ function App() {
         >
           <DialogTitle>Add New Client</DialogTitle>
           <DialogContent>
-            <Suspense fallback={<FormSkeleton />}>
-              <ClientForm onSubmit={addClient} />
-            </Suspense>
+            <ClientForm onSubmit={addClient} />
           </DialogContent>
         </Dialog>
 
@@ -1140,14 +1075,12 @@ function App() {
           <DialogTitle>Edit Task</DialogTitle>
           <DialogContent>
             {selectedTaskForEdit && (
-              <Suspense fallback={<FormSkeleton />}>
-                <TaskForm 
-                  projects={projects}
-                  teamMembers={teamMembers}
-                  onSubmit={updateTaskWithForm}
-                  initialTask={selectedTaskForEdit}
-                />
-              </Suspense>
+              <TaskForm 
+                projects={projects}
+                teamMembers={teamMembers}
+                onSubmit={updateTaskWithForm}
+                initialTask={selectedTaskForEdit}
+              />
             )}
           </DialogContent>
         </Dialog>
@@ -1161,14 +1094,12 @@ function App() {
         >
           <DialogTitle>Add New Task</DialogTitle>
           <DialogContent>
-            <Suspense fallback={<FormSkeleton />}>
-              <TaskForm 
-                projects={projects}
-                teamMembers={teamMembers}
-                onSubmit={addTask}
-                onCancel={() => setAddTaskDialogOpen(false)}
-              />
-            </Suspense>
+            <TaskForm 
+              projects={projects}
+              teamMembers={teamMembers}
+              onSubmit={addTask}
+              onCancel={() => setAddTaskDialogOpen(false)}
+            />
           </DialogContent>
         </Dialog>
 
@@ -1215,28 +1146,15 @@ function App() {
         </Dialog>
 
         {/* Global Search Results */}
-        <Suspense fallback={null}>
-          <GlobalSearchResults
-            open={showSearchResults}
-            searchTerm={searchTerm}
-            onSearchChange={handleGlobalSearchChange}
-            onClose={() => setShowSearchResults(false)}
-            onSelectResult={handleSearchResultSelect}
-            results={getSearchResults()}
-            isSearching={isSearching}
-            suggestions={suggestions}
-            quickFilters={quickFilters}
-          />
-        </Suspense>
-        
-        {/* React Query DevTools - only in development */}
-        {process.env.NODE_ENV === 'development' && (
-          <ReactQueryDevtools initialIsOpen={false} />
-        )}
-        </ThemeProvider>
-      </NavigationProvider>
+        <GlobalSearchResults
+          open={showSearchResults}
+          searchTerm={globalSearch}
+          onSearchChange={handleGlobalSearchChange}
+          onClose={() => setShowSearchResults(false)}
+          onSelectResult={handleSearchResultSelect}
+          results={getSearchResults()}
+        />
     </NotificationProvider>
-  </QueryClientProvider>
   );
 }
 

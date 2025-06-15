@@ -158,30 +158,6 @@ const EnhancedProjectScope = ({ project, onClose }) => {
     }
   };
 
-  const downloadExcelTemplate = () => {
-    // Create CSV content for Excel template
-    const csvContent = [
-      ['Description', 'Category', 'Quantity', 'Unit', 'Unit Price', 'Notes'],
-      ['Example: Install Kitchen Cabinets', 'Millwork & Carpentry', '10', 'sqft', '150', 'Premium oak finish'],
-      ['Example: Electrical Wiring', 'Electrical Systems', '500', 'lft', '12', 'Include outlets and switches'],
-      ['Example: Flooring Installation', 'Flooring & Tiling', '200', 'sqft', '45', 'Hardwood flooring']
-    ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-
-    // Create and download file
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    if (link.download !== undefined) {
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', `scope_items_template_${project.name.replace(/\s+/g, '_')}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      showNotification('Excel template downloaded successfully');
-    }
-  };
-
   // Calculate summary statistics
   const totalItems = scopeItems.length;
   const totalQuantity = scopeItems.reduce((sum, item) => sum + (parseFloat(item.quantity) || 0), 0);
@@ -199,12 +175,6 @@ const EnhancedProjectScope = ({ project, onClose }) => {
       }}
       subtitle={`${totalItems} items • $${totalValue.toLocaleString()} total value`}
       actions={[
-        {
-          icon: <DownloadIcon />,
-          label: 'Download Template',
-          onClick: downloadExcelTemplate,
-          color: 'success'
-        },
         {
           icon: <ImportIcon />,
           label: 'Import Excel',
@@ -226,6 +196,7 @@ const EnhancedProjectScope = ({ project, onClose }) => {
       contentPadding={0}
     >
       <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      </Box>
 
       {/* Summary Cards */}
       <Box sx={{ p: 3 }}>

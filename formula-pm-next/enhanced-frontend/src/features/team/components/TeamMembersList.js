@@ -632,7 +632,23 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, o
                     />
                   </Box>
 
-                  {/* Contact Info - Removed from card view, kept in details */}
+                  {/* Contact Info */}
+                  <Box sx={{ mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <Email fontSize="small" color="action" />
+                      <Typography variant="body2" color="text.secondary">
+                        {member.email}
+                      </Typography>
+                    </Box>
+                    {member.phone && (
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                        <Phone fontSize="small" color="action" />
+                        <Typography variant="body2" color="text.secondary">
+                          {member.phone}
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
 
                   {/* Stats */}
                   <Box sx={{ mb: 2 }}>

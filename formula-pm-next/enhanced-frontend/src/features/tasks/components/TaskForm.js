@@ -250,7 +250,7 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
           sx={{ mt: 2 }}
           disabled={projects.length === 0}
         >
-          {initialTask ? 'Save Changes' : 'Add Task'}
+          Add Task
         </Button>
       </Box>
     </LocalizationProvider>
