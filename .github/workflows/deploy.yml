@@ -43,6 +43,8 @@ jobs:
         rm -rf node_modules package-lock.json npm-shrinkwrap.json
         echo "Installing dependencies with npm install (not npm ci)..."
         npm install --legacy-peer-deps --force --no-audit --no-fund
+        echo "Installing ajv compatibility fix for React 19..."
+        npm install ajv@^8.12.0 ajv-keywords@^5.1.0 --save-dev --legacy-peer-deps
         echo "Dependencies installed successfully!"
         
     - name: Build React app

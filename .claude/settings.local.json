@@ -65,7 +65,8 @@
       "Bash(timeout 30s npm start:*)",
       "Bash(npm cache clean:*)",
       "Bash(GENERATE_SOURCEMAP=false CI=false npm run build)",
-      "Bash(timeout 10 npm start)"
+      "Bash(timeout 10 npm start)",
+      "Bash(CI=false GENERATE_SOURCEMAP=false npm run build)"
     ],
     "deny": []
   }
