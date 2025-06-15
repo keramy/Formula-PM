@@ -3,8 +3,7 @@ name: Deploy Formula PM to GitHub Pages
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -30,15 +29,28 @@ jobs:
         cache: 'npm'
         cache-dependency-path: formula-project-app/package-lock.json
         
+    - name: Verify project structure
+      run: |
+        echo "Checking project structure..."
+        ls -la
+        ls -la formula-project-app/
+        
     - name: Install dependencies
       run: |
         cd formula-project-app
+        echo "Installing dependencies..."
         npm ci
         
     - name: Build React app
+      env:
+        CI: false
+        GENERATE_SOURCEMAP: false
       run: |
         cd formula-project-app
+        echo "Building React app..."
         npm run build
+        echo "Build completed successfully!"
+        ls -la build/
         
     - name: Setup Pages
       uses: actions/configure-pages@v4

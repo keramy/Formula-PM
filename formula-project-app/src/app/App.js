@@ -23,7 +23,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import queryClient from '../services/queryClient';
 import ModernDashboardLayout from '../components/layout/ModernDashboardLayout';
 import ModernStatsCards from '../components/charts/ModernStatsCards';
-import UnifiedHeader from '../components/ui/UnifiedHeader';
+// import UnifiedHeader from '../components/ui/UnifiedHeader';
 // Import lightweight components directly
 import EnhancedTabSystem from '../components/layout/EnhancedTabSystem';
 import EnhancedHeader from '../components/layout/EnhancedHeader';
@@ -42,7 +42,7 @@ const ProjectForm = React.lazy(() => import('../features/projects/components/Pro
 const TaskForm = React.lazy(() => import('../features/tasks/components/TaskForm'));
 const ProjectsList = React.lazy(() => import('../features/projects/components/ProjectsList'));
 const EnhancedTasksView = React.lazy(() => import('../features/tasks/components/EnhancedTasksView'));
-const EnhancedTasksList = React.lazy(() => import('../features/tasks/components/EnhancedTasksList'));
+// const EnhancedTasksList = React.lazy(() => import('../features/tasks/components/EnhancedTasksList'));
 const GanttChart = React.lazy(() => import('../components/charts/GanttChart'));
 const TeamMemberForm = React.lazy(() => import('../features/team/components/TeamMemberForm'));
 const TeamMembersList = React.lazy(() => import('../features/team/components/TeamMembersList'));
@@ -51,8 +51,8 @@ const ClientsList = React.lazy(() => import('../features/clients/components/Clie
 const ProjectFormPage = React.lazy(() => import('../features/projects/components/ProjectFormPage'));
 const TaskFormPage = React.lazy(() => import('../features/tasks/components/TaskFormPage'));
 const TeamMemberFormPage = React.lazy(() => import('../features/team/components/TeamMemberFormPage'));
-const ClientFormPage = React.lazy(() => import('../features/clients/components/ClientFormPage'));
-const ScopeItemFormPage = React.lazy(() => import('../features/projects/components/ScopeItemFormPage'));
+// const ClientFormPage = React.lazy(() => import('../features/clients/components/ClientFormPage'));
+// const ScopeItemFormPage = React.lazy(() => import('../features/projects/components/ScopeItemFormPage'));
 const ProjectsTableView = React.lazy(() => import('../features/projects/components/ProjectsTableView'));
 const ProjectsFilters = React.lazy(() => import('../features/projects/components/ProjectsFilters'));
 const MyProjectsList = React.lazy(() => import('../features/projects/components/MyProjectsList'));
@@ -71,14 +71,14 @@ function App() {
     clients,
     loading,
     error,
-    stats,
-    lookups,
+    // stats,
+    // lookups,
     setProjects,
     setTasks,
     setTeamMembers,
     setClients,
     setError,
-    loadAllData
+    // loadAllData
   } = useFormulaData();
 
   const [currentTab, setCurrentTab] = useState(0);
@@ -107,9 +107,9 @@ function App() {
     searchResults,
     suggestions,
     quickFilters,
-    clearSearch,
+    // clearSearch,
     isSearching,
-    hasResults
+    // hasResults
   } = useEnhancedSearch(projects, tasks, teamMembers, clients);
   const [showSearchResults, setShowSearchResults] = useState(false);
   
@@ -416,6 +416,8 @@ function App() {
         setCurrentTab(4); // Switch to Team tab
         setSelectedMemberForDetail(item);
         setTeamMemberDetailOpen(true);
+        break;
+      default:
         break;
     }
   };

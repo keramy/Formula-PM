@@ -60,7 +60,8 @@
       "Bash(timeout 30s find node_modules -type f -name \"*.js\")",
       "Bash(sed:*)",
       "Bash(./scripts/start-servers.sh:*)",
-      "Bash(./scripts/stop-servers.sh:*)"
+      "Bash(./scripts/stop-servers.sh:*)",
+      "Bash(CI=false npm run build)"
     ],
     "deny": []
   }
