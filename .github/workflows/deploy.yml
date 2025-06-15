@@ -39,7 +39,7 @@ jobs:
       run: |
         cd formula-project-app
         echo "Installing dependencies..."
-        npm ci
+        npm ci --legacy-peer-deps
         
     - name: Build React app
       env:

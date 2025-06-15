@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { 
   Box, 
   Paper, 
@@ -103,67 +102,27 @@ const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }
     return { text: date.toLocaleDateString(), color: '#7f8c8d', urgent: false };
   };
 
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-
-    const { source, destination, draggableId } = result;
-    
-    // Don't do anything if dropped in the same position
-    if (source.droppableId === destination.droppableId && source.index === destination.index) {
-      return;
-    }
-
-    // Find the task being moved
-    const task = tasks.find(t => t.id === draggableId);
-    if (!task) return;
-
-    // Determine new status based on destination column
-    let newStatus = destination.droppableId;
-    
-    // Handle status mapping
-    if (newStatus === 'in-progress') {
-      newStatus = 'in-progress';
-    }
-
-    // Update the task status - pass just the updates object
-    const updates = {
-      status: newStatus,
-      // Set progress to 100% if completed
-      progress: newStatus === 'completed' ? 100 : task.progress
-    };
-
-    onTaskUpdate(task.id, updates);
-  };
-
-  const TaskCard = ({ task, index }) => {
+  const TaskCard = ({ task }) => {
     const assignedMember = getAssignedMember(task.assignedTo);
     const priority = priorityConfig[task.priority] || priorityConfig.medium;
     const dueInfo = formatDueDate(task.dueDate);
 
     return (
-      <Draggable draggableId={task.id} index={index}>
-        {(provided, snapshot) => (
-          <Card
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            sx={{
-              mb: 1.5,
-              cursor: 'pointer',
-              backgroundColor: 'white',
-              border: '1px solid #E9ECEF',
-              borderRadius: 2,
-              transition: 'all 0.2s ease-in-out',
-              transform: snapshot.isDragging ? 'rotate(5deg)' : 'none',
-              boxShadow: snapshot.isDragging 
-                ? '0 8px 24px rgba(0,0,0,0.15)' 
-                : '0 1px 3px rgba(0,0,0,0.1)',
-              '&:hover': {
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                transform: 'translateY(-1px)'
-              }
-            }}
-          >
+      <Card
+        sx={{
+          mb: 1.5,
+          cursor: 'pointer',
+          backgroundColor: 'white',
+          border: '1px solid #E9ECEF',
+          borderRadius: 2,
+          transition: 'all 0.2s ease-in-out',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          '&:hover': {
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            transform: 'translateY(-1px)'
+          }
+        }}
+      >
             <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
               {/* Task Name */}
               <Typography 
@@ -278,24 +237,21 @@ const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }
               </Box>
             </CardContent>
           </Card>
-        )}
-      </Draggable>
     );
   };
 
   return (
     <Box sx={{ p: 3, height: 'calc(100vh - 200px)', overflow: 'hidden' }}>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Box 
-          className="board-container"
-          sx={{ 
-            display: 'flex', 
-            gap: 3, 
-            overflowX: 'auto', 
-            height: '100%',
-            pb: 2
-          }}
-        >
+      <Box 
+        className="board-container"
+        sx={{ 
+          display: 'flex', 
+          gap: 3, 
+          overflowX: 'auto', 
+          height: '100%',
+          pb: 2
+        }}
+      >
           {Object.entries(columns).map(([columnId, column]) => (
             <Paper
               key={columnId}
@@ -349,55 +305,43 @@ const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }
               </Box>
               
               {/* Tasks List */}
-              <Droppable droppableId={columnId}>
-                {(provided, snapshot) => (
-                  <Box
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
+              <Box
+                sx={{ 
+                  p: 2, 
+                  minHeight: 400,
+                  maxHeight: 'calc(100vh - 350px)',
+                  overflowY: 'auto',
+                  backgroundColor: 'transparent',
+                  transition: 'background-color 0.2s ease'
+                }}
+              >
+                {column.tasks.length === 0 ? (
+                  <Box 
                     sx={{ 
-                      p: 2, 
-                      minHeight: 400,
-                      maxHeight: 'calc(100vh - 350px)',
-                      overflowY: 'auto',
-                      backgroundColor: snapshot.isDraggingOver 
-                        ? `${column.color}10` 
-                        : 'transparent',
-                      transition: 'background-color 0.2s ease'
+                      textAlign: 'center', 
+                      py: 4, 
+                      color: '#7f8c8d',
+                      border: '2px dashed #E9ECEF',
+                      borderRadius: 2,
+                      transition: 'all 0.2s ease'
                     }}
                   >
-                    {column.tasks.length === 0 ? (
-                      <Box 
-                        sx={{ 
-                          textAlign: 'center', 
-                          py: 4, 
-                          color: '#7f8c8d',
-                          backgroundColor: snapshot.isDraggingOver ? `${column.color}20` : 'transparent',
-                          border: snapshot.isDraggingOver ? `2px dashed ${column.color}` : '2px dashed transparent',
-                          borderRadius: 2,
-                          transition: 'all 0.2s ease'
-                        }}
-                      >
-                        <Typography variant="body2">
-                          Drop tasks here
-                        </Typography>
-                      </Box>
-                    ) : (
-                      column.tasks.map((task, index) => (
-                        <TaskCard 
-                          key={task.id} 
-                          task={task} 
-                          index={index} 
-                        />
-                      ))
-                    )}
-                    {provided.placeholder}
+                    <Typography variant="body2">
+                      No tasks in this column
+                    </Typography>
                   </Box>
+                ) : (
+                  column.tasks.map((task) => (
+                    <TaskCard 
+                      key={task.id} 
+                      task={task} 
+                    />
+                  ))
                 )}
-              </Droppable>
+              </Box>
             </Paper>
           ))}
         </Box>
-      </DragDropContext>
     </Box>
   );
 };
