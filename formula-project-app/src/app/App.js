@@ -1,8 +1,11 @@
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, useMemo, useCallback, useEffect } from 'react';
 import { generateProjectId, generateTaskId, generateMemberId } from '../utils/generators/idGenerator';
 import apiService from '../services/api/apiService';
+import { notificationService } from '../services/notifications/notificationService';
 import { useFormulaData, useFilteredData, useActiveFilters } from '../hooks/useFormula';
+import { useAuthenticatedData } from '../hooks/useAuthenticatedData';
 import { useEnhancedSearch } from '../hooks/useEnhancedSearch';
+import { useNavigation } from '../context/NavigationContext';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import {
@@ -15,6 +18,8 @@ import {
   DialogContent
 } from '@mui/material';
 import { NotificationProvider, NavigationProvider } from '../context';
+import { AuthProvider } from '../context/AuthContext';
+import ProtectedRoute from '../components/auth/ProtectedRoute';
 import NotificationContainer from '../components/ui/NotificationContainer';
 
 // React Query imports
@@ -62,10 +67,11 @@ const GlobalSearchResults = React.lazy(() => import('../components/ui/GlobalSear
 const BoardView = React.lazy(() => import('../components/views/BoardView'));
 const ShopDrawingsList = React.lazy(() => import('../features/shop-drawings/components/ShopDrawingsList'));
 const MaterialSpecificationsList = React.lazy(() => import('../features/specifications/components/MaterialSpecificationsList'));
+const ProjectPage = React.lazy(() => import('../features/projects/components/ProjectPage'));
 
 
 function App() {
-  // Use custom hook for data management
+  // Use authenticated data hook for role-based data access
   const {
     projects,
     tasks,
@@ -73,34 +79,75 @@ function App() {
     clients,
     loading,
     error,
-    // stats,
-    // lookups,
+    stats,
     setProjects,
     setTasks,
     setTeamMembers,
     setClients,
     setError,
-    // loadAllData
-  } = useFormulaData();
+    addProject,
+    updateProject,
+    deleteProject,
+    addTask,
+    updateTask,
+    deleteTask,
+    addTeamMember,
+    updateTeamMember,
+    deleteTeamMember,
+    addClient,
+    updateClient,
+    deleteClient
+  } = useAuthenticatedData();
 
-  const [currentTab, setCurrentTab] = useState(0);
-  const [createProjectDialogOpen, setCreateProjectDialogOpen] = useState(false);
-  const [editProjectDialogOpen, setEditProjectDialogOpen] = useState(false);
-  const [viewProjectDialogOpen, setViewProjectDialogOpen] = useState(false);
-  const [selectedProjectForEdit, setSelectedProjectForEdit] = useState(null);
-  const [selectedProjectForView, setSelectedProjectForView] = useState(null);
-  const [scopeDialogOpen, setScopeDialogOpen] = useState(false);
-  const [selectedProjectForScope, setSelectedProjectForScope] = useState(null);
-  const [addTeamMemberDialogOpen, setAddTeamMemberDialogOpen] = useState(false);
-  const [addClientDialogOpen, setAddClientDialogOpen] = useState(false);
-  const [addTaskDialogOpen, setAddTaskDialogOpen] = useState(false);
-  const [editTaskDialogOpen, setEditTaskDialogOpen] = useState(false);
-  const [viewTaskDialogOpen, setViewTaskDialogOpen] = useState(false);
-  const [selectedTaskForEdit, setSelectedTaskForEdit] = useState(null);
-  const [selectedTaskForView, setSelectedTaskForView] = useState(null);
-  const [teamMemberDetailOpen, setTeamMemberDetailOpen] = useState(false);
-  const [selectedMemberForDetail, setSelectedMemberForDetail] = useState(null);
-  const [globalSearch, setGlobalSearch] = useState('');
+  // Navigation context
+  const { 
+    currentProjectId, 
+    isInProjectContext, 
+    navigateToProject,
+    exitProjectContext 
+  } = useNavigation();
+
+  // Initialize notification service
+  useEffect(() => {
+    if (teamMembers.length > 0 && projects.length > 0 && tasks.length > 0) {
+      notificationService.init(teamMembers, projects, tasks);
+      
+      return () => {
+        notificationService.destroy();
+      };
+    }
+  }, [teamMembers, projects, tasks]);
+
+  // Consolidated dialog state for better performance
+  const [dialogState, setDialogState] = useState({
+    currentTab: 0,
+    createProjectDialogOpen: false,
+    editProjectDialogOpen: false,
+    viewProjectDialogOpen: false,
+    selectedProjectForEdit: null,
+    selectedProjectForView: null,
+    scopeDialogOpen: false,
+    selectedProjectForScope: null,
+    addTeamMemberDialogOpen: false,
+    addClientDialogOpen: false,
+    addTaskDialogOpen: false,
+    editTaskDialogOpen: false,
+    viewTaskDialogOpen: false,
+    selectedTaskForEdit: null,
+    selectedTaskForView: null,
+    teamMemberDetailOpen: false,
+    selectedMemberForDetail: null,
+    globalSearch: ''
+  });
+
+  // Helper function to update dialog state
+  const updateDialogState = useCallback((updates) => {
+    setDialogState(prev => ({ ...prev, ...updates }));
+  }, []);
+
+  // Extract commonly used values for readability
+  const currentTab = dialogState.currentTab;
+  const globalSearch = dialogState.globalSearch;
 
   // Enhanced search with debouncing
   const {
@@ -154,7 +201,8 @@ function App() {
   });
 
 
-  const addProject = async (project) => {
+  // Memoized callbacks to prevent unnecessary re-renders
+  const handleAddProject = useCallback(async (project) => {
     try {
       const newProject = {
         ...project,
@@ -162,33 +210,51 @@ function App() {
         createdAt: new Date().toISOString()
       };
       
-      const createdProject = await apiService.createProject(newProject);
-      setProjects([...projects, createdProject]);
+      const createdProject = await addProject(newProject);
       navigateToMain();
+      
+      // Add notification for project assignment
+      if (project.managerId) {
+        const manager = teamMembers.find(m => m.id === project.managerId);
+        const currentUser = teamMembers.find(m => m.id === 1008); // Current user ID
+        
+        if (manager) {
+          notificationService.notifyProjectAssignment(createdProject, manager, currentUser);
+        }
+      }
     } catch (error) {
       console.error('Error creating project:', error);
       setError('Failed to create project');
     }
-  };
+  }, [addProject, navigateToMain, setError, teamMembers]);
 
-  const updateProject = async (project) => {
+  const handleUpdateProject = useCallback(async (project) => {
     try {
+      const oldProject = projects.find(p => p.id === project.id);
+      
       // Automatically set progress to 100% if project is marked as completed
       if (project.status === 'completed' && project.progress !== 100) {
         project.progress = 100;
       }
       
-      const updatedProject = await apiService.updateProject(project.id, project);
-      setProjects(projects.map(p => p.id === project.id ? updatedProject : p));
-      setEditProjectDialogOpen(false);
-      setSelectedProjectForEdit(null);
+      const updatedProject = await updateProject(project.id, project);
+      updateDialogState({ 
+        editProjectDialogOpen: false, 
+        selectedProjectForEdit: null 
+      });
+      
+      // Add notification for project status change
+      if (oldProject && project.status !== oldProject.status) {
+        const currentUser = teamMembers.find(m => m.id === 1008); // Current user ID
+        notificationService.notifyProjectStatusChange(updatedProject, oldProject.status, project.status, currentUser);
+      }
     } catch (error) {
       console.error('Error updating project:', error);
       setError('Failed to update project');
     }
-  };
+  }, [updateProject, setError, projects, teamMembers]);
 
-  const addTask = async (task) => {
+  const handleAddTask = useCallback(async (task) => {
     try {
       const newTask = {
         ...task,
@@ -198,17 +264,19 @@ function App() {
         createdAt: new Date().toISOString()
       };
       
-      const createdTask = await apiService.createTask(newTask);
-      setTasks([...tasks, createdTask]);
+      const createdTask = await addTask(newTask);
       navigateToMain();
       
-      // Log task assignment (for demo)
+      // Add notification for task assignment
       if (task.assignedTo) {
         const assignee = teamMembers.find(m => m.id === task.assignedTo);
         const project = projects.find(p => p.id === task.projectId);
+        const currentUser = teamMembers.find(m => m.id === 1008); // Current user ID
         
         if (assignee && project) {
-          console.log('📧 Task assigned notification would be sent:', {
+          notificationService.notifyTaskAssignment(createdTask, project, assignee, currentUser);
+          
+          console.log('📧 Task assigned notification sent:', {
             taskName: createdTask.name,
             assigneeName: assignee.fullName,
             assigneeEmail: assignee.email,
@@ -220,21 +288,23 @@ function App() {
       console.error('Error creating task:', error);
       setError('Failed to create task');
     }
-  };
+  }, [addTask, navigateToMain, teamMembers, projects, setError]);
 
-  const updateTaskWithForm = async (task) => {
+  const updateTaskWithForm = useCallback(async (task) => {
     try {
       const updatedTask = await apiService.updateTask(task.id, task);
       setTasks(tasks.map(t => t.id === task.id ? updatedTask : t));
-      setEditTaskDialogOpen(false);
-      setSelectedTaskForEdit(null);
+      updateDialogState({ 
+        editTaskDialogOpen: false, 
+        selectedTaskForEdit: null 
+      });
     } catch (error) {
       console.error('Error updating task:', error);
       setError('Failed to update task');
     }
-  };
+  }, [tasks, setTasks, setError, updateDialogState]);
 
-  const updateTask = async (taskId, updates) => {
+  const updateTaskStatus = useCallback(async (taskId, updates) => {
     try {
       const oldTask = tasks.find(t => t.id === taskId);
       const updatedTask = await apiService.updateTask(taskId, updates);
@@ -243,13 +313,15 @@ function App() {
         task.id === taskId ? updatedTask : task
       ));
 
-      // Log task completion (for demo)
+      // Add notifications for task changes
       if (updates.status === 'completed' && oldTask.status !== 'completed') {
         const assignee = teamMembers.find(m => m.id === updatedTask.assignedTo);
         const project = projects.find(p => p.id === updatedTask.projectId);
         
         if (assignee && project) {
-          console.log('📧 Task completion notification would be sent:', {
+          notificationService.notifyTaskCompleted(updatedTask, project, assignee);
+          
+          console.log('📧 Task completion notification sent:', {
             taskName: updatedTask.name,
             assigneeName: assignee.fullName,
             projectName: project.name,
@@ -257,55 +329,53 @@ function App() {
           });
         }
       }
+      
+      // Task reassignment notification
+      if (updates.assignedTo && updates.assignedTo !== oldTask.assignedTo) {
+        const newAssignee = teamMembers.find(m => m.id === updates.assignedTo);
+        const project = projects.find(p => p.id === updatedTask.projectId);
+        const currentUser = teamMembers.find(m => m.id === 1008); // Current user ID
+        
+        if (newAssignee && project) {
+          notificationService.notifyTaskAssignment(updatedTask, project, newAssignee, currentUser);
+        }
+      }
     } catch (error) {
       console.error('Error updating task:', error);
       setError('Failed to update task');
     }
-  };
+  }, [tasks, setTasks, teamMembers, projects, setError]);
 
-  const deleteTask = async (taskId) => {
-    try {
-      await apiService.deleteTask(taskId);
-      setTasks(tasks.filter(task => task.id !== taskId));
-    } catch (error) {
-      console.error('Error deleting task:', error);
-      setError('Failed to delete task');
-    }
-  };
 
-  const handleViewTask = (task) => {
-    setSelectedTaskForView(task);
-    setViewTaskDialogOpen(true);
-  };
+  const handleViewTask = useCallback((task) => {
+    updateDialogState({
+      selectedTaskForView: task,
+      viewTaskDialogOpen: true
+    });
+  }, [updateDialogState]);
 
-  const handleEditTask = (task) => {
+  const handleEditTask = useCallback((task) => {
     setCurrentPage('edit-task');
     setCurrentFormData(task);
-  };
+  }, []);
 
-  const handleCloseEditTaskDialog = () => {
-    setEditTaskDialogOpen(false);
-    setSelectedTaskForEdit(null);
-  };
+  const handleCloseEditTaskDialog = useCallback(() => {
+    updateDialogState({
+      editTaskDialogOpen: false,
+      selectedTaskForEdit: null
+    });
+  }, [updateDialogState]);
 
-  const handleCloseViewTaskDialog = () => {
-    setViewTaskDialogOpen(false);
-    setSelectedTaskForView(null);
-  };
+  const handleCloseViewTaskDialog = useCallback(() => {
+    updateDialogState({
+      viewTaskDialogOpen: false,
+      selectedTaskForView: null
+    });
+  }, [updateDialogState]);
 
-  const deleteProject = async (projectId) => {
-    try {
-      await apiService.deleteProject(projectId);
-      setProjects(projects.filter(project => project.id !== projectId));
-      setTasks(tasks.filter(task => task.projectId !== projectId));
-    } catch (error) {
-      console.error('Error deleting project:', error);
-      setError('Failed to delete project');
-    }
-  };
 
   // Client functions
-  const addClient = async (client) => {
+  const handleAddClientForm = async (client) => {
     try {
       const newClient = {
         ...client,
@@ -313,8 +383,7 @@ function App() {
         createdAt: new Date().toISOString()
       };
       
-      const createdClient = await apiService.createClient(newClient);
-      setClients([...clients, createdClient]);
+      await addClient(newClient);
       setAddClientDialogOpen(false);
     } catch (error) {
       console.error('Error creating client:', error);
@@ -326,38 +395,15 @@ function App() {
     setAddClientDialogOpen(true);
   };
 
-  const updateClient = async (clientId, updates) => {
-    try {
-      const updatedClient = await apiService.updateClient(clientId, updates);
-      setClients(clients.map(client => 
-        client.id === clientId ? updatedClient : client
-      ));
-    } catch (error) {
-      console.error('Error updating client:', error);
-      setError('Failed to update client');
-    }
-  };
-
-  const deleteClient = async (clientId) => {
-    try {
-      await apiService.deleteClient(clientId);
-      setClients(clients.filter(client => client.id !== clientId));
-    } catch (error) {
-      console.error('Error deleting client:', error);
-      setError('Failed to delete client');
-    }
-  };
-
   // Team Members functions
-  const addTeamMember = async (member) => {
+  const handleAddTeamMemberForm = async (member) => {
     try {
       const newMember = {
         ...member,
         id: generateMemberId()
       };
       
-      const createdMember = await apiService.createTeamMember(newMember);
-      setTeamMembers([...teamMembers, createdMember]);
+      await addTeamMember(newMember);
       navigateToMain();
     } catch (error) {
       console.error('Error creating team member:', error);
@@ -370,31 +416,35 @@ function App() {
     setCurrentFormData(null);
   };
 
-  const handleAddTask = () => {
+  const handleNavigateToAddTask = () => {
     setCurrentPage('add-task');
     setCurrentFormData(null);
   };
 
-  const handleViewTeamMemberDetail = (member) => {
-    setSelectedMemberForDetail(member);
-    setTeamMemberDetailOpen(true);
-  };
+  const handleViewTeamMemberDetail = useCallback((member) => {
+    updateDialogState({
+      selectedMemberForDetail: member,
+      teamMemberDetailOpen: true
+    });
+  }, [updateDialogState]);
 
-  const handleCloseTeamMemberDetail = () => {
-    setTeamMemberDetailOpen(false);
-    setSelectedMemberForDetail(null);
-  };
+  const handleCloseTeamMemberDetail = useCallback(() => {
+    updateDialogState({
+      teamMemberDetailOpen: false,
+      selectedMemberForDetail: null
+    });
+  }, [updateDialogState]);
 
-  // Global search functionality (now with debouncing)
-  const handleGlobalSearchChange = (value) => {
-    setGlobalSearch(value);
+  // Optimized global search functionality
+  const handleGlobalSearchChange = useCallback((value) => {
+    updateDialogState({ globalSearch: value });
     setSearchTerm(value); // Update debounced search term
     if (value.trim().length > 0) {
       setShowSearchResults(true);
     } else {
       setShowSearchResults(false);
     }
-  };
+  }, [updateDialogState, setSearchTerm]);
 
   const handleSearchSubmit = () => {
     if (searchTerm.trim().length > 0) {
@@ -402,27 +452,59 @@ function App() {
     }
   };
 
-  const handleSearchResultSelect = (type, item) => {
+  const handleShowFullSearch = useCallback(() => {
+    setShowSearchResults(true);
+  }, []);
+
+  const handleSearchResultSelect = useCallback((result) => {
     setShowSearchResults(false);
-    setGlobalSearch('');
+    updateDialogState({ globalSearch: '' });
     
-    switch (type) {
+    // Enhanced navigation based on result type
+    switch (result.type) {
       case 'project':
-        setCurrentTab(1); // Switch to Projects tab
-        // You could add additional logic here to highlight the selected project
+        // Navigate to specific project using project navigation
+        handleNavigateToProject(result.id, 'overview');
         break;
       case 'task':
-        setCurrentTab(3); // Switch to Tasks tab
+        updateDialogState({ 
+          currentTab: 3, // Switch to Tasks tab
+          selectedTaskForView: result,
+          viewTaskDialogOpen: true
+        });
         break;
-      case 'teamMember':
-        setCurrentTab(4); // Switch to Team tab
-        setSelectedMemberForDetail(item);
-        setTeamMemberDetailOpen(true);
+      case 'team-member':
+        updateDialogState({ 
+          currentTab: 4, // Switch to Team tab
+          selectedMemberForDetail: result,
+          teamMemberDetailOpen: true
+        });
+        break;
+      case 'client':
+        updateDialogState({ currentTab: 5 }); // Switch to Clients tab
+        break;
+      case 'shop-drawing':
+        // Navigate to project's shop drawings section
+        if (result.projectId) {
+          handleNavigateToProject(result.projectId, 'shop-drawings');
+        }
+        break;
+      case 'specification':
+        // Navigate to project's specifications section
+        if (result.projectId) {
+          handleNavigateToProject(result.projectId, 'specifications');
+        }
+        break;
+      case 'compliance':
+        // Navigate to project's compliance section
+        if (result.projectId) {
+          handleNavigateToProject(result.projectId, 'compliance');
+        }
         break;
       default:
         break;
     }
-  };
+  }, [updateDialogState, handleNavigateToProject]);
 
   // Get search results (now using debounced search)
   const getSearchResults = () => {
@@ -433,44 +515,13 @@ function App() {
     };
   };
 
-  const updateTeamMember = async (memberId, updates) => {
-    try {
-      const updatedMember = await apiService.updateTeamMember(memberId, updates);
-      setTeamMembers(teamMembers.map(member => 
-        member.id === memberId ? updatedMember : member
-      ));
-    } catch (error) {
-      console.error('Error updating team member:', error);
-      setError('Failed to update team member');
-    }
-  };
+  // updateTeamMember is provided by useAuthenticatedData hook
 
-  const deleteTeamMember = async (memberId) => {
-    try {
-      await apiService.deleteTeamMember(memberId);
-      setTeamMembers(teamMembers.filter(member => member.id !== memberId));
-      
-      // Also update tasks that were assigned to this member
-      const updatedTasks = tasks.map(task => 
-        task.assignedTo === memberId ? { ...task, assignedTo: null } : task
-      );
-      setTasks(updatedTasks);
-      
-      // Update tasks in the backend too
-      for (const task of updatedTasks) {
-        if (task.assignedTo === null && tasks.find(t => t.id === task.id).assignedTo === memberId) {
-          await apiService.updateTask(task.id, { assignedTo: null });
-        }
-      }
-    } catch (error) {
-      console.error('Error deleting team member:', error);
-      setError('Failed to delete team member');
-    }
-  };
+  // deleteTeamMember is provided by useAuthenticatedData hook
 
-  const handleTabChange = (_, newValue) => {
-    setCurrentTab(newValue);
-  };
+  const handleTabChange = useCallback((_, newValue) => {
+    updateDialogState({ currentTab: newValue });
+  }, [updateDialogState]);
 
   // Enhanced Projects Handlers
 
@@ -516,6 +567,27 @@ function App() {
     setProjectsFilters(newFilters);
   };
 
+  // Project Navigation Handlers
+  const handleNavigateToProject = (projectId, section = 'overview') => {
+    navigateToProject(projectId, section);
+  };
+
+  const handleViewProject = (project) => {
+    handleNavigateToProject(project.id, 'overview');
+  };
+
+  const handleEditProject = useCallback((project) => {
+    updateDialogState({
+      selectedProjectForEdit: project,
+      editProjectDialogOpen: true
+    });
+  }, [updateDialogState]);
+
+  const handleProjectNameClick = (project) => {
+    // This is used when clicking project names from other tabs
+    handleNavigateToProject(project.id, 'overview');
+  };
+
   const handleClearFilters = () => {
     setProjectsFilters({
       status: '',
@@ -548,35 +620,35 @@ function App() {
     }
   };
 
-  const handleManageScope = (project) => {
-    setSelectedProjectForScope(project);
-    setScopeDialogOpen(true);
-  };
+  const handleManageScope = useCallback((project) => {
+    updateDialogState({
+      selectedProjectForScope: project,
+      scopeDialogOpen: true
+    });
+  }, [updateDialogState]);
 
-  const handleEditProject = (project) => {
-    setSelectedProjectForEdit(project);
-    setEditProjectDialogOpen(true);
-  };
+  // Remove duplicate functions - using the ones above that implement navigation
 
-  const handleViewProject = (project) => {
-    setSelectedProjectForView(project);
-    setViewProjectDialogOpen(true);
-  };
+  const handleCloseEditDialog = useCallback(() => {
+    updateDialogState({
+      editProjectDialogOpen: false,
+      selectedProjectForEdit: null
+    });
+  }, [updateDialogState]);
 
-  const handleCloseEditDialog = () => {
-    setEditProjectDialogOpen(false);
-    setSelectedProjectForEdit(null);
-  };
+  const handleCloseViewDialog = useCallback(() => {
+    updateDialogState({
+      viewProjectDialogOpen: false,
+      selectedProjectForView: null
+    });
+  }, [updateDialogState]);
 
-  const handleCloseViewDialog = () => {
-    setViewProjectDialogOpen(false);
-    setSelectedProjectForView(null);
-  };
-
-  const handleCloseScopeDialog = () => {
-    setScopeDialogOpen(false);
-    setSelectedProjectForScope(null);
-  };
+  const handleCloseScopeDialog = useCallback(() => {
+    updateDialogState({
+      scopeDialogOpen: false,
+      selectedProjectForScope: null
+    });
+  }, [updateDialogState]);
 
   // Use custom filtering hook for better performance
   const filteredProjects = useFilteredData(projects, projectsFilters, projectsSearchTerm);
@@ -594,6 +666,8 @@ function App() {
               globalSearch={globalSearch}
               onGlobalSearchChange={handleGlobalSearchChange}
               onSearchSubmit={handleSearchSubmit}
+              onSearchResultSelect={handleSearchResultSelect}
+              onShowFullSearch={handleShowFullSearch}
             >
               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
                 <div style={{ textAlign: 'center' }}>
@@ -612,6 +686,24 @@ function App() {
 
 
   const renderFullPageContent = () => {
+    // Check if we're in project context and render ProjectPage
+    if (isInProjectContext() && currentProjectId) {
+      return (
+        <ErrorBoundary fallbackMessage="Failed to load project page">
+          <Suspense fallback={<LoadingFallback message="Loading project..." />}>
+            <ProjectPage
+              projectId={currentProjectId}
+              projects={projects}
+              tasks={tasks}
+              teamMembers={teamMembers}
+              onEditProject={handleEditProject}
+              onUpdateTask={updateTask}
+            />
+          </Suspense>
+        </ErrorBoundary>
+      );
+    }
+
     switch (currentPage) {
       case 'add-task':
         return (
@@ -620,7 +712,7 @@ function App() {
               <TaskFormPage
                 projects={projects}
                 teamMembers={teamMembers}
-                onSubmit={addTask}
+                onSubmit={handleAddTask}
                 onCancel={navigateToMain}
                 isEdit={false}
               />
@@ -650,7 +742,7 @@ function App() {
             <Suspense fallback={<FormSkeleton />}>
               <ProjectFormPage
                 clients={clients}
-                onSubmit={addProject}
+                onSubmit={handleAddProject}
                 onCancel={navigateToMain}
                 isEdit={false}
               />
@@ -664,7 +756,7 @@ function App() {
             <Suspense fallback={<FormSkeleton />}>
               <TeamMemberFormPage
                 teamMembers={teamMembers}
-                onSubmit={addTeamMember}
+                onSubmit={handleAddTeamMemberForm}
                 onCancel={navigateToMain}
                 isEdit={false}
               />
@@ -741,7 +833,7 @@ function App() {
                 <Suspense fallback={<LoadingFallback message="Loading board view..." />}>
                   <BoardView
                     tasks={tasks}
-                    onTaskUpdate={updateTask}
+                    onTaskUpdate={updateTaskStatus}
                     teamMembers={teamMembers}
                     projects={projects}
                   />
@@ -856,7 +948,7 @@ function App() {
                 teamMembers={teamMembers}
                 onUpdateTask={updateTask}
                 onDeleteTask={deleteTask}
-                onAddTask={handleAddTask}
+                onAddTask={handleNavigateToAddTask}
                 onViewTask={handleViewTask}
                 onEditTask={handleEditTask}
               />
@@ -865,11 +957,11 @@ function App() {
         );
 
       case 4: // Team
-        return teamMemberDetailOpen ? (
+        return dialogState.teamMemberDetailOpen ? (
           <ErrorBoundary fallbackMessage="Failed to load team member details">
             <Suspense fallback={<LoadingFallback message="Loading member details..." />}>
               <TeamMemberDetail
-                member={selectedMemberForDetail}
+                member={dialogState.selectedMemberForDetail}
                 tasks={tasks}
                 projects={projects}
                 teamMembers={teamMembers}
@@ -1010,17 +1102,21 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <NotificationProvider>
-        <NavigationProvider>
-          <ThemeProvider theme={formulaTheme}>
-            <CssBaseline />
-            <ModernDashboardLayout 
-              currentTab={currentTab} 
-              onTabChange={handleTabChange}
-              globalSearch={globalSearch}
-              onGlobalSearchChange={handleGlobalSearchChange}
-              onSearchSubmit={handleSearchSubmit}
-            >
+      <AuthProvider>
+        <NotificationProvider>
+          <NavigationProvider>
+            <ThemeProvider theme={formulaTheme}>
+              <CssBaseline />
+              <ProtectedRoute>
+                <ModernDashboardLayout 
+                  currentTab={currentTab} 
+                  onTabChange={handleTabChange}
+                  globalSearch={globalSearch}
+                  onGlobalSearchChange={handleGlobalSearchChange}
+                  onSearchSubmit={handleSearchSubmit}
+                  onSearchResultSelect={handleSearchResultSelect}
+                  onShowFullSearch={handleShowFullSearch}
+                >
           <div style={{ padding: '0' }}>
             {/* Error Alert */}
             {error && (
@@ -1043,34 +1139,34 @@ function App() {
 
         {/* Create Project Dialog */}
         <Dialog 
-          open={createProjectDialogOpen} 
-          onClose={() => setCreateProjectDialogOpen(false)}
+          open={dialogState.createProjectDialogOpen} 
+          onClose={() => updateDialogState({ createProjectDialogOpen: false })}
           maxWidth="md"
           fullWidth
         >
           <DialogTitle>Create New Project</DialogTitle>
           <DialogContent>
             <Suspense fallback={<FormSkeleton />}>
-              <ProjectForm onSubmit={addProject} clients={clients} />
+              <ProjectForm onSubmit={handleAddProject} clients={clients} />
             </Suspense>
           </DialogContent>
         </Dialog>
 
         {/* Edit Project Dialog */}
         <Dialog 
-          open={editProjectDialogOpen} 
+          open={dialogState.editProjectDialogOpen} 
           onClose={handleCloseEditDialog}
           maxWidth="md"
           fullWidth
         >
           <DialogTitle>Edit Project</DialogTitle>
           <DialogContent>
-            {selectedProjectForEdit && (
+            {dialogState.selectedProjectForEdit && (
               <Suspense fallback={<FormSkeleton />}>
                 <ProjectForm 
-                  onSubmit={updateProject} 
+                  onSubmit={handleUpdateProject} 
                   clients={clients} 
-                  initialProject={selectedProjectForEdit}
+                  initialProject={dialogState.selectedProjectForEdit}
                 />
               </Suspense>
             )}
@@ -1079,36 +1175,36 @@ function App() {
 
         {/* View Project Dialog */}
         <Dialog 
-          open={viewProjectDialogOpen} 
+          open={dialogState.viewProjectDialogOpen} 
           onClose={handleCloseViewDialog}
           maxWidth="md"
           fullWidth
         >
           <DialogTitle>Project Details</DialogTitle>
           <DialogContent>
-            {selectedProjectForView && (
+            {dialogState.selectedProjectForView && (
               <Box sx={{ py: 2 }}>
                 <Typography variant="h6" gutterBottom>
-                  {selectedProjectForView.name}
+                  {dialogState.selectedProjectForView.name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" paragraph>
-                  {selectedProjectForView.description || 'No description provided'}
+                  {dialogState.selectedProjectForView.description || 'No description provided'}
                 </Typography>
                 <Typography variant="body2" paragraph>
-                  <strong>Type:</strong> {selectedProjectForView.type}
+                  <strong>Type:</strong> {dialogState.selectedProjectForView.type}
                 </Typography>
                 <Typography variant="body2" paragraph>
-                  <strong>Status:</strong> {selectedProjectForView.status}
+                  <strong>Status:</strong> {dialogState.selectedProjectForView.status}
                 </Typography>
                 <Typography variant="body2" paragraph>
-                  <strong>Start Date:</strong> {new Date(selectedProjectForView.startDate).toLocaleDateString()}
+                  <strong>Start Date:</strong> {new Date(dialogState.selectedProjectForView.startDate).toLocaleDateString()}
                 </Typography>
                 <Typography variant="body2" paragraph>
-                  <strong>End Date:</strong> {new Date(selectedProjectForView.endDate).toLocaleDateString()}
+                  <strong>End Date:</strong> {new Date(dialogState.selectedProjectForView.endDate).toLocaleDateString()}
                 </Typography>
-                {selectedProjectForView.clientId && (
+                {dialogState.selectedProjectForView.clientId && (
                   <Typography variant="body2" paragraph>
-                    <strong>Client:</strong> {clients.find(c => c.id === selectedProjectForView.clientId)?.companyName || 'Unknown'}
+                    <strong>Client:</strong> {clients.find(c => c.id === dialogState.selectedProjectForView.clientId)?.companyName || 'Unknown'}
                   </Typography>
                 )}
               </Box>
@@ -1118,7 +1214,7 @@ function App() {
 
         {/* Project Scope Dialog */}
         <Dialog 
-          open={scopeDialogOpen} 
+          open={dialogState.scopeDialogOpen} 
           onClose={handleCloseScopeDialog}
           maxWidth="lg"
           fullWidth
@@ -1127,10 +1223,10 @@ function App() {
           }}
         >
           <DialogContent sx={{ p: 0 }}>
-            {selectedProjectForScope && (
+            {dialogState.selectedProjectForScope && (
               <Suspense fallback={<LoadingFallback message="Loading project scope..." />}>
                 <EnhancedProjectScope 
-                  project={selectedProjectForScope} 
+                  project={dialogState.selectedProjectForScope} 
                   onClose={handleCloseScopeDialog}
                 />
               </Suspense>
@@ -1140,8 +1236,8 @@ function App() {
 
         {/* Add Team Member Dialog */}
         <Dialog 
-          open={addTeamMemberDialogOpen} 
-          onClose={() => setAddTeamMemberDialogOpen(false)}
+          open={dialogState.addTeamMemberDialogOpen} 
+          onClose={() => updateDialogState({ addTeamMemberDialogOpen: false })}
           maxWidth="md"
           fullWidth
         >
@@ -1150,7 +1246,7 @@ function App() {
             <Suspense fallback={<FormSkeleton />}>
               <TeamMemberForm 
                 teamMembers={teamMembers}
-                onSubmit={addTeamMember} 
+                onSubmit={handleAddTeamMemberForm} 
               />
             </Suspense>
           </DialogContent>
@@ -1158,35 +1254,35 @@ function App() {
 
         {/* Add Client Dialog */}
         <Dialog 
-          open={addClientDialogOpen} 
-          onClose={() => setAddClientDialogOpen(false)}
+          open={dialogState.addClientDialogOpen} 
+          onClose={() => updateDialogState({ addClientDialogOpen: false })}
           maxWidth="md"
           fullWidth
         >
           <DialogTitle>Add New Client</DialogTitle>
           <DialogContent>
             <Suspense fallback={<FormSkeleton />}>
-              <ClientForm onSubmit={addClient} />
+              <ClientForm onSubmit={handleAddClientForm} />
             </Suspense>
           </DialogContent>
         </Dialog>
 
         {/* Edit Task Dialog */}
         <Dialog 
-          open={editTaskDialogOpen} 
+          open={dialogState.editTaskDialogOpen} 
           onClose={handleCloseEditTaskDialog}
           maxWidth="md"
           fullWidth
         >
           <DialogTitle>Edit Task</DialogTitle>
           <DialogContent>
-            {selectedTaskForEdit && (
+            {dialogState.selectedTaskForEdit && (
               <Suspense fallback={<FormSkeleton />}>
                 <TaskForm 
                   projects={projects}
                   teamMembers={teamMembers}
                   onSubmit={updateTaskWithForm}
-                  initialTask={selectedTaskForEdit}
+                  initialTask={dialogState.selectedTaskForEdit}
                 />
               </Suspense>
             )}
@@ -1195,8 +1291,8 @@ function App() {
 
         {/* Add Task Dialog */}
         <Dialog 
-          open={addTaskDialogOpen} 
-          onClose={() => setAddTaskDialogOpen(false)}
+          open={dialogState.addTaskDialogOpen} 
+          onClose={() => updateDialogState({ addTaskDialogOpen: false })}
           maxWidth="md"
           fullWidth
         >
@@ -1206,8 +1302,8 @@ function App() {
               <TaskForm 
                 projects={projects}
                 teamMembers={teamMembers}
-                onSubmit={addTask}
-                onCancel={() => setAddTaskDialogOpen(false)}
+                onSubmit={handleAddTask}
+                onCancel={() => updateDialogState({ addTaskDialogOpen: false })}
               />
             </Suspense>
           </DialogContent>
@@ -1215,39 +1311,39 @@ function App() {
 
         {/* View Task Dialog */}
         <Dialog 
-          open={viewTaskDialogOpen} 
+          open={dialogState.viewTaskDialogOpen} 
           onClose={handleCloseViewTaskDialog}
           maxWidth="md"
           fullWidth
         >
           <DialogTitle>Task Details</DialogTitle>
           <DialogContent>
-            {selectedTaskForView && (
+            {dialogState.selectedTaskForView && (
               <Box sx={{ py: 2 }}>
                 <Typography variant="h6" gutterBottom>
-                  {selectedTaskForView.name}
+                  {dialogState.selectedTaskForView.name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" paragraph>
-                  {selectedTaskForView.description || 'No description provided'}
+                  {dialogState.selectedTaskForView.description || 'No description provided'}
                 </Typography>
                 <Typography variant="body2" paragraph>
-                  <strong>Project:</strong> {projects.find(p => p.id === selectedTaskForView.projectId)?.name || 'Unknown'}
+                  <strong>Project:</strong> {projects.find(p => p.id === dialogState.selectedTaskForView.projectId)?.name || 'Unknown'}
                 </Typography>
                 <Typography variant="body2" paragraph>
-                  <strong>Assigned To:</strong> {teamMembers.find(tm => tm.id === selectedTaskForView.assignedTo)?.fullName || 'Unassigned'}
+                  <strong>Assigned To:</strong> {teamMembers.find(tm => tm.id === dialogState.selectedTaskForView.assignedTo)?.fullName || 'Unassigned'}
                 </Typography>
                 <Typography variant="body2" paragraph>
-                  <strong>Priority:</strong> {selectedTaskForView.priority}
+                  <strong>Priority:</strong> {dialogState.selectedTaskForView.priority}
                 </Typography>
                 <Typography variant="body2" paragraph>
-                  <strong>Status:</strong> {selectedTaskForView.status}
+                  <strong>Status:</strong> {dialogState.selectedTaskForView.status}
                 </Typography>
                 <Typography variant="body2" paragraph>
-                  <strong>Due Date:</strong> {new Date(selectedTaskForView.dueDate).toLocaleDateString()}
+                  <strong>Due Date:</strong> {new Date(dialogState.selectedTaskForView.dueDate).toLocaleDateString()}
                 </Typography>
-                {selectedTaskForView.progress !== undefined && (
+                {dialogState.selectedTaskForView.progress !== undefined && (
                   <Typography variant="body2" paragraph>
-                    <strong>Progress:</strong> {selectedTaskForView.progress}%
+                    <strong>Progress:</strong> {dialogState.selectedTaskForView.progress}%
                   </Typography>
                 )}
               </Box>
@@ -1274,10 +1370,12 @@ function App() {
         {process.env.NODE_ENV === 'development' && (
           <ReactQueryDevtools initialIsOpen={false} />
         )}
-        </ThemeProvider>
-      </NavigationProvider>
-    </NotificationProvider>
-  </QueryClientProvider>
+              </ProtectedRoute>
+            </ThemeProvider>
+          </NavigationProvider>
+        </NotificationProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

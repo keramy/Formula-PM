@@ -17,6 +17,8 @@ export const NavigationProvider = ({ children }) => {
     path: '/',
     type: 'dashboard'
   });
+  const [currentProjectId, setCurrentProjectId] = useState(null);
+  const [currentSection, setCurrentSection] = useState(null);
 
   // Navigate to a new page and update breadcrumb stack
   const navigateTo = useCallback((pageInfo) => {
@@ -182,6 +184,60 @@ export const NavigationProvider = ({ children }) => {
     };
   };
 
+  // Project-specific navigation functions
+  const navigateToProject = useCallback((projectId, section = 'overview') => {
+    setCurrentProjectId(projectId);
+    setCurrentSection(section);
+    navigateTo({
+      title: `Project ${section}`,
+      path: `/project/${projectId}/${section}`,
+      type: 'project-page',
+      data: { projectId, section }
+    });
+  }, [navigateTo]);
+
+  const navigateToProjectSection = useCallback((section) => {
+    if (!currentProjectId) return;
+    
+    setCurrentSection(section);
+    navigateTo({
+      title: `Project ${section}`,
+      path: `/project/${currentProjectId}/${section}`,
+      type: 'project-page',
+      data: { projectId: currentProjectId, section }
+    });
+  }, [currentProjectId, navigateTo]);
+
+  const exitProjectContext = useCallback(() => {
+    setCurrentProjectId(null);
+    setCurrentSection(null);
+    navigateTo({
+      title: 'Projects',
+      path: '/projects',
+      type: 'projects'
+    });
+  }, [navigateTo]);
+
+  // Get available project sections
+  const getProjectSections = useCallback(() => {
+    return [
+      { id: 'overview', label: 'Overview', icon: '📊', path: 'overview' },
+      { id: 'scope', label: 'Scope Management', icon: '📋', path: 'scope' },
+      { id: 'timeline', label: 'Timeline & Gantt', icon: '📅', path: 'timeline' },
+      { id: 'drawings', label: 'Shop Drawings', icon: '🏗️', path: 'drawings' },
+      { id: 'specifications', label: 'Material Specs', icon: '📄', path: 'specifications' },
+      { id: 'compliance', label: 'Compliance', icon: '✅', path: 'compliance' }
+    ];
+  }, []);
+
+  const getCurrentProjectSection = useCallback(() => {
+    return currentSection;
+  }, [currentSection]);
+
+  const isInProjectContext = useCallback(() => {
+    return currentProjectId !== null;
+  }, [currentProjectId]);
+
   // Check if we can navigate back
   const canNavigateBack = () => {
     return navigationStack.length > 0;
@@ -190,9 +246,17 @@ export const NavigationProvider = ({ children }) => {
   const value = {
     navigationStack,
     currentPage,
+    currentProjectId,
+    currentSection,
     navigateTo,
     navigateBack,
+    navigateToProject,
+    navigateToProjectSection,
+    exitProjectContext,
     getBreadcrumbConfig,
+    getProjectSections,
+    getCurrentProjectSection,
+    isInProjectContext,
     canNavigateBack
   };
 

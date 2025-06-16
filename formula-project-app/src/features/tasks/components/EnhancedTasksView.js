@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -78,7 +78,7 @@ const statusConfig = {
   completed: { label: 'Completed', color: '#27ae60', bgColor: '#eafaf1', icon: <CheckCircle /> }
 };
 
-function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTask, onAddTask, onViewTask, onEditTask }) {
+const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTask, onAddTask, onViewTask, onEditTask }) {
   const [searchValue, setSearchValue] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [currentTab, setCurrentTab] = useState(0); // 0: List, 1: Board, 2: Calendar
@@ -138,33 +138,40 @@ function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, on
     { key: 'completed', label: 'Completed', filters: { status: 'completed' } }
   ];
 
-  // Filter and sort tasks
-  const filteredAndSortedTasks = useMemo(() => {
-    let filtered = tasks.filter(task => {
-      // Search filter
-      const searchLower = searchValue.toLowerCase();
-      const matchesSearch = !searchValue || 
-        task.name.toLowerCase().includes(searchLower) ||
-        task.description?.toLowerCase().includes(searchLower);
+  // Optimized filter function using memoization
+  const taskFilter = useMemo(() => {
+    const searchLower = searchValue.toLowerCase();
+    const hasSearch = !!searchValue;
+    
+    return (task) => {
+      // Search filter - optimized with early exit
+      if (hasSearch) {
+        const matchesSearch = task.name.toLowerCase().includes(searchLower) ||
+          task.description?.toLowerCase().includes(searchLower);
+        if (!matchesSearch) return false;
+      }
 
       // Status filter
-      const matchesStatus = !filters.status || task.status === filters.status;
+      if (filters.status && task.status !== filters.status) return false;
 
       // Priority filter
-      const matchesPriority = !filters.priority || task.priority === filters.priority;
+      if (filters.priority && task.priority !== filters.priority) return false;
 
       // Project filter
-      const matchesProject = !filters.project || task.projectId === filters.project;
+      if (filters.project && task.projectId !== filters.project) return false;
 
       // Assignee filter
-      const matchesAssignee = !filters.assignee || task.assignedTo === filters.assignee;
+      if (filters.assignee && task.assignedTo !== filters.assignee) return false;
 
-      return matchesSearch && matchesStatus && matchesPriority && 
-             matchesProject && matchesAssignee;
-    });
+      return true;
+    };
+  }, [searchValue, filters]);
 
-    // Sort tasks
-    filtered.sort((a, b) => {
+  // Optimized sort function using memoization
+  const taskSorter = useMemo(() => {
+    const priorityOrder = { low: 1, medium: 2, high: 3, urgent: 4 };
+    
+    return (a, b) => {
       let aValue, bValue;
 
       switch (sortBy) {
@@ -177,7 +184,6 @@ function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, on
           bValue = new Date(b.dueDate);
           break;
         case 'priority':
-          const priorityOrder = { low: 1, medium: 2, high: 3, urgent: 4 };
           aValue = priorityOrder[a.priority];
           bValue = priorityOrder[b.priority];
           break;
@@ -188,10 +194,13 @@ function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, on
       if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
       if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
       return 0;
-    });
+    };
+  }, [sortBy, sortDirection]);
 
-    return filtered;
-  }, [tasks, searchValue, filters, sortBy, sortDirection]);
+  // Filter and sort tasks with optimized functions
+  const filteredAndSortedTasks = useMemo(() => {
+    return tasks.filter(taskFilter).sort(taskSorter);
+  }, [tasks, taskFilter, taskSorter]);
 
   // Group tasks by status for board view
   const tasksByStatus = useMemo(() => {
@@ -213,26 +222,28 @@ function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, on
     return grouped;
   }, [filteredAndSortedTasks]);
 
-  // Get active filters for display
-  const activeFilters = Object.entries(filters)
-    .filter(([key, value]) => {
-      if (typeof value === 'string') return value !== '';
-      return value !== null && value !== undefined;
-    })
-    .map(([key, value]) => {
-      let label = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
-      let displayValue = value;
-      
-      if (key === 'project') {
-        const project = projects.find(p => p.id === value);
-        displayValue = project ? project.name : value;
-      } else if (key === 'assignee') {
-        const member = teamMembers.find(tm => tm.id === value);
-        displayValue = member ? member.fullName : value;
-      }
-      
-      return { key, label, value: displayValue };
-    });
+  // Memoized active filters calculation
+  const activeFilters = useMemo(() => {
+    return Object.entries(filters)
+      .filter(([key, value]) => {
+        if (typeof value === 'string') return value !== '';
+        return value !== null && value !== undefined;
+      })
+      .map(([key, value]) => {
+        let label = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+        let displayValue = value;
+        
+        if (key === 'project') {
+          const project = projects.find(p => p.id === value);
+          displayValue = project ? project.name : value;
+        } else if (key === 'assignee') {
+          const member = teamMembers.find(tm => tm.id === value);
+          displayValue = member ? member.fullName : value;
+        }
+        
+        return { key, label, value: displayValue };
+      });
+  }, [filters, projects, teamMembers]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -258,12 +269,12 @@ function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, on
     return diffDays;
   };
 
-  // Event handlers
-  const handleFilterChange = (key, value) => {
+  // Memoized event handlers for better performance
+  const handleFilterChange = useCallback((key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     setFilters({
       status: '',
       priority: '',
@@ -272,46 +283,46 @@ function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, on
       dueDateFrom: null,
       dueDateTo: null
     });
-  };
+  }, []);
 
-  const handleClearFilter = (key) => {
+  const handleClearFilter = useCallback((key) => {
     if (key === 'all') {
       handleClearFilters();
     } else {
       setFilters(prev => ({ ...prev, [key]: '' }));
     }
-  };
+  }, [handleClearFilters]);
 
-  const handleApplyQuickFilter = (quickFilter) => {
+  const handleApplyQuickFilter = useCallback((quickFilter) => {
     setFilters(prev => ({ ...prev, ...quickFilter.filters }));
-  };
+  }, []);
 
-  const handleExport = () => {
+  const handleExport = useCallback(() => {
     exportTasksToExcel(filteredAndSortedTasks, projects, teamMembers);
-  };
+  }, [filteredAndSortedTasks, projects, teamMembers]);
 
-  const handleCompleteTask = (taskId) => {
+  const handleCompleteTask = useCallback((taskId) => {
     onUpdateTask(taskId, { 
       status: 'completed',
       completedAt: new Date().toISOString()
     });
-  };
+  }, [onUpdateTask]);
 
-  const handleUndoTask = (taskId) => {
+  const handleUndoTask = useCallback((taskId) => {
     onUpdateTask(taskId, { 
       status: 'pending',
       completedAt: null
     });
-  };
+  }, [onUpdateTask]);
 
-  const handleDeleteTask = (taskId, taskName) => {
+  const handleDeleteTask = useCallback((taskId, taskName) => {
     if (window.confirm(`Are you sure you want to delete "${taskName}"?`)) {
       onDeleteTask(taskId);
     }
-  };
+  }, [onDeleteTask]);
 
-  // Render task card for board view
-  const renderTaskCard = (task) => {
+  // Memoized render task card for board view
+  const renderTaskCard = useCallback((task) => {
     const project = projects.find(p => p.id === task.projectId);
     const priority = priorityConfig[task.priority];
     const overdue = isOverdue(task.dueDate, task.status);
@@ -402,10 +413,10 @@ function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, on
         </CardContent>
       </Card>
     );
-  };
+  }, [projects, teamMembers, formatDate, handleCompleteTask, handleUndoTask, onEditTask]);
 
-  // Render list view
-  const renderListView = () => (
+  // Memoized render list view
+  const renderListView = useCallback(() => (
     <List>
       {filteredAndSortedTasks.map((task) => {
         const project = projects.find(p => p.id === task.projectId);
@@ -528,10 +539,10 @@ function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, on
         );
       })}
     </List>
-  );
+  ), [filteredAndSortedTasks, projects, teamMembers, formatDate, handleCompleteTask, handleUndoTask, handleDeleteTask, onEditTask]);
 
-  // Render board view
-  const renderBoardView = () => (
+  // Memoized render board view
+  const renderBoardView = useCallback(() => (
     <Grid container spacing={2}>
       {Object.entries(tasksByStatus).map(([status, statusTasks]) => {
         const statusInfo = statusConfig[status] || statusConfig.pending;
@@ -561,10 +572,10 @@ function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, on
         );
       })}
     </Grid>
-  );
+  ), [tasksByStatus, renderTaskCard]);
 
-  // Render calendar view (simplified)
-  const renderCalendarView = () => (
+  // Memoized render calendar view (simplified)
+  const renderCalendarView = useCallback(() => (
     <Box sx={{ p: 2 }}>
       <Typography variant="h6" sx={{ mb: 2 }}>
         Tasks by Due Date
@@ -614,7 +625,7 @@ function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, on
         })}
       </Grid>
     </Box>
-  );
+  ), [filteredAndSortedTasks, projects, teamMembers, formatDate]);
 
   if (tasks.length === 0) {
     return (
@@ -685,6 +696,6 @@ function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, on
       {currentTab === 2 && renderCalendarView()}
     </Box>
   );
-}
+});
 
 export default EnhancedTasksView;

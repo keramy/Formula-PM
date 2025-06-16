@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Box,
   Typography,
   Paper,
-  Chip
+  Chip,
+  Alert,
+  Button,
+  Grid
 } from '@mui/material';
+import { Timeline as TimelineIcon, Upgrade as UpgradeIcon } from '@mui/icons-material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import EnhancedGanttChart from './EnhancedGanttChart';
+import { useAuthenticatedData } from '../../hooks/useAuthenticatedData';
 
 const priorityColors = {
   low: '#27ae60',
@@ -14,13 +20,71 @@ const priorityColors = {
   urgent: '#e74c3c'
 };
 
-function GanttChart({ tasks, projects }) {
-  if (tasks.length === 0) {
+function GanttChart({ tasks, projects, scopeItems = [], teamMembers = [] }) {
+  const [useEnhancedGantt, setUseEnhancedGantt] = useState(true);
+  const { shopDrawings = [], materialSpecs = [] } = useAuthenticatedData();
+
+  // Determine if we should show the enhanced Gantt
+  const shouldShowEnhanced = useMemo(() => {
+    return useEnhancedGantt && (tasks.length > 0 || projects.length > 0 || scopeItems.length > 0);
+  }, [useEnhancedGantt, tasks.length, projects.length, scopeItems.length]);
+
+  const handleTaskUpdate = (task, updates) => {
+    console.log('Task updated:', task, updates);
+    // This would integrate with your task update logic
+  };
+
+  const handleItemClick = (item) => {
+    console.log('Gantt item clicked:', item);
+    // This would handle navigation or detail views
+  };
+
+  if (tasks.length === 0 && projects.length === 0) {
     return (
       <Box sx={{ textAlign: 'center', py: 4 }}>
-        <Typography variant="body1" color="text.secondary">
-          Timeline will appear here as you add tasks to your projects
+        <TimelineIcon sx={{ fontSize: 64, color: '#ccc', mb: 2 }} />
+        <Typography variant="h6" color="text.secondary" gutterBottom>
+          No Timeline Data Available
         </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Timeline will appear here as you add projects and tasks
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (shouldShowEnhanced) {
+    return (
+      <Box sx={{ width: '100%' }}>
+        <Alert 
+          severity="info" 
+          sx={{ mb: 2 }}
+          action={
+            <Button 
+              color="inherit" 
+              size="small" 
+              onClick={() => setUseEnhancedGantt(false)}
+            >
+              Use Simple View
+            </Button>
+          }
+        >
+          Showing Enhanced Gantt Chart with scope and workflow integration
+        </Alert>
+        
+        <EnhancedGanttChart
+          projects={projects}
+          tasks={tasks}
+          teamMembers={teamMembers}
+          scopeItems={scopeItems}
+          shopDrawings={shopDrawings}
+          materialSpecs={materialSpecs}
+          onTaskUpdate={handleTaskUpdate}
+          onItemClick={handleItemClick}
+          height={600}
+          showToolbar={true}
+          dataType="mixed"
+        />
       </Box>
     );
   }
@@ -122,6 +186,24 @@ function GanttChart({ tasks, projects }) {
 
   return (
     <Box>
+      {/* Enhanced Gantt Upgrade Alert */}
+      <Alert 
+        severity="info" 
+        sx={{ mb: 3 }}
+        action={
+          <Button 
+            color="inherit" 
+            size="small" 
+            startIcon={<UpgradeIcon />}
+            onClick={() => setUseEnhancedGantt(true)}
+          >
+            Upgrade to Enhanced Gantt
+          </Button>
+        }
+      >
+        You're viewing the simple timeline. Try the Enhanced Gantt Chart for advanced project visualization and dependency management.
+      </Alert>
+
       {timelineData.length > 0 && (
         <Box sx={{ mb: 4 }}>
           <Typography variant="h6" gutterBottom>

@@ -1,70 +1,155 @@
-# Getting Started with Create React App
+# Formula PM - Enterprise Project Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Live Demo**: [https://keramy.github.io/formula-pm](https://keramy.github.io/formula-pm)
 
-## Available Scripts
+A comprehensive enterprise-level project management solution built with **React 19** and **Material-UI**, featuring advanced workflow management, role-based authentication, and interconnected dependency tracking.
 
-In the project directory, you can run:
+## 🚀 Key Features
 
-### `npm start`
+### ✅ **User Authentication & Role-Based Access**
+- **JWT-style Authentication** with secure demo accounts
+- **Multi-Role System**: Admin, Co-founder, Project Manager access levels
+- **Project Assignment System**: Role-based project visibility
+- **Granular Permissions**: Edit/view/delete based on user roles
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### ✅ **Advanced Project Management**
+- **Full-Page Project Navigation** with professional layouts
+- **Scope Management** with 4 specialized groups: Construction 🏗️, Millwork 🪵, Electric ⚡, MEP 🔧
+- **Timeline Integration** with configurable duration tracking
+- **Progress Visualization** with interactive sliders and real-time updates
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### ✅ **Interconnected Workflow System**
+- **Connection Management**: Link scope items to shop drawings and material specifications
+- **Workflow Dashboard**: Production readiness overview with dependency analysis
+- **Smart Warnings**: Real-time detection of production blockers
+- **Recommendations Engine**: AI-like suggestions for workflow optimization
 
-### `npm test`
+### ✅ **Professional UI/UX**
+- **Material-UI Components** with custom Formula International theming
+- **Responsive Design** optimized for desktop and mobile
+- **Lazy Loading** and code splitting for optimal performance
+- **Dark/Light Mode** support (coming soon)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🛠 Technology Stack
 
-### `npm run build`
+- **Frontend**: React 19, Material-UI, Context API
+- **Backend**: Node.js, Express.js, JSON file-based database
+- **Deployment**: GitHub Pages with automated CI/CD
+- **Authentication**: JWT-style with localStorage persistence
+- **State Management**: React Context with custom hooks
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🎯 Demo Accounts
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Try the system with these pre-configured accounts:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| Role | Username | Password | Access Level |
+|------|----------|----------|--------------|
+| **Admin** | admin | admin123 | Full system access |
+| **Co-founder** | sarah.johnson | pass123 | All projects + team management |
+| **Project Manager** | mike.chen | pass123 | Assigned projects only |
 
-### `npm run eject`
+## 🚀 Quick Start
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Frontend Development
+```bash
+cd formula-project-app
+npm install
+npm start
+```
+Access at: http://localhost:3000
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Backend Development (Optional - API fallback included)
+```bash
+cd formula-backend
+npm install
+npm start
+```
+API runs on: http://localhost:5001
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Production Build
+```bash
+npm run build
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📊 Project Structure
 
-## Learn More
+```
+src/
+├── app/                 # Main App component with lazy loading
+├── components/          # Shared UI components
+│   ├── ui/             # Unified components (Headers, Filters, Tables)
+│   ├── layout/         # Layout components (Sidebar, Dashboard)
+│   ├── views/          # Advanced view components (Board, Calendar)
+│   └── common/         # Common utilities
+├── features/           # Feature-based organization
+│   ├── projects/       # Project management (Scope, Workflow, Connections)
+│   ├── tasks/          # Task management
+│   ├── team/           # Team management
+│   ├── clients/        # Client management
+│   └── dashboard/      # Dashboard components
+├── services/           # External services
+│   ├── api/           # API communication
+│   ├── connectionService.js  # Workflow connection management
+│   └── export/        # Export utilities
+├── context/           # React Context providers (Auth, Navigation)
+├── hooks/             # Custom React hooks
+└── utils/             # Utility functions
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🏗 Architecture Overview
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Advanced Scope Management
+- **4 Scope Groups**: Construction, Millwork, Electric, MEP with specialized categories
+- **Progress Tracking**: Interactive sliders with status management
+- **Timeline Management**: Duration tracking with dependency analysis
+- **Excel Integration**: Template download and bulk import functionality
 
-### Code Splitting
+### Workflow Connection System
+- **Scope → Drawings → Materials**: Full linkage tracking
+- **Production Readiness**: Automated calculation of workflow status
+- **Dependency Engine**: Smart detection of production blockers
+- **Warning System**: Real-time alerts for missing requirements
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Authentication & Security
+- **Role-Based Access Control**: Admin, Co-founder, Project Manager roles
+- **Project Assignment**: PMs only see their assigned projects
+- **Permission Management**: Granular controls throughout application
+- **Secure Demo Mode**: Pre-configured accounts for testing
 
-### Analyzing the Bundle Size
+## 🌐 Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+**Live Application**: The system is automatically deployed to GitHub Pages on every push to the main branch.
 
-### Making a Progressive Web App
+**URL**: https://keramy.github.io/formula-pm
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+**Build Status**: ✅ Successfully building with React 19 compatibility
 
-### Advanced Configuration
+## 📈 Performance Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- **Lazy Loading**: All major components load on-demand
+- **Code Splitting**: Optimized bundle size with React.lazy()
+- **Custom Hooks**: Efficient state management and data fetching
+- **Memoization**: Optimized re-renders with React.memo
+- **Bundle Optimization**: Tree shaking and dead code elimination
 
-### Deployment
+## 🧪 Testing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```bash
+npm test        # Run all tests
+npm run test:coverage  # Run with coverage report
+```
 
-### `npm run build` fails to minify
+## 📝 Development Notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **React 19 Compatibility**: Fully optimized for the latest React features
+- **Material-UI v6**: Latest components with enhanced theming
+- **ESLint Configuration**: Strict code quality standards
+- **GitHub Actions**: Automated testing and deployment pipeline
+
+## 🤝 Contributing
+
+This is a comprehensive enterprise project management system. The codebase follows modern React patterns with feature-based organization for scalability.
+
+---
+
+**Built with ❤️ by Formula International Development Team**

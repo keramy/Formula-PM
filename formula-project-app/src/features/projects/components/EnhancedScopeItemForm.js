@@ -10,7 +10,12 @@ import {
   Grid,
   Typography,
   InputAdornment,
-  Paper
+  Paper,
+  Slider,
+  FormControlLabel,
+  Switch,
+  Chip,
+  Divider
 } from '@mui/material';
 import { AttachFile as AttachFileIcon } from '@mui/icons-material';
 
@@ -22,7 +27,11 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
     unit: 'pcs',
     category: '',
     notes: '',
-    attachments: null
+    attachments: null,
+    progress: 0,
+    status: 'pending',
+    shopDrawingRequired: false,
+    materialSpecRequired: false
   });
 
   const [totalPrice, setTotalPrice] = useState(0);
@@ -36,7 +45,11 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
         unit: item.unit || 'pcs',
         category: item.category || '',
         notes: item.notes || '',
-        attachments: item.attachments || null
+        attachments: item.attachments || null,
+        progress: item.progress || 0,
+        status: item.status || 'pending',
+        shopDrawingRequired: item.shopDrawingRequired || false,
+        materialSpecRequired: item.materialSpecRequired || false
       });
     }
   }, [item]);
@@ -51,6 +64,20 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
     setFormData({
       ...formData,
       [field]: event.target.value
+    });
+  };
+
+  const handleSwitchChange = (field) => (event) => {
+    setFormData({
+      ...formData,
+      [field]: event.target.checked
+    });
+  };
+
+  const handleSliderChange = (field) => (event, value) => {
+    setFormData({
+      ...formData,
+      [field]: value
     });
   };
 
@@ -185,10 +212,129 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
           </Typography>
         </Paper>
 
-        {/* 6. Notes */}
+        {/* Progress & Status Section */}
+        <Box>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#2C3E50' }}>
+            6. Progress & Status
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={formData.status}
+                  onChange={handleChange('status')}
+                  label="Status"
+                >
+                  <MenuItem value="pending">
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Chip label="Pending" size="small" sx={{ backgroundColor: '#9E9E9E', color: 'white' }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="in-progress">
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Chip label="In Progress" size="small" sx={{ backgroundColor: '#FF9800', color: 'white' }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="completed">
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Chip label="Completed" size="small" sx={{ backgroundColor: '#4CAF50', color: 'white' }} />
+                    </Box>
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Box>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                  Progress: {formData.progress}%
+                </Typography>
+                <Slider
+                  value={formData.progress}
+                  onChange={handleSliderChange('progress')}
+                  valueLabelDisplay="auto"
+                  valueLabelFormat={(value) => `${value}%`}
+                  step={5}
+                  min={0}
+                  max={100}
+                  sx={{
+                    '& .MuiSlider-thumb': {
+                      width: 20,
+                      height: 20
+                    },
+                    '& .MuiSlider-track': {
+                      height: 8
+                    }
+                  }}
+                />
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+
+        {/* Connections Section */}
+        <Box>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#2C3E50' }}>
+            7. Connections & Requirements
+          </Typography>
+          <Paper sx={{ p: 3, backgroundColor: '#F8F9FA', borderRadius: 2 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={formData.shopDrawingRequired}
+                      onChange={handleSwitchChange('shopDrawingRequired')}
+                      color="warning"
+                    />
+                  }
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" fontWeight={500}>
+                        Shop Drawing Required
+                      </Typography>
+                      {formData.shopDrawingRequired && (
+                        <Chip label="Required" size="small" color="warning" />
+                      )}
+                    </Box>
+                  }
+                />
+                <Typography variant="caption" color="text.secondary" display="block" sx={{ ml: 4 }}>
+                  This item requires shop drawings before production
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={formData.materialSpecRequired}
+                      onChange={handleSwitchChange('materialSpecRequired')}
+                      color="info"
+                    />
+                  }
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" fontWeight={500}>
+                        Material Specification Required
+                      </Typography>
+                      {formData.materialSpecRequired && (
+                        <Chip label="Required" size="small" color="info" />
+                      )}
+                    </Box>
+                  }
+                />
+                <Typography variant="caption" color="text.secondary" display="block" sx={{ ml: 4 }}>
+                  This item requires material specifications
+                </Typography>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Box>
+
+        {/* 8. Notes */}
         <TextField
           fullWidth
-          label="6. Notes (Optional)"
+          label="8. Notes (Optional)"
           multiline
           rows={3}
           value={formData.notes}
@@ -203,10 +349,10 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
           }}
         />
 
-        {/* 7. File Attachments */}
+        {/* 9. File Attachments */}
         <Box>
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#2C3E50' }}>
-            7. File Attachments (Optional)
+            9. File Attachments (Optional)
           </Typography>
           <Box sx={{ 
             border: '2px dashed #E9ECEF', 

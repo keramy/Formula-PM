@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
-import { Box, Container, Typography, IconButton, InputBase, Paper } from '@mui/material';
-import { Search as SearchIcon, Notifications as NotificationsIcon } from '@mui/icons-material';
+import { Box, Container, Typography, IconButton } from '@mui/material';
+import { Notifications as NotificationsIcon } from '@mui/icons-material';
 import ModernSidebar from './ModernSidebar';
+import UserProfileMenu from '../auth/UserProfileMenu';
+import LiveSearchDropdown from '../ui/LiveSearchDropdown';
+import { NotificationPanel } from '../../services/notifications/notificationService';
+import { useAuth } from '../../context/AuthContext';
 
 const ModernDashboardLayout = ({ 
   children, 
   currentTab, 
   onTabChange, 
-  userName = "Kerem",
   globalSearch = '',
   onGlobalSearchChange,
-  onSearchSubmit
+  onSearchSubmit,
+  onSearchResultSelect,
+  onShowFullSearch
 }) => {
+  const { user } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     localStorage.getItem('sidebarCollapsed') === 'true'
   );
@@ -38,6 +44,7 @@ const ModernDashboardLayout = ({
   };
 
   const getWelcomeMessage = () => {
+    const userName = user?.name?.split(' ')[0] || 'User';
     switch (currentTab) {
       case 0: return `Welcome back, ${userName}. Here's what's happening.`;
       case 1: return 'Manage and track all your construction projects.';
@@ -112,48 +119,24 @@ const ModernDashboardLayout = ({
 
           {/* Right side - Search and notifications */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {/* Search Bar */}
-            <Paper
-              component="form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (onSearchSubmit) onSearchSubmit();
-              }}
-              sx={{
-                p: '2px 4px',
-                display: 'flex',
-                alignItems: 'center',
-                width: 300,
-                backgroundColor: '#F8F9FA',
-                border: '1px solid #E9ECEF',
-                borderRadius: 2,
-                boxShadow: 'none'
-              }}
-            >
-              <SearchIcon sx={{ p: '10px', color: '#7F8C8D' }} />
-              <InputBase
-                sx={{ ml: 1, flex: 1, fontSize: '0.9rem' }}
-                placeholder="Search projects, tasks, team..."
-                inputProps={{ 'aria-label': 'search' }}
-                value={globalSearch}
-                onChange={(e) => onGlobalSearchChange && onGlobalSearchChange(e.target.value)}
-              />
-            </Paper>
-
-            {/* Notifications */}
-            <IconButton
-              sx={{
-                backgroundColor: '#F8F9FA',
-                border: '1px solid #E9ECEF',
-                borderRadius: 2,
-                p: 1.5,
-                '&:hover': {
-                  backgroundColor: '#E9ECEF'
+            {/* Live Search Dropdown */}
+            <LiveSearchDropdown
+              value={globalSearch}
+              onChange={onGlobalSearchChange}
+              onResultSelect={onSearchResultSelect}
+              onNavigate={(type) => {
+                if (type === 'full-search' && onShowFullSearch) {
+                  onShowFullSearch();
                 }
               }}
-            >
-              <NotificationsIcon sx={{ color: '#7F8C8D' }} />
-            </IconButton>
+              placeholder="Search projects, tasks, team..."
+            />
+
+            {/* Notifications */}
+            <NotificationPanel />
+            
+            {/* User Profile Menu */}
+            <UserProfileMenu />
           </Box>
         </Box>
 
