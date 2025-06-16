@@ -2,6 +2,7 @@ import React, { useState, Suspense, useMemo, useCallback, useEffect } from 'reac
 import { generateProjectId, generateTaskId, generateMemberId } from '../utils/generators/idGenerator';
 import apiService from '../services/api/apiService';
 import { notificationService } from '../services/notifications/notificationService';
+import PerformanceMonitor from '../utils/performance';
 import { useFormulaData, useFilteredData, useActiveFilters } from '../hooks/useFormula';
 import { useAuthenticatedData } from '../hooks/useAuthenticatedData';
 import { useEnhancedSearch } from '../hooks/useEnhancedSearch';
@@ -34,40 +35,44 @@ import EnhancedTabSystem from '../components/layout/EnhancedTabSystem';
 import EnhancedHeader from '../components/layout/EnhancedHeader';
 // Import performance and error handling components
 import ErrorBoundary from '../components/common/ErrorBoundary';
-import { LoadingFallback, ListSkeleton, ProjectCardSkeleton, TaskRowSkeleton, TeamMemberSkeleton, FormSkeleton } from '../components/common/LoadingFallback';
 import './App.css';
 import '../styles/globals.css';
 import '../styles/modern-dashboard.css';
 import { exportProjectsToExcel } from '../services/export/excelExport';
 import { formulaTheme } from '../theme';
 
-// Lazy load heavy components for better performance
-const ModernProjectOverview = React.lazy(() => import('../features/dashboard/components/ModernProjectOverview'));
-const ProjectForm = React.lazy(() => import('../features/projects/components/ProjectForm'));
-const TaskForm = React.lazy(() => import('../features/tasks/components/TaskForm'));
-const ProjectsList = React.lazy(() => import('../features/projects/components/ProjectsList'));
-const EnhancedTasksView = React.lazy(() => import('../features/tasks/components/EnhancedTasksView'));
-// const EnhancedTasksList = React.lazy(() => import('../features/tasks/components/EnhancedTasksList'));
-const GanttChart = React.lazy(() => import('../components/charts/GanttChart'));
-const TeamMemberForm = React.lazy(() => import('../features/team/components/TeamMemberForm'));
-const TeamMembersList = React.lazy(() => import('../features/team/components/TeamMembersList'));
-const ClientForm = React.lazy(() => import('../features/clients/components/ClientForm'));
-const ClientsList = React.lazy(() => import('../features/clients/components/ClientsList'));
-const ProjectFormPage = React.lazy(() => import('../features/projects/components/ProjectFormPage'));
-const TaskFormPage = React.lazy(() => import('../features/tasks/components/TaskFormPage'));
-const TeamMemberFormPage = React.lazy(() => import('../features/team/components/TeamMemberFormPage'));
-// const ClientFormPage = React.lazy(() => import('../features/clients/components/ClientFormPage'));
-// const ScopeItemFormPage = React.lazy(() => import('../features/projects/components/ScopeItemFormPage'));
-const ProjectsTableView = React.lazy(() => import('../features/projects/components/ProjectsTableView'));
-const ProjectsFilters = React.lazy(() => import('../features/projects/components/ProjectsFilters'));
-const MyProjectsList = React.lazy(() => import('../features/projects/components/MyProjectsList'));
-const EnhancedProjectScope = React.lazy(() => import('../features/projects/components/EnhancedProjectScope'));
-const TeamMemberDetail = React.lazy(() => import('../features/team/components/TeamMemberDetail'));
-const GlobalSearchResults = React.lazy(() => import('../components/ui/GlobalSearchResults'));
-const BoardView = React.lazy(() => import('../components/views/BoardView'));
-const ShopDrawingsList = React.lazy(() => import('../features/shop-drawings/components/ShopDrawingsList'));
-const MaterialSpecificationsList = React.lazy(() => import('../features/specifications/components/MaterialSpecificationsList'));
-const ProjectPage = React.lazy(() => import('../features/projects/components/ProjectPage'));
+// Import centralized lazy components for better performance and maintainability
+import {
+  ModernProjectOverview,
+  ProjectForm,
+  TaskForm,
+  ProjectsList,
+  EnhancedTasksView,
+  GanttChart,
+  TeamMemberForm,
+  TeamMembersList,
+  ClientForm,
+  ClientsList,
+  ProjectFormPage,
+  TaskFormPage,
+  TeamMemberFormPage,
+  ProjectsTableView,
+  ProjectsFilters,
+  MyProjectsList,
+  EnhancedProjectScope,
+  TeamMemberDetail,
+  GlobalSearchResults,
+  BoardView,
+  ShopDrawingsList,
+  MaterialSpecificationsList,
+  ProjectPage,
+  LoadingFallback,
+  ListSkeleton,
+  ProjectCardSkeleton,
+  TaskRowSkeleton,
+  TeamMemberSkeleton,
+  FormSkeleton
+} from '../components/LazyComponents';
 
 
 function App() {
@@ -107,8 +112,11 @@ function App() {
     exitProjectContext 
   } = useNavigation();
 
-  // Initialize notification service
+  // Initialize notification service and performance monitoring
   useEffect(() => {
+    // Initialize performance monitoring
+    PerformanceMonitor.init();
+    
     if (teamMembers.length > 0 && projects.length > 0 && tasks.length > 0) {
       notificationService.init(teamMembers, projects, tasks);
       
@@ -384,7 +392,7 @@ function App() {
       };
       
       await addClient(newClient);
-      setAddClientDialogOpen(false);
+      updateDialogState({ addClientDialogOpen: false });
     } catch (error) {
       console.error('Error creating client:', error);
       setError('Failed to create client');
@@ -392,7 +400,7 @@ function App() {
   };
 
   const handleAddClient = () => {
-    setAddClientDialogOpen(true);
+    updateDialogState({ addClientDialogOpen: true });
   };
 
   // Team Members functions

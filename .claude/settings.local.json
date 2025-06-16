@@ -67,7 +67,11 @@
       "Bash(GENERATE_SOURCEMAP=false CI=false npm run build)",
       "Bash(timeout 10 npm start)",
       "Bash(CI=false GENERATE_SOURCEMAP=false npm run build)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(GENERATE_SOURCEMAP=false npm start)",
+      "Bash(timeout 60s npm run build)",
+      "Bash(bash:*)",
+      "Bash(npm ls:*)"
     ],
     "deny": []
   }

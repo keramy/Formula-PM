@@ -1,8 +1,10 @@
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
-
-export const exportProjectsToExcel = (projects, clients = [], teamMembers = []) => {
+export const exportProjectsToExcel = async (projects, clients = [], teamMembers = []) => {
   try {
+    // Lazy load XLSX and file-saver to reduce initial bundle size
+    const [{ default: XLSX }, { saveAs }] = await Promise.all([
+      import('xlsx'),
+      import('file-saver')
+    ]);
     // Helper functions
     const getClientName = (clientId) => {
       const client = clients.find(c => c.id === clientId);
@@ -169,8 +171,13 @@ const getTypeBreakdown = (projects) => {
 };
 
 // Export Tasks to Excel
-export const exportTasksToExcel = (tasks, projects = [], teamMembers = []) => {
+export const exportTasksToExcel = async (tasks, projects = [], teamMembers = []) => {
   try {
+    // Lazy load XLSX and file-saver
+    const [{ default: XLSX }, { saveAs }] = await Promise.all([
+      import('xlsx'),
+      import('file-saver')
+    ]);
     const getProjectName = (projectId) => {
       const project = projects.find(p => p.id === projectId);
       return project ? project.name : 'No Project Assigned';
@@ -265,8 +272,13 @@ export const exportTasksToExcel = (tasks, projects = [], teamMembers = []) => {
 };
 
 // Export Team Members to Excel
-export const exportTeamMembersToExcel = (teamMembers, tasks = []) => {
+export const exportTeamMembersToExcel = async (teamMembers, tasks = []) => {
   try {
+    // Lazy load XLSX and file-saver
+    const [{ default: XLSX }, { saveAs }] = await Promise.all([
+      import('xlsx'),
+      import('file-saver')
+    ]);
     const getRoleLabel = (role) => {
       const roleLabels = {
         'project_manager': 'Project Manager',
@@ -366,8 +378,13 @@ export const exportTeamMembersToExcel = (teamMembers, tasks = []) => {
 };
 
 // Export Clients to Excel
-export const exportClientsToExcel = (clients) => {
+export const exportClientsToExcel = async (clients) => {
   try {
+    // Lazy load XLSX and file-saver
+    const [{ default: XLSX }, { saveAs }] = await Promise.all([
+      import('xlsx'),
+      import('file-saver')
+    ]);
     const getStatusLabel = (status) => {
       const statusLabels = {
         'active': 'Active',
