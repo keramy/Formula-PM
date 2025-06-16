@@ -60,6 +60,8 @@ const EnhancedProjectScope = React.lazy(() => import('../features/projects/compo
 const TeamMemberDetail = React.lazy(() => import('../features/team/components/TeamMemberDetail'));
 const GlobalSearchResults = React.lazy(() => import('../components/ui/GlobalSearchResults'));
 const BoardView = React.lazy(() => import('../components/views/BoardView'));
+const ShopDrawingsList = React.lazy(() => import('../features/shop-drawings/components/ShopDrawingsList'));
+const MaterialSpecificationsList = React.lazy(() => import('../features/specifications/components/MaterialSpecificationsList'));
 
 
 function App() {
@@ -962,6 +964,43 @@ function App() {
               </Suspense>
             </ErrorBoundary>
           </Paper>
+        );
+
+      case 8: // Shop Drawings
+        return (
+          <ErrorBoundary fallbackMessage="Failed to load shop drawings">
+            <Suspense fallback={<LoadingFallback message="Loading shop drawings..." />}>
+              <ShopDrawingsList 
+                projects={projects}
+                teamMembers={teamMembers}
+                onDrawingUpload={(drawing) => {
+                  // This will be implemented with API integration
+                  console.log('Drawing uploaded:', drawing);
+                }}
+                onDrawingUpdate={(drawingId, updates) => {
+                  // This will be implemented with API integration
+                  console.log('Drawing updated:', drawingId, updates);
+                }}
+                onDrawingDelete={(drawingId) => {
+                  // This will be implemented with API integration
+                  console.log('Drawing deleted:', drawingId);
+                }}
+              />
+            </Suspense>
+          </ErrorBoundary>
+        );
+
+      case 9: // Material Specifications
+        return (
+          <ErrorBoundary fallbackMessage="Failed to load material specifications">
+            <Suspense fallback={<LoadingFallback message="Loading material specifications..." />}>
+              <MaterialSpecificationsList 
+                projects={projects}
+                teamMembers={teamMembers}
+                shopDrawings={[]} // This will be connected to shop drawings data later
+              />
+            </Suspense>
+          </ErrorBoundary>
         );
 
       default:

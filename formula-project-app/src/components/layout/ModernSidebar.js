@@ -24,7 +24,8 @@ import {
   ShoppingCart as ProcurementIcon,
   Business as ClientsIcon,
   ChevronLeft as ChevronLeftIcon,
-  Menu as MenuIcon
+  Menu as MenuIcon,
+  Architecture as ShopDrawingsIcon
 } from '@mui/icons-material';
 
 const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse }) => {
@@ -48,6 +49,7 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
       title: 'Work',
       items: [
         { id: 3, label: 'Tasks', icon: <TaskIcon />, description: 'Task management' },
+        { id: 8, label: 'Shop Drawings', icon: <ShopDrawingsIcon />, description: 'Millwork drawings & approvals' },
         { id: 7, label: 'Timeline', icon: <TimelineIcon />, description: 'Gantt charts and timelines' }
       ]
     },
@@ -56,6 +58,7 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
       items: [
         { id: 4, label: 'Team', icon: <TeamIcon />, description: 'Team member management' },
         { id: 5, label: 'Clients', icon: <ClientsIcon />, description: 'Client database' },
+        { id: 9, label: 'Material Specs', icon: <ProcurementIcon />, description: 'Material specifications & Excel import' },
         { id: 6, label: 'Procurement', icon: <ProcurementIcon />, description: 'Purchase and suppliers' }
       ]
     }

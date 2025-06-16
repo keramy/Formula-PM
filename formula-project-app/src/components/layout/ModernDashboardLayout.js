@@ -25,9 +25,14 @@ const ModernDashboardLayout = ({
     switch (currentTab) {
       case 0: return 'Dashboard';
       case 1: return 'Projects';
-      case 2: return 'Tasks';
-      case 3: return 'Team';
-      case 4: return 'Timeline & Gantt';
+      case 2: return 'My Work';
+      case 3: return 'Tasks';
+      case 4: return 'Team';
+      case 5: return 'Clients';
+      case 6: return 'Procurement';
+      case 7: return 'Timeline & Gantt';
+      case 8: return 'Shop Drawings';
+      case 9: return 'Material Specifications';
       default: return 'Dashboard';
     }
   };
@@ -36,9 +41,14 @@ const ModernDashboardLayout = ({
     switch (currentTab) {
       case 0: return `Welcome back, ${userName}. Here's what's happening.`;
       case 1: return 'Manage and track all your construction projects.';
-      case 2: return 'View and manage tasks across all projects.';
-      case 3: return 'Manage your team members and assignments.';
-      case 4: return 'Visualize project timelines and dependencies.';
+      case 2: return 'View your projects and assigned tasks.';
+      case 3: return 'View and manage tasks across all projects.';
+      case 4: return 'Manage your team members and assignments.';
+      case 5: return 'Manage client information and contacts.';
+      case 6: return 'Handle procurement and supplier management.';
+      case 7: return 'Visualize project timelines and dependencies.';
+      case 8: return 'Manage millwork shop drawings and approvals.';
+      case 9: return 'Manage material specifications with Excel integration.';
       default: return `Welcome back, ${userName}. Here's what's happening.`;
     }
   };
