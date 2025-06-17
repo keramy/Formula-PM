@@ -34,6 +34,15 @@ class ErrorBoundary extends React.Component {
       errorInfo: errorInfo
     });
 
+    // Enhanced error logging for development
+    if (process.env.NODE_ENV === 'development') {
+      console.group('🚨 Error Boundary Caught Error');
+      console.error('Error:', error);
+      console.error('Error Info:', errorInfo);
+      console.error('Component Stack:', errorInfo.componentStack);
+      console.groupEnd();
+    }
+
     // Here you could send error details to your error reporting service
     // Example: errorReportingService.log(error, errorInfo);
   }

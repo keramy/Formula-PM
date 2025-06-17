@@ -500,6 +500,8 @@ const MyProjectsList = ({
               tasks={tasks}
               clients={clients}
               onDeleteProject={onDeleteProject}
+              onManageScope={onManageScope}
+              onViewProject={onViewProject}
             />
           )}
         </Box>

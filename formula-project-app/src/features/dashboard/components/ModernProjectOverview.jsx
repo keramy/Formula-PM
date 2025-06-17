@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { format } from 'date-fns';
 
-const ModernProjectOverview = ({ projects, tasks, teamMembers }) => {
+const ModernProjectOverview = ({ projects, tasks, teamMembers, onViewProject }) => {
   const [filter, setFilter] = useState('All');
 
   // Calculate project statistics
@@ -132,7 +132,19 @@ const ModernProjectOverview = ({ projects, tasks, teamMembers }) => {
                       }}
                     >
                       <TableCell>
-                        <Typography variant="body2" sx={{ fontWeight: 500, color: '#2C3E50' }}>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            fontWeight: 500, 
+                            color: '#3498db',
+                            cursor: 'pointer',
+                            '&:hover': {
+                              textDecoration: 'underline',
+                              color: '#2980b9'
+                            }
+                          }}
+                          onClick={() => onViewProject && onViewProject(project)}
+                        >
                           {project.name}
                         </Typography>
                       </TableCell>

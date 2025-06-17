@@ -1,5 +1,5 @@
 import React, { useState, Suspense, useCallback } from 'react';
-import { generateProjectId, generateTaskId, generateMemberId } from '../utils';
+import { generateProjectId, generateTaskId, generateMemberId } from '../utils/generators/idGenerator';
 import apiService from '../services/api/apiService';
 import { notificationService } from '../services/notifications/notificationService';
 import { useFilteredData, useActiveFilters } from '../hooks/useFormula';
@@ -517,6 +517,8 @@ export const AppContent = ({
   const activeFilters = useActiveFilters(projectsFilters, projectsSearchTerm, clients, teamMembers);
 
   const renderFullPageContent = () => {
+    console.log('🎯 Rendering content - currentPage:', currentPage, 'currentTab:', currentTab, 'isInProject:', isInProjectContext());
+    
     // Check if we're in project context and render ProjectPage
     if (isInProjectContext() && currentProjectId) {
       return (
@@ -602,14 +604,20 @@ export const AppContent = ({
   };
 
   const renderTabContent = () => {
+    console.log('📊 Rendering tab content for tab:', currentTab);
     switch (currentTab) {
       case 0: // Dashboard
+        console.log('📈 Rendering dashboard with data:', { 
+          projects: projects.length, 
+          tasks: tasks.length, 
+          teamMembers: teamMembers.length 
+        });
         return (
           <ErrorBoundary fallbackMessage="Failed to load dashboard">
             <>
               <ModernStatsCards projects={projects} tasks={tasks} teamMembers={teamMembers} />
               <Suspense fallback={<LoadingFallback message="Loading project overview..." />}>
-                <ModernProjectOverview projects={projects} tasks={tasks} teamMembers={teamMembers} />
+                <ModernProjectOverview projects={projects} tasks={tasks} teamMembers={teamMembers} onViewProject={handleViewProject} />
               </Suspense>
             </>
           </ErrorBoundary>
@@ -706,6 +714,7 @@ export const AppContent = ({
                       clients={clients}
                       onDeleteProject={deleteProject}
                       onManageScope={handleManageScope}
+                      onViewProject={handleViewProject}
                     />
                   </Suspense>
                 </ErrorBoundary>

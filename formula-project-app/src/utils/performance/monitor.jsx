@@ -12,6 +12,16 @@ class PerformanceMonitor {
     apiRequest: 2000, // ms
     searchOperation: 50, // ms
     bundleSize: 10 * 1024 * 1024, // 10MB
+    hotReload: 500, // ms
+    buildTime: 5000, // ms
+  };
+
+  static diagnostics = {
+    totalComponents: 0,
+    renderCount: 0,
+    errorCount: 0,
+    lastError: null,
+    startTime: Date.now(),
   };
 
   /**

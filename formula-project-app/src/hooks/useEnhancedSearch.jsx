@@ -1,7 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useDeferredValue } from 'react';
-import { queryKeys } from '../services/queryClient';
 
 // Custom debounce hook with cleanup
 export const useDebounce = (value, delay) => {

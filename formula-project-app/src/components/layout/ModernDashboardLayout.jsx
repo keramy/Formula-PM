@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
 import { Box, Container, Typography, IconButton } from '@mui/material';
 import { Notifications as NotificationsIcon } from '@mui/icons-material';
 import ModernSidebar from './ModernSidebar';
@@ -8,9 +7,8 @@ import LiveSearchDropdown from '../ui/LiveSearchDropdown';
 import { NotificationPanel } from '../../services/notifications/notificationService';
 import { useAuth } from '../../context/AuthContext';
 
-const ModernDashboardLayout = () => {
+const ModernDashboardLayout = ({ children, currentTab, onTabChange }) => {
   const { user } = useAuth();
-  const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     localStorage.getItem('sidebarCollapsed') === 'true'
   );
@@ -23,33 +21,31 @@ const ModernDashboardLayout = () => {
   };
 
   const getPageTitle = () => {
-    const path = location.pathname;
-    if (path.includes('/projects')) return 'Projects';
-    if (path.includes('/tasks')) return 'Tasks';
-    if (path.includes('/team')) return 'Team';
-    if (path.includes('/clients')) return 'Clients';
-    if (path.includes('/dashboard')) return 'Dashboard';
-    return 'Dashboard';
+    switch (currentTab) {
+      case 0: return 'Dashboard';
+      case 1: return 'Projects';
+      case 2: return 'Tasks';
+      case 3: return 'Team';
+      case 4: return 'Clients';
+      default: return 'Dashboard';
+    }
   };
 
   const getWelcomeMessage = () => {
     const userName = user?.name?.split(' ')[0] || 'User';
-    const path = location.pathname;
-    if (path.includes('/projects')) return 'Manage and track all your construction projects.';
-    if (path.includes('/tasks')) return 'View and manage tasks across all projects.';
-    if (path.includes('/team')) return 'Manage your team members and assignments.';
-    if (path.includes('/clients')) return 'Manage client information and contacts.';
-    if (path.includes('/dashboard')) return `Welcome back, ${userName}. Here's what's happening.`;
-    return `Welcome back, ${userName}. Here's what's happening.`;
+    const pageTitle = getPageTitle();
+    switch (currentTab) {
+      case 0: return `Welcome back, ${userName}. Here's what's happening.`;
+      case 1: return 'Manage and track all your construction projects.';
+      case 2: return 'View and manage tasks across all projects.';
+      case 3: return 'Manage your team members and assignments.';
+      case 4: return 'Manage client information and contacts.';
+      default: return `Welcome back, ${userName}. Here's what's happening.`;
+    }
   };
 
   const getCurrentTab = () => {
-    const path = location.pathname;
-    if (path.includes('/projects')) return 1;
-    if (path.includes('/tasks')) return 3;
-    if (path.includes('/team')) return 4;
-    if (path.includes('/clients')) return 5;
-    return 0; // dashboard
+    return currentTab || 0;
   };
 
   return (
@@ -57,7 +53,7 @@ const ModernDashboardLayout = () => {
       {/* Sidebar */}
       <ModernSidebar 
         currentTab={getCurrentTab()} 
-        onTabChange={() => {}} // Navigation handled by React Router
+        onTabChange={onTabChange}
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={handleToggleSidebar}
       />
@@ -138,7 +134,7 @@ const ModernDashboardLayout = () => {
             maxWidth: 'none'
           }}
         >
-          <Outlet />
+          {children}
         </Container>
       </Box>
     </Box>

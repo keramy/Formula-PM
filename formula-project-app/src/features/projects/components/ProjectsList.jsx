@@ -91,7 +91,7 @@ const projectStatusConfig = {
   }
 };
 
-function ProjectsList({ projects, tasks, clients = [], onDeleteProject, onManageScope }) {
+function ProjectsList({ projects, tasks, clients = [], onDeleteProject, onManageScope, onViewProject }) {
   if (projects.length === 0) {
     return (
       <Box sx={{ textAlign: 'center', py: 4 }}>
@@ -241,7 +241,7 @@ function ProjectsList({ projects, tasks, clients = [], onDeleteProject, onManage
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    onManageScope && onManageScope(project);
+                    onViewProject && onViewProject(project);
                   }}
                 >
                   {project.name}
@@ -305,6 +305,7 @@ function ProjectsList({ projects, tasks, clients = [], onDeleteProject, onManage
                   fullWidth
                   onClick={(e) => {
                     e.stopPropagation();
+                    onViewProject && onViewProject(project);
                   }}
                   sx={{ 
                     borderRadius: '8px',

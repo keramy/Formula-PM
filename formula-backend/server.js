@@ -1,3 +1,6 @@
+// Load environment variables first
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const http = require('http');
@@ -804,8 +807,9 @@ app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Formula Project Management API running on port ${PORT}`);
+  console.log(`🌐 Server accessible on all interfaces (0.0.0.0:${PORT})`);
   console.log(`📧 Email service configured: ${process.env.EMAIL_USER ? 'Yes' : 'No (set EMAIL_USER and EMAIL_PASS)'}`);
   console.log(`🔗 WebSocket server ready for real-time connections`);
   

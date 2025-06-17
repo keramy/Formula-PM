@@ -75,7 +75,23 @@
       "Bash(npm run analyze:*)",
       "Bash(timeout:*)",
       "Bash(../scripts/show-optimizations.sh:*)",
-      "Bash(env)"
+      "Bash(env)",
+      "Bash(echo:*)",
+      "Bash(npm run start:fast:*)",
+      "Bash(/dev/null)",
+      "Bash(./scripts/rename-jsx.sh:*)",
+      "Bash(/mnt/c/Users/Kerem/Desktop/formula-pm/scripts/rename-jsx.sh:*)",
+      "Bash(docker:*)",
+      "Bash(docker-compose:*)",
+      "Bash(npm run:*)",
+      "Bash(npm start:*)",
+      "Bash(ip route:*)",
+      "Bash(./validate-improvements.sh:*)",
+      "Bash(./start-dev.sh:*)",
+      "Bash(PORT=5002 npm start)",
+      "Bash(VITE_API_URL=http://localhost:5002/api npm start)",
+      "Bash(PORT=5003 npm start)",
+      "Bash(PORT=5004 npm start)"
     ],
     "deny": []
   }

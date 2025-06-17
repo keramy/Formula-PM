@@ -18,8 +18,7 @@ import {
   ListItemAvatar,
   ListItemSecondaryAction,
   Divider,
-  Paper,
-  Calendar
+  Paper
 } from '@mui/material';
 import {
   CheckCircle,

@@ -28,7 +28,7 @@ const queryClient = new QueryClient({
 const AppProviders = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename="/formula-pm">
+      <BrowserRouter basename={process.env.NODE_ENV === 'production' ? '/formula-pm' : '/'}>
         <ThemeProvider theme={formulaTheme}>
           <CssBaseline />
           <AuthProvider>

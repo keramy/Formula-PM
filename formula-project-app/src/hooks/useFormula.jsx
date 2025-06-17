@@ -1,24 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import apiService from '../services/api/apiService';
 
-// MIGRATION NOTE: This hook is being phased out in favor of React Query hooks
-// For new components, use useQueryMigration from './useQueryMigration' instead
-// This hook will be maintained for backward compatibility during the migration period
-
-// Check if React Query is available and should be used
-const shouldUseReactQuery = process.env.REACT_APP_USE_REACT_QUERY !== 'false';
-
-// TODO: Re-enable React Query migration when ready
-// let useQueryMigration = null;
-// if (shouldUseReactQuery) {
-//   try {
-//     // Dynamically import the new hook if available
-//     const queryMigrationModule = require('./useQueryMigration');
-//     useQueryMigration = queryMigrationModule.useQueryMigration;
-//   } catch (error) {
-//     console.warn('React Query migration hook not available, falling back to legacy implementation');
-//   }
-// }
+// Legacy hook implementation for data fetching
+// Uses traditional useState/useEffect pattern for data management
 
 // Legacy hook implementation (will be deprecated)
 export const useFormulaDataLegacy = () => {
@@ -121,13 +105,8 @@ export const useFormulaDataLegacy = () => {
   };
 };
 
-// Main hook that uses legacy implementation for now
-// TODO: Migrate to React Query hooks when ready
+// Main hook for data fetching
 export const useFormulaData = () => {
-  // For now, just use the legacy implementation to avoid hook rule violations
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Using legacy implementation for data fetching');
-  }
   return useFormulaDataLegacy();
 };
 

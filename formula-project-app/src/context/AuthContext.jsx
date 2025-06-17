@@ -84,23 +84,28 @@ export const AuthProvider = ({ children }) => {
     
     // Auto-login as admin for development
     if (process.env.NODE_ENV === 'development') {
-      console.log('Auto-logging in as admin for development...');
-      const adminUser = DEMO_USERS[0]; // Admin user
-      const { password: _, ...userSession } = adminUser;
-      
-      // Generate demo JWT token
-      const autoToken = btoa(JSON.stringify({ 
-        userId: userSession.id, 
-        email: userSession.email,
-        role: userSession.role,
-        exp: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-      }));
+      try {
+        console.log('Auto-logging in as admin for development...');
+        const adminUser = DEMO_USERS[0]; // Admin user
+        const { password: _, ...userSession } = adminUser;
+        
+        // Generate demo JWT token
+        const autoToken = btoa(JSON.stringify({ 
+          userId: userSession.id, 
+          email: userSession.email,
+          role: userSession.role,
+          exp: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+        }));
 
-      // Store in localStorage
-      localStorage.setItem('formulapm_token', autoToken);
-      localStorage.setItem('formulapm_user', JSON.stringify(userSession));
-      
-      setUser(userSession);
+        // Store in localStorage
+        localStorage.setItem('formulapm_token', autoToken);
+        localStorage.setItem('formulapm_user', JSON.stringify(userSession));
+        
+        setUser(userSession);
+      } catch (error) {
+        console.error('Failed to auto-login in development:', error);
+        setError('Development auto-login failed');
+      }
     }
     
     setLoading(false);

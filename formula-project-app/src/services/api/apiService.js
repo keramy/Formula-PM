@@ -1,8 +1,9 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 class ApiService {
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
+    console.log('🔗 API Request:', url, 'Base URL:', API_BASE_URL);
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -13,22 +14,35 @@ class ApiService {
 
     try {
       const response = await fetch(url, config);
+      console.log('📡 Response received:', response.status, response.statusText, 'for', url);
+      
+      // Check if request was aborted
+      if (config.signal?.aborted) {
+        throw new Error('Request was aborted');
+      }
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      return await response.json();
+      const data = await response.json();
+      console.log('✅ Data received:', data?.length ? `${data.length} items` : 'data', 'for', endpoint);
+      return data;
     } catch (error) {
-      console.error(`API request failed: ${endpoint}`, error);
+      // Don't log aborted requests as errors
+      if (error.name !== 'AbortError' && !config.signal?.aborted) {
+        console.error(`🚨 API request failed: ${endpoint}`, error);
+        console.error('🚨 Full URL was:', url);
+        console.error('🚨 Error details:', error.message, error.status);
+      }
       throw error;
     }
   }
 
   // Team Members API
-  async getTeamMembers() {
+  async getTeamMembers(signal) {
     try {
-      return await this.request('/team-members');
+      return await this.request('/team-members', { signal });
     } catch (error) {
       console.warn('Backend unavailable, using demo data');
       // Demo data for GitHub Pages
@@ -82,9 +96,9 @@ class ApiService {
   }
 
   // Projects API
-  async getProjects() {
+  async getProjects(signal) {
     try {
-      return await this.request('/projects');
+      return await this.request('/projects', { signal });
     } catch (error) {
       console.warn('Backend unavailable, using demo data');
       // Demo data for GitHub Pages
@@ -138,9 +152,9 @@ class ApiService {
   }
 
   // Clients API
-  async getClients() {
+  async getClients(signal) {
     try {
-      return await this.request('/clients');
+      return await this.request('/clients', { signal });
     } catch (error) {
       console.warn('Backend unavailable, using demo data');
       // Demo data for GitHub Pages
@@ -190,9 +204,9 @@ class ApiService {
   }
 
   // Tasks API
-  async getTasks() {
+  async getTasks(signal) {
     try {
-      return await this.request('/tasks');
+      return await this.request('/tasks', { signal });
     } catch (error) {
       console.warn('Backend unavailable, using demo data');
       // Demo data for GitHub Pages

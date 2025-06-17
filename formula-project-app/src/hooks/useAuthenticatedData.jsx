@@ -59,29 +59,41 @@ export const useAuthenticatedData = () => {
         setLoading(false);
       }
     }
-  }, [user, getAccessibleProjects]);
+  }, [user]); // Simplified dependency to prevent frequent re-renders
 
   // Load data when user changes or component mounts with proper cleanup
   useEffect(() => {
     const abortController = new AbortController();
     
     const loadData = async () => {
-      await loadAllData(abortController.signal);
+      // Add delay to prevent React StrictMode double-mounting issues
+      if (import.meta.env.DEV) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      if (!abortController.signal.aborted) {
+        await loadAllData(abortController.signal);
+      }
     };
     
     loadData();
     
     return () => {
-      abortController.abort();
+      // Only abort if we're actually unmounting, not in StrictMode re-mount
+      setTimeout(() => {
+        if (!abortController.signal.aborted) {
+          abortController.abort();
+        }
+      }, 50);
     };
-  }, [loadAllData]);
+  }, [user]); // Simplified dependency - only re-run when user changes
 
   // Project management functions with permission checks
   const addProject = useCallback(async (projectData) => {
     if (!user?.role) return;
     
     try {
-      const newProject = await apiService.addProject(projectData);
+      const newProject = await apiService.createProject(projectData);
       
       // Only add to local state if user can access it
       if (getAccessibleProjects([newProject]).length > 0) {
@@ -132,7 +144,7 @@ export const useAuthenticatedData = () => {
     if (!user?.role) return;
     
     try {
-      const newTask = await apiService.addTask(taskData);
+      const newTask = await apiService.createTask(taskData);
       
       // Only add to local state if it belongs to an accessible project
       const accessibleProjects = getAccessibleProjects(projects);
@@ -185,7 +197,7 @@ export const useAuthenticatedData = () => {
     if (!user?.role) return;
     
     try {
-      const newMember = await apiService.addTeamMember(memberData);
+      const newMember = await apiService.createTeamMember(memberData);
       setTeamMembers(prev => [newMember, ...prev]);
       return newMember;
     } catch (error) {
@@ -230,7 +242,7 @@ export const useAuthenticatedData = () => {
     if (!user?.role) return;
     
     try {
-      const newClient = await apiService.addClient(clientData);
+      const newClient = await apiService.createClient(clientData);
       setClients(prev => [newClient, ...prev]);
       return newClient;
     } catch (error) {

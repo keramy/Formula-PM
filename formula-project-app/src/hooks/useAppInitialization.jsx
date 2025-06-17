@@ -9,34 +9,46 @@ import { PerformanceMonitor } from '../utils/performance';
 export const useAppInitialization = (teamMembers, projects, tasks) => {
   // Initialize performance monitoring
   useEffect(() => {
-    PerformanceMonitor.init();
-    
-    // Optional: Log performance metrics during development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🚀 Performance monitoring initialized');
+    try {
+      PerformanceMonitor.init();
+      
+      // Optional: Log performance metrics during development
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🚀 Performance monitoring initialized');
+      }
+    } catch (error) {
+      console.error('Failed to initialize performance monitoring:', error);
     }
   }, []);
 
   // Initialize notification service when data is available
   useEffect(() => {
     if (teamMembers.length > 0 && projects.length > 0 && tasks.length > 0) {
-      notificationService.init(teamMembers, projects, tasks);
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔔 Notification service initialized with:', {
-          teamMembers: teamMembers.length,
-          projects: projects.length,
-          tasks: tasks.length
-        });
-      }
-      
-      // Cleanup on unmount
-      return () => {
-        notificationService.destroy();
+      try {
+        notificationService.init(teamMembers, projects, tasks);
+        
         if (process.env.NODE_ENV === 'development') {
-          console.log('🔔 Notification service destroyed');
+          console.log('🔔 Notification service initialized with:', {
+            teamMembers: teamMembers.length,
+            projects: projects.length,
+            tasks: tasks.length
+          });
         }
-      };
+        
+        // Cleanup on unmount
+        return () => {
+          try {
+            notificationService.destroy();
+            if (process.env.NODE_ENV === 'development') {
+              console.log('🔔 Notification service destroyed');
+            }
+          } catch (error) {
+            console.error('Error destroying notification service:', error);
+          }
+        };
+      } catch (error) {
+        console.error('Failed to initialize notification service:', error);
+      }
     }
   }, [teamMembers, projects, tasks]);
 

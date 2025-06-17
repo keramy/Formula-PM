@@ -10,6 +10,9 @@
     "id": 1749905291401,
     "projectId": 2001,
     "createdAt": "2025-06-14T12:48:11.401Z",
-    "totalPrice": 15000
+    "totalPrice": 15000,
+    "progress": 0,
+    "status": "in-progress",
+    "updatedAt": "2025-06-17T15:31:47.036Z"
   }
 ]
