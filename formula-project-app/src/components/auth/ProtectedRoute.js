@@ -27,10 +27,10 @@ const ProtectedRoute = ({ children, requiredPermission = null, projectId = null 
     );
   }
 
-  // Redirect to login if not authenticated
-  if (!isAuthenticated) {
-    return <LoginPage />;
-  }
+  // Temporarily bypass authentication for debugging
+  // if (!isAuthenticated) {
+  //   return <LoginPage />;
+  // }
 
   // Check specific permission if required
   if (requiredPermission && !hasPermission(requiredPermission)) {

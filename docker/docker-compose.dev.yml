@@ -1,0 +1,73 @@
+# Docker Compose for WSL2 Optimized React Development
+# Provides containerized development with Windows filesystem support
+
+version: '3.8'
+
+services:
+  react-dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    container_name: formula-react-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source code with optimized settings
+      - ../formula-project-app:/app:cached
+      # Use named volume for node_modules for better performance
+      - formula_node_modules:/app/node_modules
+      # Mount package files separately to avoid node_modules conflicts
+      - ../formula-project-app/package.json:/app/package.json:ro
+      - ../formula-project-app/package-lock.json:/app/package-lock.json:ro
+    environment:
+      # WSL2 optimization environment variables
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      - WATCHPACK_POLLING_INTERVAL=1000
+      - CHOKIDAR_INTERVAL=1000
+      - FAST_REFRESH=true
+      - GENERATE_SOURCEMAP=false
+      - SKIP_PREFLIGHT_CHECK=true
+      - WDS_SOCKET_HOST=localhost
+      - WDS_SOCKET_PORT=3000
+      - REACT_APP_API_URL=http://localhost:5001/api
+    networks:
+      - formula-network
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    # Resource limits for optimal performance
+    mem_limit: 2g
+    memswap_limit: 2g
+    cpu_count: 2
+
+  # Backend service for full-stack development
+  backend-dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: formula-backend-dev
+    ports:
+      - "5001:5001"
+    volumes:
+      - ../formula-backend:/app:cached
+      - formula_backend_node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=5001
+    networks:
+      - formula-network
+    restart: unless-stopped
+    depends_on:
+      - react-dev
+
+volumes:
+  formula_node_modules:
+    driver: local
+  formula_backend_node_modules:
+    driver: local
+
+networks:
+  formula-network:
+    driver: bridge

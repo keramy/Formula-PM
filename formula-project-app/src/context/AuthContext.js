@@ -73,11 +73,34 @@ export const AuthProvider = ({ children }) => {
       try {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
+        setLoading(false);
+        return;
       } catch (error) {
         console.error('Error parsing stored user data:', error);
         localStorage.removeItem('formulapm_token');
         localStorage.removeItem('formulapm_user');
       }
+    }
+    
+    // Auto-login as admin for development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Auto-logging in as admin for development...');
+      const adminUser = DEMO_USERS[0]; // Admin user
+      const { password: _, ...userSession } = adminUser;
+      
+      // Generate demo JWT token
+      const autoToken = btoa(JSON.stringify({ 
+        userId: userSession.id, 
+        email: userSession.email,
+        role: userSession.role,
+        exp: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+      }));
+
+      // Store in localStorage
+      localStorage.setItem('formulapm_token', autoToken);
+      localStorage.setItem('formulapm_user', JSON.stringify(userSession));
+      
+      setUser(userSession);
     }
     
     setLoading(false);

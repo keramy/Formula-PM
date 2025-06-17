@@ -1,6 +1,7 @@
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from '../../context/AuthContext';
@@ -27,16 +28,18 @@ const queryClient = new QueryClient({
 const AppProviders = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={formulaTheme}>
-        <CssBaseline />
-        <AuthProvider>
-          <NotificationProvider>
-            <NavigationProvider>
-              {children}
-            </NavigationProvider>
-          </NotificationProvider>
-        </AuthProvider>
-      </ThemeProvider>
+      <BrowserRouter basename="/formula-pm">
+        <ThemeProvider theme={formulaTheme}>
+          <CssBaseline />
+          <AuthProvider>
+            <NotificationProvider>
+              <NavigationProvider>
+                {children}
+              </NavigationProvider>
+            </NotificationProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </BrowserRouter>
       {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );

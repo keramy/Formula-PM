@@ -24,13 +24,20 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:fast": "GENERATE_SOURCEMAP=false SKIP_PREFLIGHT_CHECK=true react-scripts start",
+    "start:debug": "REACT_APP_DEBUG=true react-scripts start",
     "build": "react-scripts build",
+    "build:analyze": "npm run build && npx webpack-bundle-analyzer build/static/js/*.js",
     "test": "react-scripts test",
+    "test:coverage": "react-scripts test --coverage --watchAll=false",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "analyze": "npm run build && npx webpack-bundle-analyzer build/static/js/*.js",
-    "lighthouse": "lighthouse http://localhost:3000 --view"
+    "lighthouse": "lighthouse http://localhost:3000 --view",
+    "performance": "node ../scripts/performance-test.js",
+    "wsl:restart": "wsl --shutdown && echo 'WSL restarted. Please restart your terminal.'",
+    "wsl:status": "wsl --status && echo 'Memory usage:' && free -h"
   },
   "eslintConfig": {
     "extends": [

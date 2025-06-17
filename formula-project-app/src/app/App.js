@@ -21,7 +21,8 @@ import '../styles/modern-dashboard.css';
  * - Error boundaries
  * - Loading states
  */
-function App() {
+// Inner component that uses hooks requiring providers
+function AppWithProviders() {
   // Get authenticated data with loading and error states
   const {
     projects,
@@ -71,37 +72,45 @@ function App() {
 
   // Render the main app once data is loaded and initialized
   return (
+    <>
+      {/* Main application content with all business logic */}
+      <AppContent
+        // Data props
+        projects={projects}
+        tasks={tasks}
+        teamMembers={teamMembers}
+        clients={clients}
+        // State props
+        loading={loading}
+        error={error}
+        // CRUD operations
+        addProject={addProject}
+        updateProject={updateProject}
+        deleteProject={deleteProject}
+        addTask={addTask}
+        updateTask={updateTask}
+        deleteTask={deleteTask}
+        addTeamMember={addTeamMember}
+        updateTeamMember={updateTeamMember}
+        deleteTeamMember={deleteTeamMember}
+        addClient={addClient}
+        updateClient={updateClient}
+        deleteClient={deleteClient}
+        setTasks={setTasks}
+        setError={setError}
+      />
+      
+      {/* Global components (notifications, performance monitor, etc.) */}
+      <GlobalComponents />
+    </>
+  );
+}
+
+function App() {
+  return (
     <ErrorBoundary fallbackMessage="Application error occurred">
       <AppProviders>
-        {/* Main application content with all business logic */}
-        <AppContent
-          // Data props
-          projects={projects}
-          tasks={tasks}
-          teamMembers={teamMembers}
-          clients={clients}
-          // State props
-          loading={loading}
-          error={error}
-          // CRUD operations
-          addProject={addProject}
-          updateProject={updateProject}
-          deleteProject={deleteProject}
-          addTask={addTask}
-          updateTask={updateTask}
-          deleteTask={deleteTask}
-          addTeamMember={addTeamMember}
-          updateTeamMember={updateTeamMember}
-          deleteTeamMember={deleteTeamMember}
-          addClient={addClient}
-          updateClient={updateClient}
-          deleteClient={deleteClient}
-          setTasks={setTasks}
-          setError={setError}
-        />
-        
-        {/* Global components (notifications, performance monitor, etc.) */}
-        <GlobalComponents />
+        <AppWithProviders />
       </AppProviders>
     </ErrorBoundary>
   );

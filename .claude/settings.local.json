@@ -73,7 +73,9 @@
       "Bash(bash:*)",
       "Bash(npm ls:*)",
       "Bash(npm run analyze:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(../scripts/show-optimizations.sh:*)",
+      "Bash(env)"
     ],
     "deny": []
   }
