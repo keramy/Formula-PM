@@ -1,8 +1,10 @@
 import React from 'react';
-import { Grid, Paper, Typography, Box } from '@mui/material';
+import { Grid, Paper, Typography, Box, useTheme } from '@mui/material';
 import { TrendingUp, TrendingDown } from '@mui/icons-material';
 
 const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
+  const theme = useTheme();
+  
   // Calculate statistics
   const totalProjects = projects.length;
   const completedTasks = tasks.filter(task => task.status === 'completed').length;
@@ -56,8 +58,8 @@ const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
             elevation={0}
             sx={{
               p: 3,
-              backgroundColor: 'white',
-              border: '1px solid #E9ECEF',
+              backgroundColor: theme.palette.background.paper,
+              border: `1px solid ${theme.palette.divider}`,
               borderRadius: 3,
               height: '140px',
               display: 'flex',
@@ -75,7 +77,7 @@ const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
               <Typography
                 variant="body2"
                 sx={{
-                  color: '#7F8C8D',
+                  color: theme.palette.text.secondary,
                   fontSize: '0.85rem',
                   fontWeight: 500,
                   mb: 1
@@ -87,7 +89,7 @@ const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
               <Typography
                 variant="h4"
                 sx={{
-                  color: '#2C3E50',
+                  color: theme.palette.text.primary,
                   fontWeight: 700,
                   fontSize: '1.8rem',
                   mb: 0.5

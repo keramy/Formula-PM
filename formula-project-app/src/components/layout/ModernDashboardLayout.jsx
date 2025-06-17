@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
-import { Box, Container, Typography, IconButton } from '@mui/material';
-import { Notifications as NotificationsIcon } from '@mui/icons-material';
+import { Box, Container, Typography, IconButton, Tooltip } from '@mui/material';
+import { 
+  Notifications as NotificationsIcon,
+  DarkMode as DarkModeIcon,
+  LightMode as LightModeIcon 
+} from '@mui/icons-material';
 import ModernSidebar from './ModernSidebar';
 import UserProfileMenu from '../auth/UserProfileMenu';
 import LiveSearchDropdown from '../ui/LiveSearchDropdown';
 import { NotificationPanel } from '../../services/notifications/notificationService';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const ModernDashboardLayout = ({ children, currentTab, onTabChange }) => {
   const { user } = useAuth();
+  const { mode, toggleTheme, isDarkMode } = useTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     localStorage.getItem('sidebarCollapsed') === 'true'
   );
@@ -56,13 +62,14 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange }) => {
         onTabChange={onTabChange}
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={handleToggleSidebar}
+        darkMode={isDarkMode}
       />
       
       {/* Main Content */}
       <Box
         sx={{
           flexGrow: 1,
-          marginLeft: sidebarCollapsed ? '70px' : '250px',
+          marginLeft: sidebarCollapsed ? '70px' : '280px',
           display: 'flex',
           flexDirection: 'column',
           transition: 'margin-left 0.3s ease-in-out'
@@ -115,6 +122,24 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange }) => {
               onNavigate={() => {}}
               placeholder="Search projects, tasks, team..."
             />
+
+            {/* Theme Toggle */}
+            <Tooltip title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
+              <IconButton
+                onClick={toggleTheme}
+                size="small"
+                sx={{
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                  },
+                  width: 40,
+                  height: 40
+                }}
+              >
+                {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+              </IconButton>
+            </Tooltip>
 
             {/* Notifications */}
             <NotificationPanel />

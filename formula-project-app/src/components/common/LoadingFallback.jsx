@@ -8,25 +8,97 @@ import {
   CardContent,
   Stack
 } from '@mui/material';
+import FormulaLogo from '../branding/FormulaLogo';
 
-// General loading fallback for lazy components
-export const LoadingFallback = ({ message = "Loading..." }) => (
-  <Box 
-    sx={{ 
-      display: 'flex', 
-      flexDirection: 'column',
-      alignItems: 'center', 
-      justifyContent: 'center',
-      p: 4,
-      minHeight: '200px'
-    }}
-  >
-    <CircularProgress size={40} sx={{ mb: 2 }} />
-    <Typography variant="body2" color="textSecondary">
-      {message}
-    </Typography>
-  </Box>
-);
+// General loading fallback for lazy components with Formula branding
+export const LoadingFallback = ({ 
+  message = "Loading...",
+  minimal = false,
+  darkMode = false 
+}) => {
+  // Formula International brand colors
+  const colors = {
+    text: darkMode ? '#F5F2E8' : '#1B2951',
+    subtext: darkMode ? '#E8E2D5' : '#566BA3',
+    accent: darkMode ? '#F5F2E8' : '#1B2951'
+  };
+
+  if (minimal) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          py: 4,
+          gap: 2,
+        }}
+      >
+        <CircularProgress 
+          size={32} 
+          thickness={3}
+          sx={{ color: colors.accent }} 
+        />
+        <Typography 
+          variant="body2" 
+          sx={{ 
+            color: colors.subtext,
+            opacity: 0.8 
+          }}
+        >
+          {message}
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        p: 4,
+        minHeight: '200px',
+        gap: 3,
+      }}
+    >
+      {/* Logo */}
+      <FormulaLogo 
+        size="small" 
+        darkMode={darkMode}
+        sx={{ 
+          opacity: 0.7,
+          '@keyframes pulse': {
+            '0%, 100%': { opacity: 0.7 },
+            '50%': { opacity: 0.9 },
+          },
+          animation: 'pulse 2s ease-in-out infinite',
+        }}
+      />
+
+      {/* Loading spinner */}
+      <CircularProgress 
+        size={40} 
+        thickness={2}
+        sx={{ color: colors.accent }} 
+      />
+      
+      {/* Loading message */}
+      <Typography 
+        variant="body2" 
+        sx={{ 
+          color: colors.subtext,
+          opacity: 0.8
+        }}
+      >
+        {message}
+      </Typography>
+    </Box>
+  );
+};
 
 // Skeleton loader for project cards
 export const ProjectCardSkeleton = () => (
@@ -112,6 +184,29 @@ export const FormSkeleton = () => (
       ))}
     </Stack>
   </Box>
+);
+
+// Specific loading fallbacks for different contexts
+export const PageLoadingFallback = ({ darkMode }) => (
+  <LoadingFallback 
+    message="Loading page..." 
+    darkMode={darkMode} 
+  />
+);
+
+export const ComponentLoadingFallback = ({ darkMode }) => (
+  <LoadingFallback 
+    message="Loading component..." 
+    minimal={true}
+    darkMode={darkMode} 
+  />
+);
+
+export const FeatureLoadingFallback = ({ darkMode, feature }) => (
+  <LoadingFallback 
+    message={`Loading ${feature || 'feature'}...`} 
+    darkMode={darkMode} 
+  />
 );
 
 export default LoadingFallback;

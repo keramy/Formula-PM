@@ -1,0 +1,200 @@
+[
+  {
+    "id": "SD001",
+    "fileName": "Executive_Kitchen_Cabinets_Rev_C.pdf",
+    "originalFileName": "Executive_Kitchen_Cabinets_Rev_C.pdf",
+    "projectId": 2001,
+    "projectName": "Akbank Head Office Renovation",
+    "drawingType": "Kitchen Cabinets",
+    "room": "Executive Kitchen",
+    "version": "Rev C",
+    "status": "approved",
+    "uploadDate": "2025-06-10T09:30:00Z",
+    "uploadedBy": "Ahmet Yılmaz",
+    "uploadedById": 1010,
+    "approvedBy": "Kubilay Ilgın",
+    "approvedById": 1001,
+    "approvedDate": "2025-06-12T14:20:00Z",
+    "drawingNumber": "AK-MM-001",
+    "scopeItemIds": ["SCOPE001", "SCOPE002"],
+    "connectedTasks": [3002],
+    "revisionHistory": [
+      {
+        "version": "Rev A",
+        "date": "2025-05-28T10:00:00Z",
+        "status": "revision_required",
+        "comment": "Adjust cabinet heights for ceiling clearance"
+      },
+      {
+        "version": "Rev B", 
+        "date": "2025-06-05T11:15:00Z",
+        "status": "revision_required",
+        "comment": "Update hardware specifications per client request"
+      },
+      {
+        "version": "Rev C",
+        "date": "2025-06-10T09:30:00Z",
+        "status": "approved",
+        "comment": "All revisions incorporated, approved for production"
+      }
+    ],
+    "fileSize": 2.8,
+    "notes": "Final approval received with client sign-off on materials and finishes"
+  },
+  {
+    "id": "SD002",
+    "fileName": "Executive_Reception_Desk_Rev_B.pdf",
+    "originalFileName": "Executive_Reception_Desk_Rev_B.pdf", 
+    "projectId": 2001,
+    "projectName": "Akbank Head Office Renovation",
+    "drawingType": "Reception Furniture",
+    "room": "Executive Reception",
+    "version": "Rev B",
+    "status": "approved",
+    "uploadDate": "2025-06-08T14:45:00Z",
+    "uploadedBy": "Ahmet Yılmaz",
+    "uploadedById": 1010,
+    "approvedBy": "Ömer Onan",
+    "approvedById": 1002,
+    "approvedDate": "2025-06-11T16:30:00Z",
+    "drawingNumber": "AK-MM-002",
+    "scopeItemIds": ["SCOPE003"],
+    "connectedTasks": [],
+    "revisionHistory": [
+      {
+        "version": "Rev A",
+        "date": "2025-05-30T13:20:00Z",
+        "status": "revision_required",
+        "comment": "Add cable management system for technology integration"
+      },
+      {
+        "version": "Rev B",
+        "date": "2025-06-08T14:45:00Z",
+        "status": "approved",
+        "comment": "Cable management and technology integration approved"
+      }
+    ],
+    "fileSize": 1.9,
+    "notes": "Custom reception desk with integrated technology and branding elements"
+  },
+  {
+    "id": "SD003",
+    "fileName": "Data_Center_HVAC_System_Rev_A.pdf",
+    "originalFileName": "Data_Center_HVAC_System_Rev_A.pdf",
+    "projectId": 2002,
+    "projectName": "Garanti BBVA Tech Center MEP",
+    "drawingType": "HVAC System",
+    "room": "Data Center",
+    "version": "Rev A", 
+    "status": "approved",
+    "uploadDate": "2025-06-01T11:20:00Z",
+    "uploadedBy": "Emre Koc",
+    "uploadedById": 1011,
+    "approvedBy": "Mehmet Demir",
+    "approvedById": 1007,
+    "approvedDate": "2025-06-03T09:15:00Z",
+    "drawingNumber": "GB-MEP-001",
+    "scopeItemIds": ["SCOPE009", "SCOPE010"],
+    "connectedTasks": [3003],
+    "revisionHistory": [
+      {
+        "version": "Rev A",
+        "date": "2025-06-01T11:20:00Z",
+        "status": "approved",
+        "comment": "Initial design approved for precision cooling requirements"
+      }
+    ],
+    "fileSize": 4.2,
+    "notes": "Precision air conditioning system for critical data center operations"
+  },
+  {
+    "id": "SD004",
+    "fileName": "Main_Electrical_Distribution_Rev_A.pdf",
+    "originalFileName": "Main_Electrical_Distribution_Rev_A.pdf",
+    "projectId": 2002,
+    "projectName": "Garanti BBVA Tech Center MEP",
+    "drawingType": "Electrical Distribution",
+    "room": "Electrical Room",
+    "version": "Rev A",
+    "status": "revision_required",
+    "uploadDate": "2025-06-09T08:30:00Z",
+    "uploadedBy": "Fatma Arslan",
+    "uploadedById": 1014,
+    "approvedBy": null,
+    "approvedById": null,
+    "approvedDate": null,
+    "drawingNumber": "GB-ELE-001",
+    "scopeItemIds": ["SCOPE006"],
+    "connectedTasks": [3004],
+    "revisionHistory": [
+      {
+        "version": "Rev A",
+        "date": "2025-06-09T08:30:00Z",
+        "status": "revision_required",
+        "comment": "Load calculations need verification, emergency backup requirements unclear"
+      }
+    ],
+    "fileSize": 3.1,
+    "notes": "Main electrical distribution panel requires load calculation verification before approval"
+  },
+  {
+    "id": "SD005",
+    "fileName": "Server_Room_Fire_Suppression_Rev_A.pdf",
+    "originalFileName": "Server_Room_Fire_Suppression_Rev_A.pdf",
+    "projectId": 2002,
+    "projectName": "Garanti BBVA Tech Center MEP",
+    "drawingType": "Fire Suppression",
+    "room": "Server Room",
+    "version": "Rev A",
+    "status": "pending",
+    "uploadDate": "2025-06-14T15:10:00Z",
+    "uploadedBy": "Emre Koc",
+    "uploadedById": 1011,
+    "approvedBy": null,
+    "approvedById": null,
+    "approvedDate": null,
+    "drawingNumber": "GB-FS-001",
+    "scopeItemIds": ["SCOPE007"],
+    "connectedTasks": [],
+    "revisionHistory": [
+      {
+        "version": "Rev A",
+        "date": "2025-06-14T15:10:00Z",
+        "status": "pending",
+        "comment": "Initial design submitted for review, awaiting approval"
+      }
+    ],
+    "fileSize": 2.6,
+    "notes": "Clean agent fire suppression system for server room protection"
+  },
+  {
+    "id": "SD006",
+    "fileName": "Office_LED_Lighting_Layout_Rev_A.pdf",
+    "originalFileName": "Office_LED_Lighting_Layout_Rev_A.pdf",
+    "projectId": 2001,
+    "projectName": "Akbank Head Office Renovation",
+    "drawingType": "Lighting Layout",
+    "room": "Open Office Areas",
+    "version": "Rev A",
+    "status": "pending",
+    "uploadDate": "2025-06-13T12:45:00Z",
+    "uploadedBy": "Fatma Arslan",
+    "uploadedById": 1014,
+    "approvedBy": null,
+    "approvedById": null,
+    "approvedDate": null,
+    "drawingNumber": "AK-ELE-001",
+    "scopeItemIds": ["SCOPE008"],
+    "connectedTasks": [],
+    "revisionHistory": [
+      {
+        "version": "Rev A",
+        "date": "2025-06-13T12:45:00Z",
+        "status": "pending",
+        "comment": "LED lighting layout submitted, awaiting client review"
+      }
+    ],
+    "fileSize": 1.7,
+    "notes": "Energy-efficient LED lighting system for office areas with dimming controls"
+  }
+]

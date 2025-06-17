@@ -3,7 +3,7 @@ import AppProviders from '../components/providers/AppProviders';
 import GlobalComponents from '../components/global/GlobalComponents';
 import { useAppInitialization } from '../hooks/useAppInitialization';
 import { useAuthenticatedData } from '../hooks/useAuthenticatedData';
-import LoadingScreen from '../components/ui/LoadingScreen';
+import FormulaLoadingScreen from '../components/ui/FormulaLoadingScreen';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { AppContent } from './AppContent';
 import './App.css';
@@ -54,7 +54,7 @@ function AppWithProviders() {
   // Show loading screen during initial data load
   if (loading) {
     return (
-      <LoadingScreen 
+      <FormulaLoadingScreen 
         message="Loading Formula Project Management..."
         subtitle="Fetching team members and project data"
       />

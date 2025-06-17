@@ -9,14 +9,16 @@ import {
   Divider,
   ListItemIcon,
   ListItemText,
-  Chip
+  Chip,
+  useTheme
 } from '@mui/material';
 import {
   AccountCircle,
   Logout,
   Settings,
   Dashboard,
-  AdminPanelSettings
+  AdminPanelSettings,
+  Business
 } from '@mui/icons-material';
 import { useAuth, USER_ROLES } from '../../context/AuthContext';
 

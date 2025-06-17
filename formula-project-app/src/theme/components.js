@@ -68,12 +68,12 @@ export const components = {
         height: '24px'
       },
       colorPrimary: {
-        backgroundColor: colors.primary.main,
-        color: colors.primary.contrastText
+        backgroundColor: colors.brand.navy,
+        color: colors.brand.cream
       },
       colorSecondary: {
-        backgroundColor: colors.secondary.main,
-        color: colors.secondary.contrastText
+        backgroundColor: colors.brand.cream,
+        color: colors.brand.navy
       }
     }
   },
@@ -101,7 +101,7 @@ export const components = {
         minHeight: '48px'
       },
       indicator: {
-        backgroundColor: colors.primary.main,
+        backgroundColor: colors.brand.navy,
         height: '3px',
         borderRadius: '3px'
       }
@@ -116,7 +116,7 @@ export const components = {
         fontSize: '0.875rem',
         minHeight: '48px',
         '&.Mui-selected': {
-          color: colors.primary.main,
+          color: colors.brand.navy,
           fontWeight: 600
         }
       }
@@ -133,10 +133,10 @@ export const components = {
             borderColor: colors.border.medium
           },
           '&:hover fieldset': {
-            borderColor: colors.primary.light
+            borderColor: colors.brand.navy
           },
           '&.Mui-focused fieldset': {
-            borderColor: colors.primary.main,
+            borderColor: colors.brand.navy,
             borderWidth: '2px'
           }
         }
@@ -174,7 +174,7 @@ export const components = {
         borderRadius: '8px',
         marginBottom: '4px',
         '&:hover': {
-          backgroundColor: `${colors.primary.main}08`
+          backgroundColor: `${colors.brand.navy}08`
         }
       }
     }
@@ -195,7 +195,7 @@ export const components = {
     styleOverrides: {
       root: {
         '&:hover': {
-          backgroundColor: `${colors.primary.main}05`
+          backgroundColor: `${colors.brand.navy}05`
         }
       }
     }
@@ -205,7 +205,7 @@ export const components = {
   MuiTooltip: {
     styleOverrides: {
       tooltip: {
-        backgroundColor: colors.text.primary,
+        backgroundColor: colors.text.light.primary,
         fontSize: '0.75rem',
         borderRadius: '6px'
       }

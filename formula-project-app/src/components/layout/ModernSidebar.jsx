@@ -12,6 +12,7 @@ import {
   IconButton,
   Tooltip
 } from '@mui/material';
+import FormulaLogo, { FormulaLogoCompact } from '../branding/FormulaLogo';
 import {
   Dashboard as DashboardIcon,
   FolderOpen as ProjectsIcon,
@@ -27,9 +28,33 @@ import {
   Menu as MenuIcon,
   Architecture as ShopDrawingsIcon
 } from '@mui/icons-material';
+import { useTheme as useFormulaTheme } from '../../context/ThemeContext';
 
 const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse }) => {
   const theme = useTheme();
+  const { isDarkMode } = useFormulaTheme();
+  const darkMode = isDarkMode;
+  
+  // Formula International brand colors
+  const colors = darkMode ? {
+    background: '#1B2951',     // Navy background
+    text: '#F5F2E8',          // Light cream text
+    textSecondary: '#E8E2D5', // Cream secondary text
+    textMuted: '#A8B8D1',     // Muted text
+    accent: '#F5F2E8',        // Light cream accent
+    border: '#566BA3',        // Medium navy border
+    hover: 'rgba(245, 242, 232, 0.08)',
+    active: 'rgba(245, 242, 232, 0.12)'
+  } : {
+    background: '#FDFCFA',    // Light cream background
+    text: '#1B2951',          // Navy text
+    textSecondary: '#566BA3', // Medium navy secondary
+    textMuted: '#7A8FB8',     // Muted navy text
+    accent: '#1B2951',        // Navy accent
+    border: '#D1D8E6',        // Light border
+    hover: 'rgba(27, 41, 81, 0.05)',
+    active: 'rgba(27, 41, 81, 0.08)'
+  };
 
   const menuGroups = [
     {
@@ -78,9 +103,9 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
   return (
     <Box
       sx={{
-        width: isCollapsed ? 70 : 250,
+        width: isCollapsed ? 70 : 280,
         height: '100vh',
-        backgroundColor: '#2C3E50', // Dark blue-gray background
+        backgroundColor: colors.background,
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
@@ -88,7 +113,9 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
         top: 0,
         zIndex: 1200,
         transition: 'width 0.3s ease-in-out',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        borderRight: `1px solid ${colors.border}`,
+        boxShadow: darkMode ? '4px 0 8px rgba(0, 0, 0, 0.2)' : '4px 0 8px rgba(27, 41, 81, 0.1)'
       }}
     >
       {/* Logo Section */}
@@ -97,47 +124,24 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
           p: 3,
           display: 'flex',
           alignItems: 'center',
-          gap: 2,
-          position: 'relative'
+          justifyContent: isCollapsed ? 'center' : 'space-between',
+          position: 'relative',
+          borderBottom: `1px solid ${colors.border}`,
+          minHeight: 80
         }}
       >
-        <Box
-          sx={{
-            width: 32,
-            height: 32,
-            backgroundColor: '#E67E22', // Orange accent
-            borderRadius: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transform: 'rotate(45deg)',
-            flexShrink: 0
-          }}
-        >
-          <Box
-            sx={{
-              width: 16,
-              height: 16,
-              backgroundColor: 'white',
-              borderRadius: 0.5,
-              transform: 'rotate(-45deg)'
-            }}
+        {isCollapsed ? (
+          <FormulaLogoCompact 
+            darkMode={darkMode}
+            onClick={() => onTabChange(null, 0)}
           />
-        </Box>
-        
-        {!isCollapsed && (
-          <Typography
-            variant="h6"
-            sx={{
-              color: 'white',
-              fontWeight: 600,
-              fontSize: '1.1rem',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden'
-            }}
-          >
-            Formula Project Management
-          </Typography>
+        ) : (
+          <FormulaLogo 
+            size="small"
+            darkMode={darkMode}
+            onClick={() => onTabChange(null, 0)}
+            sx={{ cursor: 'pointer' }}
+          />
         )}
         
         {/* Toggle Button */}
@@ -145,21 +149,19 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
           <IconButton
             onClick={onToggleCollapse}
             sx={{
-              position: 'absolute',
-              right: isCollapsed ? 8 : 16,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: 'white',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              width: 24,
-              height: 24,
+              color: colors.text,
+              backgroundColor: colors.hover,
+              width: 32,
+              height: 32,
               '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.2)'
+                backgroundColor: colors.active,
+                transform: 'scale(1.05)'
               },
-              transition: 'all 0.2s ease'
+              transition: 'all 0.2s ease',
+              ml: isCollapsed ? 0 : 1
             }}
           >
-            {isCollapsed ? <MenuIcon sx={{ fontSize: 16 }} /> : <ChevronLeftIcon sx={{ fontSize: 16 }} />}
+            {isCollapsed ? <MenuIcon sx={{ fontSize: 18 }} /> : <ChevronLeftIcon sx={{ fontSize: 18 }} />}
           </IconButton>
         </Tooltip>
       </Box>
@@ -172,7 +174,7 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
               <Typography
                 variant="caption"
                 sx={{
-                  color: 'rgba(255, 255, 255, 0.6)',
+                  color: colors.textMuted,
                   textTransform: 'uppercase',
                   fontWeight: 600,
                   letterSpacing: 1,
@@ -196,13 +198,15 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                         borderRadius: 2,
                         mx: 1,
                         py: 1.5,
-                        backgroundColor: currentTab === item.id ? '#E67E22' : 'transparent',
-                        color: currentTab === item.id ? 'white' : '#BDC3C7',
+                        backgroundColor: currentTab === item.id ? colors.accent : 'transparent',
+                        color: currentTab === item.id ? (darkMode ? colors.background : colors.background) : colors.textSecondary,
                         justifyContent: isCollapsed ? 'center' : 'flex-start',
                         minHeight: 48,
+                        borderLeft: currentTab === item.id ? `3px solid ${colors.accent}` : 'none',
                         '&:hover': {
-                          backgroundColor: currentTab === item.id ? '#D35400' : 'rgba(255, 255, 255, 0.08)',
-                          color: currentTab === item.id ? 'white' : '#ECF0F1'
+                          backgroundColor: currentTab === item.id ? colors.accent : colors.hover,
+                          color: currentTab === item.id ? (darkMode ? colors.background : colors.background) : colors.text,
+                          transform: 'translateX(4px)'
                         },
                         transition: 'all 0.2s ease-in-out'
                       }}
@@ -226,7 +230,9 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                           }}
                           secondaryTypographyProps={{
                             fontSize: '0.75rem',
-                            color: currentTab === item.id ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.5)',
+                            color: currentTab === item.id 
+                              ? (darkMode ? `${colors.background}cc` : `${colors.background}cc`)
+                              : colors.textMuted,
                             display: 'none' // Show on hover or when active
                           }}
                         />
@@ -243,7 +249,7 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
       {/* Bottom Section */}
       <Box sx={{ px: 2, pb: 3 }}>
         {!isCollapsed && (
-          <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)', mb: 2 }} />
+          <Divider sx={{ borderColor: colors.border, mb: 2 }} />
         )}
         <List sx={{ padding: 0 }}>
           {bottomItems.map((item) => (
@@ -254,12 +260,15 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                     borderRadius: 2,
                     mx: 1,
                     py: 1.5,
-                    color: '#BDC3C7',
+                    color: colors.textSecondary,
                     justifyContent: isCollapsed ? 'center' : 'flex-start',
                     minHeight: 48,
                     '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.08)'
-                    }
+                      backgroundColor: colors.hover,
+                      color: colors.text,
+                      transform: 'translateX(4px)'
+                    },
+                    transition: 'all 0.2s ease-in-out'
                   }}
                 >
                   <ListItemIcon
@@ -284,6 +293,28 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
             </ListItem>
           ))}
         </List>
+        
+        {/* Formula International Copyright Footer */}
+        {!isCollapsed && (
+          <Box sx={{ mt: 3, px: 2 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: colors.textMuted,
+                textAlign: 'center',
+                display: 'block',
+                opacity: 0.6,
+                fontSize: '0.7rem',
+                letterSpacing: '0.05em',
+                lineHeight: 1.3
+              }}
+            >
+              Formula International
+              <br />
+              © 2025
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Box>
   );

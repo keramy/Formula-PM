@@ -1,3 +1,6 @@
+// Branding Components
+export * from './branding';
+
 export { default as NotificationContainer } from './ui/NotificationContainer';
 export { default as ModernSidebar } from './layout/ModernSidebar';
 export { default as ModernDashboardLayout } from './layout/ModernDashboardLayout';

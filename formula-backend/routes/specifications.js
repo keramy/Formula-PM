@@ -38,103 +38,24 @@ const upload = multer({
   }
 });
 
-// Initialize specifications data
-let specifications = [
-  {
-    id: 'SPEC001',
-    itemId: 'SPEC001',
-    description: 'Upper Cabinet - 30" Wide',
-    category: 'Kitchen Cabinets',
-    material: 'Maple Hardwood',
-    finish: 'Natural Stain',
-    hardware: 'Soft-close hinges, adjustable shelves',
-    dimensions: '30" W x 12" D x 36" H',
-    quantity: 6,
-    unit: 'EA',
-    unitCost: 300.00,
-    totalCost: 1800.00,
-    projectId: 'P001',
-    projectName: 'Downtown Office Renovation',
-    status: 'approved',
-    createdDate: '2025-06-10T09:00:00Z',
-    createdBy: 'John Smith',
-    createdById: 'USER001',
-    approvedBy: 'Mike Johnson',
-    approvedById: 'USER002',
-    approvalDate: '2025-06-12T14:30:00Z',
-    linkedDrawings: ['SD001'],
-    linkedTasks: ['TASK001'],
-    supplier: 'ABC Millwork Supply',
-    supplierContact: 'supplier@abcmillwork.com',
-    leadTime: '3-4 weeks',
-    notes: 'Confirm exact stain color with client',
-    revision: 1,
-    tags: ['millwork', 'kitchen', 'cabinets']
-  },
-  {
-    id: 'SPEC002',
-    itemId: 'SPEC002',
-    description: 'Base Cabinet with Drawers',
-    category: 'Kitchen Cabinets',
-    material: 'Maple Hardwood',
-    finish: 'Natural Stain',
-    hardware: 'Soft-close drawers, full extension',
-    dimensions: '36" W x 24" D x 34.5" H',
-    quantity: 4,
-    unit: 'EA',
-    unitCost: 975.00,
-    totalCost: 3900.00,
-    projectId: 'P001',
-    projectName: 'Downtown Office Renovation',
-    status: 'approved',
-    createdDate: '2025-06-10T10:30:00Z',
-    createdBy: 'John Smith',
-    createdById: 'USER001',
-    approvedBy: 'Mike Johnson',
-    approvedById: 'USER002',
-    approvalDate: '2025-06-12T14:30:00Z',
-    linkedDrawings: ['SD001'],
-    linkedTasks: ['TASK002'],
-    supplier: 'ABC Millwork Supply',
-    supplierContact: 'supplier@abcmillwork.com',   
-    leadTime: '3-4 weeks',
-    notes: 'Include soft-close mechanism upgrade',
-    revision: 1,
-    tags: ['millwork', 'kitchen', 'cabinets']
-  },
-  {
-    id: 'SPEC003',
-    itemId: 'SPEC003',
-    description: 'Reception Desk - Custom',
-    category: 'Reception Furniture',
-    material: 'White Oak Veneer',
-    finish: 'Clear Lacquer',
-    hardware: 'Integrated cable management',
-    dimensions: '96" W x 30" D x 42" H',
-    quantity: 1,
-    unit: 'EA',
-    unitCost: 2800.00,
-    totalCost: 2800.00,
-    projectId: 'P002',
-    projectName: 'Medical Office Fit-out',
-    status: 'pending',
-    createdDate: '2025-06-14T11:00:00Z',
-    createdBy: 'Sarah Wilson',
-    createdById: 'USER003',
-    linkedDrawings: ['SD003'],
-    linkedTasks: ['TASK003'],
-    supplier: 'Premium Oak Works',
-    supplierContact: 'orders@premiumoak.com',
-    leadTime: '5-6 weeks',
-    notes: 'Awaiting final measurements confirmation',
-    revision: 1,
-    tags: ['millwork', 'reception', 'furniture']
-  }
-];
+// Import database
+const SimpleDB = require('../database');
+const db = new SimpleDB('./data');
+
+// Get specifications from database
+function getSpecifications() {
+  return db.read('materialSpecifications');
+}
+
+// Update specifications in database
+function updateSpecifications(specs) {
+  return db.write('materialSpecifications', specs);
+}
 
 // GET /api/specifications/stats - Get specification statistics
 router.get('/stats', (req, res) => {
   try {
+    const specifications = getSpecifications();
     const stats = {
       total: specifications.length,
       byStatus: {
@@ -184,7 +105,7 @@ router.get('/', (req, res) => {
   try {
     const { projectId, category, status, limit, offset } = req.query;
     
-    let filteredSpecs = [...specifications];
+    let filteredSpecs = getSpecifications();
     
     // Filter by project
     if (projectId) {
@@ -230,6 +151,7 @@ router.get('/', (req, res) => {
 // GET /api/specifications/:id - Get single specification
 router.get('/:id', (req, res) => {
   try {
+    const specifications = getSpecifications();
     const spec = specifications.find(s => s.id === req.params.id);
     
     if (!spec) {
@@ -284,6 +206,7 @@ router.post('/', (req, res) => {
       });
     }
     
+    const specifications = getSpecifications();
     // Generate new specification ID
     const newId = `SPEC${String(specifications.length + 1).padStart(3, '0')}`;
     
@@ -319,6 +242,7 @@ router.post('/', (req, res) => {
     };
     
     specifications.unshift(newSpec);
+    updateSpecifications(specifications);
     
     res.status(201).json({
       success: true,
@@ -337,6 +261,7 @@ router.post('/', (req, res) => {
 // PUT /api/specifications/:id - Update specification
 router.put('/:id', (req, res) => {
   try {
+    const specifications = getSpecifications();
     const specIndex = specifications.findIndex(s => s.id === req.params.id);
     
     if (specIndex === -1) {
@@ -375,6 +300,8 @@ router.put('/:id', (req, res) => {
       revision: specifications[specIndex].revision + 1
     };
     
+    updateSpecifications(specifications);
+    
     res.json({
       success: true,
       message: 'Specification updated successfully',
@@ -393,6 +320,7 @@ router.put('/:id', (req, res) => {
 router.patch('/:id/status', (req, res) => {
   try {
     const { status, notes } = req.body;
+    const specifications = getSpecifications();
     const specIndex = specifications.findIndex(s => s.id === req.params.id);
     
     if (specIndex === -1) {
@@ -425,6 +353,8 @@ router.patch('/:id/status', (req, res) => {
       spec.approvalDate = new Date().toISOString();
     }
     
+    updateSpecifications(specifications);
+    
     res.json({
       success: true,
       message: 'Specification status updated successfully',
@@ -442,6 +372,7 @@ router.patch('/:id/status', (req, res) => {
 // DELETE /api/specifications/:id - Delete specification
 router.delete('/:id', (req, res) => {
   try {
+    const specifications = getSpecifications();
     const specIndex = specifications.findIndex(s => s.id === req.params.id);
     
     if (specIndex === -1) {
@@ -452,6 +383,7 @@ router.delete('/:id', (req, res) => {
     }
     
     specifications.splice(specIndex, 1);
+    updateSpecifications(specifications);
     
     res.json({
       success: true,
@@ -529,6 +461,7 @@ router.get('/export/template', (req, res) => {
 // GET /api/specifications/project/:projectId - Get specifications by project
 router.get('/project/:projectId', (req, res) => {
   try {
+    const specifications = getSpecifications();
     const projectSpecs = specifications.filter(s => s.projectId === req.params.projectId);
     
     // Calculate project totals
@@ -555,57 +488,11 @@ router.get('/project/:projectId', (req, res) => {
   }
 });
 
-// GET /api/specifications/stats - Get specification statistics
-router.get('/stats', (req, res) => {
-  try {
-    const stats = {
-      total: specifications.length,
-      byStatus: {
-        pending: specifications.filter(s => s.status === 'pending').length,
-        approved: specifications.filter(s => s.status === 'approved').length,
-        revision_required: specifications.filter(s => s.status === 'revision_required').length,
-        rejected: specifications.filter(s => s.status === 'rejected').length
-      },
-      byCategory: {},
-      totalCost: specifications.reduce((sum, spec) => sum + spec.totalCost, 0),
-      approvedCost: specifications
-        .filter(s => s.status === 'approved')
-        .reduce((sum, spec) => sum + spec.totalCost, 0),
-      avgCostPerItem: specifications.length > 0 
-        ? (specifications.reduce((sum, spec) => sum + spec.totalCost, 0) / specifications.length)
-        : 0
-    };
-    
-    // Calculate by category
-    specifications.forEach(spec => {
-      const category = spec.category;
-      if (!stats.byCategory[category]) {
-        stats.byCategory[category] = {
-          count: 0,
-          totalCost: 0
-        };
-      }
-      stats.byCategory[category].count++;
-      stats.byCategory[category].totalCost += spec.totalCost;
-    });
-    
-    res.json({
-      success: true,
-      data: stats
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get specification statistics',
-      error: error.message
-    });
-  }
-});
-
 // PATCH /api/specifications/:id/links - Update specification links
 router.patch('/:id/links', (req, res) => {
   try {
     const { linkedDrawings = [], linkedTasks = [] } = req.body;
+    const specifications = getSpecifications();
     const specIndex = specifications.findIndex(s => s.id === req.params.id);
     
     if (specIndex === -1) {
@@ -619,6 +506,8 @@ router.patch('/:id/links', (req, res) => {
     specifications[specIndex].linkedTasks = linkedTasks;
     specifications[specIndex].updatedDate = new Date().toISOString();
     specifications[specIndex].updatedBy = 'Current User';
+    
+    updateSpecifications(specifications);
     
     res.json({
       success: true,
@@ -638,9 +527,9 @@ router.patch('/:id/links', (req, res) => {
 function getProjectName(projectId) {
   // This should query your projects database
   const projectNames = {
-    'P001': 'Downtown Office Renovation',
-    'P002': 'Medical Office Fit-out',
-    'P003': 'Retail Store Build-out'
+    '2001': 'Akbank Head Office Renovation',
+    '2002': 'Garanti BBVA Tech Center MEP',
+    '2003': 'Test Project with Client'
   };
   return projectNames[projectId] || 'Unknown Project';
 }

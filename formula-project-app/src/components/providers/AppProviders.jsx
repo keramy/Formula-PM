@@ -2,12 +2,11 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { BrowserRouter } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from '../../context/AuthContext';
 import { NotificationProvider } from '../../context/NotificationContext';
 import { NavigationProvider } from '../../context/NavigationContext';
-import { formulaTheme } from '../../theme';
+import { ThemeProvider } from '../../context/ThemeContext';
 
 // Create a client with optimized defaults
 const queryClient = new QueryClient({
@@ -29,7 +28,7 @@ const AppProviders = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter basename={process.env.NODE_ENV === 'production' ? '/formula-pm' : '/'}>
-        <ThemeProvider theme={formulaTheme}>
+        <ThemeProvider>
           <CssBaseline />
           <AuthProvider>
             <NotificationProvider>

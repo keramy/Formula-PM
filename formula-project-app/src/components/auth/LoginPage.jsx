@@ -12,22 +12,33 @@ import {
   Chip,
   Grid,
   Paper,
-  Avatar
+  Avatar,
+  Divider,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import {
   Visibility,
   VisibilityOff,
   Email,
   Lock,
-  Business
+  Business,
+  Brightness4,
+  Brightness7
 } from '@mui/icons-material';
 import { useAuth, USER_ROLES } from '../../context/AuthContext';
+import { FormulaLogoWithTagline } from '../branding/LogoVariations';
+import { useTheme as useFormulaTheme } from '../../context/ThemeContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { login, loading, error } = useAuth();
+  const theme = useTheme();
+  const { isDarkMode, toggleTheme } = useFormulaTheme();
+  const darkMode = isDarkMode;
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,43 +77,117 @@ const LoginPage = () => {
     setPassword(demo.password);
   };
 
+  // Formula International brand colors
+  const colors = {
+    background: darkMode 
+      ? 'linear-gradient(135deg, #0F1729 0%, #1B2951 50%, #2A3A5C 100%)'
+      : 'linear-gradient(135deg, #FDFCFA 0%, #F5F2E8 50%, #E8E2D5 100%)',
+    cardBg: darkMode ? '#1B2951' : '#FFFFFF',
+    cardBorder: darkMode ? '#566BA3' : '#D1D8E6',
+    text: darkMode ? '#F5F2E8' : '#1B2951',
+    subtext: darkMode ? '#E8E2D5' : '#566BA3',
+    input: darkMode ? 'rgba(245, 242, 232, 0.05)' : 'rgba(27, 41, 81, 0.02)',
+    accent: darkMode ? '#F5F2E8' : '#1B2951'
+  };
+
   return (
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: colors.background,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 2
+        padding: 2,
+        position: 'relative',
+        overflow: 'hidden'
       }}
     >
+      {/* Background Pattern */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          opacity: 0.03,
+          background: darkMode 
+            ? 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'
+            : 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%231B2951" fill-opacity="1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+        }}
+      />
+
+      {/* Theme Toggle */}
+      <IconButton
+        onClick={toggleTheme}
+        sx={{
+          position: 'absolute',
+          top: 20,
+          right: 20,
+          color: colors.text,
+          backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)',
+          '&:hover': {
+            backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)',
+          },
+        }}
+      >
+        {darkMode ? <Brightness7 /> : <Brightness4 />}
+      </IconButton>
+
       <Grid container maxWidth="lg" spacing={4}>
         {/* Login Form */}
         <Grid item xs={12} md={6}>
-          <Card elevation={8} sx={{ borderRadius: 3 }}>
+          <Card 
+            elevation={0}
+            sx={{ 
+              borderRadius: 3,
+              backgroundColor: colors.cardBg,
+              border: `1px solid ${colors.cardBorder}`,
+              boxShadow: darkMode 
+                ? '0 20px 40px rgba(0, 0, 0, 0.3)'
+                : '0 20px 40px rgba(27, 41, 81, 0.1)',
+            }}
+          >
             <CardContent sx={{ p: 4 }}>
               <Box sx={{ textAlign: 'center', mb: 4 }}>
-                <Avatar
-                  sx={{
-                    width: 64,
-                    height: 64,
-                    margin: '0 auto 16px',
-                    bgcolor: 'primary.main'
+                <FormulaLogoWithTagline
+                  darkMode={darkMode}
+                  tagline="Project Management Platform"
+                  size="medium"
+                />
+                <Typography 
+                  variant="h5" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    color: colors.text, 
+                    mt: 3, 
+                    mb: 1 
                   }}
                 >
-                  <Business fontSize="large" />
-                </Avatar>
-                <Typography variant="h4" fontWeight={700} color="primary">
-                  Formula PM
+                  Welcome Back
                 </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-                  Project Management System
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: colors.subtext, 
+                    opacity: 0.8 
+                  }}
+                >
+                  Sign in to continue to your workspace
                 </Typography>
               </Box>
 
               {error && (
-                <Alert severity="error" sx={{ mb: 3 }}>
+                <Alert 
+                  severity="error" 
+                  sx={{ 
+                    mb: 3,
+                    backgroundColor: darkMode ? 'rgba(220, 38, 38, 0.1)' : '#FEE2E2',
+                    color: darkMode ? '#FCA5A5' : '#DC2626',
+                    border: `1px solid ${darkMode ? '#DC2626' : '#FCA5A5'}`,
+                  }}
+                >
                   {error}
                 </Alert>
               )}
@@ -115,11 +200,32 @@ const LoginPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  sx={{ mb: 2 }}
+                  disabled={loading}
+                  sx={{ 
+                    mb: 2,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: colors.input,
+                      '& fieldset': {
+                        borderColor: colors.cardBorder,
+                      },
+                      '&:hover fieldset': {
+                        borderColor: colors.text,
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: colors.accent,
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: colors.subtext,
+                    },
+                    '& .MuiInputBase-input': {
+                      color: colors.text,
+                    },
+                  }}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Email color="action" />
+                        <Email sx={{ color: colors.subtext }} />
                       </InputAdornment>
                     ),
                   }}
@@ -132,11 +238,32 @@ const LoginPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  sx={{ mb: 3 }}
+                  disabled={loading}
+                  sx={{ 
+                    mb: 3,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: colors.input,
+                      '& fieldset': {
+                        borderColor: colors.cardBorder,
+                      },
+                      '&:hover fieldset': {
+                        borderColor: colors.text,
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: colors.accent,
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: colors.subtext,
+                    },
+                    '& .MuiInputBase-input': {
+                      color: colors.text,
+                    },
+                  }}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Lock color="action" />
+                        <Lock sx={{ color: colors.subtext }} />
                       </InputAdornment>
                     ),
                     endAdornment: (
@@ -144,6 +271,7 @@ const LoginPage = () => {
                         <IconButton
                           onClick={() => setShowPassword(!showPassword)}
                           edge="end"
+                          sx={{ color: colors.subtext }}
                         >
                           {showPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
@@ -158,7 +286,19 @@ const LoginPage = () => {
                   variant="contained"
                   size="large"
                   disabled={loading}
-                  sx={{ py: 1.5, fontSize: '1.1rem', fontWeight: 600 }}
+                  sx={{ 
+                    py: 1.5, 
+                    fontSize: '1.1rem', 
+                    fontWeight: 600,
+                    backgroundColor: colors.accent,
+                    color: darkMode ? '#1B2951' : '#F5F2E8',
+                    '&:hover': {
+                      backgroundColor: darkMode ? '#E8E2D5' : '#566BA3',
+                    },
+                    '&:disabled': {
+                      backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.3)' : 'rgba(27, 41, 81, 0.3)',
+                    },
+                  }}
                 >
                   {loading ? 'Signing In...' : 'Sign In'}
                 </Button>
@@ -169,28 +309,55 @@ const LoginPage = () => {
 
         {/* Demo Accounts */}
         <Grid item xs={12} md={6}>
-          <Paper elevation={4} sx={{ p: 3, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.95)' }}>
-            <Typography variant="h5" fontWeight={600} gutterBottom>
+          <Paper 
+            elevation={0}
+            sx={{ 
+              p: 3, 
+              borderRadius: 3, 
+              backgroundColor: colors.cardBg,
+              border: `1px solid ${colors.cardBorder}`,
+              boxShadow: darkMode 
+                ? '0 20px 40px rgba(0, 0, 0, 0.2)'
+                : '0 20px 40px rgba(27, 41, 81, 0.08)',
+            }}
+          >
+            <Typography 
+              variant="h5" 
+              fontWeight={600} 
+              gutterBottom
+              sx={{ color: colors.text }}
+            >
               Demo Accounts
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: colors.subtext, 
+                mb: 3, 
+                opacity: 0.8 
+              }}
+            >
               Click any account below to auto-fill login credentials
             </Typography>
 
             {demoAccounts.map((demo, index) => (
               <Paper
                 key={index}
-                elevation={2}
+                elevation={0}
                 sx={{
                   p: 2,
                   mb: 2,
                   cursor: 'pointer',
                   transition: 'all 0.2s',
-                  border: '1px solid transparent',
+                  border: `1px solid ${colors.cardBorder}`,
+                  backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.02)' : 'rgba(27, 41, 81, 0.02)',
                   '&:hover': {
                     transform: 'translateY(-2px)',
-                    boxShadow: 4,
-                    borderColor: demo.color
+                    boxShadow: darkMode 
+                      ? '0 8px 25px rgba(0, 0, 0, 0.2)'
+                      : '0 8px 25px rgba(27, 41, 81, 0.1)',
+                    borderColor: demo.color,
+                    backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.05)' : 'rgba(27, 41, 81, 0.05)',
                   }
                 }}
                 onClick={() => fillDemoCredentials(demo)}
@@ -199,7 +366,14 @@ const LoginPage = () => {
                   <Typography variant="h6" sx={{ mr: 1 }}>
                     {demo.icon}
                   </Typography>
-                  <Typography variant="h6" fontWeight={600} sx={{ flexGrow: 1 }}>
+                  <Typography 
+                    variant="h6" 
+                    fontWeight={600} 
+                    sx={{ 
+                      flexGrow: 1,
+                      color: colors.text
+                    }}
+                  >
                     {demo.role}
                   </Typography>
                   <Chip
@@ -212,21 +386,64 @@ const LoginPage = () => {
                     }}
                   />
                 </Box>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    mb: 1,
+                    color: colors.subtext,
+                    opacity: 0.8
+                  }}
+                >
                   {demo.description}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: colors.subtext,
+                    opacity: 0.6
+                  }}
+                >
                   {demo.email}
                 </Typography>
               </Paper>
             ))}
 
-            <Alert severity="info" sx={{ mt: 3 }}>
+            <Alert 
+              severity="info" 
+              sx={{ 
+                mt: 3,
+                backgroundColor: darkMode ? 'rgba(59, 130, 246, 0.1)' : '#EFF6FF',
+                color: darkMode ? '#93C5FD' : '#1E40AF',
+                border: `1px solid ${darkMode ? '#3B82F6' : '#93C5FD'}`,
+              }}
+            >
               <strong>Note:</strong> This is a demo system. In production, these would be replaced with secure authentication.
             </Alert>
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Footer */}
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: 20,
+          left: 0,
+          right: 0,
+          textAlign: 'center',
+        }}
+      >
+        <Typography
+          variant="caption"
+          sx={{
+            color: colors.subtext,
+            opacity: 0.6,
+            letterSpacing: '0.1em',
+          }}
+        >
+          FORMULA INTERNATIONAL © 2025 • Secure Login
+        </Typography>
+      </Box>
     </Box>
   );
 };

@@ -33,65 +33,29 @@ const upload = multer({
   }
 });
 
-// Initialize shop drawings data
-let shopDrawings = [
-  {
-    id: 'SD001',
-    fileName: 'Kitchen_Cabinets_Rev_C.pdf',
-    originalFileName: 'Kitchen_Cabinets_Rev_C.pdf',
-    projectId: 'P001',
-    projectName: 'Downtown Office Renovation',
-    drawingType: 'Kitchen Cabinets',
-    room: 'Kitchen',
-    version: 'Rev C',
-    status: 'approved',
-    uploadDate: '2025-06-15T10:00:00Z',
-    uploadedBy: 'John Smith',
-    uploadedById: 'USER001',
-    approvedBy: 'Mike Johnson',
-    approvedById: 'USER002',
-    approvalDate: '2025-06-16T14:30:00Z',
-    fileSize: 2457600, // bytes
-    filePath: '/uploads/shop-drawings/kitchen-cabinets-rev-c.pdf',
-    revisions: [
-      { 
-        version: 'Rev A', 
-        date: '2025-06-10T09:00:00Z', 
-        status: 'rejected', 
-        notes: 'Dimensions incorrect',
-        uploadedBy: 'John Smith',
-        reviewedBy: 'Mike Johnson'
-      },
-      { 
-        version: 'Rev B', 
-        date: '2025-06-12T11:30:00Z', 
-        status: 'pending', 
-        notes: 'Under review',
-        uploadedBy: 'John Smith'
-      },
-      { 
-        version: 'Rev C', 
-        date: '2025-06-15T10:00:00Z', 
-        status: 'approved', 
-        notes: 'Approved for production',
-        uploadedBy: 'John Smith',
-        approvedBy: 'Mike Johnson',
-        approvalDate: '2025-06-16T14:30:00Z'
-      }
-    ],
-    linkedSpecifications: ['SPEC001', 'SPEC002'],
-    linkedTasks: ['TASK001'],
-    tags: ['millwork', 'kitchen', 'cabinets'],
-    notes: 'Final approved drawings for kitchen millwork installation'
-  }
-];
+// Import database
+const SimpleDB = require('../database');
+const db = new SimpleDB('./data');
+
+// Get shop drawings from database
+function getShopDrawings() {
+  return db.read('shopDrawings');
+}
+
+// Update shop drawings in database
+function updateShopDrawings(drawings) {
+  return db.write('shopDrawings', drawings);
+}
+
+// Initialize with existing data
+let shopDrawings = getShopDrawings();
 
 // GET /api/shop-drawings - Get all shop drawings
 router.get('/', (req, res) => {
   try {
     const { projectId, status, limit, offset } = req.query;
     
-    let filteredDrawings = [...shopDrawings];
+    let filteredDrawings = getShopDrawings();
     
     // Filter by project
     if (projectId) {
@@ -130,7 +94,8 @@ router.get('/', (req, res) => {
 // GET /api/shop-drawings/:id - Get single shop drawing
 router.get('/:id', (req, res) => {
   try {
-    const drawing = shopDrawings.find(d => d.id === req.params.id);
+    const drawings = getShopDrawings();
+    const drawing = drawings.find(d => d.id === req.params.id);
     
     if (!drawing) {
       return res.status(404).json({
@@ -204,7 +169,9 @@ router.post('/upload', upload.single('file'), (req, res) => {
       notes: notes || ''
     };
     
-    shopDrawings.unshift(newDrawing);
+    const drawings = getShopDrawings();
+    drawings.unshift(newDrawing);
+    updateShopDrawings(drawings);
     
     res.status(201).json({
       success: true,
@@ -223,7 +190,8 @@ router.post('/upload', upload.single('file'), (req, res) => {
 // PUT /api/shop-drawings/:id - Update shop drawing
 router.put('/:id', (req, res) => {
   try {
-    const drawingIndex = shopDrawings.findIndex(d => d.id === req.params.id);
+    const drawings = getShopDrawings();
+    const drawingIndex = drawings.findIndex(d => d.id === req.params.id);
     
     if (drawingIndex === -1) {
       return res.status(404).json({
@@ -241,17 +209,19 @@ router.put('/:id', (req, res) => {
       }
     });
     
-    shopDrawings[drawingIndex] = {
-      ...shopDrawings[drawingIndex],
+    drawings[drawingIndex] = {
+      ...drawings[drawingIndex],
       ...updates,
       updatedDate: new Date().toISOString(),
       updatedBy: 'Current User' // This should come from authentication
     };
     
+    updateShopDrawings(drawings);
+    
     res.json({
       success: true,
       message: 'Shop drawing updated successfully',
-      data: shopDrawings[drawingIndex]
+      data: drawings[drawingIndex]
     });
   } catch (error) {
     res.status(500).json({
@@ -266,7 +236,8 @@ router.put('/:id', (req, res) => {
 router.patch('/:id/status', (req, res) => {
   try {
     const { status, notes } = req.body;
-    const drawingIndex = shopDrawings.findIndex(d => d.id === req.params.id);
+    const drawings = getShopDrawings();
+    const drawingIndex = drawings.findIndex(d => d.id === req.params.id);
     
     if (drawingIndex === -1) {
       return res.status(404).json({
@@ -283,7 +254,7 @@ router.patch('/:id/status', (req, res) => {
       });
     }
     
-    const drawing = shopDrawings[drawingIndex];
+    const drawing = drawings[drawingIndex];
     const currentRevision = drawing.revisions[drawing.revisions.length - 1];
     
     // Update current revision status
@@ -300,6 +271,8 @@ router.patch('/:id/status', (req, res) => {
       drawing.approvedById = 'USER001';
       drawing.approvalDate = new Date().toISOString();
     }
+    
+    updateShopDrawings(drawings);
     
     res.json({
       success: true,
@@ -318,7 +291,8 @@ router.patch('/:id/status', (req, res) => {
 // POST /api/shop-drawings/:id/revisions - Add new revision
 router.post('/:id/revisions', upload.single('file'), (req, res) => {
   try {
-    const drawingIndex = shopDrawings.findIndex(d => d.id === req.params.id);
+    const drawings = getShopDrawings();
+    const drawingIndex = drawings.findIndex(d => d.id === req.params.id);
     
     if (drawingIndex === -1) {
       return res.status(404).json({
@@ -335,7 +309,7 @@ router.post('/:id/revisions', upload.single('file'), (req, res) => {
     }
     
     const { notes } = req.body;
-    const drawing = shopDrawings[drawingIndex];
+    const drawing = drawings[drawingIndex];
     
     // Generate next version
     const lastVersion = drawing.revisions[drawing.revisions.length - 1].version;
@@ -358,6 +332,8 @@ router.post('/:id/revisions', upload.single('file'), (req, res) => {
     drawing.fileSize = req.file.size;
     drawing.filePath = `/uploads/shop-drawings/${req.file.filename}`;
     
+    updateShopDrawings(drawings);
+    
     res.status(201).json({
       success: true,
       message: 'Revision added successfully',
@@ -375,7 +351,8 @@ router.post('/:id/revisions', upload.single('file'), (req, res) => {
 // DELETE /api/shop-drawings/:id - Delete shop drawing
 router.delete('/:id', (req, res) => {
   try {
-    const drawingIndex = shopDrawings.findIndex(d => d.id === req.params.id);
+    const drawings = getShopDrawings();
+    const drawingIndex = drawings.findIndex(d => d.id === req.params.id);
     
     if (drawingIndex === -1) {
       return res.status(404).json({
@@ -384,7 +361,7 @@ router.delete('/:id', (req, res) => {
       });
     }
     
-    const drawing = shopDrawings[drawingIndex];
+    const drawing = drawings[drawingIndex];
     
     // Delete file from filesystem
     if (drawing.filePath && fs.existsSync(path.join(__dirname, '..', drawing.filePath))) {
@@ -398,7 +375,8 @@ router.delete('/:id', (req, res) => {
       }
     });
     
-    shopDrawings.splice(drawingIndex, 1);
+    drawings.splice(drawingIndex, 1);
+    updateShopDrawings(drawings);
     
     res.json({
       success: true,
@@ -416,7 +394,8 @@ router.delete('/:id', (req, res) => {
 // GET /api/shop-drawings/:id/file/:version? - Serve drawing file
 router.get('/:id/file/:version?', (req, res) => {
   try {
-    const drawing = shopDrawings.find(d => d.id === req.params.id);
+    const drawings = getShopDrawings();
+    const drawing = drawings.find(d => d.id === req.params.id);
     
     if (!drawing) {
       return res.status(404).json({
@@ -472,7 +451,8 @@ function getProjectName(projectId) {
 // GET /api/shop-drawings/project/:projectId - Get drawings by project
 router.get('/project/:projectId', (req, res) => {
   try {
-    const projectDrawings = shopDrawings.filter(d => d.projectId === req.params.projectId);
+    const drawings = getShopDrawings();
+    const projectDrawings = drawings.filter(d => d.projectId === req.params.projectId);
     
     res.json({
       success: true,
@@ -491,23 +471,24 @@ router.get('/project/:projectId', (req, res) => {
 // GET /api/shop-drawings/stats - Get drawing statistics
 router.get('/stats', (req, res) => {
   try {
+    const drawings = getShopDrawings();
     const stats = {
-      total: shopDrawings.length,
+      total: drawings.length,
       byStatus: {
-        pending: shopDrawings.filter(d => d.status === 'pending').length,
-        approved: shopDrawings.filter(d => d.status === 'approved').length,
-        revision_required: shopDrawings.filter(d => d.status === 'revision_required').length,
-        rejected: shopDrawings.filter(d => d.status === 'rejected').length
+        pending: drawings.filter(d => d.status === 'pending').length,
+        approved: drawings.filter(d => d.status === 'approved').length,
+        revision_required: drawings.filter(d => d.status === 'revision_required').length,
+        rejected: drawings.filter(d => d.status === 'rejected').length
       },
       byProject: {},
-      totalRevisions: shopDrawings.reduce((sum, drawing) => sum + drawing.revisions.length, 0),
-      averageRevisionsPerDrawing: shopDrawings.length > 0 
-        ? (shopDrawings.reduce((sum, drawing) => sum + drawing.revisions.length, 0) / shopDrawings.length).toFixed(1)
+      totalRevisions: drawings.reduce((sum, drawing) => sum + drawing.revisions.length, 0),
+      averageRevisionsPerDrawing: drawings.length > 0 
+        ? (drawings.reduce((sum, drawing) => sum + drawing.revisions.length, 0) / drawings.length).toFixed(1)
         : 0
     };
     
     // Calculate by project
-    shopDrawings.forEach(drawing => {
+    drawings.forEach(drawing => {
       const projectName = drawing.projectName;
       if (!stats.byProject[projectName]) {
         stats.byProject[projectName] = 0;

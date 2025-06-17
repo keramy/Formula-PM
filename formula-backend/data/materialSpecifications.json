@@ -1,0 +1,419 @@
+[
+  {
+    "id": "SPEC001",
+    "itemId": "SPEC001",
+    "description": "Executive Kitchen Upper Cabinets - 30\" Wide Maple",
+    "category": "Kitchen Cabinets",
+    "material": "Solid Maple Hardwood",
+    "finish": "Natural Oil-Based Stain with Clear Polyurethane Topcoat",
+    "hardware": "Blum Blumotion soft-close hinges, adjustable European hinges, interior LED strip lighting",
+    "manufacturer": "Kastamonu Entegre",
+    "supplierName": "İstanbul Mobilya Sistemleri Ltd.",
+    "supplierContact": "Ahmet Özkan",
+    "supplierPhone": "+90 212 456 7890",
+    "supplierEmail": "ahmet.ozkan@imobilya.com.tr",
+    "unitPrice": 1850.00,
+    "currency": "TRY",
+    "leadTime": 21,
+    "leadTimeUnit": "days",
+    "status": "approved",
+    "approvedBy": "Kubilay Ilgın",
+    "approvedById": 1001,
+    "approvedDate": "2025-06-12T14:30:00Z",
+    "projectId": 2001,
+    "scopeItemIds": ["SCOPE001"],
+    "shopDrawingIds": ["SD001"],
+    "specifications": {
+      "dimensions": "30\"W x 24\"D x 36\"H",
+      "weight": "65 lbs",
+      "mounting": "Wall mounted with heavy duty brackets",
+      "interiorFinish": "Melamine white interior with adjustable shelves",
+      "doorStyle": "Shaker style with raised panel",
+      "warranty": "5 years manufacturer warranty"
+    },
+    "compliance": {
+      "fireRating": "Class A",
+      "environmentalCertification": "FSC Certified",
+      "qualityStandard": "EN 14749:2016"
+    },
+    "deliveryInfo": {
+      "packaging": "Individual carton packaging with foam protection",
+      "deliveryMethod": "Truck delivery to job site",
+      "installationRequired": true
+    },
+    "costBreakdown": {
+      "materialCost": 1450.00,
+      "laborCost": 400.00,
+      "totalCost": 1850.00
+    },
+    "notes": "Premium maple cabinet with soft-close hardware and integrated LED lighting. Approved for executive kitchen renovation.",
+    "createdAt": "2025-06-10T10:00:00Z",
+    "updatedAt": "2025-06-12T14:30:00Z"
+  },
+  {
+    "id": "SPEC002",
+    "itemId": "SPEC002", 
+    "description": "Executive Kitchen Base Cabinets - 36\" Wide with Quartz Countertop",
+    "category": "Kitchen Cabinets",
+    "material": "Solid Maple Hardwood with Engineered Quartz Top",
+    "finish": "Natural Oil-Based Stain, Quartz in Calacatta Gold",
+    "hardware": "Blum Tandem drawer slides, soft-close doors, under-cabinet LED lighting",
+    "manufacturer": "Kastamonu Entegre / Çimstone",
+    "supplierName": "İstanbul Mobilya Sistemleri Ltd.",
+    "supplierContact": "Ahmet Özkan",
+    "supplierPhone": "+90 212 456 7890",
+    "supplierEmail": "ahmet.ozkan@imobilya.com.tr",
+    "unitPrice": 2750.00,
+    "currency": "TRY",
+    "leadTime": 28,
+    "leadTimeUnit": "days",
+    "status": "approved",
+    "approvedBy": "Kubilay Ilgın",
+    "approvedById": 1001,
+    "approvedDate": "2025-06-12T14:35:00Z",
+    "projectId": 2001,
+    "scopeItemIds": ["SCOPE002"],
+    "shopDrawingIds": ["SD001"],
+    "specifications": {
+      "dimensions": "36\"W x 24\"D x 36\"H",
+      "weight": "125 lbs",
+      "mounting": "Floor standing with adjustable legs",
+      "countertopThickness": "3cm engineered quartz",
+      "drawerConfiguration": "3 drawers with full extension slides",
+      "warranty": "5 years cabinet, 15 years quartz"
+    },
+    "compliance": {
+      "fireRating": "Class A",
+      "environmentalCertification": "FSC Certified",
+      "qualityStandard": "EN 14749:2016"
+    },
+    "deliveryInfo": {
+      "packaging": "Professional crating for countertop, carton for cabinet",
+      "deliveryMethod": "White glove delivery service",
+      "installationRequired": true
+    },
+    "costBreakdown": {
+      "cabinetCost": 1650.00,
+      "countertopCost": 800.00,
+      "laborCost": 300.00,
+      "totalCost": 2750.00
+    },
+    "notes": "Base cabinet with premium quartz countertop. Template required before fabrication.",
+    "createdAt": "2025-06-10T10:15:00Z",
+    "updatedAt": "2025-06-12T14:35:00Z"
+  },
+  {
+    "id": "SPEC003",
+    "itemId": "SPEC003",
+    "description": "Custom Executive Reception Desk with Technology Integration",
+    "category": "Custom Furniture",
+    "material": "Walnut Veneer with Steel Frame",
+    "finish": "Satin Walnut Stain with Matte Clear Coat",
+    "hardware": "Hidden cable management, integrated power outlets, USB charging stations",
+    "manufacturer": "Özel Mobilya Atölyesi",
+    "supplierName": "Lüks Ofis Mobilyaları A.Ş.",
+    "supplierContact": "Mehmet Yıldırım",
+    "supplierPhone": "+90 212 987 6543",
+    "supplierEmail": "mehmet.yildirim@luksofis.com.tr",
+    "unitPrice": 8500.00,
+    "currency": "TRY",
+    "leadTime": 35,
+    "leadTimeUnit": "days",
+    "status": "approved",
+    "approvedBy": "Ömer Onan",
+    "approvedById": 1002,
+    "approvedDate": "2025-06-11T16:45:00Z",
+    "projectId": 2001,
+    "scopeItemIds": ["SCOPE003"],
+    "shopDrawingIds": ["SD002"],
+    "specifications": {
+      "dimensions": "96\"W x 30\"D x 42\"H",
+      "weight": "280 lbs",
+      "mounting": "Free standing with leveling feet",
+      "technology": "Integrated 6-outlet power strip, 4x USB-C charging ports",
+      "cableManagement": "Hidden cable tray system with access panels",
+      "warranty": "3 years manufacturer warranty"
+    },
+    "compliance": {
+      "fireRating": "Class A",
+      "environmentalCertification": "FSC Certified",
+      "electricalCertification": "CE marked power components"
+    },
+    "deliveryInfo": {
+      "packaging": "Custom crating with foam protection",
+      "deliveryMethod": "White glove delivery with installation",
+      "installationRequired": true
+    },
+    "costBreakdown": {
+      "materialCost": 4200.00,
+      "technologyCost": 1800.00,
+      "laborCost": 2500.00,
+      "totalCost": 8500.00
+    },
+    "notes": "Custom designed reception desk with integrated technology features and brand elements.",
+    "createdAt": "2025-06-08T15:00:00Z",
+    "updatedAt": "2025-06-11T16:45:00Z"
+  },
+  {
+    "id": "SPEC004",
+    "itemId": "SPEC004",
+    "description": "Precision Air Conditioning Unit - 20 Ton Capacity",
+    "category": "HVAC Equipment",
+    "material": "Stainless Steel Housing with R-410A Refrigerant",
+    "finish": "Powder Coated Steel, RAL 7035 Light Grey",
+    "hardware": "Variable speed compressor, redundant cooling circuits, BMS integration",
+    "manufacturer": "Stulz GmbH",
+    "supplierName": "Klima Teknolojileri Ltd. Şti.",
+    "supplierContact": "Engin Yavuz",
+    "supplierPhone": "+90 212 345 6789",
+    "supplierEmail": "engin.yavuz@klimatek.com.tr",
+    "unitPrice": 75000.00,
+    "currency": "TRY",
+    "leadTime": 42,
+    "leadTimeUnit": "days",
+    "status": "approved",
+    "approvedBy": "Mehmet Demir",
+    "approvedById": 1007,
+    "approvedDate": "2025-06-03T09:30:00Z",
+    "projectId": 2002,
+    "scopeItemIds": ["SCOPE009"],
+    "shopDrawingIds": ["SD003"],
+    "specifications": {
+      "coolingCapacity": "20 tons (240,000 BTU/hr)",
+      "powerRequirement": "460V, 3-phase, 60Hz",
+      "dimensions": "84\"L x 36\"W x 78\"H",
+      "weight": "1850 lbs",
+      "airflow": "8000 CFM",
+      "warranty": "2 years parts and labor"
+    },
+    "compliance": {
+      "energyEfficiency": "AHRI Certified",
+      "environmentalCompliance": "RoHS compliant, REACH certified",
+      "safetyStandards": "UL Listed, CE marked"
+    },
+    "deliveryInfo": {
+      "packaging": "Wooden crate with shock absorbing material",
+      "deliveryMethod": "Crane truck delivery",
+      "installationRequired": true,
+      "riggingRequired": true
+    },
+    "costBreakdown": {
+      "equipmentCost": 65000.00,
+      "shippingCost": 3500.00,
+      "installationCost": 6500.00,
+      "totalCost": 75000.00
+    },
+    "notes": "High precision air conditioning for critical data center cooling. Requires crane for installation.",
+    "createdAt": "2025-06-01T11:30:00Z",
+    "updatedAt": "2025-06-03T09:30:00Z"
+  },
+  {
+    "id": "SPEC005",
+    "itemId": "SPEC005",
+    "description": "HVAC Ductwork - Galvanized Steel Rectangular Duct System",
+    "category": "HVAC Ductwork",
+    "material": "Galvanized Steel with Insulation",
+    "finish": "Galvanized coating with external wrap insulation",
+    "hardware": "Flanged connections, access doors, balancing dampers",
+    "manufacturer": "Lindab",
+    "supplierName": "Havalandırma Sistemleri A.Ş.",
+    "supplierContact": "Ali Kaya",
+    "supplierPhone": "+90 212 234 5678",
+    "supplierEmail": "ali.kaya@havasist.com.tr",
+    "unitPrice": 285.00,
+    "currency": "TRY",
+    "leadTime": 14,
+    "leadTimeUnit": "days",
+    "status": "approved",
+    "approvedBy": "Mehmet Demir",
+    "approvedById": 1007,
+    "approvedDate": "2025-06-03T10:00:00Z",
+    "projectId": 2002,
+    "scopeItemIds": ["SCOPE010"],
+    "shopDrawingIds": ["SD003"],
+    "specifications": {
+      "ductSize": "24\" x 18\" rectangular",
+      "thickness": "22 gauge galvanized steel",
+      "insulation": "2\" fiberglass duct wrap",
+      "connections": "TDC flanged connections",
+      "pressure": "4\" WC maximum working pressure",
+      "warranty": "5 years against corrosion"
+    },
+    "compliance": {
+      "fireRating": "UL 181 Class 1",
+      "acousticRating": "STC 28",
+      "airLeakage": "SMACNA Class 3"
+    },
+    "deliveryInfo": {
+      "packaging": "Bundled sections with protective wrapping",
+      "deliveryMethod": "Flatbed truck delivery",
+      "installationRequired": true
+    },
+    "costBreakdown": {
+      "materialCost": 180.00,
+      "insulationCost": 65.00,
+      "laborCost": 40.00,
+      "totalCost": 285.00
+    },
+    "notes": "Rectangular ductwork for main distribution. Price per linear foot.",
+    "createdAt": "2025-06-01T12:00:00Z",
+    "updatedAt": "2025-06-03T10:00:00Z"
+  },
+  {
+    "id": "SPEC006",
+    "itemId": "SPEC006",
+    "description": "Main Electrical Distribution Panel - 800A Service",
+    "category": "Electrical Equipment",
+    "material": "Steel Enclosure with Copper Bus Bars",
+    "finish": "NEMA 1 powder coated steel enclosure",
+    "hardware": "Main breaker, branch circuit breakers, monitoring system",
+    "manufacturer": "Schneider Electric",
+    "supplierName": "Elektrik Malzemeleri Tic. Ltd. Şti.",
+    "supplierContact": "Osman Çelik",
+    "supplierPhone": "+90 212 876 5432",
+    "supplierEmail": "osman.celik@elektrikmalz.com.tr",
+    "unitPrice": 28500.00,
+    "currency": "TRY",
+    "leadTime": 21,
+    "leadTimeUnit": "days",
+    "status": "pending",
+    "approvedBy": null,
+    "approvedById": null,
+    "approvedDate": null,
+    "projectId": 2002,
+    "scopeItemIds": ["SCOPE006"],
+    "shopDrawingIds": ["SD004"],
+    "specifications": {
+      "mainBreakerRating": "800A, 480V, 3-phase",
+      "shortCircuitRating": "65kA",
+      "enclosureDimensions": "72\"H x 36\"W x 18\"D",
+      "weight": "485 lbs",
+      "branchCircuits": "42 branch circuit positions",
+      "warranty": "10 years manufacturer warranty"
+    },
+    "compliance": {
+      "listing": "UL 891 Listed",
+      "standards": "IEEE C37.20.1, NEMA AB 1",
+      "seismic": "Zone 4 seismic certified"
+    },
+    "deliveryInfo": {
+      "packaging": "Custom wooden crate",
+      "deliveryMethod": "Liftgate truck delivery",
+      "installationRequired": true
+    },
+    "costBreakdown": {
+      "panelCost": 22000.00,
+      "breakersCost": 4500.00,
+      "laborCost": 2000.00,
+      "totalCost": 28500.00
+    },
+    "notes": "Main electrical distribution panel. Awaiting load calculation verification before approval.",
+    "createdAt": "2025-06-09T09:00:00Z",
+    "updatedAt": "2025-06-09T09:00:00Z"
+  },
+  {
+    "id": "SPEC007",
+    "itemId": "SPEC007",
+    "description": "Clean Agent Fire Suppression System - FM-200",
+    "category": "Fire Suppression",
+    "material": "FM-200 Clean Agent with Steel Distribution Network",
+    "finish": "Red painted steel piping with chrome cylinder",
+    "hardware": "Detection system, discharge nozzles, control panel, manual release",
+    "manufacturer": "Ansul",
+    "supplierName": "Yangın Güvenlik Sistemleri A.Ş.",
+    "supplierContact": "Serkan Aydın",
+    "supplierPhone": "+90 212 765 4321",
+    "supplierEmail": "serkan.aydin@yanginsis.com.tr",
+    "unitPrice": 45000.00,
+    "currency": "TRY",
+    "leadTime": 28,
+    "leadTimeUnit": "days",
+    "status": "pending",
+    "approvedBy": null,
+    "approvedById": null,
+    "approvedDate": null,
+    "projectId": 2002,
+    "scopeItemIds": ["SCOPE007"],
+    "shopDrawingIds": ["SD005"],
+    "specifications": {
+      "protectedArea": "2400 sq ft server room",
+      "agentQuantity": "850 lbs FM-200",
+      "dischargeTime": "10 seconds",
+      "holdTime": "10 minutes minimum",
+      "detectionZones": "4 zones with cross-zone verification",
+      "warranty": "5 years system warranty"
+    },
+    "compliance": {
+      "standards": "NFPA 2001, UL Listed",
+      "environmental": "Zero ozone depletion potential",
+      "safetyStandards": "OSHA compliant"
+    },
+    "deliveryInfo": {
+      "packaging": "Individual component packaging",
+      "deliveryMethod": "Standard truck delivery",
+      "installationRequired": true,
+      "commissioningRequired": true
+    },
+    "costBreakdown": {
+      "agentCost": 25000.00,
+      "equipmentCost": 12000.00,
+      "installationCost": 8000.00,
+      "totalCost": 45000.00
+    },
+    "notes": "Clean agent fire suppression for server room. Requires commissioning and testing.",
+    "createdAt": "2025-06-14T15:30:00Z",
+    "updatedAt": "2025-06-14T15:30:00Z"
+  },
+  {
+    "id": "SPEC008",
+    "itemId": "SPEC008",
+    "description": "LED Office Lighting - 2x4 Troffer with Dimming Controls",
+    "category": "Lighting",
+    "material": "Aluminum Housing with LED Light Engine",
+    "finish": "White powder coated aluminum",
+    "hardware": "0-10V dimming drivers, emergency battery backup option",
+    "manufacturer": "Philips Lighting",
+    "supplierName": "Aydınlatma Teknolojileri Ltd.",
+    "supplierContact": "Zeynep Öztürk",
+    "supplierPhone": "+90 212 654 3210",
+    "supplierEmail": "zeynep.ozturk@aydinlatma.com.tr",
+    "unitPrice": 650.00,
+    "currency": "TRY",
+    "leadTime": 10,
+    "leadTimeUnit": "days",
+    "status": "pending",
+    "approvedBy": null,
+    "approvedById": null,
+    "approvedDate": null,
+    "projectId": 2001,
+    "scopeItemIds": ["SCOPE008"],
+    "shopDrawingIds": ["SD006"],
+    "specifications": {
+      "dimensions": "24\" x 48\" x 3.5\"",
+      "wattage": "40W LED (equivalent to 120W fluorescent)",
+      "lumens": "4200 lumens",
+      "colorTemperature": "4000K neutral white",
+      "dimmingRange": "5% to 100%",
+      "warranty": "5 years LED, 3 years driver"
+    },
+    "compliance": {
+      "energyEfficiency": "Energy Star qualified",
+      "photometric": "IES LM-79 tested",
+      "lifespan": "L70 > 50,000 hours"
+    },
+    "deliveryInfo": {
+      "packaging": "Individual carton packaging",
+      "deliveryMethod": "Standard delivery truck",
+      "installationRequired": true
+    },
+    "costBreakdown": {
+      "fixtureCost": 420.00,
+      "driverCost": 130.00,
+      "laborCost": 100.00,
+      "totalCost": 650.00
+    },
+    "notes": "Energy efficient LED troffer lights for office areas with dimming capability.",
+    "createdAt": "2025-06-13T13:00:00Z",
+    "updatedAt": "2025-06-13T13:00:00Z"
+  }
+]

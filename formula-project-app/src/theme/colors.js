@@ -1,29 +1,56 @@
 // Formula International Color Palette
-// Easy to modify - all colors defined in one place!
+// Official Brand Colors - Light and Dark Mode Support
 
 export const colors = {
-  // Primary Brand Colors
-  primary: {
-    main: '#37444B',        // Formula International Dark Gray
-    light: '#5a6b73',       // Lighter shade
-    dark: '#1f2e35',        // Darker shade
-    contrastText: '#ffffff'
+  // Formula International Brand Colors
+  brand: {
+    navy: '#1B2951',        // Formula International Navy
+    cream: '#E8E2D5',       // Formula International Cream
+    lightBackground: '#FDFCFA', // Light mode background
+    darkBackground: '#0F1729',  // Dark mode background
+    lightCream: '#F5F2E8'   // Light cream for dark mode
   },
   
-  // Secondary Brand Colors  
-  secondary: {
-    main: '#C0B19E',        // Formula International Beige
-    light: '#d4c7b5',       // Lighter beige
-    dark: '#a5967e',        // Darker beige
-    contrastText: '#37444B'
+  // Light Mode Colors
+  light: {
+    primary: {
+      main: '#1B2951',        // Navy
+      light: '#3a4f7a',       // Lighter navy
+      dark: '#0f1a2e',        // Darker navy
+      contrastText: '#ffffff'
+    },
+    secondary: {
+      main: '#E8E2D5',        // Cream
+      light: '#f0ebe0',       // Lighter cream
+      dark: '#d4c9b5',        // Darker cream
+      contrastText: '#1B2951'
+    },
+    background: {
+      default: '#FDFCFA',     // Light background
+      paper: '#ffffff',       // White paper
+      sidebar: '#f8f6f3'      // Sidebar background
+    }
   },
   
-  // Background Colors
-  background: {
-    default: '#f8fafc',     // Light gray background
-    paper: '#ffffff',       // White paper/card background
-    dark: '#1a1a1a',        // Dark mode background
-    sidebar: '#fafbfc'      // Sidebar background
+  // Dark Mode Colors
+  dark: {
+    primary: {
+      main: '#F5F2E8',        // Light cream
+      light: '#ffffff',       // White
+      dark: '#e8e2d5',        // Cream
+      contrastText: '#1B2951'
+    },
+    secondary: {
+      main: '#1B2951',        // Navy
+      light: '#3a4f7a',       // Lighter navy
+      dark: '#0f1a2e',        // Darker navy
+      contrastText: '#F5F2E8'
+    },
+    background: {
+      default: '#0F1729',     // Dark background
+      paper: '#1a2332',       // Dark paper
+      sidebar: '#141e2e'      // Dark sidebar
+    }
   },
   
   // Status Colors
@@ -62,12 +89,20 @@ export const colors = {
     management: '#37444B'   // Dark gray
   },
   
-  // Text Colors
+  // Text Colors (Light Mode)
   text: {
-    primary: '#2c3e50',     // Dark blue-gray
-    secondary: '#7f8c8d',   // Medium gray
-    disabled: '#bdc3c7',    // Light gray
-    inverse: '#ffffff'      // White text
+    light: {
+      primary: '#1B2951',     // Navy text
+      secondary: '#4a5568',   // Medium gray
+      disabled: '#a0aec0',    // Light gray
+      inverse: '#ffffff'      // White text
+    },
+    dark: {
+      primary: '#F5F2E8',     // Light cream text
+      secondary: '#a0aec0',   // Medium gray
+      disabled: '#4a5568',    // Dark gray
+      inverse: '#1B2951'      // Navy text
+    }
   },
   
   // Border Colors
@@ -89,14 +124,14 @@ export const colors = {
 // Color utility functions
 export const getStatusColor = (status) => {
   const statusColors = {
-    'pending': colors.text.secondary,
+    'pending': colors.text.light.secondary,
     'in_progress': colors.status.warning,
     'review': colors.status.info,
     'completed': colors.status.success,
     'cancelled': colors.status.error,
-    'on_hold': colors.text.disabled
+    'on_hold': colors.text.light.disabled
   };
-  return statusColors[status] || colors.text.secondary;
+  return statusColors[status] || colors.text.light.secondary;
 };
 
 export const getPriorityColor = (priority) => {
@@ -104,7 +139,7 @@ export const getPriorityColor = (priority) => {
 };
 
 export const getProjectTypeColor = (type) => {
-  return colors.projectTypes[type] || colors.primary.main;
+  return colors.projectTypes[type] || colors.brand.navy;
 };
 
 export default colors;

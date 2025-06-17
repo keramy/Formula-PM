@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Box, 
   Typography, 
@@ -10,7 +10,12 @@ import {
   InputBase,
   Paper,
   AvatarGroup,
-  Tooltip
+  Tooltip,
+  Menu,
+  MenuItem,
+  Divider,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import { 
   Search, 
@@ -20,8 +25,16 @@ import {
   Star,
   StarBorder,
   Home,
-  Business
+  Business,
+  Brightness4,
+  Brightness7,
+  Settings,
+  Person,
+  Logout
 } from '@mui/icons-material';
+import FormulaLogo from '../branding/FormulaLogo';
+import { FormulaLogoCompact } from '../branding/LogoVariations';
+import { useTheme as useFormulaTheme } from '../../context/ThemeContext';
 
 const EnhancedHeader = ({ 
   title, 
@@ -35,8 +48,18 @@ const EnhancedHeader = ({
   onSearchChange,
   subtitle = '',
   showTeamAvatars = true,
-  maxAvatars = 4
+  maxAvatars = 4,
+  showLogo = true,
+  user = { name: 'Admin User', avatar: null },
+  onUserMenuClick
 }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { mode, toggleTheme, isDarkMode } = useFormulaTheme();
+  const darkMode = isDarkMode;
+  
+  const [userMenuAnchor, setUserMenuAnchor] = useState(null);
+  
   const displayMembers = teamMembers.slice(0, maxAvatars);
   const remainingCount = teamMembers.length - maxAvatars;
 
@@ -46,20 +69,128 @@ const EnhancedHeader = ({
     }
   };
 
+  const handleUserMenuOpen = (event) => {
+    setUserMenuAnchor(event.currentTarget);
+  };
+
+  const handleUserMenuClose = () => {
+    setUserMenuAnchor(null);
+  };
+
+  const handleUserMenuItemClick = (action) => {
+    handleUserMenuClose();
+    if (onUserMenuClick) {
+      onUserMenuClick(action);
+    }
+  };
+
+  // Formula brand colors
+  const headerColors = {
+    background: darkMode ? theme.palette.formulaBrand.darkBackground : theme.palette.formulaBrand.lightBackground,
+    border: darkMode ? theme.palette.formulaBrand.navy : '#D1D8E6',
+    text: darkMode ? theme.palette.formulaBrand.lightCream : theme.palette.formulaBrand.navy,
+    textSecondary: darkMode ? '#E8E2D5' : '#566BA3',
+    hover: darkMode ? theme.palette.formulaBrand.lightCream : theme.palette.formulaBrand.navy
+  };
+
   return (
     <Box sx={{ 
-      backgroundColor: 'white',
-      borderBottom: '1px solid #E9ECEF',
+      backgroundColor: headerColors.background,
+      borderBottom: `1px solid ${headerColors.border}`,
       px: 4,
-      py: 3
+      py: 3,
+      transition: 'all 0.3s ease'
     }}>
+      {/* Logo and Breadcrumbs Row */}
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        mb: 2 
+      }}>
+        {/* Logo Section */}
+        {showLogo && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {isMobile ? (
+              <FormulaLogoCompact 
+                darkMode={darkMode}
+                onClick={() => window.location.href = '/'}
+              />
+            ) : (
+              <FormulaLogo 
+                size="small"
+                darkMode={darkMode}
+                onClick={() => window.location.href = '/'}
+                sx={{ 
+                  '&:hover': {
+                    transform: 'scale(1.02)',
+                    transition: 'transform 0.2s ease-in-out',
+                  }
+                }}
+              />
+            )}
+          </Box>
+        )}
+
+        {/* User Controls */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {/* Theme Toggle */}
+          <Tooltip title={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
+            <IconButton 
+              onClick={toggleTheme}
+              sx={{ 
+                color: headerColors.text,
+                backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)',
+                '&:hover': {
+                  backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)',
+                  transform: 'scale(1.05)'
+                },
+                transition: 'all 0.2s ease'
+              }}
+            >
+              {darkMode ? <Brightness7 /> : <Brightness4 />}
+            </IconButton>
+          </Tooltip>
+
+          {/* User Avatar & Menu */}
+          <Tooltip title="User menu">
+            <IconButton
+              onClick={handleUserMenuOpen}
+              sx={{ 
+                p: 0,
+                ml: 1,
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                },
+                transition: 'transform 0.2s ease'
+              }}
+            >
+              <Avatar
+                src={user.avatar}
+                sx={{
+                  width: 36,
+                  height: 36,
+                  backgroundColor: darkMode ? theme.palette.formulaBrand.lightCream : theme.palette.formulaBrand.navy,
+                  color: darkMode ? theme.palette.formulaBrand.navy : theme.palette.formulaBrand.lightCream,
+                  fontSize: '1rem',
+                  fontWeight: 500,
+                  border: `2px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
+                }}
+              >
+                {user.name?.charAt(0) || 'U'}
+              </Avatar>
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </Box>
+
       {/* Breadcrumbs */}
       <Breadcrumbs 
         sx={{ 
           mb: 2, 
           fontSize: '0.875rem',
           '& .MuiBreadcrumbs-separator': {
-            color: '#7F8C8D'
+            color: headerColors.textSecondary
           }
         }}
       >
@@ -71,8 +202,8 @@ const EnhancedHeader = ({
             display: 'flex', 
             alignItems: 'center', 
             gap: 0.5,
-            color: '#7F8C8D',
-            '&:hover': { color: '#2C3E50' }
+            color: headerColors.textSecondary,
+            '&:hover': { color: headerColors.hover }
           }}
         >
           <Home sx={{ fontSize: 16 }} />
@@ -86,8 +217,8 @@ const EnhancedHeader = ({
             display: 'flex', 
             alignItems: 'center', 
             gap: 0.5,
-            color: '#7F8C8D',
-            '&:hover': { color: '#2C3E50' }
+            color: headerColors.textSecondary,
+            '&:hover': { color: headerColors.hover }
           }}
         >
           <Business sx={{ fontSize: 16 }} />
@@ -101,8 +232,9 @@ const EnhancedHeader = ({
             color="inherit"
             href={crumb.href || '#'}
             sx={{ 
-              color: '#7F8C8D',
-              '&:hover': { color: '#2C3E50' }
+              color: headerColors.textSecondary,
+              '&:hover': { color: headerColors.hover },
+              transition: 'color 0.2s ease'
             }}
           >
             {crumb.label}
@@ -112,7 +244,10 @@ const EnhancedHeader = ({
         <Typography 
           color="text.primary" 
           fontWeight={500}
-          sx={{ color: '#2C3E50' }}
+          sx={{ 
+            color: headerColors.text,
+            fontSize: '0.875rem'
+          }}
         >
           {title}
         </Typography>
@@ -127,8 +262,9 @@ const EnhancedHeader = ({
               variant="h4" 
               sx={{ 
                 fontWeight: 700, 
-                color: '#2C3E50',
-                fontSize: '1.75rem'
+                color: headerColors.text,
+                fontSize: '1.75rem',
+                fontFamily: "'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif"
               }}
             >
               {title}
@@ -139,10 +275,13 @@ const EnhancedHeader = ({
                 size="small" 
                 onClick={handleStarClick}
                 sx={{ 
-                  color: isStarred ? '#F39C12' : '#BDC3C7',
+                  color: isStarred ? theme.palette.warning.main : headerColors.textSecondary,
                   '&:hover': {
-                    color: isStarred ? '#E67E22' : '#F39C12'
-                  }
+                    color: isStarred ? theme.palette.warning.dark : theme.palette.warning.main,
+                    backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)',
+                    transform: 'scale(1.1)'
+                  },
+                  transition: 'all 0.2s ease'
                 }}
               >
                 {isStarred ? <Star /> : <StarBorder />}
@@ -155,9 +294,10 @@ const EnhancedHeader = ({
             <Typography 
               variant="body2" 
               sx={{ 
-                color: '#7F8C8D',
+                color: headerColors.textSecondary,
                 fontSize: '0.9rem',
-                ml: 1
+                ml: 1,
+                opacity: 0.8
               }}
             >
               {subtitle}
@@ -174,7 +314,7 @@ const EnhancedHeader = ({
                     width: 32,
                     height: 32,
                     fontSize: '0.875rem',
-                    border: '2px solid white',
+                    border: `2px solid ${headerColors.background}`,
                     cursor: 'pointer',
                     transition: 'transform 0.2s ease',
                     '&:hover': {
@@ -188,7 +328,7 @@ const EnhancedHeader = ({
                   <Tooltip key={member.id} title={member.fullName}>
                     <Avatar
                       sx={{
-                        bgcolor: member.roleColor || '#3498DB',
+                        bgcolor: member.roleColor || theme.palette.info.main,
                         fontWeight: 600
                       }}
                     >
@@ -207,12 +347,15 @@ const EnhancedHeader = ({
                       height: 24,
                       fontSize: '0.75rem',
                       fontWeight: 600,
-                      backgroundColor: '#ECF0F1',
-                      color: '#2C3E50',
+                      backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)',
+                      color: headerColors.text,
                       cursor: 'pointer',
+                      border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
                       '&:hover': {
-                        backgroundColor: '#D5DBDB'
-                      }
+                        backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)',
+                        transform: 'scale(1.05)'
+                      },
+                      transition: 'all 0.2s ease'
                     }}
                   />
                 </Tooltip>
@@ -231,23 +374,27 @@ const EnhancedHeader = ({
               width: 240,
               height: 38,
               px: 1.5,
-              backgroundColor: '#F8F9FA',
-              border: '1px solid #E9ECEF',
+              backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.08)' : 'rgba(27, 41, 81, 0.05)',
+              border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
               borderRadius: 2,
               boxShadow: 'none',
               transition: 'all 0.2s ease',
               '&:hover': {
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #D5DBDB'
+                backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.12)' : 'rgba(27, 41, 81, 0.08)',
+                border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.3)' : 'rgba(27, 41, 81, 0.3)'}`
               },
               '&:focus-within': {
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #3498DB',
-                boxShadow: '0 0 0 3px rgba(52, 152, 219, 0.1)'
+                backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.15)' : 'rgba(27, 41, 81, 0.1)',
+                border: `1px solid ${theme.palette.primary.main}`,
+                boxShadow: `0 0 0 3px ${darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)'}`
               }
             }}
           >
-            <Search sx={{ color: '#7F8C8D', mr: 1, fontSize: 20 }} />
+            <Search sx={{ 
+              color: headerColors.textSecondary, 
+              mr: 1, 
+              fontSize: 20 
+            }} />
             <InputBase
               placeholder="Search in this space..."
               size="small"
@@ -256,9 +403,10 @@ const EnhancedHeader = ({
               sx={{ 
                 flex: 1, 
                 fontSize: '0.875rem',
+                color: headerColors.text,
                 '& input::placeholder': {
-                  color: '#95A5A6',
-                  opacity: 1
+                  color: headerColors.textSecondary,
+                  opacity: 0.7
                 }
               }}
             />
@@ -268,15 +416,18 @@ const EnhancedHeader = ({
           <Tooltip title="Share">
             <IconButton 
               sx={{ 
-                backgroundColor: '#F8F9FA',
-                border: '1px solid #E9ECEF',
+                backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.08)',
+                border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
                 borderRadius: 2,
                 width: 38,
                 height: 38,
+                color: headerColors.text,
                 '&:hover': { 
-                  backgroundColor: '#ECF0F1',
-                  border: '1px solid #D5DBDB'
-                }
+                  backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.15)',
+                  border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.3)' : 'rgba(27, 41, 81, 0.3)'}`,
+                  transform: 'scale(1.05)'
+                },
+                transition: 'all 0.2s ease'
               }}
             >
               <Share sx={{ fontSize: 18 }} />
@@ -287,16 +438,19 @@ const EnhancedHeader = ({
             <IconButton 
               onClick={onAdd}
               sx={{ 
-                backgroundColor: '#3498DB', 
-                color: 'white',
+                backgroundColor: theme.palette.primary.main, 
+                color: theme.palette.primary.contrastText,
                 borderRadius: 2,
                 width: 38,
                 height: 38,
                 '&:hover': { 
-                  backgroundColor: '#2980B9',
+                  backgroundColor: theme.palette.primary.dark,
                   transform: 'translateY(-1px)',
-                  boxShadow: '0 4px 12px rgba(52, 152, 219, 0.3)'
-                }
+                  boxShadow: darkMode 
+                    ? '0 4px 12px rgba(245, 242, 232, 0.3)'
+                    : '0 4px 12px rgba(27, 41, 81, 0.3)'
+                },
+                transition: 'all 0.2s ease'
               }}
             >
               <Add sx={{ fontSize: 18 }} />
@@ -306,22 +460,114 @@ const EnhancedHeader = ({
           <Tooltip title="More options">
             <IconButton 
               sx={{ 
-                backgroundColor: '#F8F9FA',
-                border: '1px solid #E9ECEF',
+                backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.08)',
+                border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
                 borderRadius: 2,
                 width: 38,
                 height: 38,
+                color: headerColors.text,
                 '&:hover': { 
-                  backgroundColor: '#ECF0F1',
-                  border: '1px solid #D5DBDB'
-                }
+                  backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.15)',
+                  border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.3)' : 'rgba(27, 41, 81, 0.3)'}`,
+                  transform: 'scale(1.05)'
+                },
+                transition: 'all 0.2s ease'
               }}
             >
               <MoreHoriz sx={{ fontSize: 18 }} />
             </IconButton>
           </Tooltip>
+
+          {/* User Avatar */}
+          <Tooltip title={user.name}>
+            <IconButton 
+              onClick={handleUserMenuOpen}
+              sx={{ 
+                p: 0,
+                ml: 1,
+                '&:hover': { 
+                  transform: 'scale(1.05)'
+                },
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <Avatar
+                src={user.avatar}
+                sx={{
+                  width: 38,
+                  height: 38,
+                  bgcolor: theme.palette.primary.main,
+                  color: theme.palette.primary.contrastText,
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  border: `2px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
+                }}
+              >
+                {!user.avatar && user.name?.charAt(0)?.toUpperCase()}
+              </Avatar>
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
+
+      {/* User Menu */}
+      <Menu
+        anchorEl={userMenuAnchor}
+        open={Boolean(userMenuAnchor)}
+        onClose={handleUserMenuClose}
+        onClick={handleUserMenuClose}
+        PaperProps={{
+          elevation: 3,
+          sx: {
+            mt: 1.5,
+            minWidth: 200,
+            backgroundColor: darkMode ? theme.palette.formulaBrand.darkBackground : theme.palette.background.paper,
+            border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
+            borderRadius: 2,
+            boxShadow: darkMode 
+              ? '0 8px 32px rgba(0, 0, 0, 0.4)'
+              : '0 8px 32px rgba(27, 41, 81, 0.15)',
+            '& .MuiMenuItem-root': {
+              color: headerColors.text,
+              borderRadius: 1,
+              mx: 1,
+              my: 0.5,
+              '&:hover': {
+                backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.08)',
+              },
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem onClick={() => handleUserMenuItemClick('profile')}>
+          <Person sx={{ mr: 2, fontSize: 20, color: headerColors.textSecondary }} />
+          Profile
+        </MenuItem>
+        <MenuItem onClick={() => handleUserMenuItemClick('settings')}>
+          <Settings sx={{ mr: 2, fontSize: 20, color: headerColors.textSecondary }} />
+          Settings
+        </MenuItem>
+        <MenuItem onClick={toggleTheme}>
+          {darkMode ? (
+            <Brightness7 sx={{ mr: 2, fontSize: 20, color: headerColors.textSecondary }} />
+          ) : (
+            <Brightness4 sx={{ mr: 2, fontSize: 20, color: headerColors.textSecondary }} />
+          )}
+          {darkMode ? 'Light Mode' : 'Dark Mode'}
+        </MenuItem>
+        <Divider sx={{ 
+          borderColor: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)',
+          my: 1,
+        }} />
+        <MenuItem onClick={() => handleUserMenuItemClick('logout')}>
+          <Logout sx={{ mr: 2, fontSize: 20, color: theme.palette.error.main }} />
+          <Typography sx={{ color: theme.palette.error.main }}>
+            Logout
+          </Typography>
+        </MenuItem>
+      </Menu>
     </Box>
   );
 };
