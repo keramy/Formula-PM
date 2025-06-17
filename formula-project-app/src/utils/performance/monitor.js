@@ -243,8 +243,6 @@ class PerformanceMonitor {
   }
 }
 
-export default PerformanceMonitor;
-
 // React Hook for component performance measurement
 export const usePerformanceMeasurement = (componentName) => {
   const measurement = PerformanceMonitor.useComponentMeasurement(componentName);
@@ -270,3 +268,5 @@ export const withPerformanceMonitoring = (WrappedComponent, componentName) => {
     return React.createElement(WrappedComponent, props);
   });
 };
+
+export default PerformanceMonitor;

@@ -7,107 +7,112 @@ import { lazy } from 'react';
 
 // Dashboard components
 export const ModernProjectOverview = lazy(() => 
-  import('../features/dashboard/components/ModernProjectOverview')
+  import('../../features/dashboard/components/ModernProjectOverview')
 );
 
 // Project components
 export const ProjectForm = lazy(() => 
-  import('../features/projects/components/ProjectForm')
+  import('../../features/projects/components/ProjectForm')
 );
 
 export const ProjectsList = lazy(() => 
-  import('../features/projects/components/ProjectsList')
+  import('../../features/projects/components/ProjectsList')
 );
 
 export const ProjectsTableView = lazy(() => 
-  import('../features/projects/components/ProjectsTableView')
+  import('../../features/projects/components/ProjectsTableView')
 );
 
 export const ProjectsFilters = lazy(() => 
-  import('../features/projects/components/ProjectsFilters')
+  import('../../features/projects/components/ProjectsFilters')
 );
 
 export const MyProjectsList = lazy(() => 
-  import('../features/projects/components/MyProjectsList')
+  import('../../features/projects/components/MyProjectsList')
 );
 
 export const EnhancedProjectScope = lazy(() => 
-  import('../features/projects/components/EnhancedProjectScope')
+  import('../../features/projects/components/EnhancedProjectScope')
 );
 
 export const ProjectFormPage = lazy(() => 
-  import('../features/projects/components/ProjectFormPage')
+  import('../../features/projects/components/ProjectFormPage')
 );
 
 export const ProjectPage = lazy(() => 
-  import('../features/projects/components/ProjectPage')
+  import('../../features/projects/components/ProjectPage')
 );
 
 // Task components
 export const TaskForm = lazy(() => 
-  import('../features/tasks/components/TaskForm')
+  import('../../features/tasks/components/TaskForm')
 );
 
 export const TaskFormPage = lazy(() => 
-  import('../features/tasks/components/TaskFormPage')
+  import('../../features/tasks/components/TaskFormPage')
 );
 
 export const EnhancedTasksView = lazy(() => 
-  import('../features/tasks/components/EnhancedTasksView')
+  import('../../features/tasks/components/EnhancedTasksView')
 );
 
 // Team components
 export const TeamMemberForm = lazy(() => 
-  import('../features/team/components/TeamMemberForm')
+  import('../../features/team/components/TeamMemberForm')
 );
 
 export const TeamMembersList = lazy(() => 
-  import('../features/team/components/TeamMembersList')
+  import('../../features/team/components/TeamMembersList')
 );
 
 export const TeamMemberFormPage = lazy(() => 
-  import('../features/team/components/TeamMemberFormPage')
+  import('../../features/team/components/TeamMemberFormPage')
 );
 
 export const TeamMemberDetail = lazy(() => 
-  import('../features/team/components/TeamMemberDetail')
+  import('../../features/team/components/TeamMemberDetail')
 );
 
 // Client components
 export const ClientForm = lazy(() => 
-  import('../features/clients/components/ClientForm')
+  import('../../features/clients/components/ClientForm')
 );
 
 export const ClientsList = lazy(() => 
-  import('../features/clients/components/ClientsList')
+  import('../../features/clients/components/ClientsList')
 );
 
 // Chart components (heavy - should be lazy loaded)
 export const GanttChart = lazy(() => 
-  import('../components/charts/GanttChart')
+  import('../charts/GanttChart')
 );
 
 // View components
 export const BoardView = lazy(() => 
-  import('../components/views/BoardView')
+  import('../views/BoardView')
 );
 
 export const GlobalSearchResults = lazy(() => 
-  import('../components/ui/GlobalSearchResults')
+  import('../ui/GlobalSearchResults')
 );
 
 // Feature-specific components
 export const ShopDrawingsList = lazy(() => 
-  import('../features/shop-drawings/components/ShopDrawingsList')
+  import('../../features/shop-drawings/components/ShopDrawingsList')
 );
 
 export const MaterialSpecificationsList = lazy(() => 
-  import('../features/specifications/components/MaterialSpecificationsList')
+  import('../../features/specifications/components/MaterialSpecificationsList')
 );
 
 // Admin components
 export const PerformanceDashboard = lazy(() => 
-  import('../components/admin/PerformanceDashboard')
+  import('../admin/PerformanceDashboard')
+);
+
+// Dialog components
+export const DialogContainer = lazy(() => 
+  import('../dialogs/DialogContainer')
 );
 
 // Loading fallback components
@@ -329,6 +334,7 @@ export default {
   ShopDrawingsList,
   MaterialSpecificationsList,
   PerformanceDashboard,
+  DialogContainer,
   LoadingFallback,
   FormSkeleton,
   ListSkeleton,

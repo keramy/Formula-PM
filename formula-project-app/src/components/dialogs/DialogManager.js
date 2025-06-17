@@ -15,7 +15,7 @@ import {
   EnhancedProjectScope,
   FormSkeleton,
   LoadingFallback
-} from '../LazyComponents';
+} from '../lazy';
 
 /**
  * Centralized dialog management component

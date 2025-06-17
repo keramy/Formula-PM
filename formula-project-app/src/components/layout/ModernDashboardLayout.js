@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Box, Container, Typography, IconButton } from '@mui/material';
 import { Notifications as NotificationsIcon } from '@mui/icons-material';
 import ModernSidebar from './ModernSidebar';
@@ -7,65 +8,56 @@ import LiveSearchDropdown from '../ui/LiveSearchDropdown';
 import { NotificationPanel } from '../../services/notifications/notificationService';
 import { useAuth } from '../../context/AuthContext';
 
-const ModernDashboardLayout = ({ 
-  children, 
-  currentTab, 
-  onTabChange, 
-  globalSearch = '',
-  onGlobalSearchChange,
-  onSearchSubmit,
-  onSearchResultSelect,
-  onShowFullSearch
-}) => {
+const ModernDashboardLayout = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     localStorage.getItem('sidebarCollapsed') === 'true'
   );
+  const [globalSearch, setGlobalSearch] = useState('');
   
   const handleToggleSidebar = () => {
     const newCollapsed = !sidebarCollapsed;
     setSidebarCollapsed(newCollapsed);
     localStorage.setItem('sidebarCollapsed', newCollapsed.toString());
   };
+
   const getPageTitle = () => {
-    switch (currentTab) {
-      case 0: return 'Dashboard';
-      case 1: return 'Projects';
-      case 2: return 'My Work';
-      case 3: return 'Tasks';
-      case 4: return 'Team';
-      case 5: return 'Clients';
-      case 6: return 'Procurement';
-      case 7: return 'Timeline & Gantt';
-      case 8: return 'Shop Drawings';
-      case 9: return 'Material Specifications';
-      default: return 'Dashboard';
-    }
+    const path = location.pathname;
+    if (path.includes('/projects')) return 'Projects';
+    if (path.includes('/tasks')) return 'Tasks';
+    if (path.includes('/team')) return 'Team';
+    if (path.includes('/clients')) return 'Clients';
+    if (path.includes('/dashboard')) return 'Dashboard';
+    return 'Dashboard';
   };
 
   const getWelcomeMessage = () => {
     const userName = user?.name?.split(' ')[0] || 'User';
-    switch (currentTab) {
-      case 0: return `Welcome back, ${userName}. Here's what's happening.`;
-      case 1: return 'Manage and track all your construction projects.';
-      case 2: return 'View your projects and assigned tasks.';
-      case 3: return 'View and manage tasks across all projects.';
-      case 4: return 'Manage your team members and assignments.';
-      case 5: return 'Manage client information and contacts.';
-      case 6: return 'Handle procurement and supplier management.';
-      case 7: return 'Visualize project timelines and dependencies.';
-      case 8: return 'Manage millwork shop drawings and approvals.';
-      case 9: return 'Manage material specifications with Excel integration.';
-      default: return `Welcome back, ${userName}. Here's what's happening.`;
-    }
+    const path = location.pathname;
+    if (path.includes('/projects')) return 'Manage and track all your construction projects.';
+    if (path.includes('/tasks')) return 'View and manage tasks across all projects.';
+    if (path.includes('/team')) return 'Manage your team members and assignments.';
+    if (path.includes('/clients')) return 'Manage client information and contacts.';
+    if (path.includes('/dashboard')) return `Welcome back, ${userName}. Here's what's happening.`;
+    return `Welcome back, ${userName}. Here's what's happening.`;
+  };
+
+  const getCurrentTab = () => {
+    const path = location.pathname;
+    if (path.includes('/projects')) return 1;
+    if (path.includes('/tasks')) return 3;
+    if (path.includes('/team')) return 4;
+    if (path.includes('/clients')) return 5;
+    return 0; // dashboard
   };
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F8F9FA' }}>
       {/* Sidebar */}
       <ModernSidebar 
-        currentTab={currentTab} 
-        onTabChange={onTabChange} 
+        currentTab={getCurrentTab()} 
+        onTabChange={() => {}} // Navigation handled by React Router
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={handleToggleSidebar}
       />
@@ -122,13 +114,9 @@ const ModernDashboardLayout = ({
             {/* Live Search Dropdown */}
             <LiveSearchDropdown
               value={globalSearch}
-              onChange={onGlobalSearchChange}
-              onResultSelect={onSearchResultSelect}
-              onNavigate={(type) => {
-                if (type === 'full-search' && onShowFullSearch) {
-                  onShowFullSearch();
-                }
-              }}
+              onChange={setGlobalSearch}
+              onResultSelect={() => {}}
+              onNavigate={() => {}}
               placeholder="Search projects, tasks, team..."
             />
 
@@ -150,7 +138,7 @@ const ModernDashboardLayout = ({
             maxWidth: 'none'
           }}
         >
-          {children}
+          <Outlet />
         </Container>
       </Box>
     </Box>

@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { Box } from '@mui/material';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import ModernStatsCards from '../components/charts/ModernStatsCards';
-import { ModernProjectOverview, LoadingFallback } from '../components/LazyComponents';
+import { ModernProjectOverview, LoadingFallback } from '../components/lazy';
 
 const DashboardPage = ({ projects, tasks, teamMembers }) => {
   return (

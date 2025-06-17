@@ -12,7 +12,7 @@ import {
   LoadingFallback,
   ListSkeleton,
   ProjectCardSkeleton
-} from '../components/LazyComponents';
+} from '../components/lazy';
 
 const ProjectsPage = ({ 
   projects,
