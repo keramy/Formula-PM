@@ -56,6 +56,9 @@ export const exportProjectsToExcel = async (projects, clients = [], teamMembers 
       'Project Manager': getProjectManager(project.projectManager),
       'Start Date': formatDate(project.startDate),
       'End Date': formatDate(project.endDate),
+      'Progress': project.progress !== undefined ? `${project.progress}%` : 'N/A',
+      'Tasks Completed': project.completedTasks !== undefined ? `${project.completedTasks}/${project.totalTasks}` : 'N/A',
+      'Due Status': project.dueStatus || 'N/A',
       'Description': project.description || '',
       'Created Date': formatDate(project.createdAt),
       'Budget': project.budget || 'Not set',
@@ -78,6 +81,9 @@ export const exportProjectsToExcel = async (projects, clients = [], teamMembers 
       { wch: 20 },  // Project Manager
       { wch: 12 },  // Start Date
       { wch: 12 },  // End Date
+      { wch: 10 },  // Progress
+      { wch: 15 },  // Tasks Completed
+      { wch: 18 },  // Due Status
       { wch: 40 },  // Description
       { wch: 12 },  // Created Date
       { wch: 15 },  // Budget
