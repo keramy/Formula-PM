@@ -15,9 +15,16 @@
     "createdAt": "2025-05-20T08:00:00.000Z",
     "completedAt": "2025-05-29T16:30:00.000Z",
     "updatedAt": "2025-05-29T16:30:00.000Z",
-    "scopeItemIds": ["SCOPE001", "SCOPE002"],
+    "scopeItemIds": [
+      "SCOPE001",
+      "SCOPE002"
+    ],
     "category": "Design",
-    "tags": ["millwork", "design", "approval"],
+    "tags": [
+      "millwork",
+      "design",
+      "approval"
+    ],
     "files": []
   },
   {
@@ -36,9 +43,16 @@
     "createdAt": "2025-06-01T08:00:00.000Z",
     "completedAt": "2025-06-14T17:00:00.000Z",
     "updatedAt": "2025-06-14T17:00:00.000Z",
-    "scopeItemIds": ["SCOPE001", "SCOPE002"],
+    "scopeItemIds": [
+      "SCOPE001",
+      "SCOPE002"
+    ],
     "category": "Procurement",
-    "tags": ["procurement", "millwork", "materials"],
+    "tags": [
+      "procurement",
+      "millwork",
+      "materials"
+    ],
     "files": []
   },
   {
@@ -57,9 +71,16 @@
     "createdAt": "2025-05-15T08:00:00.000Z",
     "completedAt": "2025-05-30T17:30:00.000Z",
     "updatedAt": "2025-05-30T17:30:00.000Z",
-    "scopeItemIds": ["SCOPE009", "SCOPE010"],
+    "scopeItemIds": [
+      "SCOPE009",
+      "SCOPE010"
+    ],
     "category": "Design",
-    "tags": ["mep", "hvac", "data-center"],
+    "tags": [
+      "mep",
+      "hvac",
+      "data-center"
+    ],
     "files": []
   },
   {
@@ -77,9 +98,15 @@
     "actualHours": 12,
     "createdAt": "2025-06-09T08:00:00.000Z",
     "updatedAt": "2025-06-17T14:30:00.000Z",
-    "scopeItemIds": ["SCOPE006"],
+    "scopeItemIds": [
+      "SCOPE006"
+    ],
     "category": "Installation",
-    "tags": ["electrical", "infrastructure", "panel"],
+    "tags": [
+      "electrical",
+      "infrastructure",
+      "panel"
+    ],
     "files": [],
     "notes": "Waiting for revised shop drawings with corrected load calculations"
   },
@@ -98,9 +125,15 @@
     "actualHours": 28,
     "createdAt": "2025-06-08T08:00:00.000Z",
     "updatedAt": "2025-06-17T13:45:00.000Z",
-    "scopeItemIds": ["SCOPE003"],
+    "scopeItemIds": [
+      "SCOPE003"
+    ],
     "category": "Fabrication",
-    "tags": ["millwork", "custom-furniture", "technology"],
+    "tags": [
+      "millwork",
+      "custom-furniture",
+      "technology"
+    ],
     "files": []
   },
   {
@@ -119,9 +152,15 @@
     "createdAt": "2025-05-24T08:00:00.000Z",
     "completedAt": "2025-05-24T15:30:00.000Z",
     "updatedAt": "2025-05-24T15:30:00.000Z",
-    "scopeItemIds": ["SCOPE004"],
+    "scopeItemIds": [
+      "SCOPE004"
+    ],
     "category": "Quality Control",
-    "tags": ["demolition", "inspection", "completion"],
+    "tags": [
+      "demolition",
+      "inspection",
+      "completion"
+    ],
     "files": []
   },
   {
@@ -140,9 +179,15 @@
     "createdAt": "2025-05-27T08:00:00.000Z",
     "completedAt": "2025-06-03T16:00:00.000Z",
     "updatedAt": "2025-06-03T16:00:00.000Z",
-    "scopeItemIds": ["SCOPE005"],
+    "scopeItemIds": [
+      "SCOPE005"
+    ],
     "category": "Installation",
-    "tags": ["structural", "steel", "supervision"],
+    "tags": [
+      "structural",
+      "steel",
+      "supervision"
+    ],
     "files": []
   },
   {
@@ -160,9 +205,15 @@
     "actualHours": 9,
     "createdAt": "2025-06-14T08:00:00.000Z",
     "updatedAt": "2025-06-17T11:20:00.000Z",
-    "scopeItemIds": ["SCOPE007"],
+    "scopeItemIds": [
+      "SCOPE007"
+    ],
     "category": "Design",
-    "tags": ["fire-suppression", "safety", "server-room"],
+    "tags": [
+      "fire-suppression",
+      "safety",
+      "server-room"
+    ],
     "files": []
   },
   {
@@ -180,9 +231,15 @@
     "actualHours": 45,
     "createdAt": "2025-06-04T08:00:00.000Z",
     "updatedAt": "2025-06-17T16:15:00.000Z",
-    "scopeItemIds": ["SCOPE011"],
+    "scopeItemIds": [
+      "SCOPE011"
+    ],
     "category": "Installation",
-    "tags": ["drywall", "finishing", "construction"],
+    "tags": [
+      "drywall",
+      "finishing",
+      "construction"
+    ],
     "files": []
   },
   {
@@ -200,9 +257,15 @@
     "actualHours": 10,
     "createdAt": "2025-06-10T08:00:00.000Z",
     "updatedAt": "2025-06-17T12:30:00.000Z",
-    "scopeItemIds": ["SCOPE012"],
+    "scopeItemIds": [
+      "SCOPE012"
+    ],
     "category": "Planning",
-    "tags": ["glass", "partition", "scheduling"],
+    "tags": [
+      "glass",
+      "partition",
+      "scheduling"
+    ],
     "files": []
   },
   {
@@ -221,9 +284,15 @@
     "createdAt": "2025-05-25T08:00:00.000Z",
     "completedAt": "2025-06-04T17:00:00.000Z",
     "updatedAt": "2025-06-04T17:00:00.000Z",
-    "scopeItemIds": ["SCOPE009"],
+    "scopeItemIds": [
+      "SCOPE009"
+    ],
     "category": "Planning",
-    "tags": ["hvac", "rigging", "planning"],
+    "tags": [
+      "hvac",
+      "rigging",
+      "planning"
+    ],
     "files": []
   },
   {
@@ -241,9 +310,15 @@
     "actualHours": 11,
     "createdAt": "2025-06-03T08:00:00.000Z",
     "updatedAt": "2025-06-17T15:00:00.000Z",
-    "scopeItemIds": ["SCOPE010"],
+    "scopeItemIds": [
+      "SCOPE010"
+    ],
     "category": "Fabrication",
-    "tags": ["hvac", "ductwork", "fabrication"],
+    "tags": [
+      "hvac",
+      "ductwork",
+      "fabrication"
+    ],
     "files": []
   },
   {
@@ -261,9 +336,15 @@
     "actualHours": 0,
     "createdAt": "2025-06-12T08:00:00.000Z",
     "updatedAt": "2025-06-17T10:30:00.000Z",
-    "scopeItemIds": ["SCOPE013"],
+    "scopeItemIds": [
+      "SCOPE013"
+    ],
     "category": "Installation",
-    "tags": ["ceiling", "acoustic", "coordination"],
+    "tags": [
+      "ceiling",
+      "acoustic",
+      "coordination"
+    ],
     "files": []
   },
   {
@@ -281,9 +362,15 @@
     "actualHours": 30,
     "createdAt": "2025-06-05T08:00:00.000Z",
     "updatedAt": "2025-06-17T14:00:00.000Z",
-    "scopeItemIds": ["SCOPE014"],
+    "scopeItemIds": [
+      "SCOPE014"
+    ],
     "category": "Installation",
-    "tags": ["flooring", "data-center", "access-floor"],
+    "tags": [
+      "flooring",
+      "data-center",
+      "access-floor"
+    ],
     "files": []
   },
   {
@@ -301,9 +388,15 @@
     "actualHours": 0,
     "createdAt": "2025-06-13T08:00:00.000Z",
     "updatedAt": "2025-06-17T11:45:00.000Z",
-    "scopeItemIds": ["SCOPE008"],
+    "scopeItemIds": [
+      "SCOPE008"
+    ],
     "category": "Design",
-    "tags": ["lighting", "led", "electrical"],
+    "tags": [
+      "lighting",
+      "led",
+      "electrical"
+    ],
     "files": []
   },
   {
@@ -321,9 +414,15 @@
     "actualHours": 0,
     "createdAt": "2025-06-07T08:00:00.000Z",
     "updatedAt": "2025-06-17T13:20:00.000Z",
-    "scopeItemIds": ["SCOPE017"],
+    "scopeItemIds": [
+      "SCOPE017"
+    ],
     "category": "Site Preparation",
-    "tags": ["generator", "electrical", "utilities"],
+    "tags": [
+      "generator",
+      "electrical",
+      "utilities"
+    ],
     "files": []
   },
   {
@@ -341,9 +440,15 @@
     "actualHours": 15,
     "createdAt": "2025-06-08T08:00:00.000Z",
     "updatedAt": "2025-06-17T15:30:00.000Z",
-    "scopeItemIds": ["SCOPE019"],
+    "scopeItemIds": [
+      "SCOPE019"
+    ],
     "category": "Installation",
-    "tags": ["piping", "mep", "chilled-water"],
+    "tags": [
+      "piping",
+      "mep",
+      "chilled-water"
+    ],
     "files": []
   },
   {
@@ -361,9 +466,15 @@
     "actualHours": 14,
     "createdAt": "2025-06-02T08:00:00.000Z",
     "updatedAt": "2025-06-17T16:45:00.000Z",
-    "scopeItemIds": ["SCOPE020"],
+    "scopeItemIds": [
+      "SCOPE020"
+    ],
     "category": "Planning",
-    "tags": ["bathroom", "renovation", "fixtures"],
+    "tags": [
+      "bathroom",
+      "renovation",
+      "fixtures"
+    ],
     "files": []
   },
   {
@@ -381,9 +492,15 @@
     "actualHours": 0,
     "createdAt": "2025-06-06T08:00:00.000Z",
     "updatedAt": "2025-06-17T09:30:00.000Z",
-    "scopeItemIds": ["SCOPE015"],
+    "scopeItemIds": [
+      "SCOPE015"
+    ],
     "category": "Material Selection",
-    "tags": ["flooring", "hardwood", "selection"],
+    "tags": [
+      "flooring",
+      "hardwood",
+      "selection"
+    ],
     "files": []
   },
   {
@@ -401,9 +518,15 @@
     "actualHours": 0,
     "createdAt": "2025-06-06T08:30:00.000Z",
     "updatedAt": "2025-06-17T10:15:00.000Z",
-    "scopeItemIds": ["SCOPE016"],
+    "scopeItemIds": [
+      "SCOPE016"
+    ],
     "category": "Scheduling",
-    "tags": ["flooring", "carpet", "scheduling"],
+    "tags": [
+      "flooring",
+      "carpet",
+      "scheduling"
+    ],
     "files": []
   },
   {
@@ -421,9 +544,15 @@
     "actualHours": 0,
     "createdAt": "2025-06-07T10:00:00.000Z",
     "updatedAt": "2025-06-17T12:15:00.000Z",
-    "scopeItemIds": ["SCOPE018"],
+    "scopeItemIds": [
+      "SCOPE018"
+    ],
     "category": "Design",
-    "tags": ["emergency-lighting", "safety", "electrical"],
+    "tags": [
+      "emergency-lighting",
+      "safety",
+      "electrical"
+    ],
     "files": []
   },
   {
@@ -443,7 +572,11 @@
     "updatedAt": "2025-06-17T08:00:00.000Z",
     "scopeItemIds": [],
     "category": "Project Management",
-    "tags": ["milestone", "review", "phase-completion"],
+    "tags": [
+      "milestone",
+      "review",
+      "phase-completion"
+    ],
     "files": []
   },
   {
@@ -461,9 +594,359 @@
     "actualHours": 0,
     "createdAt": "2025-06-17T09:00:00.000Z",
     "updatedAt": "2025-06-17T09:00:00.000Z",
-    "scopeItemIds": ["SCOPE006", "SCOPE007", "SCOPE009", "SCOPE017"],
+    "scopeItemIds": [
+      "SCOPE006",
+      "SCOPE007",
+      "SCOPE009",
+      "SCOPE017"
+    ],
     "category": "Testing",
-    "tags": ["mep", "integration", "testing"],
+    "tags": [
+      "mep",
+      "integration",
+      "testing"
+    ],
+    "files": []
+  },
+  {
+    "id": 3024,
+    "projectId": 2004,
+    "name": "Luxury Display Case Design Review",
+    "description": "Review and approve final designs for high-end retail display cases with integrated LED lighting",
+    "status": "completed",
+    "priority": "high",
+    "assignedTo": 1006,
+    "startDate": "2025-02-01",
+    "dueDate": "2025-02-15",
+    "progress": 100,
+    "estimatedHours": 20,
+    "actualHours": 18,
+    "createdAt": "2025-02-01T08:00:00.000Z",
+    "completedAt": "2025-06-18T13:26:28.614Z",
+    "updatedAt": "2025-06-18T13:26:28.618Z",
+    "scopeItemIds": [
+      "SCOPE011"
+    ],
+    "category": "Design",
+    "tags": [
+      "retail",
+      "fixtures",
+      "design"
+    ],
+    "files": []
+  },
+  {
+    "id": 3025,
+    "projectId": 2004,
+    "name": "Retail Floor Layout Planning",
+    "description": "Plan optimal customer flow and merchandise positioning for luxury retail space",
+    "status": "active",
+    "priority": "medium",
+    "assignedTo": 1009,
+    "startDate": "2025-04-20",
+    "dueDate": "2025-05-15",
+    "progress": 75,
+    "estimatedHours": 32,
+    "actualHours": 24,
+    "createdAt": "2025-04-20T09:00:00.000Z",
+    "updatedAt": "2025-06-17T14:00:00.000Z",
+    "scopeItemIds": [
+      "SCOPE015"
+    ],
+    "category": "Planning",
+    "tags": [
+      "retail",
+      "layout",
+      "planning"
+    ],
+    "files": []
+  },
+  {
+    "id": 3026,
+    "projectId": 2004,
+    "name": "Luxury Lighting System Installation",
+    "description": "Install premium LED lighting system for retail display and ambient lighting",
+    "status": "pending",
+    "priority": "medium",
+    "assignedTo": 1012,
+    "startDate": "2025-06-01",
+    "dueDate": "2025-06-30",
+    "progress": 0,
+    "estimatedHours": 40,
+    "actualHours": 0,
+    "createdAt": "2025-05-15T10:00:00.000Z",
+    "updatedAt": "2025-05-15T10:00:00.000Z",
+    "scopeItemIds": [
+      "SCOPE016"
+    ],
+    "category": "Installation",
+    "tags": [
+      "lighting",
+      "retail",
+      "installation"
+    ],
+    "files": []
+  },
+  {
+    "id": 3027,
+    "projectId": 2005,
+    "name": "Acoustic Ceiling System Design",
+    "description": "Design acoustic ceiling system for optimal sound control in open office environment",
+    "status": "completed",
+    "priority": "high",
+    "assignedTo": 1010,
+    "startDate": "2025-03-10",
+    "dueDate": "2025-03-25",
+    "progress": 100,
+    "estimatedHours": 25,
+    "actualHours": 23,
+    "createdAt": "2025-03-10T08:30:00.000Z",
+    "completedAt": "2025-06-18T13:26:34.826Z",
+    "updatedAt": "2025-06-18T13:26:35.146Z",
+    "scopeItemIds": [
+      "SCOPE012"
+    ],
+    "category": "Design",
+    "tags": [
+      "acoustic",
+      "ceiling",
+      "design"
+    ],
+    "files": []
+  },
+  {
+    "id": 3028,
+    "projectId": 2005,
+    "name": "Sustainable Materials Procurement",
+    "description": "Source and procure eco-friendly materials for modern office renovation",
+    "status": "active",
+    "priority": "medium",
+    "assignedTo": 1013,
+    "startDate": "2025-05-01",
+    "dueDate": "2025-06-15",
+    "progress": 60,
+    "estimatedHours": 35,
+    "actualHours": 21,
+    "createdAt": "2025-05-01T09:00:00.000Z",
+    "updatedAt": "2025-06-17T11:30:00.000Z",
+    "scopeItemIds": [
+      "SCOPE017"
+    ],
+    "category": "Procurement",
+    "tags": [
+      "sustainable",
+      "materials",
+      "procurement"
+    ],
+    "files": []
+  },
+  {
+    "id": 3029,
+    "projectId": 2005,
+    "name": "Smart Building Integration Setup",
+    "description": "Configure smart building systems including HVAC controls and lighting automation",
+    "status": "pending",
+    "priority": "high",
+    "assignedTo": 1014,
+    "startDate": "2025-07-01",
+    "dueDate": "2025-08-15",
+    "progress": 0,
+    "estimatedHours": 50,
+    "actualHours": 0,
+    "createdAt": "2025-06-01T14:00:00.000Z",
+    "updatedAt": "2025-06-01T14:00:00.000Z",
+    "scopeItemIds": [
+      "SCOPE018"
+    ],
+    "category": "Technology",
+    "tags": [
+      "smart",
+      "automation",
+      "technology"
+    ],
+    "files": []
+  },
+  {
+    "id": 3030,
+    "projectId": 2006,
+    "name": "Executive Conference Table Design",
+    "description": "Design custom walnut conference table with integrated technology features",
+    "status": "active",
+    "priority": "high",
+    "assignedTo": 1003,
+    "startDate": "2025-03-15",
+    "dueDate": "2025-04-30",
+    "progress": 85,
+    "estimatedHours": 45,
+    "actualHours": 38,
+    "createdAt": "2025-03-15T10:00:00.000Z",
+    "updatedAt": "2025-06-17T16:15:00.000Z",
+    "scopeItemIds": [
+      "SCOPE013"
+    ],
+    "category": "Design",
+    "tags": [
+      "furniture",
+      "executive",
+      "design"
+    ],
+    "files": []
+  },
+  {
+    "id": 3031,
+    "projectId": 2006,
+    "name": "Executive Suite Millwork Planning",
+    "description": "Plan custom millwork for executive offices including built-in storage and desk units",
+    "status": "pending",
+    "priority": "medium",
+    "assignedTo": 1008,
+    "startDate": "2025-06-01",
+    "dueDate": "2025-07-15",
+    "progress": 0,
+    "estimatedHours": 40,
+    "actualHours": 0,
+    "createdAt": "2025-05-20T11:00:00.000Z",
+    "updatedAt": "2025-05-20T11:00:00.000Z",
+    "scopeItemIds": [
+      "SCOPE019"
+    ],
+    "category": "Planning",
+    "tags": [
+      "millwork",
+      "executive",
+      "planning"
+    ],
+    "files": []
+  },
+  {
+    "id": 3032,
+    "projectId": 2006,
+    "name": "Premium Finishes Selection",
+    "description": "Select and approve premium finishes for executive floor renovation including stone, wood, and metals",
+    "status": "active",
+    "priority": "high",
+    "assignedTo": 1011,
+    "startDate": "2025-05-01",
+    "dueDate": "2025-06-30",
+    "progress": 40,
+    "estimatedHours": 30,
+    "actualHours": 12,
+    "createdAt": "2025-05-01T13:00:00.000Z",
+    "updatedAt": "2025-06-17T15:45:00.000Z",
+    "scopeItemIds": [
+      "SCOPE020"
+    ],
+    "category": "Selection",
+    "tags": [
+      "finishes",
+      "premium",
+      "selection"
+    ],
+    "files": []
+  },
+  {
+    "id": 3033,
+    "projectId": 2007,
+    "name": "Formula Branded Reception Wall Design",
+    "description": "Design and fabricate Formula International branded reception wall feature",
+    "status": "completed",
+    "priority": "high",
+    "assignedTo": 1005,
+    "startDate": "2025-04-15",
+    "dueDate": "2025-05-15",
+    "progress": 100,
+    "estimatedHours": 35,
+    "actualHours": 33,
+    "createdAt": "2025-04-15T09:30:00.000Z",
+    "completedAt": "2025-05-14T17:00:00.000Z",
+    "updatedAt": "2025-05-14T17:00:00.000Z",
+    "scopeItemIds": [
+      "SCOPE014"
+    ],
+    "category": "Design",
+    "tags": [
+      "branding",
+      "reception",
+      "design"
+    ],
+    "files": []
+  },
+  {
+    "id": 3034,
+    "projectId": 2007,
+    "name": "Showroom Display System Setup",
+    "description": "Install and configure showroom display systems for Formula's project portfolio",
+    "status": "active",
+    "priority": "medium",
+    "assignedTo": 1009,
+    "startDate": "2025-06-01",
+    "dueDate": "2025-07-31",
+    "progress": 30,
+    "estimatedHours": 45,
+    "actualHours": 13,
+    "createdAt": "2025-06-01T10:00:00.000Z",
+    "updatedAt": "2025-06-17T14:30:00.000Z",
+    "scopeItemIds": [
+      "SCOPE021"
+    ],
+    "category": "Installation",
+    "tags": [
+      "showroom",
+      "display",
+      "installation"
+    ],
+    "files": []
+  },
+  {
+    "id": 3035,
+    "projectId": 2007,
+    "name": "Office Furniture Coordination",
+    "description": "Coordinate delivery and installation of modern office furniture for Formula HQ",
+    "status": "pending",
+    "priority": "medium",
+    "assignedTo": 1012,
+    "startDate": "2025-08-01",
+    "dueDate": "2025-09-15",
+    "progress": 0,
+    "estimatedHours": 25,
+    "actualHours": 0,
+    "createdAt": "2025-06-10T11:30:00.000Z",
+    "updatedAt": "2025-06-10T11:30:00.000Z",
+    "scopeItemIds": [
+      "SCOPE022"
+    ],
+    "category": "Coordination",
+    "tags": [
+      "furniture",
+      "office",
+      "coordination"
+    ],
+    "files": []
+  },
+  {
+    "id": 3036,
+    "projectId": 2007,
+    "name": "Conference Room Technology Integration",
+    "description": "Install and configure AV technology for Formula's new conference facilities",
+    "status": "pending",
+    "priority": "high",
+    "assignedTo": 1013,
+    "startDate": "2025-09-01",
+    "dueDate": "2025-10-15",
+    "progress": 0,
+    "estimatedHours": 40,
+    "actualHours": 0,
+    "createdAt": "2025-06-15T14:00:00.000Z",
+    "updatedAt": "2025-06-15T14:00:00.000Z",
+    "scopeItemIds": [
+      "SCOPE023"
+    ],
+    "category": "Technology",
+    "tags": [
+      "conference",
+      "av",
+      "technology"
+    ],
     "files": []
   }
 ]

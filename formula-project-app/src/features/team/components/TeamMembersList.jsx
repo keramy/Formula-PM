@@ -36,6 +36,7 @@ import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';
 import OptionsMenu from '../../../components/ui/OptionsMenu';
+import TeamPerformance from './TeamPerformance';
 import { exportTeamMembersToExcel } from '../../../services/export/excelExport';
 
 const roles = [
@@ -55,7 +56,7 @@ const departments = [
   { value: 'client', label: 'Client' }
 ];
 
-function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, onAddMember, onViewMemberDetail, viewMode: propViewMode, onViewModeChange: propOnViewModeChange }) {
+function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDeleteMember, onAddMember, onViewMemberDetail, viewMode: propViewMode, onViewModeChange: propOnViewModeChange }) {
   const [editDialog, setEditDialog] = useState(false);
   const [viewDialog, setViewDialog] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
@@ -695,6 +696,15 @@ function TeamMembersList({ teamMembers, tasks, onUpdateMember, onDeleteMember, o
           )}
         </Grid>
       )}
+
+      {/* Team Performance Section */}
+      <Box sx={{ mt: 4 }}>
+        <TeamPerformance 
+          teamMembers={teamMembers} 
+          tasks={tasks} 
+          projects={projects || []} 
+        />
+      </Box>
 
       {/* Edit Dialog */}
       <Dialog open={editDialog} onClose={() => setEditDialog(false)} maxWidth="sm" fullWidth>

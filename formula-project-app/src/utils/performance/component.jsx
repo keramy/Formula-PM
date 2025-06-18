@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, IconButton, Paper, Collapse } from '@mui/material';
+import { Box, Typography, IconButton, Paper, Collapse, Divider, Chip } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import SpeedIcon from '@mui/icons-material/Speed';
+import PerformanceMonitor from './monitor';
 
 /**
  * PerformanceMonitor - Development tool for monitoring app performance
  */
-const PerformanceMonitor = () => {
+const PerformanceMonitorComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [metrics, setMetrics] = useState({
     fps: 0,
     memory: 0,
     renderTime: 0,
+  });
+  const [formulaMetrics, setFormulaMetrics] = useState({
+    totalRequests: 0,
+    avgApiTime: 0,
+    slowRequests: 0,
+    lastWorkflowTime: 0,
   });
 
   useEffect(() => {
@@ -51,6 +59,40 @@ const PerformanceMonitor = () => {
     requestAnimationFrame(measureFPS);
   }, [isOpen]);
 
+  // Update Formula PM metrics from analytics data
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const updateFormulaMetrics = () => {
+      const analytics = PerformanceMonitor.getAnalytics();
+      
+      const apiRequests = analytics.filter(a => a.metric.startsWith('api_'));
+      const workflowMetrics = analytics.filter(a => a.metric.includes('workflow'));
+      
+      const avgApiTime = apiRequests.length > 0 
+        ? Math.round(apiRequests.reduce((sum, r) => sum + r.value, 0) / apiRequests.length)
+        : 0;
+      
+      const slowRequests = apiRequests.filter(r => r.value > 2000).length;
+      
+      const lastWorkflow = workflowMetrics.length > 0 
+        ? Math.round(workflowMetrics[workflowMetrics.length - 1]?.value || 0)
+        : 0;
+
+      setFormulaMetrics({
+        totalRequests: apiRequests.length,
+        avgApiTime,
+        slowRequests,
+        lastWorkflowTime: lastWorkflow,
+      });
+    };
+
+    updateFormulaMetrics();
+    const interval = setInterval(updateFormulaMetrics, 5000); // Update every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [isOpen]);
+
   return (
     <Box
       sx={{
@@ -76,9 +118,12 @@ const PerformanceMonitor = () => {
             mb: isOpen ? 1 : 0,
           }}
         >
-          <Typography variant="body2" fontWeight="bold">
-            Performance
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <SpeedIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+            <Typography variant="body2" fontWeight="bold">
+              Performance
+            </Typography>
+          </Box>
           <Box>
             <IconButton
               size="small"
@@ -92,6 +137,9 @@ const PerformanceMonitor = () => {
 
         <Collapse in={isOpen}>
           <Box sx={{ mt: 1 }}>
+            <Typography variant="caption" fontWeight="bold" display="block" sx={{ mb: 1 }}>
+              System Metrics
+            </Typography>
             <Typography variant="caption" display="block">
               FPS: {metrics.fps}
             </Typography>
@@ -100,9 +148,57 @@ const PerformanceMonitor = () => {
                 Memory: {metrics.memory} MB
               </Typography>
             )}
-            <Typography variant="caption" display="block">
+            <Typography variant="caption" display="block" sx={{ mb: 1 }}>
               Render: {metrics.renderTime} ms
             </Typography>
+
+            <Divider sx={{ my: 1 }} />
+            
+            <Typography variant="caption" fontWeight="bold" display="block" sx={{ mb: 1 }}>
+              Formula PM Metrics
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1 }}>
+              <Chip 
+                label={`${formulaMetrics.totalRequests} API calls`} 
+                size="small" 
+                variant="outlined" 
+                sx={{ fontSize: '0.6rem', height: 18 }}
+              />
+              {formulaMetrics.slowRequests > 0 && (
+                <Chip 
+                  label={`${formulaMetrics.slowRequests} slow`} 
+                  size="small" 
+                  color="warning"
+                  sx={{ fontSize: '0.6rem', height: 18 }}
+                />
+              )}
+            </Box>
+            
+            <Typography variant="caption" display="block">
+              Avg API: {formulaMetrics.avgApiTime}ms
+            </Typography>
+            {formulaMetrics.lastWorkflowTime > 0 && (
+              <Typography variant="caption" display="block">
+                Last Workflow: {formulaMetrics.lastWorkflowTime}ms
+              </Typography>
+            )}
+            
+            <Box sx={{ mt: 1 }}>
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  cursor: 'pointer', 
+                  color: 'primary.main',
+                  textDecoration: 'underline'
+                }}
+                onClick={() => {
+                  console.log('📊 Performance Analytics:', PerformanceMonitor.getAnalytics());
+                  console.log('🧠 Current Memory:', performance.memory);
+                }}
+              >
+                View Console Logs
+              </Typography>
+            </Box>
           </Box>
         </Collapse>
       </Paper>
@@ -110,4 +206,4 @@ const PerformanceMonitor = () => {
   );
 };
 
-export default PerformanceMonitor;
+export default PerformanceMonitorComponent;

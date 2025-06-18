@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -51,12 +51,15 @@ import {
 import EnhancedHeader from '../../../components/ui/UnifiedHeader';
 import EnhancedTabSystem from '../../../components/layout/EnhancedTabSystem';
 import excelSpecificationService from '../services/excelSpecificationService';
+import apiService from '../../../services/api/apiService';
 
 const MaterialSpecificationsList = ({ 
   projects = [],
   teamMembers = [],
   shopDrawings = []
 }) => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('list');
   const [selectedProject, setSelectedProject] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -74,84 +77,39 @@ const MaterialSpecificationsList = ({
   const [importing, setImporting] = useState(false);
   const [importResults, setImportResults] = useState(null);
 
-  // Mock specifications data - this will come from API later
-  const [specifications, setSpecifications] = useState([
-    {
-      id: 'SPEC001',
-      itemId: 'SPEC001',
-      description: 'Upper Cabinet - 30" Wide',
-      category: 'Kitchen Cabinets',
-      material: 'Maple Hardwood',
-      finish: 'Natural Stain',
-      hardware: 'Soft-close hinges, adjustable shelves',
-      dimensions: '30" x 12" x 36"',
-      quantity: '4',
-      unit: 'EA',
-      unitCost: '$450.00',
-      totalCost: '$1,800.00',
-      supplier: 'Cabinet Works Inc',
-      partNumber: 'UC-30-NAT',
-      leadTime: '14',
-      notes: 'Pre-finished, ready to install',
-      drawingReference: 'Kitchen_Cabinets_Rev_C.pdf',
-      roomLocation: 'Kitchen',
-      installationPhase: 'Phase 2',
-      projectId: 'P001',
-      projectName: 'Downtown Office Renovation',
-      linkedDrawings: ['SD001'],
-      status: 'approved'
-    },
-    {
-      id: 'SPEC002',
-      itemId: 'SPEC002', 
-      description: 'Base Cabinet with Drawers',
-      category: 'Kitchen Cabinets',
-      material: 'Maple Hardwood',
-      finish: 'Natural Stain',
-      hardware: 'Soft-close drawers, full extension slides',
-      dimensions: '24" x 24" x 34.5"',
-      quantity: '6',
-      unit: 'EA',
-      unitCost: '$650.00',
-      totalCost: '$3,900.00',
-      supplier: 'Cabinet Works Inc',
-      partNumber: 'BC-24-3DR',
-      leadTime: '14',
-      notes: 'Includes toe kick and crown molding',
-      drawingReference: 'Kitchen_Cabinets_Rev_C.pdf',
-      roomLocation: 'Kitchen',
-      installationPhase: 'Phase 2',
-      projectId: 'P001',
-      projectName: 'Downtown Office Renovation',
-      linkedDrawings: ['SD001'],
-      status: 'approved'
-    },
-    {
-      id: 'SPEC003',
-      itemId: 'SPEC003',
-      description: 'Reception Desk - Custom',
-      category: 'Reception Furniture',
-      material: 'White Oak Veneer',
-      finish: 'Clear Lacquer',
-      hardware: 'Wire management, LED strip lighting',
-      dimensions: '96" x 30" x 42"',
-      quantity: '1',
-      unit: 'EA',
-      unitCost: '$2,800.00',
-      totalCost: '$2,800.00',
-      supplier: 'Custom Millwork Co',
-      partNumber: 'RD-96-WO',
-      leadTime: '21',
-      notes: 'Curved front edge, integrated cable management',
-      drawingReference: 'Reception_Desk_Rev_B.pdf',
-      roomLocation: 'Reception',
-      installationPhase: 'Phase 1',
-      projectId: 'P002',
-      projectName: 'Medical Office Fit-out',
-      linkedDrawings: ['SD003'],
-      status: 'pending'
+  const [specifications, setSpecifications] = useState([]);
+
+  // Load specifications on component mount
+  useEffect(() => {
+    loadSpecifications();
+  }, [selectedProject]);
+
+  const loadSpecifications = async () => {
+    try {
+      setLoading(true);
+      const params = selectedProject !== 'all' ? { projectId: selectedProject } : {};
+      const data = await apiService.getMaterialSpecifications(params);
+      
+      // Format the data to match component expectations
+      const formattedSpecs = data.map(spec => ({
+        ...spec,
+        unitCost: typeof spec.unitCost === 'number' ? `$${spec.unitCost.toFixed(2)}` : spec.unitCost,
+        totalCost: typeof spec.totalCost === 'number' ? `$${spec.totalCost.toFixed(2)}` : spec.totalCost,
+        quantity: spec.quantity?.toString() || '1',
+        leadTime: spec.leadTime?.toString() || '',
+        projectName: spec.projectName || projects.find(p => p.id === spec.projectId)?.name || ''
+      }));
+      
+      setSpecifications(formattedSpecs);
+      setError(null);
+    } catch (err) {
+      console.error('Error loading specifications:', err);
+      setError('Failed to load specifications');
+      setSpecifications([]);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
   const [newSpec, setNewSpec] = useState({
     itemId: '',
@@ -188,7 +146,8 @@ const MaterialSpecificationsList = ({
 
   // Calculate totals
   const totalCost = filteredSpecs.reduce((sum, spec) => {
-    return sum + parseFloat(spec.totalCost.replace(/[$,]/g, '') || 0);
+    const costStr = typeof spec.totalCost === 'string' ? spec.totalCost : String(spec.totalCost || '0');
+    return sum + parseFloat(costStr.replace(/[$,]/g, '') || 0);
   }, 0);
 
   const handleMenuOpen = (event, spec) => {
@@ -201,24 +160,41 @@ const MaterialSpecificationsList = ({
     setSelectedSpec(null);
   };
 
-  const handleAddSpec = () => {
-    const spec = {
-      ...newSpec,
-      id: `SPEC${String(specifications.length + 1).padStart(3, '0')}`,
-      totalCost: `$${(parseFloat(newSpec.unitCost.replace(/[$,]/g, '') || 0) * parseFloat(newSpec.quantity || 0)).toFixed(2)}`,
-      projectName: projects.find(p => p.id === newSpec.projectId)?.name || '',
-      linkedDrawings: [],
-      status: 'pending'
-    };
+  const handleAddSpec = async () => {
+    try {
+      const specData = {
+        ...newSpec,
+        quantity: parseInt(newSpec.quantity) || 1,
+        unitCost: parseFloat(newSpec.unitCost.replace(/[$,]/g, '') || 0),
+        projectId: newSpec.projectId || (selectedProject !== 'all' ? selectedProject : null),
+        linkedDrawings: [],
+        status: 'pending'
+      };
 
-    setSpecifications([spec, ...specifications]);
-    setAddSpecDialogOpen(false);
-    setNewSpec({
-      itemId: '', description: '', category: '', material: '', finish: '',
-      hardware: '', dimensions: '', quantity: '', unit: 'EA', unitCost: '',
-      supplier: '', partNumber: '', leadTime: '', notes: '', roomLocation: '',
-      installationPhase: '', projectId: ''
-    });
+      const createdSpec = await apiService.createMaterialSpecification(specData);
+      
+      // Format the response to match component expectations
+      const formattedSpec = {
+        ...createdSpec,
+        unitCost: `$${createdSpec.unitCost.toFixed(2)}`,
+        totalCost: `$${createdSpec.totalCost.toFixed(2)}`,
+        quantity: createdSpec.quantity.toString(),
+        leadTime: createdSpec.leadTime?.toString() || '',
+        projectName: createdSpec.projectName || projects.find(p => p.id === createdSpec.projectId)?.name || ''
+      };
+
+      setSpecifications([formattedSpec, ...specifications]);
+      setAddSpecDialogOpen(false);
+      setNewSpec({
+        itemId: '', description: '', category: '', material: '', finish: '',
+        hardware: '', dimensions: '', quantity: '', unit: 'EA', unitCost: '',
+        supplier: '', partNumber: '', leadTime: '', notes: '', roomLocation: '',
+        installationPhase: '', projectId: ''
+      });
+    } catch (error) {
+      console.error('Error creating specification:', error);
+      alert('Failed to create specification. Please try again.');
+    }
   };
 
   const handleExportTemplate = () => {
@@ -386,9 +362,10 @@ const MaterialSpecificationsList = ({
     return (
       <Box>
         {Object.entries(specsByCategory).map(([category, specs]) => {
-          const categoryTotal = specs.reduce((sum, spec) => 
-            sum + parseFloat(spec.totalCost.replace(/[$,]/g, '') || 0), 0
-          );
+          const categoryTotal = specs.reduce((sum, spec) => {
+            const costStr = typeof spec.totalCost === 'string' ? spec.totalCost : String(spec.totalCost || '0');
+            return sum + parseFloat(costStr.replace(/[$,]/g, '') || 0);
+          }, 0);
 
           return (
             <Accordion key={category} defaultExpanded>
@@ -542,7 +519,38 @@ const MaterialSpecificationsList = ({
 
       {/* Content */}
       <Box sx={{ mt: 3 }}>
-        {viewMode === 'list' ? renderListView() : renderCategoryView()}
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+            <LinearProgress sx={{ width: '50%' }} />
+          </Box>
+        ) : error ? (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+            <Button size="small" onClick={loadSpecifications} sx={{ ml: 2 }}>
+              Retry
+            </Button>
+          </Alert>
+        ) : filteredSpecs.length === 0 ? (
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              No material specifications found
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              {searchTerm || selectedCategory !== 'all' || selectedProject !== 'all' 
+                ? 'Try adjusting your filters or search terms'
+                : 'Get started by adding your first specification'}
+            </Typography>
+            <Button 
+              variant="contained" 
+              startIcon={<AddIcon />}
+              onClick={() => setAddSpecDialogOpen(true)}
+            >
+              Add Material Specification
+            </Button>
+          </Box>
+        ) : (
+          viewMode === 'list' ? renderListView() : renderCategoryView()
+        )}
       </Box>
 
       {/* Actions Menu */}
@@ -551,16 +559,38 @@ const MaterialSpecificationsList = ({
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem onClick={() => {
+          // TODO: Implement edit functionality
+          handleMenuClose();
+          alert('Edit functionality coming soon!');
+        }}>
           <EditIcon sx={{ mr: 1 }} /> Edit Specification
         </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem onClick={() => {
+          setLinkDrawingDialogOpen(true);
+          handleMenuClose();
+        }}>
           <LinkIcon sx={{ mr: 1 }} /> Link to Drawing
         </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem onClick={() => {
+          // TODO: Implement inventory check
+          handleMenuClose();
+          alert('Inventory check functionality coming soon!');
+        }}>
           <InventoryIcon sx={{ mr: 1 }} /> Check Inventory
         </MenuItem>
-        <MenuItem onClick={handleMenuClose} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={async () => {
+          if (selectedSpec && window.confirm(`Are you sure you want to delete ${selectedSpec.itemId}?`)) {
+            try {
+              await apiService.deleteMaterialSpecification(selectedSpec.id);
+              setSpecifications(specifications.filter(spec => spec.id !== selectedSpec.id));
+            } catch (error) {
+              console.error('Error deleting specification:', error);
+              alert('Failed to delete specification');
+            }
+          }
+          handleMenuClose();
+        }} sx={{ color: 'error.main' }}>
           <DeleteIcon sx={{ mr: 1 }} /> Delete
         </MenuItem>
       </Menu>

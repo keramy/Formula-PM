@@ -9,8 +9,8 @@ class ShopDrawingService {
   // Get all shop drawings
   async getAllDrawings() {
     try {
-      const response = await apiService.get(`${this.baseUrl}`);
-      return response.data;
+      const response = await apiService.request('/shop-drawings');
+      return response.data || response;
     } catch (error) {
       console.error('Error fetching shop drawings:', error);
       // Return mock data for development
@@ -21,8 +21,8 @@ class ShopDrawingService {
   // Get drawings by project
   async getDrawingsByProject(projectId) {
     try {
-      const response = await apiService.get(`${this.baseUrl}/project/${projectId}`);
-      return response.data;
+      const response = await apiService.request(`/shop-drawings/project/${projectId}`);
+      return response.data || response;
     } catch (error) {
       console.error('Error fetching project drawings:', error);
       return this.getMockDrawings().filter(d => d.projectId === projectId);
@@ -32,8 +32,8 @@ class ShopDrawingService {
   // Get single drawing
   async getDrawing(drawingId) {
     try {
-      const response = await apiService.get(`${this.baseUrl}/${drawingId}`);
-      return response.data;
+      const response = await apiService.request(`/shop-drawings/${drawingId}`);
+      return response.data || response;
     } catch (error) {
       console.error('Error fetching drawing:', error);
       return this.getMockDrawings().find(d => d.id === drawingId);
@@ -69,13 +69,16 @@ class ShopDrawingService {
   // Update drawing status
   async updateDrawingStatus(drawingId, status, notes = '') {
     try {
-      const response = await apiService.patch(`${this.baseUrl}/${drawingId}/status`, {
-        status,
-        notes,
-        approvedBy: 'Current User', // This should come from auth context
-        approvalDate: new Date().toISOString()
+      const response = await apiService.request(`/shop-drawings/${drawingId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          status,
+          notes,
+          approvedBy: 'Current User', // This should come from auth context
+          approvalDate: new Date().toISOString()
+        })
       });
-      return response.data;
+      return response.data || response;
     } catch (error) {
       console.error('Error updating drawing status:', error);
       throw error;
@@ -114,9 +117,9 @@ class ShopDrawingService {
     return [
       {
         id: 'SD001',
-        fileName: 'Kitchen_Cabinets_Rev_C.pdf',
-        projectId: 'P001',
-        projectName: 'Downtown Office Renovation',
+        fileName: 'Executive_Kitchen_Cabinets_Rev_C.pdf',
+        projectId: 2001,
+        projectName: 'Akbank Head Office Renovation',
         drawingType: 'Kitchen Cabinets',
         room: 'Kitchen',
         version: 'Rev C',
@@ -154,9 +157,9 @@ class ShopDrawingService {
       },
       {
         id: 'SD002',
-        fileName: 'Bathroom_Vanity_Rev_A.pdf',
-        projectId: 'P001',
-        projectName: 'Downtown Office Renovation',
+        fileName: 'Reception_Desk_Rev_A.pdf',
+        projectId: 2002,
+        projectName: 'Garanti BBVA Branch Fit-out',
         drawingType: 'Bathroom Vanity',
         room: 'Bathroom',
         version: 'Rev A',
@@ -177,9 +180,9 @@ class ShopDrawingService {
       },
       {
         id: 'SD003',
-        fileName: 'Reception_Desk_Rev_B.pdf',
-        projectId: 'P002',
-        projectName: 'Medical Office Fit-out',
+        fileName: 'Conference_Room_Cabinets_Rev_B.pdf',
+        projectId: 2003,
+        projectName: 'Yapı Kredi Head Office',
         drawingType: 'Reception Desk',
         room: 'Reception',
         version: 'Rev B',
@@ -207,9 +210,9 @@ class ShopDrawingService {
       },
       {
         id: 'SD004',
-        fileName: 'Conference_Table_Rev_A.pdf',
-        projectId: 'P001',
-        projectName: 'Downtown Office Renovation',
+        fileName: 'Executive_Desk_Rev_A.pdf',
+        projectId: 2001,
+        projectName: 'Akbank Head Office Renovation',
         drawingType: 'Conference Table',
         room: 'Conference Room',
         version: 'Rev A',

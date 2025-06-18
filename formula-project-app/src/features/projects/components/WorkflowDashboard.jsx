@@ -54,15 +54,24 @@ const WorkflowDashboard = ({
   const analyzeWorkflow = async () => {
     setLoading(true);
     try {
-      const status = connectionService.getWorkflowStatus(
-        project.id, 
-        scopeItems, 
-        shopDrawings, 
-        materialSpecs
-      );
+      // Try to use the async method that fetches fresh data from backend
+      const status = await connectionService.getWorkflowStatusAsync(project.id);
       setWorkflowStatus(status);
     } catch (error) {
       console.error('Error analyzing workflow:', error);
+      try {
+        // Fallback to using passed-in data
+        const status = connectionService.getWorkflowStatus(
+          project.id, 
+          scopeItems, 
+          shopDrawings, 
+          materialSpecs
+        );
+        setWorkflowStatus(status);
+      } catch (fallbackError) {
+        console.error('Fallback workflow analysis failed:', fallbackError);
+        setWorkflowStatus(null);
+      }
     } finally {
       setLoading(false);
     }

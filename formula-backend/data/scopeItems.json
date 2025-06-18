@@ -11,17 +11,22 @@
     "attachments": null,
     "projectId": 2001,
     "createdAt": "2025-06-14T12:48:11.401Z",
-    "totalPrice": 14800.00,
-    "progress": 85,
+    "totalPrice": 14800,
+    "progress": 75,
     "status": "in-progress",
-    "updatedAt": "2025-06-17T15:31:47.036Z",
+    "updatedAt": "2025-06-18T11:00:18.172Z",
     "shopDrawingId": "SD001",
     "materialSpecId": "SPEC001",
     "estimatedDuration": 14,
     "actualStartDate": "2025-06-05T08:00:00Z",
     "estimatedEndDate": "2025-06-19T17:00:00Z",
-    "dependencies": ["SCOPE004"],
-    "assignedTeamMembers": [1010, 1012],
+    "dependencies": [
+      "SCOPE004"
+    ],
+    "assignedTeamMembers": [
+      1010,
+      1012
+    ],
     "workflowStatus": "production_ready"
   },
   {
@@ -36,7 +41,7 @@
     "attachments": null,
     "projectId": 2001,
     "createdAt": "2025-06-14T13:00:00.000Z",
-    "totalPrice": 16500.00,
+    "totalPrice": 16500,
     "progress": 85,
     "status": "in-progress",
     "updatedAt": "2025-06-17T15:32:00.000Z",
@@ -45,8 +50,13 @@
     "estimatedDuration": 21,
     "actualStartDate": "2025-06-05T08:00:00Z",
     "estimatedEndDate": "2025-06-26T17:00:00Z",
-    "dependencies": ["SCOPE004"],
-    "assignedTeamMembers": [1010, 1012],
+    "dependencies": [
+      "SCOPE004"
+    ],
+    "assignedTeamMembers": [
+      1010,
+      1012
+    ],
     "workflowStatus": "production_ready"
   },
   {
@@ -61,7 +71,7 @@
     "attachments": null,
     "projectId": 2001,
     "createdAt": "2025-06-14T13:15:00.000Z",
-    "totalPrice": 8500.00,
+    "totalPrice": 8500,
     "progress": 90,
     "status": "in-progress",
     "updatedAt": "2025-06-17T16:00:00.000Z",
@@ -71,7 +81,9 @@
     "actualStartDate": "2025-05-15T08:00:00Z",
     "estimatedEndDate": "2025-06-19T17:00:00Z",
     "dependencies": [],
-    "assignedTeamMembers": [1010],
+    "assignedTeamMembers": [
+      1010
+    ],
     "workflowStatus": "production_ready"
   },
   {
@@ -86,7 +98,7 @@
     "attachments": null,
     "projectId": 2001,
     "createdAt": "2025-05-20T09:00:00.000Z",
-    "totalPrice": 11250.00,
+    "totalPrice": 11250,
     "progress": 100,
     "status": "completed",
     "updatedAt": "2025-06-01T17:00:00.000Z",
@@ -97,12 +109,14 @@
     "estimatedEndDate": "2025-05-25T17:00:00Z",
     "actualEndDate": "2025-05-24T15:30:00Z",
     "dependencies": [],
-    "assignedTeamMembers": [1013],
+    "assignedTeamMembers": [
+      1013
+    ],
     "workflowStatus": "completed"
   },
   {
     "id": "SCOPE005",
-    "description": "Structural Steel Reinforcement - Load Bearing Modifications", 
+    "description": "Structural Steel Reinforcement - Load Bearing Modifications",
     "quantity": "12",
     "unitPrice": "850.00",
     "unit": "linear ft",
@@ -112,7 +126,7 @@
     "attachments": null,
     "projectId": 2001,
     "createdAt": "2025-05-25T10:00:00.000Z",
-    "totalPrice": 10200.00,
+    "totalPrice": 10200,
     "progress": 100,
     "status": "completed",
     "updatedAt": "2025-06-08T17:00:00.000Z",
@@ -122,8 +136,12 @@
     "actualStartDate": "2025-05-27T08:00:00Z",
     "estimatedEndDate": "2025-06-04T17:00:00Z",
     "actualEndDate": "2025-06-03T16:00:00Z",
-    "dependencies": ["SCOPE004"],
-    "assignedTeamMembers": [1013],
+    "dependencies": [
+      "SCOPE004"
+    ],
+    "assignedTeamMembers": [
+      1013
+    ],
     "workflowStatus": "completed"
   },
   {
@@ -138,7 +156,7 @@
     "attachments": null,
     "projectId": 2002,
     "createdAt": "2025-06-09T09:30:00.000Z",
-    "totalPrice": 28500.00,
+    "totalPrice": 28500,
     "progress": 10,
     "status": "in-progress",
     "updatedAt": "2025-06-17T14:00:00.000Z",
@@ -148,7 +166,9 @@
     "actualStartDate": "2025-06-09T08:00:00Z",
     "estimatedEndDate": "2025-06-30T17:00:00Z",
     "dependencies": [],
-    "assignedTeamMembers": [1014],
+    "assignedTeamMembers": [
+      1014
+    ],
     "workflowStatus": "production_blocked",
     "blockingIssue": "Shop drawing requires revision - load calculations need verification"
   },
@@ -164,7 +184,7 @@
     "attachments": null,
     "projectId": 2002,
     "createdAt": "2025-06-14T15:45:00.000Z",
-    "totalPrice": 45000.00,
+    "totalPrice": 45000,
     "progress": 15,
     "status": "in-progress",
     "updatedAt": "2025-06-17T13:30:00.000Z",
@@ -173,8 +193,12 @@
     "estimatedDuration": 28,
     "actualStartDate": "2025-06-14T08:00:00Z",
     "estimatedEndDate": "2025-07-12T17:00:00Z",
-    "dependencies": ["SCOPE009"],
-    "assignedTeamMembers": [1011],
+    "dependencies": [
+      "SCOPE009"
+    ],
+    "assignedTeamMembers": [
+      1011
+    ],
     "workflowStatus": "awaiting_approval"
   },
   {
@@ -189,7 +213,7 @@
     "attachments": null,
     "projectId": 2001,
     "createdAt": "2025-06-13T13:30:00.000Z",
-    "totalPrice": 15600.00,
+    "totalPrice": 15600,
     "progress": 0,
     "status": "pending",
     "updatedAt": "2025-06-17T12:00:00.000Z",
@@ -198,8 +222,12 @@
     "estimatedDuration": 10,
     "actualStartDate": null,
     "estimatedEndDate": "2025-07-05T17:00:00Z",
-    "dependencies": ["SCOPE011"],
-    "assignedTeamMembers": [1014],
+    "dependencies": [
+      "SCOPE011"
+    ],
+    "assignedTeamMembers": [
+      1014
+    ],
     "workflowStatus": "awaiting_approval"
   },
   {
@@ -214,7 +242,7 @@
     "attachments": null,
     "projectId": 2002,
     "createdAt": "2025-06-01T12:00:00.000Z",
-    "totalPrice": 150000.00,
+    "totalPrice": 150000,
     "progress": 25,
     "status": "in-progress",
     "updatedAt": "2025-06-17T11:00:00.000Z",
@@ -224,7 +252,9 @@
     "actualStartDate": "2025-06-01T08:00:00Z",
     "estimatedEndDate": "2025-07-13T17:00:00Z",
     "dependencies": [],
-    "assignedTeamMembers": [1011],
+    "assignedTeamMembers": [
+      1011
+    ],
     "workflowStatus": "production_ready"
   },
   {
@@ -239,7 +269,7 @@
     "attachments": null,
     "projectId": 2002,
     "createdAt": "2025-06-01T12:30:00.000Z",
-    "totalPrice": 242250.00,
+    "totalPrice": 242250,
     "progress": 25,
     "status": "in-progress",
     "updatedAt": "2025-06-17T11:30:00.000Z",
@@ -248,8 +278,12 @@
     "estimatedDuration": 28,
     "actualStartDate": "2025-06-03T08:00:00Z",
     "estimatedEndDate": "2025-07-01T17:00:00Z",
-    "dependencies": ["SCOPE009"],
-    "assignedTeamMembers": [1011],
+    "dependencies": [
+      "SCOPE009"
+    ],
+    "assignedTeamMembers": [
+      1011
+    ],
     "workflowStatus": "production_ready"
   },
   {
@@ -264,7 +298,7 @@
     "attachments": null,
     "projectId": 2001,
     "createdAt": "2025-06-02T09:00:00.000Z",
-    "totalPrice": 15000.00,
+    "totalPrice": 15000,
     "progress": 75,
     "status": "in-progress",
     "updatedAt": "2025-06-17T14:30:00.000Z",
@@ -273,8 +307,12 @@
     "estimatedDuration": 12,
     "actualStartDate": "2025-06-04T08:00:00Z",
     "estimatedEndDate": "2025-06-16T17:00:00Z",
-    "dependencies": ["SCOPE005"],
-    "assignedTeamMembers": [1013],
+    "dependencies": [
+      "SCOPE005"
+    ],
+    "assignedTeamMembers": [
+      1013
+    ],
     "workflowStatus": "no_dependencies"
   },
   {
@@ -289,7 +327,7 @@
     "attachments": null,
     "projectId": 2001,
     "createdAt": "2025-06-03T10:00:00.000Z",
-    "totalPrice": 17100.00,
+    "totalPrice": 17100,
     "progress": 50,
     "status": "in-progress",
     "updatedAt": "2025-06-17T13:00:00.000Z",
@@ -298,8 +336,12 @@
     "estimatedDuration": 10,
     "actualStartDate": "2025-06-10T08:00:00Z",
     "estimatedEndDate": "2025-06-20T17:00:00Z",
-    "dependencies": ["SCOPE011"],
-    "assignedTeamMembers": [1013],
+    "dependencies": [
+      "SCOPE011"
+    ],
+    "assignedTeamMembers": [
+      1013
+    ],
     "workflowStatus": "no_dependencies"
   },
   {
@@ -314,7 +356,7 @@
     "attachments": null,
     "projectId": 2001,
     "createdAt": "2025-06-04T11:00:00.000Z",
-    "totalPrice": 21000.00,
+    "totalPrice": 21000,
     "progress": 30,
     "status": "in-progress",
     "updatedAt": "2025-06-17T15:00:00.000Z",
@@ -323,8 +365,12 @@
     "estimatedDuration": 8,
     "actualStartDate": "2025-06-12T08:00:00Z",
     "estimatedEndDate": "2025-06-20T17:00:00Z",
-    "dependencies": ["SCOPE011"],
-    "assignedTeamMembers": [1013],
+    "dependencies": [
+      "SCOPE011"
+    ],
+    "assignedTeamMembers": [
+      1013
+    ],
     "workflowStatus": "no_dependencies"
   },
   {
@@ -339,7 +385,7 @@
     "attachments": null,
     "projectId": 2002,
     "createdAt": "2025-06-05T09:30:00.000Z",
-    "totalPrice": 162000.00,
+    "totalPrice": 162000,
     "progress": 60,
     "status": "in-progress",
     "updatedAt": "2025-06-17T16:30:00.000Z",
@@ -349,7 +395,9 @@
     "actualStartDate": "2025-06-05T08:00:00Z",
     "estimatedEndDate": "2025-06-20T17:00:00Z",
     "dependencies": [],
-    "assignedTeamMembers": [1013],
+    "assignedTeamMembers": [
+      1013
+    ],
     "workflowStatus": "no_dependencies"
   },
   {
@@ -364,7 +412,7 @@
     "attachments": null,
     "projectId": 2001,
     "createdAt": "2025-06-06T08:00:00.000Z",
-    "totalPrice": 33300.00,
+    "totalPrice": 33300,
     "progress": 0,
     "status": "pending",
     "updatedAt": "2025-06-17T10:00:00.000Z",
@@ -373,8 +421,13 @@
     "estimatedDuration": 12,
     "actualStartDate": null,
     "estimatedEndDate": "2025-07-08T17:00:00Z",
-    "dependencies": ["SCOPE011", "SCOPE013"],
-    "assignedTeamMembers": [1012],
+    "dependencies": [
+      "SCOPE011",
+      "SCOPE013"
+    ],
+    "assignedTeamMembers": [
+      1012
+    ],
     "workflowStatus": "waiting_dependencies"
   },
   {
@@ -389,7 +442,7 @@
     "attachments": null,
     "projectId": 2001,
     "createdAt": "2025-06-06T08:30:00.000Z",
-    "totalPrice": 20000.00,
+    "totalPrice": 20000,
     "progress": 0,
     "status": "pending",
     "updatedAt": "2025-06-17T10:30:00.000Z",
@@ -398,8 +451,13 @@
     "estimatedDuration": 8,
     "actualStartDate": null,
     "estimatedEndDate": "2025-07-02T17:00:00Z",
-    "dependencies": ["SCOPE011", "SCOPE013"],
-    "assignedTeamMembers": [1012],
+    "dependencies": [
+      "SCOPE011",
+      "SCOPE013"
+    ],
+    "assignedTeamMembers": [
+      1012
+    ],
     "workflowStatus": "waiting_dependencies"
   },
   {
@@ -414,7 +472,7 @@
     "attachments": null,
     "projectId": 2002,
     "createdAt": "2025-06-07T09:00:00.000Z",
-    "totalPrice": 85000.00,
+    "totalPrice": 85000,
     "progress": 20,
     "status": "in-progress",
     "updatedAt": "2025-06-17T12:30:00.000Z",
@@ -423,8 +481,12 @@
     "estimatedDuration": 35,
     "actualStartDate": "2025-06-07T08:00:00Z",
     "estimatedEndDate": "2025-07-12T17:00:00Z",
-    "dependencies": ["SCOPE006"],
-    "assignedTeamMembers": [1014],
+    "dependencies": [
+      "SCOPE006"
+    ],
+    "assignedTeamMembers": [
+      1014
+    ],
     "workflowStatus": "waiting_dependencies"
   },
   {
@@ -439,7 +501,7 @@
     "attachments": null,
     "projectId": 2002,
     "createdAt": "2025-06-07T10:00:00.000Z",
-    "totalPrice": 12250.00,
+    "totalPrice": 12250,
     "progress": 0,
     "status": "pending",
     "updatedAt": "2025-06-17T11:45:00.000Z",
@@ -448,8 +510,12 @@
     "estimatedDuration": 7,
     "actualStartDate": null,
     "estimatedEndDate": "2025-07-15T17:00:00Z",
-    "dependencies": ["SCOPE006"],
-    "assignedTeamMembers": [1014],
+    "dependencies": [
+      "SCOPE006"
+    ],
+    "assignedTeamMembers": [
+      1014
+    ],
     "workflowStatus": "waiting_dependencies"
   },
   {
@@ -464,7 +530,7 @@
     "attachments": null,
     "projectId": 2002,
     "createdAt": "2025-06-08T09:00:00.000Z",
-    "totalPrice": 56250.00,
+    "totalPrice": 56250,
     "progress": 35,
     "status": "in-progress",
     "updatedAt": "2025-06-17T14:45:00.000Z",
@@ -473,8 +539,12 @@
     "estimatedDuration": 18,
     "actualStartDate": "2025-06-08T08:00:00Z",
     "estimatedEndDate": "2025-06-26T17:00:00Z",
-    "dependencies": ["SCOPE009"],
-    "assignedTeamMembers": [1011],
+    "dependencies": [
+      "SCOPE009"
+    ],
+    "assignedTeamMembers": [
+      1011
+    ],
     "workflowStatus": "no_dependencies"
   },
   {
@@ -489,7 +559,7 @@
     "attachments": null,
     "projectId": 2001,
     "createdAt": "2025-06-08T10:30:00.000Z",
-    "totalPrice": 37000.00,
+    "totalPrice": 37000,
     "progress": 40,
     "status": "in-progress",
     "updatedAt": "2025-06-17T15:15:00.000Z",
@@ -498,8 +568,13 @@
     "estimatedDuration": 21,
     "actualStartDate": "2025-06-02T08:00:00Z",
     "estimatedEndDate": "2025-06-23T17:00:00Z",
-    "dependencies": ["SCOPE005"],
-    "assignedTeamMembers": [1011, 1012],
+    "dependencies": [
+      "SCOPE005"
+    ],
+    "assignedTeamMembers": [
+      1011,
+      1012
+    ],
     "workflowStatus": "no_dependencies"
   }
 ]

@@ -47,8 +47,7 @@ function updateShopDrawings(drawings) {
   return db.write('shopDrawings', drawings);
 }
 
-// Initialize with existing data
-let shopDrawings = getShopDrawings();
+// Data will be loaded inside each route handler to avoid startup issues
 
 // GET /api/shop-drawings - Get all shop drawings
 router.get('/', (req, res) => {
@@ -137,7 +136,8 @@ router.post('/upload', upload.single('file'), (req, res) => {
     }
     
     // Generate new drawing ID
-    const newId = `SD${String(shopDrawings.length + 1).padStart(3, '0')}`;
+    const drawings = getShopDrawings();
+    const newId = `SD${String(drawings.length + 1).padStart(3, '0')}`;
     
     const newDrawing = {
       id: newId,
@@ -169,7 +169,6 @@ router.post('/upload', upload.single('file'), (req, res) => {
       notes: notes || ''
     };
     
-    const drawings = getShopDrawings();
     drawings.unshift(newDrawing);
     updateShopDrawings(drawings);
     
@@ -448,65 +447,5 @@ function getProjectName(projectId) {
   return projectNames[projectId] || 'Unknown Project';
 }
 
-// GET /api/shop-drawings/project/:projectId - Get drawings by project
-router.get('/project/:projectId', (req, res) => {
-  try {
-    const drawings = getShopDrawings();
-    const projectDrawings = drawings.filter(d => d.projectId === req.params.projectId);
-    
-    res.json({
-      success: true,
-      data: projectDrawings,
-      count: projectDrawings.length
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch project drawings',
-      error: error.message
-    });
-  }
-});
-
-// GET /api/shop-drawings/stats - Get drawing statistics
-router.get('/stats', (req, res) => {
-  try {
-    const drawings = getShopDrawings();
-    const stats = {
-      total: drawings.length,
-      byStatus: {
-        pending: drawings.filter(d => d.status === 'pending').length,
-        approved: drawings.filter(d => d.status === 'approved').length,
-        revision_required: drawings.filter(d => d.status === 'revision_required').length,
-        rejected: drawings.filter(d => d.status === 'rejected').length
-      },
-      byProject: {},
-      totalRevisions: drawings.reduce((sum, drawing) => sum + drawing.revisions.length, 0),
-      averageRevisionsPerDrawing: drawings.length > 0 
-        ? (drawings.reduce((sum, drawing) => sum + drawing.revisions.length, 0) / drawings.length).toFixed(1)
-        : 0
-    };
-    
-    // Calculate by project
-    drawings.forEach(drawing => {
-      const projectName = drawing.projectName;
-      if (!stats.byProject[projectName]) {
-        stats.byProject[projectName] = 0;
-      }
-      stats.byProject[projectName]++;
-    });
-    
-    res.json({
-      success: true,
-      data: stats
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get drawing statistics',
-      error: error.message
-    });
-  }
-});
 
 module.exports = router;

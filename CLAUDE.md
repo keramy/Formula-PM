@@ -107,11 +107,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
+### ⚠️ **CRITICAL: Server Startup Protocol**
+**NEVER CHANGE WORKING PORTS!** If you see "port already in use" - that means our app is ALREADY WORKING on that port.
+- **Backend**: Port 5014 ✅
+- **Frontend**: Port 3002 ✅
+- **See**: `SERVER_STARTUP_GUIDE.md` for detailed instructions
+
 ### Backend (formula-backend)
 ```bash
 cd formula-backend
 npm install          # Install dependencies
-npm start           # Start production server (port 5001)
+npm start           # Start production server (port 5014)
 npm run dev         # Start development server with nodemon
 ```
 
@@ -119,7 +125,7 @@ npm run dev         # Start development server with nodemon
 ```bash
 cd formula-project-app
 npm install         # Install dependencies
-npm start          # Start development server (port 3000)
+npm start          # Start development server (port 3002)
 npm run build      # Create production build
 npm test           # Run React tests
 
@@ -140,16 +146,16 @@ npm run performance # Run performance monitoring script
 
 ### Full Application Startup
 
-#### Option 1: Standard Development
-1. **Terminal 1**: `cd formula-backend && npm start`
-2. **Terminal 2**: `cd formula-project-app && npm start`
-3. **Access**: http://localhost:3000
+#### Option 1: Standard Development ✅
+1. **Terminal 1**: `cd formula-backend && npm start` (Port 5014)
+2. **Terminal 2**: `cd formula-project-app && npm start` (Port 3002)
+3. **Access**: http://localhost:3002
 
 #### Option 2: Optimized WSL2 Development (Recommended for WSL2)
 1. **Restart WSL2**: `wsl --shutdown` (from Windows PowerShell)
-2. **Backend**: `cd formula-backend && npm start`
-3. **Frontend**: `cd formula-project-app && npm run start:fast`
-4. **Access**: http://localhost:3000
+2. **Backend**: `cd formula-backend && npm start` (Port 5014)
+3. **Frontend**: `cd formula-project-app && npm run start:fast` (Port 3002)
+4. **Access**: http://localhost:3002
 
 #### Option 3: Docker Development (Best Performance on WSL2)
 1. **Start Both Services**: `cd formula-project-app && npm run docker:dev`

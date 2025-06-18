@@ -14,6 +14,13 @@ class PerformanceMonitor {
     bundleSize: 10 * 1024 * 1024, // 10MB
     hotReload: 500, // ms
     buildTime: 5000, // ms
+    // Formula PM specific thresholds
+    projectPageLoad: 1000, // ms
+    scopeItemsLoad: 800, // ms
+    shopDrawingsLoad: 1200, // ms
+    materialSpecsLoad: 1000, // ms
+    workflowAnalysis: 500, // ms
+    notificationDelivery: 100, // ms
   };
 
   static diagnostics = {
@@ -109,8 +116,9 @@ class PerformanceMonitor {
    * Send performance data to analytics service
    * @param {string} metric - Metric name
    * @param {number} value - Metric value
+   * @param {Object} metadata - Additional metadata
    */
-  static sendAnalytics(metric, value) {
+  static sendAnalytics(metric, value, metadata = {}) {
     // In a real app, this would send to your analytics service
     // For now, we'll just store in localStorage for debugging
     try {
@@ -120,6 +128,8 @@ class PerformanceMonitor {
         value,
         timestamp: new Date().toISOString(),
         userAgent: navigator.userAgent.substring(0, 100),
+        url: window.location.pathname,
+        ...metadata
       });
       
       // Keep only last 100 entries
@@ -204,6 +214,73 @@ class PerformanceMonitor {
   }
 
   /**
+   * Track API request performance
+   * @param {string} endpoint - API endpoint
+   * @param {number} duration - Request duration in ms
+   * @param {boolean} success - Whether request was successful
+   * @param {string} method - HTTP method
+   */
+  static trackApiRequest(endpoint, duration, success, method = 'GET') {
+    const metricName = `api_${method.toLowerCase()}_${endpoint.replace(/[^a-zA-Z0-9]/g, '_')}`;
+    
+    // Log with appropriate level
+    const threshold = this.thresholds.apiRequest;
+    const logLevel = duration > threshold ? 'warn' : 'log';
+    const status = success ? '✅' : '❌';
+    
+    console[logLevel](`🌐 API ${method} ${endpoint}: ${duration.toFixed(2)}ms ${status} ${duration > threshold ? '⚠️ SLOW' : ''}`);
+    
+    // Store for analytics
+    if (process.env.NODE_ENV === 'production') {
+      this.sendAnalytics(metricName, duration, {
+        endpoint,
+        method,
+        success,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }
+
+  /**
+   * Track Formula PM specific operations
+   * @param {string} operation - Operation name
+   * @param {number} duration - Duration in ms
+   * @param {Object} metadata - Additional metadata
+   */
+  static trackFormulaPMOperation(operation, duration, metadata = {}) {
+    const threshold = this.thresholds[operation] || 1000;
+    const logLevel = duration > threshold ? 'warn' : 'log';
+    
+    console[logLevel](`🏗️ Formula PM ${operation}: ${duration.toFixed(2)}ms ${duration > threshold ? '⚠️ SLOW' : '✅'}`, metadata);
+    
+    if (process.env.NODE_ENV === 'production') {
+      this.sendAnalytics(`formula_pm_${operation}`, duration, metadata);
+    }
+  }
+
+  /**
+   * Track user interactions for UX optimization
+   * @param {string} action - User action (click, scroll, etc.)
+   * @param {string} element - Element identifier
+   * @param {number} duration - Time to complete action
+   */
+  static trackUserInteraction(action, element, duration) {
+    const metricName = `user_${action}_${element}`;
+    
+    if (duration > 200) { // Only log slow interactions
+      console.log(`👤 User ${action} on ${element}: ${duration.toFixed(2)}ms`);
+    }
+    
+    if (process.env.NODE_ENV === 'production') {
+      this.sendAnalytics(metricName, duration, {
+        action,
+        element,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }
+
+  /**
    * Initialize performance monitoring
    */
   static init() {
@@ -277,6 +354,35 @@ export const withPerformanceMonitoring = (WrappedComponent, componentName) => {
     
     return React.createElement(WrappedComponent, props);
   });
+};
+
+// Hook for Formula PM specific operation timing
+export const useFormulaPMTiming = (operationName) => {
+  const startTiming = React.useCallback(() => {
+    PerformanceMonitor.startMeasurement(operationName);
+  }, [operationName]);
+
+  const endTiming = React.useCallback((metadata = {}) => {
+    const duration = PerformanceMonitor.endMeasurement(operationName);
+    PerformanceMonitor.trackFormulaPMOperation(operationName, duration, metadata);
+    return duration;
+  }, [operationName]);
+
+  return { startTiming, endTiming };
+};
+
+// Hook for user interaction timing
+export const useUserInteractionTiming = () => {
+  const trackInteraction = React.useCallback((action, element) => {
+    const startTime = performance.now();
+    
+    return () => {
+      const duration = performance.now() - startTime;
+      PerformanceMonitor.trackUserInteraction(action, element, duration);
+    };
+  }, []);
+
+  return { trackInteraction };
 };
 
 export default PerformanceMonitor;

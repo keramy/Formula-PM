@@ -815,6 +815,7 @@ export const AppContent = ({
               <TeamMembersList 
                 teamMembers={teamMembers}
                 tasks={tasks}
+                projects={projects}
                 onUpdateMember={updateTeamMember}
                 onDeleteMember={deleteTeamMember}
                 onAddMember={handleAddTeamMember}
@@ -905,18 +906,6 @@ export const AppContent = ({
               <ShopDrawingsList 
                 projects={projects}
                 teamMembers={teamMembers}
-                onDrawingUpload={(drawing) => {
-                  // This will be implemented with API integration
-                  console.log('Drawing uploaded:', drawing);
-                }}
-                onDrawingUpdate={(drawingId, updates) => {
-                  // This will be implemented with API integration
-                  console.log('Drawing updated:', drawingId, updates);
-                }}
-                onDrawingDelete={(drawingId) => {
-                  // This will be implemented with API integration
-                  console.log('Drawing deleted:', drawingId);
-                }}
               />
             </Suspense>
           </ErrorBoundary>

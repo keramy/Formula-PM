@@ -52,37 +52,36 @@ function broadcastActivity(activity) {
   console.log('📡 Activity broadcast:', activityEntry);
 }
 
-// Socket.IO connection handling
+// Socket.IO connection handling - Simplified to prevent hanging
 io.on('connection', (socket) => {
   console.log('👤 User connected:', socket.id);
   
   // Handle user authentication/identification
   socket.on('authenticate', (userData) => {
-    const user = {
-      socketId: socket.id,
-      userId: userData.userId,
-      userName: userData.userName || 'Anonymous',
-      email: userData.email,
-      joinedAt: new Date().toISOString()
-    };
-    
-    connectedUsers.set(socket.id, user);
-    userPresence.set(userData.userId, {
-      ...user,
-      status: 'online',
-      lastActivity: new Date().toISOString()
-    });
-    
-    console.log(`✅ User authenticated: ${user.userName} (${user.email})`);
-    
-    // Broadcast user joined
-    socket.broadcast.emit('userJoined', user);
-    
-    // Send current presence to the new user
-    socket.emit('presenceUpdate', Array.from(userPresence.values()));
-    
-    // Send recent activities to the new user
-    socket.emit('activityHistory', activityLog.slice(0, 20)); // Last 20 activities
+    try {
+      const user = {
+        socketId: socket.id,
+        userId: userData.userId || socket.id,
+        userName: userData.userName || 'Anonymous',
+        email: userData.email || '',
+        joinedAt: new Date().toISOString()
+      };
+      
+      connectedUsers.set(socket.id, user);
+      userPresence.set(user.userId, {
+        ...user,
+        status: 'online',
+        lastActivity: new Date().toISOString()
+      });
+      
+      console.log(`✅ User authenticated: ${user.userName}`);
+      
+      // Send acknowledgment to the user
+      socket.emit('authenticated', { success: true, user });
+    } catch (error) {
+      console.error('Authentication error:', error);
+      socket.emit('authenticated', { success: false, error: error.message });
+    }
   });
   
   // Handle joining specific rooms (projects, tasks, etc.)
@@ -229,29 +228,27 @@ io.on('connection', (socket) => {
   
   // Handle disconnection
   socket.on('disconnect', () => {
-    const user = connectedUsers.get(socket.id);
-    
-    if (user) {
-      console.log(`👋 User disconnected: ${user.userName}`);
+    try {
+      const user = connectedUsers.get(socket.id);
       
-      // Update presence
-      const presence = userPresence.get(user.userId);
-      if (presence) {
-        presence.status = 'offline';
-        presence.lastActivity = new Date().toISOString();
-        userPresence.set(user.userId, presence);
+      if (user) {
+        console.log(`👋 User disconnected: ${user.userName}`);
+        
+        // Update presence
+        const presence = userPresence.get(user.userId);
+        if (presence) {
+          presence.status = 'offline';
+          presence.lastActivity = new Date().toISOString();
+          userPresence.set(user.userId, presence);
+        }
+        
+        // Remove from connected users
+        connectedUsers.delete(socket.id);
+      } else {
+        console.log('👋 Anonymous user disconnected:', socket.id);
       }
-      
-      // Remove from connected users
-      connectedUsers.delete(socket.id);
-      
-      // Broadcast user left
-      socket.broadcast.emit('userLeft', user);
-      
-      // Broadcast updated presence
-      io.emit('presenceUpdate', Array.from(userPresence.values()));
-    } else {
-      console.log('👋 Anonymous user disconnected:', socket.id);
+    } catch (error) {
+      console.error('Disconnect error:', error);
     }
   });
 });
@@ -807,12 +804,30 @@ app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, (err) => {
+  if (err) {
+    console.error('❌ Server failed to start:', err);
+    process.exit(1);
+  }
+  
   console.log(`🚀 Formula Project Management API running on port ${PORT}`);
-  console.log(`🌐 Server accessible on all interfaces (0.0.0.0:${PORT})`);
+  console.log(`🌐 Server accessible at http://localhost:${PORT}`);
   console.log(`📧 Email service configured: ${process.env.EMAIL_USER ? 'Yes' : 'No (set EMAIL_USER and EMAIL_PASS)'}`);
   console.log(`🔗 WebSocket server ready for real-time connections`);
   
-  // Initialize database with seed data
-  initializeDatabase();
+  // Initialize database with seed data after server starts
+  setTimeout(() => {
+    initializeDatabase();
+  }, 100);
+});
+
+// Handle server errors
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} is already in use`);
+    process.exit(1);
+  } else {
+    console.error('❌ Server error:', err);
+    process.exit(1);
+  }
 });

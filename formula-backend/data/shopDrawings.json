@@ -196,5 +196,161 @@
     ],
     "fileSize": 1.7,
     "notes": "Energy-efficient LED lighting system for office areas with dimming controls"
+  },
+  {
+    "id": "SD007",
+    "fileName": "Luxury_Display_Cases_Rev_A.pdf",
+    "originalFileName": "Luxury_Display_Cases_Rev_A.pdf",
+    "projectId": 2004,
+    "projectName": "Zorlu Center Luxury Retail Fit-out",
+    "drawingType": "Retail Fixtures",
+    "room": "Main Retail Floor",
+    "version": "Rev A",
+    "status": "approved",
+    "uploadDate": "2025-02-15T13:30:00Z",
+    "uploadedBy": "Hakan Ayseli",
+    "uploadedById": 1009,
+    "approvedBy": "İpek Gönenç",
+    "approvedById": 1006,
+    "approvedDate": "2025-03-15T11:00:00Z",
+    "drawingNumber": "ZC-RT-001",
+    "scopeItemIds": ["SCOPE011"],
+    "connectedTasks": [3015],
+    "revisionHistory": [
+      {
+        "version": "Rev A",
+        "date": "2025-02-15T13:30:00Z",
+        "status": "approved",
+        "comment": "Luxury display cases approved for premium retail merchandise"
+      }
+    ],
+    "fileSize": 2.3,
+    "notes": "High-end display cases with integrated LED lighting and security features"
+  },
+  {
+    "id": "SD008",
+    "fileName": "Acoustic_Ceiling_System_Rev_A.pdf",
+    "originalFileName": "Acoustic_Ceiling_System_Rev_A.pdf",
+    "projectId": 2005,
+    "projectName": "Tekfen Plaza Office Modernization",
+    "drawingType": "Acoustic System",
+    "room": "Open Office Areas",
+    "version": "Rev A",
+    "status": "approved",
+    "uploadDate": "2025-03-20T10:15:00Z",
+    "uploadedBy": "Ebru Alkın",
+    "uploadedById": 1013,
+    "approvedBy": "Hande Selen Karaman",
+    "approvedById": 1010,
+    "approvedDate": "2025-04-10T14:15:00Z",
+    "drawingNumber": "TK-AC-001",
+    "scopeItemIds": ["SCOPE012"],
+    "connectedTasks": [3020],
+    "revisionHistory": [
+      {
+        "version": "Rev A",
+        "date": "2025-03-20T10:15:00Z",
+        "status": "approved",
+        "comment": "Acoustic ceiling system approved for noise reduction requirements"
+      }
+    ],
+    "fileSize": 1.8,
+    "notes": "Premium acoustic ceiling panels for enhanced sound control in office environment"
+  },
+  {
+    "id": "SD009",
+    "fileName": "Executive_Conference_Table_Rev_A.pdf",
+    "originalFileName": "Executive_Conference_Table_Rev_A.pdf",
+    "projectId": 2006,
+    "projectName": "Sabancı Center Executive Floor Renovation",
+    "drawingType": "Conference Furniture",
+    "room": "Executive Boardroom",
+    "version": "Rev A",
+    "status": "revision_required",
+    "uploadDate": "2025-04-01T14:20:00Z",
+    "uploadedBy": "Serra Uluveren",
+    "uploadedById": 1012,
+    "approvedBy": null,
+    "approvedById": null,
+    "approvedDate": null,
+    "drawingNumber": "SB-CF-001",
+    "scopeItemIds": ["SCOPE013"],
+    "connectedTasks": [3025],
+    "revisionHistory": [
+      {
+        "version": "Rev A",
+        "date": "2025-04-01T14:20:00Z",
+        "status": "revision_required",
+        "comment": "Requires walnut grain pattern approval and technology integration details"
+      }
+    ],
+    "fileSize": 3.2,
+    "notes": "Custom executive conference table requiring client approval for wood selection"
+  },
+  {
+    "id": "SD010",
+    "fileName": "Formula_Branded_Reception_Wall_Rev_B.pdf",
+    "originalFileName": "Formula_Branded_Reception_Wall_Rev_B.pdf",
+    "projectId": 2007,
+    "projectName": "Formula HQ Showroom & Office Renovation",
+    "drawingType": "Branding Elements",
+    "room": "Reception Area",
+    "version": "Rev B",
+    "status": "approved",
+    "uploadDate": "2025-05-15T11:45:00Z",
+    "uploadedBy": "Hande Selen Karaman",
+    "uploadedById": 1010,
+    "approvedBy": "Yusuf Sağlam",
+    "approvedById": 1005,
+    "approvedDate": "2025-05-20T15:30:00Z",
+    "drawingNumber": "FI-BR-001",
+    "scopeItemIds": ["SCOPE014"],
+    "connectedTasks": [3030],
+    "revisionHistory": [
+      {
+        "version": "Rev A",
+        "date": "2025-05-01T09:00:00Z",
+        "status": "revision_required",
+        "comment": "Adjust LED color temperature and mounting details"
+      },
+      {
+        "version": "Rev B",
+        "date": "2025-05-15T11:45:00Z",
+        "status": "approved",
+        "comment": "LED specifications updated, approved for fabrication"
+      }
+    ],
+    "fileSize": 2.1,
+    "notes": "Formula International branded reception feature with dynamic RGB lighting"
+  },
+  {
+    "id": "SD011",
+    "fileName": "Retail_Floor_Layout_Rev_A.pdf",
+    "originalFileName": "Retail_Floor_Layout_Rev_A.pdf",
+    "projectId": 2004,
+    "projectName": "Zorlu Center Luxury Retail Fit-out",
+    "drawingType": "Floor Plan",
+    "room": "Retail Floor",
+    "version": "Rev A",
+    "status": "pending",
+    "uploadDate": "2025-04-25T16:00:00Z",
+    "uploadedBy": "Serra Uluveren",
+    "uploadedById": 1012,
+    "approvedBy": null,
+    "approvedById": null,
+    "approvedDate": null,
+    "drawingNumber": "ZC-FP-001",
+    "scopeItemIds": ["SCOPE015"],
+    "connectedTasks": [],
+    "revisionHistory": [
+      {
+        "version": "Rev A",
+        "date": "2025-04-25T16:00:00Z",
+        "status": "pending",
+        "comment": "Overall retail floor layout submitted for review"
+      }
+    ],
+    "fileSize": 4.1,
+    "notes": "Comprehensive retail floor layout showing traffic flow and merchandise positioning"
   }
 ]

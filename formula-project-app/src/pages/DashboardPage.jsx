@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { Box } from '@mui/material';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import ModernStatsCards from '../components/charts/ModernStatsCards';
+import FinancialAnalytics from '../components/charts/FinancialAnalytics';
 import { ModernProjectOverview, LoadingFallback } from '../components/lazy';
 
 const DashboardPage = ({ projects, tasks, teamMembers }) => {
@@ -12,6 +13,9 @@ const DashboardPage = ({ projects, tasks, teamMembers }) => {
           projects={projects} 
           tasks={tasks} 
           teamMembers={teamMembers} 
+        />
+        <FinancialAnalytics 
+          projects={projects} 
         />
         <Suspense fallback={<LoadingFallback message="Loading project overview..." />}>
           <ModernProjectOverview 

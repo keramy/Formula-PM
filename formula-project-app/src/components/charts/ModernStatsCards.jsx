@@ -11,49 +11,84 @@ const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
   const totalTasks = tasks.length;
   const activeProjects = projects.filter(project => project.status === 'active').length;
   
-  // Calculate total estimated hours (mock calculation)
-  const totalHours = tasks.reduce((sum, task) => {
-    return sum + (task.estimatedHours || 8); // Default 8 hours if not specified
-  }, 0);
+  // Calculate budget statistics
+  const totalBudget = projects.reduce((sum, project) => sum + (project.budget || 0), 0);
+  const activeBudget = projects
+    .filter(project => project.status === 'active')
+    .reduce((sum, project) => sum + (project.budget || 0), 0);
+  const completedBudget = projects
+    .filter(project => project.status === 'completed')
+    .reduce((sum, project) => sum + (project.budget || 0), 0);
+  
+  // Calculate average project progress for active projects
+  const activeProjectsProgress = projects
+    .filter(project => project.status === 'active')
+    .reduce((sum, project) => sum + (project.progress || 0), 0);
+  const avgProgress = activeProjects > 0 ? Math.round(activeProjectsProgress / activeProjects) : 0;
 
   // Calculate completion percentage
   const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
+  // Calculate overall progress
+  const overallProgress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  
+  // Project status distribution
+  const completedProjects = projects.filter(p => p.status === 'completed').length;
+  const inProgressProjects = projects.filter(p => p.status === 'active').length;
+
+  // Format currency
+  const formatCurrency = (amount) => {
+    if (amount >= 1000000) {
+      return `₺${(amount / 1000000).toFixed(1)}M`;
+    } else if (amount >= 1000) {
+      return `₺${(amount / 1000).toFixed(0)}K`;
+    } else {
+      return `₺${amount.toLocaleString()}`;
+    }
+  };
+
   const statsData = [
     {
-      title: 'Total Revenue',
-      value: '$2.5M',
-      change: '+10%',
+      title: 'Total Portfolio Value',
+      value: formatCurrency(totalBudget),
+      change: `${totalProjects} projects`,
       isPositive: true,
-      subtitle: 'From completed projects'
+      subtitle: 'Total project budgets'
     },
     {
-      title: 'Active Projects',
-      value: activeProjects.toString(),
-      change: '+5%',
+      title: 'Active Project Value',
+      value: formatCurrency(activeBudget),
+      change: `${activeProjects} active`,
       isPositive: true,
       subtitle: 'Currently in progress'
     },
     {
-      title: 'Time Spent',
-      value: `${totalHours}h`,
-      change: '-2%',
-      isPositive: false,
-      subtitle: 'Total estimated hours'
+      title: 'Revenue Generated',
+      value: formatCurrency(completedBudget),
+      change: `${avgProgress}% avg progress`,
+      isPositive: avgProgress > 50,
+      subtitle: 'From completed projects'
     },
     {
-      title: 'Completion Rate',
+      title: 'Task Completion',
       value: `${completionPercentage}%`,
       change: `${completedTasks}/${totalTasks}`,
       isPositive: completionPercentage > 70,
       subtitle: 'Tasks completed'
+    },
+    {
+      title: 'Overall Progress',
+      value: `${overallProgress}%`,
+      change: `${Math.round((completedProjects / totalProjects) * 100)}% completed`,
+      isPositive: overallProgress > 60,
+      subtitle: 'Project completion rate'
     }
   ];
 
   return (
     <Grid container spacing={3} sx={{ mb: 4 }}>
       {statsData.map((stat, index) => (
-        <Grid item xs={12} sm={6} md={3} key={index}>
+        <Grid item xs={12} sm={6} md={2.4} key={index}>
           <Paper
             elevation={0}
             sx={{

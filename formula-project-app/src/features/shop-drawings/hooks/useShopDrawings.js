@@ -13,16 +13,26 @@ export const useShopDrawings = (projectId = null) => {
       setError(null);
       
       let data;
-      if (projectId) {
-        data = await shopDrawingService.getDrawingsByProject(projectId);
-      } else {
-        data = await shopDrawingService.getAllDrawings();
+      try {
+        if (projectId) {
+          data = await shopDrawingService.getDrawingsByProject(projectId);
+        } else {
+          data = await shopDrawingService.getAllDrawings();
+        }
+      } catch (apiError) {
+        console.warn('API unavailable, using demo data for shop drawings');
+        data = shopDrawingService.getMockDrawings();
+        if (projectId) {
+          data = data.filter(d => d.projectId === projectId);
+        }
       }
       
       setDrawings(data);
     } catch (err) {
       setError(err.message || 'Failed to load shop drawings');
       console.error('Error loading shop drawings:', err);
+      // Fallback to mock data
+      setDrawings(shopDrawingService.getMockDrawings());
     } finally {
       setLoading(false);
     }

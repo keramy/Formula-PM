@@ -1,8 +1,13 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+import { PerformanceMonitor } from '../../utils/performance';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5014/api';
 
 class ApiService {
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
+    const startTime = performance.now();
+    const method = options.method || 'GET';
+    
     console.log('🔗 API Request:', url, 'Base URL:', API_BASE_URL);
     const config = {
       headers: {
@@ -14,6 +19,8 @@ class ApiService {
 
     try {
       const response = await fetch(url, config);
+      const duration = performance.now() - startTime;
+      
       console.log('📡 Response received:', response.status, response.statusText, 'for', url);
       
       // Check if request was aborted
@@ -22,15 +29,25 @@ class ApiService {
       }
       
       if (!response.ok) {
+        // Track failed API requests
+        PerformanceMonitor.trackApiRequest(endpoint, duration, false, method);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.json();
+      
+      // Track successful API requests
+      PerformanceMonitor.trackApiRequest(endpoint, duration, true, method);
+      
       console.log('✅ Data received:', data?.length ? `${data.length} items` : 'data', 'for', endpoint);
       return data;
     } catch (error) {
+      const duration = performance.now() - startTime;
+      
       // Don't log aborted requests as errors
       if (error.name !== 'AbortError' && !config.signal?.aborted) {
+        // Track failed API requests
+        PerformanceMonitor.trackApiRequest(endpoint, duration, false, method);
         console.error(`🚨 API request failed: ${endpoint}`, error);
         console.error('🚨 Full URL was:', url);
         console.error('🚨 Error details:', error.message, error.status);
@@ -364,6 +381,206 @@ class ApiService {
       }
       
       throw error;
+    }
+  }
+
+  // Material Specifications API
+  async getMaterialSpecifications(params = {}) {
+    try {
+      const queryParams = new URLSearchParams(params).toString();
+      const endpoint = `/specifications${queryParams ? `?${queryParams}` : ''}`;
+      const response = await this.request(endpoint);
+      const specifications = response.data || response;
+      
+      // Format the specifications to match frontend expectations
+      return specifications.map(spec => ({
+        ...spec,
+        unitCost: typeof spec.unitPrice === 'number' ? `$${spec.unitPrice.toFixed(2)}` : 
+                  typeof spec.unitCost === 'number' ? `$${spec.unitCost.toFixed(2)}` : 
+                  spec.unitCost || '$0.00',
+        totalCost: typeof spec.totalCost === 'number' ? `$${spec.totalCost.toFixed(2)}` : 
+                   spec.totalCost || '$0.00',
+        quantity: spec.quantity?.toString() || '1',
+        leadTime: spec.leadTime?.toString() || '',
+        supplier: spec.supplierName || spec.supplier || '',
+        projectName: spec.projectName || 'Unknown Project',
+        linkedDrawings: spec.shopDrawingIds || spec.linkedDrawings || []
+      }));
+    } catch (error) {
+      console.warn('Backend unavailable, using demo data for specifications');
+      // Return demo data for GitHub Pages
+      return [
+        {
+          id: 'SPEC001',
+          itemId: 'SPEC001',
+          description: 'Upper Cabinet - 30" Wide',
+          category: 'Kitchen Cabinets',
+          material: 'Maple Hardwood',
+          finish: 'Natural Stain',
+          hardware: 'Soft-close hinges, adjustable shelves',
+          dimensions: '30" x 12" x 36"',
+          quantity: '4',
+          unit: 'EA',
+          unitCost: '$450.00',
+          totalCost: '$1,800.00',
+          supplier: 'Cabinet Works Inc',
+          partNumber: 'UC-30-NAT',
+          leadTime: '14 days',
+          notes: 'Pre-finished, ready to install',
+          drawingReference: 'Kitchen_Cabinets_Rev_C.pdf',
+          roomLocation: 'Kitchen',
+          installationPhase: 'Phase 2',
+          projectId: 2001,
+          projectName: 'Downtown Office Renovation',
+          linkedDrawings: ['SD001'],
+          status: 'approved'
+        }
+      ];
+    }
+  }
+
+  async getMaterialSpecificationById(id) {
+    try {
+      const response = await this.request(`/specifications/${id}`);
+      return response.data || response;
+    } catch (error) {
+      console.error('Error fetching specification:', error);
+      throw error;
+    }
+  }
+
+  async getMaterialSpecificationsByProject(projectId) {
+    try {
+      const response = await this.request(`/specifications/project/${projectId}`);
+      return response.data || response;
+    } catch (error) {
+      console.error('Error fetching project specifications:', error);
+      return [];
+    }
+  }
+
+  async createMaterialSpecification(specData) {
+    try {
+      const response = await this.request('/specifications', {
+        method: 'POST',
+        body: JSON.stringify(specData)
+      });
+      const spec = response.data || response;
+      
+      // Format the response to match frontend expectations
+      return {
+        ...spec,
+        unitCost: typeof spec.unitPrice === 'number' ? `$${spec.unitPrice.toFixed(2)}` : 
+                  typeof spec.unitCost === 'number' ? `$${spec.unitCost.toFixed(2)}` : 
+                  spec.unitCost || '$0.00',
+        totalCost: typeof spec.totalCost === 'number' ? `$${spec.totalCost.toFixed(2)}` : 
+                   spec.totalCost || '$0.00',
+        quantity: spec.quantity?.toString() || '1',
+        leadTime: spec.leadTime?.toString() || '',
+        supplier: spec.supplierName || spec.supplier || '',
+        projectName: spec.projectName || 'Unknown Project',
+        linkedDrawings: spec.shopDrawingIds || spec.linkedDrawings || []
+      };
+    } catch (error) {
+      console.error('Error creating specification:', error);
+      throw error;
+    }
+  }
+
+  async updateMaterialSpecification(id, specData) {
+    try {
+      const response = await this.request(`/specifications/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(specData)
+      });
+      return response.data || response;
+    } catch (error) {
+      console.error('Error updating specification:', error);
+      throw error;
+    }
+  }
+
+  async updateMaterialSpecificationStatus(id, status, notes) {
+    try {
+      const response = await this.request(`/specifications/${id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status, notes })
+      });
+      return response.data || response;
+    } catch (error) {
+      console.error('Error updating specification status:', error);
+      throw error;
+    }
+  }
+
+  async updateMaterialSpecificationLinks(id, linkedDrawings, linkedTasks) {
+    try {
+      const response = await this.request(`/specifications/${id}/links`, {
+        method: 'PATCH',
+        body: JSON.stringify({ linkedDrawings, linkedTasks })
+      });
+      return response.data || response;
+    } catch (error) {
+      console.error('Error updating specification links:', error);
+      throw error;
+    }
+  }
+
+  async deleteMaterialSpecification(id) {
+    try {
+      await this.request(`/specifications/${id}`, {
+        method: 'DELETE'
+      });
+      return true;
+    } catch (error) {
+      console.error('Error deleting specification:', error);
+      throw error;
+    }
+  }
+
+  async getMaterialSpecificationStats() {
+    try {
+      const response = await this.request('/specifications/stats');
+      return response.data || response;
+    } catch (error) {
+      console.error('Error fetching specification stats:', error);
+      return {
+        total: 0,
+        byStatus: {
+          pending: 0,
+          approved: 0,
+          revision_required: 0,
+          rejected: 0
+        },
+        byCategory: {},
+        totalCost: 0,
+        approvedCost: 0,
+        avgCostPerItem: 0
+      };
+    }
+  }
+
+  // Shop Drawings API (for linking)
+  async getShopDrawings(projectId) {
+    try {
+      const response = await this.request(`/shop-drawings/project/${projectId}`);
+      return response.data || response;
+    } catch (error) {
+      console.warn('Backend unavailable, using demo data for shop drawings');
+      return [
+        {
+          id: 'SD001',
+          name: 'Kitchen Cabinet Details',
+          projectId: projectId,
+          status: 'approved'
+        },
+        {
+          id: 'SD002',
+          name: 'Reception Desk Assembly',
+          projectId: projectId,
+          status: 'pending'
+        }
+      ];
     }
   }
 }

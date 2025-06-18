@@ -91,7 +91,17 @@
       "Bash(PORT=5002 npm start)",
       "Bash(VITE_API_URL=http://localhost:5002/api npm start)",
       "Bash(PORT=5003 npm start)",
-      "Bash(PORT=5004 npm start)"
+      "Bash(PORT=5004 npm start)",
+      "Bash(powershell.exe:*)",
+      "Bash(sudo lsof:*)",
+      "Bash(PORT=5002 node server.js)",
+      "Bash(PORT=5003 node server.js)",
+      "Bash(python3:*)",
+      "Bash(PORT=5007 npm run dev)",
+      "Bash(NODE_ENV=development PORT=5013 timeout 10s node server.js)",
+      "Bash(PORT=5013 npm start)",
+      "Bash(PORT=5014 node server.js)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }

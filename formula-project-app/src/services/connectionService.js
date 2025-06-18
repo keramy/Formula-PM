@@ -2,6 +2,9 @@
  * Connection Service - Manages relationships between scope items, shop drawings, and material specifications
  */
 
+import apiService from './api/apiService';
+import { PerformanceMonitor } from '../utils/performance';
+
 class ConnectionService {
   constructor() {
     this.connections = new Map(); // Store connections in memory (would be API calls in production)
@@ -13,18 +16,18 @@ class ConnectionService {
       // Rules for what dependencies are required before production can start
       productionBlockers: {
         shopDrawingRequired: {
-          condition: (scopeItem) => scopeItem.shopDrawingRequired === true,
-          blockedBy: (scopeItem, connections) => {
-            const drawings = this.getConnectedDrawings(scopeItem.id);
-            return drawings.filter(d => d.status !== 'approved').length > 0;
+          condition: (scopeItem) => {
+            // Check if scope item requires shop drawings based on category/type
+            const category = scopeItem.category?.toLowerCase() || '';
+            return category.includes('cabinet') || category.includes('millwork') || 
+                   category.includes('custom') || scopeItem.shopDrawingRequired === true;
           },
           message: "Shop drawing approval required before production"
         },
         materialSpecRequired: {
-          condition: (scopeItem) => scopeItem.materialSpecRequired === true,
-          blockedBy: (scopeItem, connections) => {
-            const specs = this.getConnectedMaterialSpecs(scopeItem.id);
-            return specs.filter(s => s.status !== 'approved').length > 0;
+          condition: (scopeItem) => {
+            // Most items require material specifications
+            return scopeItem.materialSpecRequired !== false; // Default to true unless explicitly false
           },
           message: "Material specification approval required before production"
         }
@@ -88,28 +91,78 @@ class ConnectionService {
     return this.createConnection('scope', scopeItemId, 'material', specId, { notes });
   }
 
-  getConnectedDrawings(scopeItemId) {
+  getConnectedDrawings(scopeItemId, allDrawings = []) {
+    // First check in-memory connections
     const connections = this.getConnections('scope', scopeItemId);
-    return connections
+    const connectedDrawings = connections
       .filter(conn => conn.targetType === 'drawing')
-      .map(conn => ({
-        connectionId: conn.id,
-        drawingId: conn.targetId,
-        notes: conn.notes,
-        createdAt: conn.createdAt
+      .map(conn => {
+        const drawing = allDrawings.find(d => d.id === conn.targetId);
+        return drawing ? {
+          connectionId: conn.id,
+          drawingId: conn.targetId,
+          notes: conn.notes,
+          createdAt: conn.createdAt,
+          drawing
+        } : null;
+      })
+      .filter(Boolean);
+
+    // Also check if drawings are linked by scopeItemIds in the backend data
+    const linkedDrawings = allDrawings
+      .filter(drawing => drawing.scopeItemIds?.includes(scopeItemId))
+      .map(drawing => ({
+        connectionId: `auto_${scopeItemId}_${drawing.id}`,
+        drawingId: drawing.id,
+        notes: 'Auto-linked from backend',
+        createdAt: drawing.createdAt || new Date().toISOString(),
+        drawing
       }));
+
+    // Combine and deduplicate
+    const allConnected = [...connectedDrawings, ...linkedDrawings];
+    const unique = allConnected.filter((item, index, self) => 
+      index === self.findIndex(t => t.drawingId === item.drawingId)
+    );
+
+    return unique;
   }
 
-  getConnectedMaterialSpecs(scopeItemId) {
+  getConnectedMaterialSpecs(scopeItemId, allSpecs = []) {
+    // First check in-memory connections
     const connections = this.getConnections('scope', scopeItemId);
-    return connections
+    const connectedSpecs = connections
       .filter(conn => conn.targetType === 'material')
-      .map(conn => ({
-        connectionId: conn.id,
-        specId: conn.targetId,
-        notes: conn.notes,
-        createdAt: conn.createdAt
+      .map(conn => {
+        const spec = allSpecs.find(s => s.id === conn.targetId);
+        return spec ? {
+          connectionId: conn.id,
+          specId: conn.targetId,
+          notes: conn.notes,
+          createdAt: conn.createdAt,
+          spec
+        } : null;
+      })
+      .filter(Boolean);
+
+    // Also check if specs are linked by scopeItemIds in the backend data
+    const linkedSpecs = allSpecs
+      .filter(spec => spec.scopeItemIds?.includes(scopeItemId))
+      .map(spec => ({
+        connectionId: `auto_${scopeItemId}_${spec.id}`,
+        specId: spec.id,
+        notes: 'Auto-linked from backend',
+        createdAt: spec.createdAt || new Date().toISOString(),
+        spec
       }));
+
+    // Combine and deduplicate
+    const allConnected = [...connectedSpecs, ...linkedSpecs];
+    const unique = allConnected.filter((item, index, self) => 
+      index === self.findIndex(t => t.specId === item.specId)
+    );
+
+    return unique;
   }
 
   // Dependency Analysis
@@ -157,20 +210,9 @@ class ConnectionService {
       }
     };
 
-    // Get connected items
-    const connectedDrawings = this.getConnectedDrawings(scopeItem.id);
-    const connectedSpecs = this.getConnectedMaterialSpecs(scopeItem.id);
-
-    // Populate actual connected items
-    analysis.connections.drawings = connectedDrawings.map(conn => {
-      const drawing = shopDrawings.find(d => d.id === conn.drawingId);
-      return { ...conn, drawing };
-    }).filter(conn => conn.drawing);
-
-    analysis.connections.materials = connectedSpecs.map(conn => {
-      const spec = materialSpecs.find(s => s.id === conn.specId);
-      return { ...conn, spec };
-    }).filter(conn => conn.spec);
+    // Get connected items (now includes backend auto-linking)
+    analysis.connections.drawings = this.getConnectedDrawings(scopeItem.id, shopDrawings);
+    analysis.connections.materials = this.getConnectedMaterialSpecs(scopeItem.id, materialSpecs);
 
     // Check production blockers
     Object.entries(this.dependencyRules.productionBlockers).forEach(([ruleKey, rule]) => {
@@ -288,19 +330,28 @@ class ConnectionService {
 
     // Group scope items by category
     scopeItems.forEach(item => {
-      const category = item.category?.toLowerCase();
-      if (category?.includes('construction') || category?.includes('structural') || 
-          category?.includes('demolition') || category?.includes('flooring')) {
+      const category = item.category?.toLowerCase() || '';
+      const description = item.description?.toLowerCase() || '';
+      
+      if (category.includes('construction') || category.includes('structural') || 
+          category.includes('demolition') || category.includes('flooring') ||
+          description.includes('construction') || description.includes('structural')) {
         groups.construction.push(item);
-      } else if (category?.includes('millwork') || category?.includes('cabinet') || 
-                 category?.includes('carpentry')) {
+      } else if (category.includes('millwork') || category.includes('cabinet') || 
+                 category.includes('carpentry') || category.includes('woodwork') ||
+                 description.includes('cabinet') || description.includes('millwork')) {
         groups.millwork.push(item);
-      } else if (category?.includes('electrical') || category?.includes('lighting') || 
-                 category?.includes('power')) {
+      } else if (category.includes('electrical') || category.includes('lighting') || 
+                 category.includes('power') || category.includes('electric') ||
+                 description.includes('electrical') || description.includes('lighting')) {
         groups.electric.push(item);
-      } else if (category?.includes('mep') || category?.includes('hvac') || 
-                 category?.includes('plumbing') || category?.includes('mechanical')) {
+      } else if (category.includes('mep') || category.includes('hvac') || 
+                 category.includes('plumbing') || category.includes('mechanical') ||
+                 description.includes('hvac') || description.includes('mechanical')) {
         groups.mep.push(item);
+      } else {
+        // Default to construction if no clear category
+        groups.construction.push(item);
       }
     });
 
@@ -310,8 +361,20 @@ class ConnectionService {
       if (items.length === 0) {
         progress[groupKey] = 0;
       } else {
-        const completedItems = items.filter(item => item.status === 'completed').length;
-        progress[groupKey] = Math.round((completedItems / items.length) * 100);
+        // Calculate progress based on item progress values or completion status
+        const totalProgress = items.reduce((sum, item) => {
+          if (item.progress !== undefined) {
+            return sum + (item.progress || 0);
+          } else if (item.status === 'completed') {
+            return sum + 100;
+          } else if (item.status === 'in-progress') {
+            return sum + 50;
+          } else {
+            return sum + 0;
+          }
+        }, 0);
+        
+        progress[groupKey] = Math.round(totalProgress / items.length);
       }
     });
 
@@ -319,10 +382,51 @@ class ConnectionService {
   }
 
   // Workflow Analysis
+  async getWorkflowStatusAsync(projectId) {
+    const startTime = performance.now();
+    
+    try {
+      // Fetch all data from backend
+      PerformanceMonitor.startMeasurement('workflowDataFetch');
+      const [scopeItems, shopDrawings, materialSpecs] = await Promise.all([
+        apiService.getScopeItems(projectId),
+        apiService.getShopDrawings(projectId),
+        apiService.getMaterialSpecifications({ projectId })
+      ]);
+      PerformanceMonitor.endMeasurement('workflowDataFetch');
+
+      const result = this.getWorkflowStatus(projectId, scopeItems, shopDrawings, materialSpecs);
+      
+      // Track workflow analysis performance
+      const duration = performance.now() - startTime;
+      PerformanceMonitor.trackFormulaPMOperation('workflowAnalysis', duration, {
+        projectId,
+        scopeItemsCount: scopeItems.length,
+        shopDrawingsCount: shopDrawings.length,
+        materialSpecsCount: materialSpecs.length
+      });
+
+      return result;
+    } catch (error) {
+      const duration = performance.now() - startTime;
+      PerformanceMonitor.trackFormulaPMOperation('workflowAnalysis', duration, {
+        projectId,
+        error: error.message,
+        success: false
+      });
+      
+      console.error('Error fetching workflow data:', error);
+      // Return empty analysis if backend fails
+      return this.getWorkflowStatus(projectId, [], [], []);
+    }
+  }
+
   getWorkflowStatus(projectId, scopeItems, shopDrawings, materialSpecs) {
+    PerformanceMonitor.startMeasurement('workflowAnalysisCalculation');
+    
     const analysis = this.analyzeDependencies(scopeItems, shopDrawings, materialSpecs);
     
-    return {
+    const result = {
       projectId,
       timestamp: new Date().toISOString(),
       summary: {
@@ -335,6 +439,9 @@ class ConnectionService {
       details: analysis,
       recommendations: this.generateRecommendations(analysis)
     };
+
+    PerformanceMonitor.endMeasurement('workflowAnalysisCalculation');
+    return result;
   }
 
   generateRecommendations(analysis) {
