@@ -53,31 +53,31 @@ export const colors = {
     }
   },
   
-  // Status Colors
+  // Status Colors - Enhanced contrast
   status: {
-    success: '#27ae60',     // Green for completed/success
-    successLight: '#2ecc71',
-    successDark: '#229954',
+    success: '#1e8449',     // Darker green for better contrast (was #27ae60)
+    successLight: '#27ae60',
+    successDark: '#186a3b',
     
-    warning: '#f39c12',     // Orange for warnings/in-progress
-    warningLight: '#f1c40f',
-    warningDark: '#e67e22',
+    warning: '#d68910',     // Darker orange for better contrast (was #f39c12)
+    warningLight: '#f39c12',
+    warningDark: '#b7950b',
     
-    error: '#e74c3c',       // Red for errors/urgent
-    errorLight: '#ec7063',
-    errorDark: '#c0392b',
+    error: '#c0392b',       // Darker red for better contrast (was #e74c3c)
+    errorLight: '#e74c3c',
+    errorDark: '#a93226',
     
-    info: '#3498db',        // Blue for info
-    infoLight: '#5dade2',
-    infoDark: '#2980b9'
+    info: '#2874a6',        // Darker blue for better contrast (was #3498db)
+    infoLight: '#3498db',
+    infoDark: '#1f618d'
   },
   
-  // Priority Colors
+  // Priority Colors - Enhanced contrast
   priority: {
-    low: '#27ae60',         // Green
-    medium: '#f39c12',      // Orange  
-    high: '#e67e22',        // Dark orange
-    urgent: '#e74c3c'       // Red
+    low: '#1e8449',         // Darker green for better contrast
+    medium: '#d68910',      // Darker orange for better contrast
+    high: '#ca6f1e',        // Darker orange for better contrast
+    urgent: '#c0392b'       // Darker red for better contrast
   },
   
   // Project Type Colors
@@ -105,11 +105,11 @@ export const colors = {
     }
   },
   
-  // Border Colors
+  // Border Colors - Enhanced contrast
   border: {
-    light: '#e2e8f0',       // Light border
-    medium: '#cbd5e0',      // Medium border
-    dark: '#a0aec0'         // Dark border
+    light: '#d0d0d0',       // Enhanced light border (was #e2e8f0)
+    medium: '#b0b0b0',      // Enhanced medium border (was #cbd5e0)
+    dark: '#909090'         // Enhanced dark border (was #a0aec0)
   },
   
   // Construction-specific colors

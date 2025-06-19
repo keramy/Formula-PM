@@ -560,7 +560,7 @@
     "projectId": 2001,
     "name": "Project Milestone Review - Phase 1 Completion",
     "description": "Review completion of construction phase items and prepare for millwork installation",
-    "status": "pending",
+    "status": "completed",
     "priority": "high",
     "assignedTo": 1008,
     "startDate": "2025-06-20",
@@ -569,7 +569,7 @@
     "estimatedHours": 8,
     "actualHours": 0,
     "createdAt": "2025-06-17T08:00:00.000Z",
-    "updatedAt": "2025-06-17T08:00:00.000Z",
+    "updatedAt": "2025-06-19T12:03:43.272Z",
     "scopeItemIds": [],
     "category": "Project Management",
     "tags": [
@@ -797,7 +797,7 @@
     "projectId": 2006,
     "name": "Executive Suite Millwork Planning",
     "description": "Plan custom millwork for executive offices including built-in storage and desk units",
-    "status": "pending",
+    "status": "completed",
     "priority": "medium",
     "assignedTo": 1008,
     "startDate": "2025-06-01",
@@ -806,7 +806,7 @@
     "estimatedHours": 40,
     "actualHours": 0,
     "createdAt": "2025-05-20T11:00:00.000Z",
-    "updatedAt": "2025-05-20T11:00:00.000Z",
+    "updatedAt": "2025-06-19T14:35:11.152Z",
     "scopeItemIds": [
       "SCOPE019"
     ],

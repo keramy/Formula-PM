@@ -3,19 +3,17 @@ import {
   Box, 
   Paper, 
   Typography, 
-  Chip, 
   Avatar, 
   Card, 
   CardContent,
   Tooltip
 } from '@mui/material';
 import {
-  Flag,
-  PriorityHigh,
-  Warning,
   CalendarToday,
   Person as PersonIcon
 } from '@mui/icons-material';
+import { PriorityChip } from '../ui/StatusChip';
+import { getPriorityConfig, isCompletedStatus } from '../../utils/statusConfig';
 
 const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }) => {
 
@@ -72,12 +70,7 @@ const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }
     return grouped;
   }, [tasks]);
 
-  const priorityConfig = {
-    low: { label: 'Low', color: '#27ae60', bgColor: '#eafaf1', icon: <Flag fontSize="small" /> },
-    medium: { label: 'Medium', color: '#f39c12', bgColor: '#fef9e7', icon: <Flag fontSize="small" /> },
-    high: { label: 'High', color: '#e67e22', bgColor: '#fef5e7', icon: <Warning fontSize="small" /> },
-    urgent: { label: 'Urgent', color: '#e74c3c', bgColor: '#fdf2f2', icon: <PriorityHigh fontSize="small" /> }
-  };
+  // Using centralized priority configuration
 
   const getAssignedMember = (assignedTo) => {
     return teamMembers.find(member => member.id === assignedTo);
@@ -104,7 +97,7 @@ const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }
 
   const TaskCard = ({ task }) => {
     const assignedMember = getAssignedMember(task.assignedTo);
-    const priority = priorityConfig[task.priority] || priorityConfig.medium;
+    const priority = getPriorityConfig(task.priority);
     const dueInfo = formatDueDate(task.dueDate);
 
     return (
@@ -139,20 +132,12 @@ const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }
 
               {/* Priority Badge */}
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-                <Chip
-                  icon={priority.icon}
-                  label={priority.label}
+                <PriorityChip 
+                  priority={task.priority} 
                   size="small"
                   sx={{
-                    backgroundColor: priority.bgColor,
-                    color: priority.color,
-                    fontWeight: 500,
                     height: 20,
-                    fontSize: '0.7rem',
-                    '& .MuiChip-icon': {
-                      color: priority.color,
-                      fontSize: '12px'
-                    }
+                    fontSize: '0.7rem'
                   }}
                 />
               </Box>

@@ -215,13 +215,13 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                         mx: 1,
                         py: 1.5,
                         backgroundColor: currentTab === item.id ? colors.accent : 'transparent',
-                        color: currentTab === item.id ? (darkMode ? colors.background : colors.background) : colors.textSecondary,
+                        color: currentTab === item.id ? '#ffffff !important' : colors.textSecondary,
                         justifyContent: isCollapsed ? 'center' : 'flex-start',
                         minHeight: 48,
                         borderLeft: currentTab === item.id ? `3px solid ${colors.accent}` : 'none',
                         '&:hover': {
                           backgroundColor: currentTab === item.id ? colors.accent : colors.hover,
-                          color: currentTab === item.id ? (darkMode ? colors.background : colors.background) : colors.text,
+                          color: currentTab === item.id ? '#ffffff !important' : colors.text,
                           transform: 'translateX(4px)'
                         },
                         transition: 'all 0.2s ease-in-out'
@@ -229,7 +229,7 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                     >
                       <ListItemIcon
                         sx={{
-                          color: 'inherit',
+                          color: currentTab === item.id ? '#ffffff !important' : 'inherit',
                           minWidth: isCollapsed ? 0 : 40,
                           justifyContent: 'center'
                         }}
@@ -242,12 +242,13 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                           secondary={item.description}
                           primaryTypographyProps={{
                             fontSize: '0.9rem',
-                            fontWeight: currentTab === item.id ? 600 : 400
+                            fontWeight: currentTab === item.id ? 600 : 400,
+                            color: currentTab === item.id ? '#ffffff !important' : 'inherit'
                           }}
                           secondaryTypographyProps={{
                             fontSize: '0.75rem',
                             color: currentTab === item.id 
-                              ? (darkMode ? `${colors.background}cc` : `${colors.background}cc`)
+                              ? '#ffffffcc'
                               : colors.textMuted,
                             display: 'none' // Show on hover or when active
                           }}

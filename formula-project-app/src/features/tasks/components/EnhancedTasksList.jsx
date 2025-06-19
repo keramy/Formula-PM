@@ -1,12 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import {
   Box,
-  Card,
-  CardContent,
   Typography,
-  Chip,
   Button,
-  IconButton,
   Grid,
   Avatar,
   LinearProgress,
@@ -24,11 +20,6 @@ import {
   Undo,
   Edit as EditIcon,
   Visibility as ViewIcon,
-  Schedule,
-  PlayArrow,
-  Flag,
-  Error,
-  PriorityHigh,
   ViewList,
   ViewModule,
   DateRange
@@ -37,61 +28,18 @@ import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';
 import BoardView from '../../../components/views/BoardView';
+import { StatusChip, ActionTooltip, StandardCard, TaskStatusChip, PriorityChip, TaskCard, ActionIconButton, commonTooltips } from '../../../components/ui';
 import { exportTasksToExcel } from '../../../services/export/excelExport';
+import { 
+  getTaskStatusConfig, 
+  getPriorityConfig, 
+  getTaskStatusOptions, 
+  getPriorityOptions,
+  normalizeTaskStatus,
+  isCompletedStatus 
+} from '../../../utils/statusConfig';
 
-const priorityConfig = {
-  low: {
-    label: 'Low',
-    color: '#27ae60',
-    bgColor: '#eafaf1',
-    icon: <Flag />
-  },
-  medium: {
-    label: 'Medium',
-    color: '#f39c12',
-    bgColor: '#fef9e7',
-    icon: <Flag />
-  },
-  high: {
-    label: 'High',
-    color: '#e67e22',
-    bgColor: '#fef5e7',
-    icon: <Warning />
-  },
-  urgent: {
-    label: 'Urgent',
-    color: '#e74c3c',
-    bgColor: '#fdf2f2',
-    icon: <PriorityHigh />
-  }
-};
-
-const statusConfig = {
-  pending: {
-    label: 'To Do',
-    color: '#f39c12',
-    bgColor: '#fef9e7',
-    icon: <Schedule />
-  },
-  'in-progress': {
-    label: 'In Progress',
-    color: '#3498db',
-    bgColor: '#ebf5fb',
-    icon: <PlayArrow />
-  },
-  'in_progress': {
-    label: 'In Progress',
-    color: '#3498db',
-    bgColor: '#ebf5fb',
-    icon: <PlayArrow />
-  },
-  completed: {
-    label: 'Done',
-    color: '#27ae60',
-    bgColor: '#eafaf1',
-    icon: <CheckCircle />
-  }
-};
+// Using centralized configuration - removed duplicate configs
 
 // Task view tabs configuration
 const taskViewTabs = [
@@ -144,23 +92,13 @@ function EnhancedTasksList({
       key: 'status',
       label: 'Status',
       type: 'select',
-      options: [
-        { value: 'pending', label: 'To Do' },
-        { value: 'in-progress', label: 'In Progress' },
-        { value: 'in_progress', label: 'In Progress' },
-        { value: 'completed', label: 'Done' }
-      ]
+      options: getTaskStatusOptions()
     },
     {
       key: 'priority',
       label: 'Priority',
       type: 'select',
-      options: [
-        { value: 'low', label: 'Low' },
-        { value: 'medium', label: 'Medium' },
-        { value: 'high', label: 'High' },
-        { value: 'urgent', label: 'Urgent' }
-      ]
+      options: getPriorityOptions()
     },
     {
       key: 'project',
@@ -233,9 +171,10 @@ function EnhancedTasksList({
         task.name.toLowerCase().includes(searchLower) ||
         task.description?.toLowerCase().includes(searchLower);
 
-      // Status filter with special handling
+      // Status filter with special handling and normalization
+      const normalizedTaskStatus = normalizeTaskStatus(task.status);
       const matchesStatus = !filters.status || 
-        task.status === filters.status ||
+        normalizedTaskStatus === filters.status ||
         (filters.status === 'overdue' && isOverdue(task)) ||
         (filters.status === 'due-today' && isDueToday(task)) ||
         (filters.status === 'this-week' && isDueThisWeek(task));
@@ -279,21 +218,21 @@ function EnhancedTasksList({
 
   // Helper functions
   const isOverdue = (task) => {
-    if (task.status === 'completed') return false;
+    if (isCompletedStatus(task.status)) return false;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return new Date(task.dueDate) < today;
   };
 
   const isDueToday = (task) => {
-    if (task.status === 'completed') return false;
+    if (isCompletedStatus(task.status)) return false;
     const today = new Date();
     const taskDate = new Date(task.dueDate);
     return today.toDateString() === taskDate.toDateString();
   };
 
   const isDueThisWeek = (task) => {
-    if (task.status === 'completed') return false;
+    if (isCompletedStatus(task.status)) return false;
     const today = new Date();
     const weekFromNow = new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000));
     const taskDate = new Date(task.dueDate);
@@ -416,11 +355,11 @@ function EnhancedTasksList({
       label: 'Priority',
       type: 'chip',
       render: (value) => {
-        const config = priorityConfig[value];
+        const config = getPriorityConfig(value);
         return {
-          label: config?.label || value,
-          color: config?.color || '#95A5A6',
-          bgColor: config?.bgColor || '#F8F9FA'
+          label: config.label,
+          color: config.color,
+          bgColor: config.bgColor
         };
       }
     },
@@ -429,11 +368,11 @@ function EnhancedTasksList({
       label: 'Status',
       type: 'chip',
       render: (value) => {
-        const config = statusConfig[value];
+        const config = getTaskStatusConfig(value);
         return {
-          label: config?.label || value,
-          color: config?.color || '#95A5A6',
-          bgColor: config?.bgColor || '#F8F9FA'
+          label: config.label,
+          color: config.color,
+          bgColor: config.bgColor
         };
       }
     },
@@ -542,13 +481,12 @@ function EnhancedTasksList({
           showFilters={showFilters}
           onToggleFilters={() => setShowFilters(!showFilters)}
           activeFiltersCount={activeFilters.length}
-          viewMode="list"
-          onViewModeChange={() => {}}
           onExport={handleExport}
           onAdd={onAddTask}
           addButtonText="Add Task"
           activeFilters={activeFilters}
           onClearFilter={handleClearFilter}
+          showViewToggle={false}
         />
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <Assignment sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
@@ -570,13 +508,12 @@ function EnhancedTasksList({
         showFilters={showFilters}
         onToggleFilters={() => setShowFilters(!showFilters)}
         activeFiltersCount={activeFilters.length}
-        viewMode="list"
-        onViewModeChange={() => {}}
         onExport={handleExport}
         onAdd={onAddTask}
         addButtonText="Add Task"
         activeFilters={activeFilters}
         onClearFilter={handleClearFilter}
+        showViewToggle={false}
       />
 
       {/* Unified Filters */}
@@ -631,78 +568,68 @@ function EnhancedTasksList({
               <Grid container spacing={2}>
                 {tasksByStatus.completed.map((task) => (
                   <Grid item xs={12} sm={6} md={4} key={task.id}>
-                    <Card
-                      elevation={0}
-                      sx={{
-                        border: '1px solid #E9ECEF',
-                        borderRadius: 2,
-                        borderLeft: '4px solid #27ae60',
-                        '&:hover': {
-                          boxShadow: 2,
-                          transform: 'translateY(-2px)'
-                        },
-                        transition: 'all 0.2s ease'
-                      }}
+                    <TaskCard
+                      task={task}
+                      priority={getPriorityConfig(task.priority)}
+                      status={task.status}
+                      overdue={false}
+                      variant="compact"
+                      borderColor="#27ae60"
+                      borderWidth={4}
                     >
-                      <CardContent sx={{ p: 2 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                          <Typography variant="body1" sx={{ fontWeight: 600, flex: 1 }}>
-                            {task.name}
-                          </Typography>
-                          <CheckCircle sx={{ color: '#27ae60', ml: 1 }} />
-                        </Box>
-                        
-                        {task.description && (
-                          <Typography variant="body2" color="textSecondary" sx={{ mb: 1.5 }}>
-                            {task.description}
-                          </Typography>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                        <Typography variant="body1" sx={{ fontWeight: 600, flex: 1 }}>
+                          {task.name}
+                        </Typography>
+                        <TaskStatusChip status={task.status} size="small" />
+                      </Box>
+                      
+                      {task.description && (
+                        <Typography variant="body2" color="textSecondary" sx={{ mb: 1.5 }}>
+                          {task.description}
+                        </Typography>
+                      )}
+                      
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                        <Typography variant="caption" color="textSecondary">
+                          📁 {getProjectName(task.projectId)}
+                        </Typography>
+                        {task.assignedTo && (
+                          <Avatar
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              fontSize: '0.75rem',
+                              bgcolor: getAssigneeColor(task.assignedTo)
+                            }}
+                          >
+                            {getAssigneeInitials(task.assignedTo)}
+                          </Avatar>
                         )}
-                        
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                          <Chip
-                            size="small"
-                            label={getProjectName(task.projectId)}
-                            sx={{ backgroundColor: '#F8F9FA', color: '#7F8C8D' }}
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="caption" color="textSecondary">
+                          ✅ Completed: {formatDate(task.completedAt || task.dueDate)}
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                          <ActionIconButton
+                            tooltip={commonTooltips.view}
+                            icon={<ViewIcon />}
+                            color="primary"
+                            onClick={() => onViewTask && onViewTask(task)}
                           />
-                          {task.assignedTo && (
-                            <Avatar
-                              sx={{
-                                width: 24,
-                                height: 24,
-                                fontSize: '0.75rem',
-                                bgcolor: getAssigneeColor(task.assignedTo)
-                              }}
-                            >
-                              {getAssigneeInitials(task.assignedTo)}
-                            </Avatar>
-                          )}
+                          <ActionIconButton
+                            tooltip={commonTooltips.edit}
+                            icon={<EditIcon />}
+                            color="warning"
+                            onClick={() => onEditTask && onEditTask(task)}
+                          />
                         </Box>
-                        
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Typography variant="caption" color="textSecondary">
-                            Completed: {formatDate(task.completedAt || task.dueDate)}
-                          </Typography>
-                          <Box sx={{ display: 'flex', gap: 0.5 }}>
-                            <IconButton
-                              size="small"
-                              onClick={() => onViewTask && onViewTask(task)}
-                              sx={{ color: '#3498db' }}
-                            >
-                              <ViewIcon fontSize="small" />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              onClick={() => onEditTask && onEditTask(task)}
-                              sx={{ color: '#f39c12' }}
-                            >
-                              <EditIcon fontSize="small" />
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </CardContent>
-                    </Card>
+                      </Box>
+                    </TaskCard>
                   </Grid>
-                ))}
+                ))
               </Grid>
             </Box>
           )}

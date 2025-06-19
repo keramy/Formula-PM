@@ -133,16 +133,17 @@ body {
   50% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
 }
 
-/* Custom Material-UI Overrides */
+/* Custom Material-UI Overrides - Enhanced contrast, no movement */
 .MuiPaper-root.custom-card {
   border-radius: var(--border-radius-lg) !important;
   box-shadow: var(--shadow-sm) !important;
+  border: 1px solid #e9ecef !important; /* Enhanced border */
   transition: all 0.3s ease !important;
 }
 
 .MuiPaper-root.custom-card:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: var(--shadow-md) !important;
+  box-shadow: var(--shadow-md) !important; /* No transform */
+  border-color: #c0c0c0 !important; /* Darker border on hover */
 }
 
 .MuiButton-root.custom-button {
@@ -199,18 +200,18 @@ body {
   .MuiPaper-root { box-shadow: none !important; border: 1px solid #ddd !important; }
 }
 
-/* Enhanced ClickUp-style animations */
+/* Enhanced ClickUp-style animations - No movement */
 .board-card {
   transition: all 0.2s ease-in-out;
   border-radius: 8px;
   background: white;
-  border: 1px solid #e1e5e9;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #c0c0c0; /* Enhanced border */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); /* Enhanced shadow */
 }
 
 .board-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18); /* Enhanced shadow, no transform */
+  border-color: #a0a0a0; /* Darker border on hover */
 }
 
 .tab-system {
@@ -237,15 +238,16 @@ body {
   background: #a8a8a8;
 }
 
-/* Enhanced card animations */
+/* Enhanced card animations - No movement */
 .kanban-card {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  border: 1px solid #e1e5e9; /* Enhanced border */
 }
 
 .kanban-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* Enhanced shadow, no transform */
+  border-color: #c0c0c0; /* Darker border on hover */
 }
 
 /* Enhanced tab animations */
@@ -305,12 +307,13 @@ body {
   border: 2px dashed #3498db;
 }
 
-/* Enhanced button animations */
+/* Enhanced button animations - No movement */
 .action-button {
   transition: all 0.2s ease-in-out;
+  border: 1px solid transparent; /* Enhanced border setup */
 }
 
 .action-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18); /* Enhanced shadow, no transform */
+  border-color: rgba(52, 152, 219, 0.3); /* Subtle border on hover */
 }

@@ -448,59 +448,49 @@ const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, project
               </ListItemAvatar>
               
               <ListItemText
-                primary={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                      {task.name}
-                    </Typography>
-                    <Chip
-                      label={priority.label}
-                      size="small"
-                      sx={{
-                        backgroundColor: priority.bgColor,
-                        color: priority.color,
-                        fontSize: '0.7rem'
-                      }}
-                    />
-                    <Chip
-                      label={status.label}
-                      size="small"
-                      sx={{
-                        backgroundColor: status.bgColor,
-                        color: status.color,
-                        fontSize: '0.7rem'
-                      }}
-                    />
-                    {overdue && (
-                      <Chip
-                        label="Overdue"
-                        size="small"
-                        sx={{
-                          backgroundColor: '#fdf2f2',
-                          color: '#e74c3c',
-                          fontSize: '0.7rem'
-                        }}
-                      />
-                    )}
-                  </Box>
-                }
-                secondary={
-                  <Box>
-                    <Typography variant="body2" color="text.secondary">
-                      Project: {project ? project.name : 'Unknown Project'}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Assigned to: {assignedMember ? assignedMember.fullName : 'Unassigned'}
-                    </Typography>
-                    <Typography variant="body2" color={overdue ? 'error' : 'text.secondary'}>
-                      Due: {formatDate(task.dueDate)}
-                    </Typography>
-                  </Box>
-                }
+                primary={task.name}
+                secondary={`Project: ${project ? project.name : 'Unknown Project'} | Assigned to: ${assignedMember ? assignedMember.fullName : 'Unassigned'} | Due: ${formatDate(task.dueDate)}`}
+                primaryTypographyProps={{
+                  variant: "subtitle1",
+                  sx: { fontWeight: 600 }
+                }}
+                secondaryTypographyProps={{
+                  variant: "body2",
+                  color: overdue ? 'error' : 'text.secondary'
+                }}
               />
               
               <ListItemSecondaryAction>
-                <Box sx={{ display: 'flex', gap: 0.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Chip
+                    label={priority.label}
+                    size="small"
+                    sx={{
+                      backgroundColor: priority.bgColor,
+                      color: priority.color,
+                      fontSize: '0.7rem'
+                    }}
+                  />
+                  <Chip
+                    label={status.label}
+                    size="small"
+                    sx={{
+                      backgroundColor: status.bgColor,
+                      color: status.color,
+                      fontSize: '0.7rem'
+                    }}
+                  />
+                  {overdue && (
+                    <Chip
+                      label="Overdue"
+                      size="small"
+                      sx={{
+                        backgroundColor: '#fdf2f2',
+                        color: '#e74c3c',
+                        fontSize: '0.7rem'
+                      }}
+                    />
+                  )}
                   <IconButton
                     size="small"
                     onClick={() => onEditTask && onEditTask(task)}
@@ -641,6 +631,7 @@ const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, project
           addButtonText="Add Task"
           activeFilters={activeFilters}
           onClearFilter={handleClearFilter}
+          showViewToggle={false}
         />
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <Assignment sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
@@ -667,6 +658,7 @@ const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, project
         addButtonText="Add Task"
         activeFilters={activeFilters}
         onClearFilter={handleClearFilter}
+        showViewToggle={false}
       />
 
       {/* Unified Filters */}

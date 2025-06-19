@@ -1,12 +1,8 @@
 import React from 'react';
 import {
   Box,
-  Card,
-  CardContent,
   Typography,
-  Chip,
   Grid,
-  IconButton,
   Button
 } from '@mui/material';
 import {
@@ -18,78 +14,13 @@ import {
   Delete,
   Business
 } from '@mui/icons-material';
+import { StatusChip, ActionTooltip, StandardCard, ProjectStatusChip, ProjectTypeChip, ProjectCard, ActionIconButton, commonTooltips } from '../../../components/ui';
+import { 
+  getProjectStatusConfig, 
+  getProjectTypeConfig
+} from '../../../utils/statusConfig';
 
-const projectTypeConfig = {
-  'general-contractor': {
-    label: 'General Contractor',
-    icon: <Build />,
-    color: '#e67e22',
-    bgColor: '#fef5e7'
-  },
-  'fit-out': {
-    label: 'Fit-out (Legacy)',
-    icon: <Build />,
-    color: '#e67e22',
-    bgColor: '#fef5e7'
-  },
-  millwork: {
-    label: 'Millwork',
-    icon: <Carpenter />,
-    color: '#8e44ad',
-    bgColor: '#f4ecf7'
-  },
-  electrical: {
-    label: 'Electrical',
-    icon: <ElectricalServices />,
-    color: '#f1c40f',
-    bgColor: '#fffbf0'
-  },
-  mep: {
-    label: 'MEP',
-    icon: <Engineering />,
-    color: '#1abc9c',
-    bgColor: '#e8f8f5'
-  },
-  management: {
-    label: 'Management',
-    icon: <Business />,
-    color: '#37444B',
-    bgColor: '#f5f5f5'
-  }
-};
-
-const projectStatusConfig = {
-  'on-tender': {
-    label: 'On Tender',
-    color: '#3498db',
-    bgColor: '#ebf3fd'
-  },
-  awarded: {
-    label: 'Awarded',
-    color: '#27ae60',
-    bgColor: '#eafaf1'
-  },
-  'on-hold': {
-    label: 'On Hold',
-    color: '#f39c12',
-    bgColor: '#fef9e7'
-  },
-  'not-awarded': {
-    label: 'Not Awarded',
-    color: '#e74c3c',
-    bgColor: '#fdedec'
-  },
-  active: {
-    label: 'Active',
-    color: '#9b59b6',
-    bgColor: '#f4ecf7'
-  },
-  completed: {
-    label: 'Completed',
-    color: '#2c3e50',
-    bgColor: '#eaeded'
-  }
-};
+// Using centralized configurations
 
 function ProjectsList({ projects, tasks, clients = [], onDeleteProject, onManageScope, onViewProject }) {
   if (projects.length === 0) {
@@ -155,76 +86,43 @@ function ProjectsList({ projects, tasks, clients = [], onDeleteProject, onManage
   return (
     <Grid container spacing={3}>
       {projects.map((project) => {
-        // Safe fallback for type config
-        const typeConfig = projectTypeConfig[project.type] || {
-          label: 'General Contractor',
-          icon: <Build />,
-          color: '#e67e22',
-          bgColor: '#fef5e7'
-        };
-        
+        const typeConfig = getProjectTypeConfig(project.type);
         const progress = calculateProjectProgress(project.id);
         const stats = getProjectStats(project.id);
         const projectStatus = getProjectStatus(project, stats);
-        
-        // Safe fallback for status config
-        const statusConfig = projectStatusConfig[projectStatus] || {
-          label: 'On Tender',
-          color: '#3498db',
-          bgColor: '#ebf3fd'
-        };
+        const statusConfig = getProjectStatusConfig(projectStatus);
         
         return (
           <Grid item xs={12} md={6} key={project.id}>
-            <Card
+            <ProjectCard
+              project={project}
+              type={typeConfig}
+              status={projectStatus}
               className={`project-card construction-card type-${project.type}`}
-              sx={{
-                cursor: 'pointer',
-                position: 'relative',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
-              onClick={() => {}}
+              clickable={true}
+              onClick={() => onViewProject && onViewProject(project)}
             >
 
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box sx={{ color: typeConfig.color }}>
-                      {typeConfig.icon}
-                    </Box>
-                    <Chip
-                      label={typeConfig.label}
-                      size="small"
-                      sx={{
-                        backgroundColor: typeConfig.bgColor,
-                        color: typeConfig.color,
-                        fontWeight: 'bold'
-                      }}
-                    />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ color: typeConfig.color }}>
+                    {typeConfig.icon}
                   </Box>
-                  
-                  {/* Status Badge */}
-                  <Chip
-                    label={statusConfig.label}
-                    size="small"
-                    sx={{
-                      backgroundColor: statusConfig.bgColor,
-                      color: statusConfig.color,
-                      fontWeight: 'bold'
-                    }}
-                  />
-                  
-                  <IconButton
-                    size="small"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteProject(project.id, project.name);
-                    }}
-                    sx={{ color: '#e74c3c' }}
-                  >
-                    <Delete fontSize="small" />
-                  </IconButton>
+                  <ProjectTypeChip type={project.type} size="small" />
                 </Box>
+                
+                <ProjectStatusChip status={projectStatus} size="small" />
+                
+                <ActionIconButton
+                  tooltip={commonTooltips.delete}
+                  icon={<Delete />}
+                  color="error"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteProject(project.id, project.name);
+                  }}
+                />
+              </Box>
 
                 <Typography 
                   variant="h6" 
@@ -315,8 +213,7 @@ function ProjectsList({ projects, tasks, clients = [], onDeleteProject, onManage
                 >
                   View Details
                 </Button>
-              </CardContent>
-            </Card>
+            </ProjectCard>
           </Grid>
         );
       })}

@@ -277,7 +277,7 @@ const ProjectsTableView = ({
                               color: '#2980b9'
                             }
                           }}
-                          onClick={() => onManageScope && onManageScope(project)}
+                          onClick={() => onViewProject && onViewProject(project)}
                         >
                           {project.name}
                         </Typography>

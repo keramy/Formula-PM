@@ -1,12 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import {
   Box,
-  Card,
-  CardContent,
   Typography,
-  Chip,
   Button,
-  IconButton,
   Grid,
   Avatar,
   LinearProgress
@@ -20,44 +16,23 @@ import {
   Warning,
   Undo,
   Edit as EditIcon,
-  Visibility as ViewIcon,
-  Schedule,
-  PlayArrow,
-  Flag,
-  Error,
-  PriorityHigh
+  Visibility as ViewIcon
 } from '@mui/icons-material';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';
+import { StatusChip, ActionTooltip, StandardCard, TaskStatusChip, PriorityChip, TaskCard, ActionIconButton, commonTooltips } from '../../../components/ui';
 import { exportTasksToExcel } from '../../../services/export/excelExport';
+import { 
+  getTaskStatusConfig, 
+  getPriorityConfig, 
+  getTaskStatusOptions, 
+  getPriorityOptions,
+  normalizeTaskStatus,
+  isCompletedStatus 
+} from '../../../utils/statusConfig';
 
-const priorityConfig = {
-  low: {
-    label: 'Low',
-    color: '#27ae60',
-    bgColor: '#eafaf1',
-    icon: <Flag />
-  },
-  medium: {
-    label: 'Medium',
-    color: '#f39c12',
-    bgColor: '#fef9e7',
-    icon: <Flag />
-  },
-  high: {
-    label: 'High',
-    color: '#e67e22',
-    bgColor: '#fef5e7',
-    icon: <Warning />
-  },
-  urgent: {
-    label: 'Urgent',
-    color: '#e74c3c',
-    bgColor: '#fdf2f2',
-    icon: <PriorityHigh />
-  }
-};
+// Using centralized configuration - removed duplicate config
 
 function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTask, onAddTask, onViewTask, onEditTask }) {
   const [searchValue, setSearchValue] = useState('');
@@ -79,23 +54,13 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
       key: 'status',
       label: 'Status',
       type: 'select',
-      options: [
-        { value: 'pending', label: 'Pending' },
-        { value: 'in-progress', label: 'In Progress' },
-        { value: 'in_progress', label: 'In Progress (Legacy)' },
-        { value: 'completed', label: 'Completed' }
-      ]
+      options: getTaskStatusOptions()
     },
     {
       key: 'priority',
       label: 'Priority',
       type: 'select',
-      options: [
-        { value: 'low', label: 'Low' },
-        { value: 'medium', label: 'Medium' },
-        { value: 'high', label: 'High' },
-        { value: 'urgent', label: 'Urgent' }
-      ]
+      options: getPriorityOptions()
     },
     {
       key: 'project',
@@ -166,7 +131,7 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
       label: 'Priority',
       type: 'chip',
       render: (value) => {
-        const config = priorityConfig[value || 'medium'] || priorityConfig.medium;
+        const config = getPriorityConfig(value);
         return {
           label: config.label,
           color: config.color,
@@ -180,13 +145,7 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
       label: 'Status',
       type: 'chip',
       render: (value) => {
-        const statusConfig = {
-          pending: { label: 'Pending', color: '#f39c12', bgColor: '#fef9e7', icon: <Schedule /> },
-          'in-progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb', icon: <PlayArrow /> },
-          'in_progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb', icon: <PlayArrow /> },
-          completed: { label: 'Completed', color: '#27ae60', bgColor: '#eafaf1', icon: <CheckCircle /> }
-        };
-        const config = statusConfig[value || 'pending'] || statusConfig.pending;
+        const config = getTaskStatusConfig(value);
         return {
           label: config.label,
           color: config.color,
@@ -243,8 +202,9 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
         task.name.toLowerCase().includes(searchLower) ||
         task.description?.toLowerCase().includes(searchLower);
 
-      // Status filter
-      const matchesStatus = !filters.status || task.status === filters.status;
+      // Status filter with normalization
+      const normalizedTaskStatus = normalizeTaskStatus(task.status);
+      const matchesStatus = !filters.status || normalizedTaskStatus === filters.status;
 
       // Priority filter
       const matchesPriority = !filters.priority || task.priority === filters.priority;
@@ -338,7 +298,7 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
   };
 
   const isOverdue = (dueDate, status) => {
-    if (status === 'completed') return false;
+    if (isCompletedStatus(status)) return false;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return new Date(dueDate) < today;
@@ -520,68 +480,48 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
           ) : (
             filteredAndSortedTasks.map((task) => {
               const project = projects.find(p => p.id === task.projectId);
-              const priority = priorityConfig[task.priority];
+              const priority = getPriorityConfig(task.priority);
+              const status = getTaskStatusConfig(task.status);
               const overdue = isOverdue(task.dueDate, task.status);
               const daysUntilDue = getDaysUntilDue(task.dueDate);
+              const assignedMember = teamMembers.find(member => member.id === task.assignedTo);
               
               return (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={task.id}>
-                  <Card
-                    className={`task-card priority-${task.priority} ${task.status === 'completed' ? 'status-completed' : ''} ${overdue ? 'status-overdue' : ''}`}
-                    sx={{
-                      height: 320,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      borderLeft: `4px solid ${overdue ? '#e74c3c' : priority.color}`,
-                      backgroundColor: task.status === 'completed' ? '#f8f9fa' : 
-                                     overdue ? '#fff5f5' : 'white',
-                      opacity: task.status === 'completed' ? 0.7 : 1,
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: 3
-                      }
-                    }}
-            >
-                    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 2 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexGrow: 1 }}>
-                        <Box sx={{ flex: 1 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                            <Typography 
-                              variant="h6" 
-                              component="h3"
-                              sx={{ 
-                                textDecoration: task.status === 'completed' ? 'line-through' : 'none',
-                                flex: 1,
-                                fontSize: '1rem',
-                                fontWeight: 600,
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap'
-                              }}
-                            >
-                              {task.name}
-                              {overdue && (
-                                <Warning sx={{ ml: 0.5, color: '#e74c3c', fontSize: 16 }} />
-                              )}
-                            </Typography>
-                            
-                            <Chip
-                              label={priority.label}
-                              size="small"
-                              icon={priority.icon}
-                              sx={{
-                                backgroundColor: priority.bgColor,
-                                color: priority.color,
-                                fontWeight: 600,
-                                fontSize: '0.75rem',
-                                '& .MuiChip-icon': {
-                                  color: priority.color,
-                                  fontSize: '14px'
-                                }
-                              }}
-                            />
-                          </Box>
+                  <TaskCard
+                    task={task}
+                    priority={priority}
+                    status={task.status}
+                    overdue={overdue}
+                    height={320}
+                    className={`task-card priority-${task.priority} ${isCompletedStatus(task.status) ? 'status-completed' : ''} ${overdue ? 'status-overdue' : ''}`}
+                  >
+                    {/* Task Header */}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+                      <Typography 
+                        variant="h6" 
+                        component="h3"
+                        sx={{ 
+                          textDecoration: isCompletedStatus(task.status) ? 'line-through' : 'none',
+                          flex: 1,
+                          fontSize: '1rem',
+                          fontWeight: 600,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          mr: 1
+                        }}
+                      >
+                        {task.name}
+                        {overdue && (
+                          <Warning sx={{ ml: 0.5, color: '#e74c3c', fontSize: 16 }} />
+                        )}
+                      </Typography>
+                      
+                      <PriorityChip priority={task.priority} size="small" />
+                    </Box>
 
+                    {/* Project Info */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                       <Assignment fontSize="small" color="action" />
                       <Typography variant="body2" color="text.secondary">
@@ -589,24 +529,22 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
                       </Typography>
                     </Box>
 
+                    {/* Assigned Member */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                      <Avatar sx={{ width: 20, height: 20, fontSize: 12, bgcolor: (() => {
-                        const assignedMember = teamMembers.find(member => member.id === task.assignedTo);
-                        return assignedMember ? assignedMember.roleColor : '#gray';
-                      })() }}>
-                        {(() => {
-                          const assignedMember = teamMembers.find(member => member.id === task.assignedTo);
-                          return assignedMember ? assignedMember.initials : '?';
-                        })()}
+                      <Avatar sx={{ 
+                        width: 20, 
+                        height: 20, 
+                        fontSize: 12, 
+                        bgcolor: assignedMember ? assignedMember.roleColor : '#95a5a6' 
+                      }}>
+                        {assignedMember ? assignedMember.initials : '?'}
                       </Avatar>
                       <Typography variant="body2" color="text.secondary">
-                        <strong>Assigned to:</strong> {(() => {
-                          const assignedMember = teamMembers.find(member => member.id === task.assignedTo);
-                          return assignedMember ? assignedMember.fullName : 'Unassigned';
-                        })()}
+                        <strong>Assigned to:</strong> {assignedMember ? assignedMember.fullName : 'Unassigned'}
                       </Typography>
                     </Box>
 
+                    {/* Due Date */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                       <CalendarToday fontSize="small" color="action" />
                       <Typography 
@@ -615,7 +553,7 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
                         sx={{ fontWeight: overdue ? 'bold' : 'normal' }}
                       >
                         <strong>Due:</strong> {formatDate(task.dueDate)}
-                        {task.status !== 'completed' && (
+                        {!isCompletedStatus(task.status) && (
                           <span style={{ marginLeft: 8 }}>
                             {overdue ? (
                               <span style={{ color: '#e74c3c' }}>
@@ -633,83 +571,65 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
                       </Typography>
                     </Box>
 
+                    {/* Description */}
                     {task.description && (
                       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                         <strong>Description:</strong> {task.description}
                       </Typography>
                     )}
 
-                          {/* Status and Progress */}
-                          <Box sx={{ mt: 'auto', pt: 1 }}>
-                            {task.status === 'completed' ? (
-                              <Chip
-                                label="Completed"
-                                size="small"
-                                icon={<CheckCircle />}
-                                sx={{
-                                  backgroundColor: '#eafaf1',
-                                  color: '#27ae60',
-                                  fontWeight: 600,
-                                  '& .MuiChip-icon': {
-                                    color: '#27ae60',
-                                    fontSize: '14px'
-                                  }
-                                }}
-                              />
-                            ) : (
-                              <LinearProgress
-                                variant="determinate"
-                                value={task.progress || 0}
-                                sx={{ 
-                                  height: 8, 
-                                  borderRadius: 4,
-                                  backgroundColor: 'grey.200'
-                                }}
-                              />
-                            )}
-                          </Box>
-                        </Box>
+                    {/* Status and Progress */}
+                    <Box sx={{ mt: 'auto', pt: 1, mb: 2 }}>
+                      {isCompletedStatus(task.status) ? (
+                        <TaskStatusChip status={task.status} size="small" />
+                      ) : (
+                        <LinearProgress
+                          variant="determinate"
+                          value={task.progress || 0}
+                          sx={{ 
+                            height: 8, 
+                            borderRadius: 4,
+                            backgroundColor: 'grey.200'
+                          }}
+                        />
+                      )}
+                    </Box>
 
-                        {/* Action Buttons */}
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, ml: 1 }}>
-                          {task.status === 'completed' ? (
-                            <IconButton
-                              size="small"
-                              color="warning"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleUndoTask(task.id);
-                              }}
-                            >
-                              <Undo fontSize="small" />
-                            </IconButton>
-                          ) : (
-                            <IconButton
-                              size="small"
-                              color="success"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleCompleteTask(task.id);
-                              }}
-                            >
-                              <CheckCircle fontSize="small" />
-                            </IconButton>
-                          )}
-                          
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteTask(task.id, task.name);
-                            }}
-                          >
-                            <Delete fontSize="small" />
-                          </IconButton>
-                        </Box>
-                      </Box>
-                    </CardContent>
-                  </Card>
+                    {/* Action Buttons */}
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
+                      {isCompletedStatus(task.status) ? (
+                        <ActionIconButton
+                          tooltip={commonTooltips.undo}
+                          icon={<Undo />}
+                          color="warning"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUndoTask(task.id);
+                          }}
+                        />
+                      ) : (
+                        <ActionIconButton
+                          tooltip={commonTooltips.complete}
+                          icon={<CheckCircle />}
+                          color="success"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCompleteTask(task.id);
+                          }}
+                        />
+                      )}
+                      
+                      <ActionIconButton
+                        tooltip={commonTooltips.delete}
+                        icon={<Delete />}
+                        color="error"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteTask(task.id, task.name);
+                        }}
+                      />
+                    </Box>
+                  </TaskCard>
                 </Grid>
               );
             })

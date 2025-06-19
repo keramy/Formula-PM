@@ -25,19 +25,29 @@ import {
   Warning,
   PriorityHigh,
   Schedule,
-  PlayArrow,
+  Pause,
   Visibility as ViewIcon,
   Edit as EditIcon,
   DoneAll as CompleteIcon,
-  Pause as PauseIcon,
+  PlayArrow,
   FolderOpen as ProjectIcon,
   Today as TodayIcon,
   Error as OverdueIcon
 } from '@mui/icons-material';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
+import { StatusChip, ActionTooltip, StandardCard } from '../../../components/ui';
 import ProjectsList from './ProjectsList';
 import ProjectsTableView from './ProjectsTableView';
+import { 
+  getTaskStatusConfig, 
+  getPriorityConfig, 
+  getTaskStatusOptions, 
+  getPriorityOptions,
+  normalizeTaskStatus,
+  isTaskCompleted,
+  isTaskInProgress 
+} from '../../../utils/statusConfig';
 
 const MyProjectsList = ({ 
   projects, 
@@ -57,6 +67,9 @@ const MyProjectsList = ({
   const [searchValue, setSearchValue] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState('card');
+  const [taskViewMode, setTaskViewMode] = useState('list'); // For tasks tab - fixed to list view
+  const [editingTask, setEditingTask] = useState(null);
+  const [undoHistory, setUndoHistory] = useState([]);
   const [filters, setFilters] = useState({
     status: '',
     type: '',
@@ -264,20 +277,7 @@ const MyProjectsList = ({
     console.log('Export my projects:', filteredAndSortedProjects);
   };
 
-  // Task helper functions
-  const priorityConfig = {
-    low: { label: 'Low', color: '#27ae60', bgColor: '#eafaf1', icon: <Flag /> },
-    medium: { label: 'Medium', color: '#f39c12', bgColor: '#fef9e7', icon: <Flag /> },
-    high: { label: 'High', color: '#e67e22', bgColor: '#fef5e7', icon: <Warning /> },
-    urgent: { label: 'Urgent', color: '#e74c3c', bgColor: '#fdf2f2', icon: <PriorityHigh /> }
-  };
-
-  const statusConfig = {
-    pending: { label: 'To Do', color: '#f39c12', bgColor: '#fef9e7', icon: <Schedule /> },
-    'in-progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb', icon: <PlayArrow /> },
-    'in_progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb', icon: <PlayArrow /> },
-    completed: { label: 'Done', color: '#27ae60', bgColor: '#eafaf1', icon: <CheckCircle /> }
-  };
+  // Using centralized configurations
 
   const getProjectName = (projectId) => {
     const project = projects.find(p => p.id === projectId);
@@ -294,14 +294,14 @@ const MyProjectsList = ({
   };
 
   const isOverdue = (task) => {
-    if (task.status === 'completed') return false;
+    if (isTaskCompleted(task.status)) return false;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return new Date(task.dueDate) < today;
   };
 
   const isDueSoon = (task) => {
-    if (task.status === 'completed') return false;
+    if (isTaskCompleted(task.status)) return false;
     const today = new Date();
     const dueDate = new Date(task.dueDate);
     const diffTime = dueDate - today;
@@ -312,9 +312,9 @@ const MyProjectsList = ({
   // Enhanced task statistics
   const getTaskStats = () => {
     const total = myTasks.length;
-    const completed = myTasks.filter(t => t.status === 'completed').length;
-    const inProgress = myTasks.filter(t => t.status === 'in-progress' || t.status === 'in_progress').length;
-    const pending = myTasks.filter(t => t.status === 'pending').length;
+    const completed = myTasks.filter(t => isTaskCompleted(t.status)).length;
+    const inProgress = myTasks.filter(t => isTaskInProgress(t.status)).length;
+    const pending = myTasks.filter(t => normalizeTaskStatus(t.status) === 'pending').length;
     const overdue = myTasks.filter(t => isOverdue(t)).length;
     const dueSoon = myTasks.filter(t => isDueSoon(t)).length;
     
@@ -323,10 +323,41 @@ const MyProjectsList = ({
 
   const taskStats = getTaskStats();
 
-  // Quick task status update
+  // Quick task status update with undo functionality
   const handleQuickStatusChange = async (taskId, newStatus) => {
     if (onUpdateTask) {
+      const task = myTasks.find(t => t.id === taskId);
+      const oldStatus = task?.status;
+      
+      // Save to undo history
+      setUndoHistory(prev => [...prev, { taskId, oldStatus, timestamp: Date.now() }]);
+      
       await onUpdateTask(taskId, { status: newStatus });
+      
+      // Auto-clear undo history after 10 seconds
+      setTimeout(() => {
+        setUndoHistory(prev => prev.filter(item => item.taskId !== taskId));
+      }, 10000);
+    }
+  };
+
+  // Undo last action
+  const handleUndo = async (undoItem) => {
+    if (onUpdateTask) {
+      await onUpdateTask(undoItem.taskId, { status: undoItem.oldStatus });
+      setUndoHistory(prev => prev.filter(item => item.taskId !== undoItem.taskId));
+    }
+  };
+
+  // Task editing
+  const handleEditTask = (task) => {
+    setEditingTask(task);
+  };
+
+  const handleSaveTask = async (taskData) => {
+    if (onUpdateTask && editingTask) {
+      await onUpdateTask(editingTask.id, taskData);
+      setEditingTask(null);
     }
   };
 
@@ -470,8 +501,9 @@ const MyProjectsList = ({
                 My Tasks ({myTasks.length})
               </Typography>
               
-              {/* Task Quick Stats */}
-              <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {/* Task Quick Stats */}
+                <Box sx={{ display: 'flex', gap: 1 }}>
                 {taskStats.overdue > 0 && (
                   <Chip
                     icon={<OverdueIcon />}
@@ -494,6 +526,7 @@ const MyProjectsList = ({
                   size="small"
                   sx={{ backgroundColor: '#eafaf1', color: '#27ae60', fontWeight: 600 }}
                 />
+                </Box>
               </Box>
             </Box>
           </Box>
@@ -511,169 +544,193 @@ const MyProjectsList = ({
                 </Typography>
               </Box>
             ) : (
-              <Grid container spacing={3}>
-                {myTasks.map((task) => {
-                  const priority = priorityConfig[task.priority] || priorityConfig.medium;
-                  const status = statusConfig[task.status] || statusConfig.pending;
-                  const taskOverdue = isOverdue(task);
-                  const taskDueSoon = isDueSoon(task);
-                  
-                  return (
-                    <Grid item xs={12} sm={6} lg={4} key={task.id}>
-                      <Card
-                        elevation={0}
-                        sx={{
-                          border: '1px solid #E9ECEF',
-                          borderRadius: 3,
-                          borderLeft: `4px solid ${taskOverdue ? '#e74c3c' : priority.color}`,
-                          '&:hover': {
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                            transform: 'translateY(-2px)'
-                          },
-                          transition: 'all 0.3s ease',
-                          position: 'relative'
-                        }}
-                      >
-                        <CardContent sx={{ p: 3 }}>
-                          {/* Task Header */}
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                            <Typography variant="h6" sx={{ fontWeight: 600, flex: 1, color: '#2C3E50' }}>
-                              {task.name}
-                            </Typography>
-                            <Chip
-                              size="small"
-                              label={status.label}
-                              sx={{
-                                backgroundColor: status.bgColor,
-                                color: status.color,
-                                fontWeight: 600,
-                                ml: 1
-                              }}
-                            />
-                          </Box>
-                          
-                          {/* Description */}
-                          {task.description && (
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.5 }}>
-                              {task.description}
-                            </Typography>
-                          )}
-                          
-                          {/* Project and Priority */}
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                            <Chip
-                              icon={<ProjectIcon />}
-                              size="small"
-                              label={getProjectName(task.projectId)}
-                              sx={{ backgroundColor: '#F8F9FA', color: '#7F8C8D' }}
-                            />
-                            <Chip
-                              size="small"
-                              label={priority.label}
-                              sx={{
-                                backgroundColor: priority.bgColor,
-                                color: priority.color,
-                                fontWeight: 600
-                              }}
-                            />
-                          </Box>
-                          
-                          {/* Due Date */}
-                          <Box sx={{ mb: 2 }}>
-                            <Typography 
-                              variant="body2" 
-                              sx={{ 
-                                color: taskOverdue ? '#e74c3c' : taskDueSoon ? '#f39c12' : 'text.secondary',
-                                fontWeight: taskOverdue || taskDueSoon ? 600 : 400,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 0.5
-                              }}
-                            >
-                              <Schedule fontSize="small" />
-                              Due: {formatDate(task.dueDate)}
-                              {taskOverdue && ' (Overdue)'}
-                              {taskDueSoon && !taskOverdue && ' (Due Soon)'}
-                            </Typography>
-                          </Box>
-                          
-                          {/* Progress Bar */}
-                          {task.progress !== undefined && (
-                            <Box sx={{ mb: 2 }}>
-                              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                <Typography variant="caption" color="text.secondary">
-                                  Progress
-                                </Typography>
-                                <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                                  {task.progress}%
-                                </Typography>
-                              </Box>
-                              <LinearProgress
-                                variant="determinate"
-                                value={task.progress}
-                                sx={{ 
-                                  height: 8,
-                                  borderRadius: 4,
-                                  backgroundColor: '#E9ECEF',
-                                  '& .MuiLinearProgress-bar': {
-                                    backgroundColor: task.progress === 100 ? '#27ae60' : '#3498db',
-                                    borderRadius: 4
-                                  }
-                                }}
-                              />
-                            </Box>
-                          )}
-                          
-                          {/* Action Buttons */}
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Box sx={{ display: 'flex', gap: 1 }}>
-                              <Tooltip title="View Details">
-                                <IconButton
-                                  size="small"
-                                  onClick={() => onViewTask && onViewTask(task)}
-                                  sx={{ color: '#3498db' }}
-                                >
-                                  <ViewIcon />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Edit Task">
-                                <IconButton
-                                  size="small"
-                                  onClick={() => onEditTask && onEditTask(task)}
-                                  sx={{ color: '#f39c12' }}
-                                >
-                                  <EditIcon />
-                                </IconButton>
-                              </Tooltip>
+              <>
+                {/* Task Cards View */}
+                {taskViewMode === 'card' && (
+                  <Grid container spacing={2}>
+                    {myTasks.map((task) => {
+                      const taskOverdue = isOverdue(task);
+                      const taskDueSoon = isDueSoon(task);
+                      
+                      return (
+                        <Grid item xs={12} sm={6} lg={4} key={task.id}>
+                          <StandardCard
+                            variant="compact"
+                            hoverable={true}
+                            sx={{
+                              borderLeft: `4px solid ${taskOverdue ? '#e74c3c' : getPriorityConfig(task.priority).color}`,
+                            }}
+                          >
+                            {/* Task Header */}
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+                              <Typography variant="subtitle1" sx={{ fontWeight: 600, flex: 1, color: '#2C3E50', fontSize: '1rem' }}>
+                                {task.name}
+                              </Typography>
+                              <StatusChip type="task" status={task.status} size="small" />
                             </Box>
                             
-                            {/* Quick Actions */}
-                            <ButtonGroup size="small" variant="outlined">
-                              {task.status !== 'completed' && (
-                                <Button
-                                  onClick={() => handleQuickStatusChange(task.id, 'completed')}
-                                  sx={{ color: '#27ae60', borderColor: '#27ae60', minWidth: 'auto', px: 1 }}
-                                >
-                                  <CompleteIcon fontSize="small" />
-                                </Button>
-                              )}
-                              {task.status !== 'in-progress' && task.status !== 'completed' && (
-                                <Button
-                                  onClick={() => handleQuickStatusChange(task.id, 'in-progress')}
-                                  sx={{ color: '#3498db', borderColor: '#3498db', minWidth: 'auto', px: 1 }}
-                                >
-                                  <PlayArrow fontSize="small" />
-                                </Button>
-                              )}
-                            </ButtonGroup>
+                            {/* Description */}
+                            {task.description && (
+                              <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, lineHeight: 1.4, fontSize: '0.875rem' }}>
+                                {task.description.length > 80 ? `${task.description.substring(0, 80)}...` : task.description}
+                              </Typography>
+                            )}
+                            
+                            {/* Project and Priority */}
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5, gap: 1 }}>
+                              <Chip
+                                icon={<ProjectIcon />}
+                                size="small"
+                                label={getProjectName(task.projectId)}
+                                sx={{ backgroundColor: '#F8F9FA', color: '#7F8C8D', fontSize: '0.75rem' }}
+                              />
+                              <StatusChip type="priority" status={task.priority} size="small" />
+                            </Box>
+                        
+                            {/* Due Date */}
+                            <Box sx={{ mb: 1.5 }}>
+                              <Typography 
+                                variant="body2" 
+                                sx={{ 
+                                  color: taskOverdue ? '#e74c3c' : taskDueSoon ? '#f39c12' : 'text.secondary',
+                                  fontWeight: taskOverdue || taskDueSoon ? 600 : 400,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 0.5,
+                                  fontSize: '0.875rem'
+                                }}
+                              >
+                                <Schedule fontSize="small" />
+                                Due: {formatDate(task.dueDate)}
+                                {taskOverdue && ' (Overdue)'}
+                                {taskDueSoon && !taskOverdue && ' (Due Soon)'}
+                              </Typography>
+                            </Box>
+                            
+                            {/* Progress Bar - Compact */}
+                            {task.progress !== undefined && (
+                              <Box sx={{ mb: 1.5 }}>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                                  <Typography variant="caption" color="text.secondary" fontSize="0.75rem">
+                                    Progress
+                                  </Typography>
+                                  <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.75rem' }}>
+                                    {task.progress}%
+                                  </Typography>
+                                </Box>
+                                <LinearProgress
+                                  variant="determinate"
+                                  value={task.progress}
+                                  sx={{ 
+                                    height: 6,
+                                    borderRadius: 3,
+                                    backgroundColor: '#E9ECEF',
+                                    '& .MuiLinearProgress-bar': {
+                                      backgroundColor: task.progress === 100 ? '#27ae60' : '#3498db',
+                                      borderRadius: 3
+                                    }
+                                  }}
+                                />
+                              </Box>
+                            )}
+                            
+                            {/* Action Buttons */}
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <Box sx={{ display: 'flex', gap: 0.5 }}>
+                                <ActionTooltip title="View task details">
+                                  <ViewIcon />
+                                </ActionTooltip>
+                                <ActionTooltip title="Edit task" color="#f39c12" onClick={() => handleEditTask(task)}>
+                                  <EditIcon />
+                                </ActionTooltip>
                           </Box>
-                        </CardContent>
-                      </Card>
+                          
+                              {/* Quick Actions */}
+                              <ButtonGroup size="small" variant="outlined">
+                                {!isTaskCompleted(task.status) && (
+                                  <ActionTooltip title="Mark as completed" component="custom">
+                                    <Button
+                                      onClick={() => handleQuickStatusChange(task.id, 'completed')}
+                                      sx={{ color: '#27ae60', borderColor: '#27ae60', minWidth: 'auto', px: 1 }}
+                                    >
+                                      <CompleteIcon fontSize="small" />
+                                    </Button>
+                                  </ActionTooltip>
+                                )}
+                                {!isTaskInProgress(task.status) && !isTaskCompleted(task.status) && (
+                                  <ActionTooltip title="Start working" component="custom">
+                                    <Button
+                                      onClick={() => handleQuickStatusChange(task.id, 'in-progress')}
+                                      sx={{ color: '#3498db', borderColor: '#3498db', minWidth: 'auto', px: 1 }}
+                                    >
+                                      <PlayArrow fontSize="small" />
+                                    </Button>
+                                  </ActionTooltip>
+                                )}
+                              </ButtonGroup>
+                            </Box>
+                          </StandardCard>
                     </Grid>
                   );
-                })}
-              </Grid>
-            )}
+                      })}
+                    </Grid>
+                  )}
+                  
+                  {/* Task List View */}
+                  {taskViewMode === 'list' && (
+                    <Box sx={{ 
+                      maxWidth: 900, 
+                      margin: '0 auto'
+                    }}>
+                      {myTasks.map((task) => {
+                        const taskOverdue = isOverdue(task);
+                        const taskDueSoon = isDueSoon(task);
+                        
+                        return (
+                          <StandardCard
+                            key={task.id}
+                            variant="compact"
+                            sx={{
+                              mb: 1,
+                              borderLeft: `4px solid ${taskOverdue ? '#e74c3c' : getPriorityConfig(task.priority).color}`
+                            }}
+                          >
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, minWidth: 0, flexShrink: 1 }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#2C3E50', minWidth: 180, maxWidth: 300 }}>
+                                  {task.name}
+                                </Typography>
+                                <StatusChip type="task" status={task.status} size="small" />
+                                <StatusChip type="priority" status={task.priority} size="small" />
+                                <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+                                  <Schedule fontSize="small" sx={{ mr: 0.5 }} />
+                                  {formatDate(task.dueDate)}
+                                  {taskOverdue && ' (Overdue)'}
+                                  {taskDueSoon && !taskOverdue && ' (Due Soon)'}
+                                </Typography>
+                              </Box>
+                              
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 'auto' }}>
+                                <ActionTooltip title="View task details">
+                                  <ViewIcon />
+                                </ActionTooltip>
+                                <ActionTooltip title="Edit task" color="#f39c12" onClick={() => handleEditTask(task)}>
+                                  <EditIcon />
+                                </ActionTooltip>
+                                {!isTaskCompleted(task.status) && (
+                                  <ActionTooltip title="Mark as completed">
+                                    <CompleteIcon onClick={() => handleQuickStatusChange(task.id, 'completed')} />
+                                  </ActionTooltip>
+                                )}
+                              </Box>
+                            </Box>
+                          </StandardCard>
+                        );
+                      })}
+                    </Box>
+                  )}
+                </>
+              )}
           </Box>
         </Paper>
       )}
@@ -711,7 +768,7 @@ const MyProjectsList = ({
                   variant={viewMode === 'table' ? 'contained' : 'outlined'}
                   sx={{ borderRadius: '0 4px 4px 0', minWidth: 'auto', px: 2 }}
                 >
-                  Table
+                  List
                 </Button>
               </Box>
             </Box>
