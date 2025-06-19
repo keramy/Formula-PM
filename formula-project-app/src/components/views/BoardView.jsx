@@ -6,14 +6,15 @@ import {
   Avatar, 
   Card, 
   CardContent,
-  Tooltip
+  Tooltip,
+  Chip
 } from '@mui/material';
 import {
   CalendarToday,
   Person as PersonIcon
 } from '@mui/icons-material';
 import { PriorityChip } from '../ui/StatusChip';
-import { getPriorityConfig, isCompletedStatus } from '../../utils/statusConfig';
+import { getPriorityConfig, isTaskCompleted } from '../../utils/statusConfig';
 
 const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }) => {
 

@@ -68,5 +68,5 @@ export default defineConfig({
       },
     },
   },
-  base: process.env.NODE_ENV === 'production' ? '/formula-pm/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/Formula-PM/' : '/',
 })

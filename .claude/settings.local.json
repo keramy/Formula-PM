@@ -101,7 +101,9 @@
       "Bash(NODE_ENV=development PORT=5013 timeout 10s node server.js)",
       "Bash(PORT=5013 npm start)",
       "Bash(PORT=5014 node server.js)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(npx gh-pages:*)",
+      "Bash(git branch:*)"
     ],
     "deny": []
   }
