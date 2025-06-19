@@ -1,10 +1,37 @@
 export const exportProjectsToExcel = async (projects, clients = [], teamMembers = []) => {
   try {
+    console.log('Starting export process...');
+    console.log('Projects to export:', projects.length);
+    console.log('Clients available:', clients.length);
+    console.log('Team members available:', teamMembers.length);
+    
     // Lazy load XLSX and file-saver to reduce initial bundle size
-    const [{ default: XLSX }, { saveAs }] = await Promise.all([
-      import('xlsx'),
-      import('file-saver')
-    ]);
+    let XLSX, saveAs;
+    
+    try {
+      // Try importing with destructuring for named exports
+      const xlsxModule = await import('xlsx');
+      console.log('XLSX module loaded:', xlsxModule);
+      console.log('Module keys:', Object.keys(xlsxModule));
+      
+      // xlsx exports everything on the module itself
+      XLSX = xlsxModule;
+      
+      // Verify we have the required methods
+      if (!XLSX.utils) {
+        console.error('XLSX.utils not found. Available properties:', Object.keys(XLSX));
+        throw new Error('XLSX.utils is not available');
+      }
+      
+      console.log('XLSX utils methods:', Object.keys(XLSX.utils).slice(0, 5) + '...');
+      
+      const fileSaverModule = await import('file-saver');
+      saveAs = fileSaverModule.saveAs || fileSaverModule.default?.saveAs;
+      
+    } catch (importError) {
+      console.error('Error importing modules:', importError);
+      throw new Error('Failed to load required export libraries: ' + importError.message);
+    }
     // Helper functions
     const getClientName = (clientId) => {
       const client = clients.find(c => c.id === clientId);
@@ -180,8 +207,8 @@ const getTypeBreakdown = (projects) => {
 export const exportTasksToExcel = async (tasks, projects = [], teamMembers = []) => {
   try {
     // Lazy load XLSX and file-saver
-    const [{ default: XLSX }, { saveAs }] = await Promise.all([
-      import('xlsx'),
+    const [XLSX, { saveAs }] = await Promise.all([
+      import('xlsx').then(module => module.default || module),
       import('file-saver')
     ]);
     const getProjectName = (projectId) => {
@@ -281,8 +308,8 @@ export const exportTasksToExcel = async (tasks, projects = [], teamMembers = [])
 export const exportTeamMembersToExcel = async (teamMembers, tasks = []) => {
   try {
     // Lazy load XLSX and file-saver
-    const [{ default: XLSX }, { saveAs }] = await Promise.all([
-      import('xlsx'),
+    const [XLSX, { saveAs }] = await Promise.all([
+      import('xlsx').then(module => module.default || module),
       import('file-saver')
     ]);
     const getRoleLabel = (role) => {
@@ -387,8 +414,8 @@ export const exportTeamMembersToExcel = async (teamMembers, tasks = []) => {
 export const exportClientsToExcel = async (clients) => {
   try {
     // Lazy load XLSX and file-saver
-    const [{ default: XLSX }, { saveAs }] = await Promise.all([
-      import('xlsx'),
+    const [XLSX, { saveAs }] = await Promise.all([
+      import('xlsx').then(module => module.default || module),
       import('file-saver')
     ]);
     const getStatusLabel = (status) => {

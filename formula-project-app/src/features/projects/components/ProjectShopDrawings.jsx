@@ -12,19 +12,13 @@ const ShopDrawingsList = React.lazy(() => import('../../shop-drawings/components
 const ProjectShopDrawings = ({ project, projectId }) => {
   return (
     <Box>
-      <Typography variant="h5" fontWeight={600} gutterBottom>
-        Shop Drawings
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Manage millwork shop drawings and approval workflow for {project.name}
-      </Typography>
-
       <Suspense fallback={<LoadingFallback />}>
         <ShopDrawingsList 
           projectFilter={projectId}
           projects={[project]}
           teamMembers={[]}
           showProjectFilter={false}
+          compactMode={true}
         />
       </Suspense>
     </Box>

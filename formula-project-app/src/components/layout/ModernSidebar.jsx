@@ -29,10 +29,12 @@ import {
   Architecture as ShopDrawingsIcon
 } from '@mui/icons-material';
 import { useTheme as useFormulaTheme } from '../../context/ThemeContext';
+import { useNavigation } from '../../context/NavigationContext';
 
 const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse }) => {
   const theme = useTheme();
   const { isDarkMode } = useFormulaTheme();
+  const { isInProjectContext, exitProjectContext } = useNavigation();
   const darkMode = isDarkMode;
   
   // Formula International brand colors
@@ -96,6 +98,10 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
 
   const handleItemClick = (id) => {
     if (typeof id === 'number') {
+      // If we're in project context, exit it first before navigating to main tabs
+      if (isInProjectContext()) {
+        exitProjectContext();
+      }
       onTabChange(null, id);
     }
   };
@@ -133,13 +139,23 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
         {isCollapsed ? (
           <FormulaLogoCompact 
             darkMode={darkMode}
-            onClick={() => onTabChange(null, 0)}
+            onClick={() => {
+              if (isInProjectContext()) {
+                exitProjectContext();
+              }
+              onTabChange(null, 0);
+            }}
           />
         ) : (
           <FormulaLogo 
             size="small"
             darkMode={darkMode}
-            onClick={() => onTabChange(null, 0)}
+            onClick={() => {
+              if (isInProjectContext()) {
+                exitProjectContext();
+              }
+              onTabChange(null, 0);
+            }}
             sx={{ cursor: 'pointer' }}
           />
         )}

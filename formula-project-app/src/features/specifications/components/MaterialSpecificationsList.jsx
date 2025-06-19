@@ -310,9 +310,17 @@ const MaterialSpecificationsList = ({
                 <Typography variant="body2">{spec.unitCost}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="body2" fontWeight={600}>
-                  {spec.totalCost}
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <Typography variant="caption" color="text.secondary">
+                    {spec.quantity} × {spec.unitCost} =
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600} color="primary">
+                    ${(
+                      (parseFloat(spec.quantity) || 0) * 
+                      (parseFloat(spec.unitCost?.replace(/[$,]/g, '')) || 0)
+                    ).toFixed(2)}
+                  </Typography>
+                </Box>
               </TableCell>
               <TableCell>
                 <Typography variant="body2">{spec.supplier}</Typography>
@@ -403,11 +411,14 @@ const MaterialSpecificationsList = ({
                             {spec.material} • {spec.finish}
                           </Typography>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                            <Typography variant="body2">
-                              {spec.quantity} {spec.unit} × {spec.unitCost}
+                            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <span>{spec.quantity}</span>
+                              <span style={{ color: '#666' }}>{spec.unit}</span>
+                              <span style={{ color: '#999' }}>×</span>
+                              <span>{spec.unitCost}</span>
                             </Typography>
-                            <Typography variant="body2" fontWeight={600}>
-                              {spec.totalCost}
+                            <Typography variant="body2" fontWeight={600} color="primary">
+                              = {spec.totalCost}
                             </Typography>
                           </Box>
                         </CardContent>
@@ -698,6 +709,28 @@ const MaterialSpecificationsList = ({
                 placeholder="$0.00"
               />
             </Grid>
+            {/* Real-time Total Cost Display */}
+            {(newSpec.quantity && newSpec.unitCost) && (
+              <Grid item xs={12}>
+                <Box sx={{ 
+                  p: 2, 
+                  bgcolor: 'grey.50', 
+                  borderRadius: 1,
+                  border: '1px solid',
+                  borderColor: 'grey.300'
+                }}>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    Total Cost Calculation:
+                  </Typography>
+                  <Typography variant="h6" color="primary">
+                    {newSpec.quantity} × {newSpec.unitCost} = ${(
+                      (parseFloat(newSpec.quantity) || 0) * 
+                      (parseFloat(newSpec.unitCost.replace(/[$,]/g, '')) || 0)
+                    ).toFixed(2)}
+                  </Typography>
+                </Box>
+              </Grid>
+            )}
             <Grid item xs={12}>
               <TextField
                 fullWidth

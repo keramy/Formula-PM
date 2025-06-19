@@ -53,7 +53,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['date-fns', '@mui/material', '@emotion/react', '@emotion/styled'],
+    include: ['date-fns', '@mui/material', '@emotion/react', '@emotion/styled', 'xlsx', 'file-saver'],
   },
   build: {
     outDir: 'dist',

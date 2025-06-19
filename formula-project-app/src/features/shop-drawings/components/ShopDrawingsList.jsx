@@ -28,7 +28,9 @@ import {
   Tooltip,
   Avatar,
   CircularProgress,
-  Alert
+  Alert,
+  Tabs,
+  Tab
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -50,7 +52,9 @@ import { useShopDrawings } from '../hooks/useShopDrawings';
 
 const ShopDrawingsList = ({ 
   projects = [],
-  teamMembers = []
+  teamMembers = [],
+  compactMode = false,
+  showProjectFilter = true
 }) => {
   const [viewMode, setViewMode] = useState('list');
   const [selectedProject, setSelectedProject] = useState('all');
@@ -138,8 +142,8 @@ const ShopDrawingsList = ({
   });
 
   const renderListView = () => (
-    <TableContainer component={Paper} elevation={1}>
-      <Table>
+    <TableContainer sx={{ height: '100%' }}>
+      <Table stickyHeader>
         <TableHead>
           <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
             <TableCell><strong>Drawing</strong></TableCell>
@@ -154,7 +158,7 @@ const ShopDrawingsList = ({
         </TableHead>
         <TableBody>
           {filteredDrawings.map((drawing) => (
-            <TableRow key={drawing.id} hover>
+            <TableRow key={drawing.id}>
               <TableCell>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <PdfIcon sx={{ color: '#d32f2f', mr: 1 }} />
@@ -220,10 +224,14 @@ const ShopDrawingsList = ({
   );
 
   const renderCardView = () => (
-    <Grid container spacing={3}>
-      {filteredDrawings.map((drawing) => (
-        <Grid item xs={12} sm={6} md={4} key={drawing.id}>
-          <Card elevation={2} sx={{ height: '100%' }}>
+    <Box sx={{ height: '100%', overflow: 'auto', px: 1 }}>
+      <Grid container spacing={2}>
+        {filteredDrawings.map((drawing) => (
+          <Grid item xs={12} sm={6} md={4} key={drawing.id}>
+            <Card 
+              elevation={1} 
+              sx={{ height: '100%' }}
+            >
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -274,65 +282,86 @@ const ShopDrawingsList = ({
           </Card>
         </Grid>
       ))}
-    </Grid>
+      </Grid>
+    </Box>
   );
 
   return (
-    <Box>
-      {/* Header */}
-      <EnhancedHeader
-        title="Shop Drawings"
-        breadcrumbs={[
-          { label: 'Shop Drawings', href: '/shop-drawings' }
-        ]}
-        searchValue={searchTerm}
-        onSearchChange={setSearchTerm}
-        onAdd={() => setUploadDialogOpen(true)}
-        addButtonText="Upload Drawing"
-        addButtonIcon={<UploadIcon />}
-        teamMembers={teamMembers.slice(0, 5)}
-        subtitle={`${filteredDrawings.length} drawings`}
-      />
-
-      {/* Project Filter */}
-      <Box sx={{ mb: 3 }}>
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Filter by Project</InputLabel>
-          <Select
-            value={selectedProject}
-            onChange={(e) => setSelectedProject(e.target.value)}
-            label="Filter by Project"
-          >
-            <MenuItem value="all">All Projects</MenuItem>
-            {projects.map((project) => (
-              <MenuItem key={project.id} value={project.id}>
-                {project.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+    <Box sx={{ 
+      height: 'calc(100vh - 120px)', 
+      display: 'flex', 
+      flexDirection: 'column',
+      overflow: 'hidden'
+    }}>
+      {/* Minimal Action Bar */}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        px: 1,
+        py: 0.5,
+        borderBottom: '1px solid #e0e0e0',
+        backgroundColor: '#f8f9fa'
+      }}>
+        <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 600 }}>
+          Shop Drawings ({filteredDrawings.length})
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+          <TextField
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            size="small"
+            sx={{ width: 200 }}
+          />
+          {showProjectFilter && (
+            <FormControl size="small" sx={{ minWidth: 150 }}>
+              <Select
+                value={selectedProject}
+                onChange={(e) => setSelectedProject(e.target.value)}
+                displayEmpty
+                sx={{ height: 32 }}
+              >
+                <MenuItem value="all">All Projects</MenuItem>
+                {projects.map((project) => (
+                  <MenuItem key={project.id} value={project.id}>
+                    {project.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          <FormControl size="small">
+            <Select
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value)}
+              sx={{ height: 32, minWidth: 80 }}
+            >
+              <MenuItem value="list">List</MenuItem>
+              <MenuItem value="cards">Cards</MenuItem>
+            </Select>
+          </FormControl>
+          <IconButton size="small" onClick={() => setUploadDialogOpen(true)} title="Upload Drawing">
+            <UploadIcon fontSize="small" />
+          </IconButton>
+        </Box>
       </Box>
 
       {/* Error Display */}
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
+        <Alert severity="error" sx={{ mx: 1, mb: 1 }}>
           {error}
         </Alert>
       )}
 
-      {/* Enhanced Tab System */}
-      <EnhancedTabSystem
-        currentView={viewMode}
-        onViewChange={setViewMode}
-        title="Shop Drawings"
-        views={[
-          { id: 'list', label: 'List View', icon: 'list' },
-          { id: 'cards', label: 'Card View', icon: 'grid' }
-        ]}
-      />
-
-      {/* Content */}
-      <Box sx={{ mt: 3 }}>
+      {/* Content - Full Page */}
+      <Box sx={{ 
+        flexGrow: 1, 
+        overflow: 'hidden',
+        '& .MuiTableRow-root:hover': {
+          backgroundColor: 'transparent'
+        }
+      }}>
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
             <CircularProgress />

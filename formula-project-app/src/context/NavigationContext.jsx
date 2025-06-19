@@ -72,6 +72,14 @@ export const NavigationProvider = ({ children }) => {
         }
         break;
         
+      case 'project-page':
+        stack.push({ label: 'Projects', href: '/projects' });
+        if (data?.projectId) {
+          const projectLabel = data?.projectName || `Project ${data.projectId}`;
+          stack.push({ label: projectLabel, href: `/projects/${data.projectId}` });
+        }
+        break;
+        
       case 'project-scope':
         stack.push({ label: 'Projects', href: '/projects' });
         if (data?.projectName) {
@@ -185,14 +193,15 @@ export const NavigationProvider = ({ children }) => {
   };
 
   // Project-specific navigation functions
-  const navigateToProject = useCallback((projectId, section = 'overview') => {
+  const navigateToProject = useCallback((projectId, section = 'overview', projectName = null) => {
     setCurrentProjectId(projectId);
     setCurrentSection(section);
+    const finalProjectName = projectName || `Project ${projectId}`;
     navigateTo({
       title: `Project ${section}`,
       path: `/project/${projectId}/${section}`,
       type: 'project-page',
-      data: { projectId, section }
+      data: { projectId, section, projectName: finalProjectName }
     });
   }, [navigateTo]);
 
@@ -204,7 +213,7 @@ export const NavigationProvider = ({ children }) => {
       title: `Project ${section}`,
       path: `/project/${currentProjectId}/${section}`,
       type: 'project-page',
-      data: { projectId: currentProjectId, section }
+      data: { projectId: currentProjectId, section, projectName: `Project ${currentProjectId}` }
     });
   }, [currentProjectId, navigateTo]);
 

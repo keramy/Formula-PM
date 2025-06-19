@@ -477,8 +477,12 @@ export const AppContent = ({
 
   // Project Navigation Handlers
   const handleNavigateToProject = useCallback((projectId, section = 'overview') => {
-    navigateToProject(projectId, section);
-  }, [navigateToProject]);
+    const project = projects.find(p => p.id === projectId);
+    const projectName = project?.name || `Project ${projectId}`;
+    
+    // We need to update NavigationContext to accept project name
+    navigateToProject(projectId, section, projectName);
+  }, [navigateToProject, projects]);
 
   const handleViewProject = (project) => {
     handleNavigateToProject(project.id, 'overview');
@@ -531,6 +535,7 @@ export const AppContent = ({
               teamMembers={teamMembers}
               onEditProject={handleEditProject}
               onUpdateTask={updateTask}
+              onNavigateToProject={handleNavigateToProject}
             />
           </Suspense>
         </ErrorBoundary>
@@ -617,7 +622,7 @@ export const AppContent = ({
             <>
               <ModernStatsCards projects={projects} tasks={tasks} teamMembers={teamMembers} />
               <Suspense fallback={<LoadingFallback message="Loading project overview..." />}>
-                <ModernProjectOverview projects={projects} tasks={tasks} teamMembers={teamMembers} onViewProject={handleViewProject} />
+                <ModernProjectOverview projects={projects} tasks={tasks} teamMembers={teamMembers} clients={clients} onViewProject={handleViewProject} />
               </Suspense>
             </>
           </ErrorBoundary>
@@ -934,6 +939,7 @@ export const AppContent = ({
       <ModernDashboardLayout 
         currentTab={currentTab} 
         onTabChange={handleTabChange}
+        projects={projects}
         globalSearch={globalSearch}
         onGlobalSearchChange={handleGlobalSearchChange}
         onSearchSubmit={handleSearchSubmit}

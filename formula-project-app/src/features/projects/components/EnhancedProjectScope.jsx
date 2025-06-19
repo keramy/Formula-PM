@@ -58,7 +58,7 @@ import apiService from '../../../services/api/apiService';
 import PageWrapper from '../../../components/layout/PageWrapper';
 import connectionService from '../../../services/connectionService';
 
-const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], materialSpecs = [] }) => {
+const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], materialSpecs = [], initialScopeItems = [] }) => {
   const [scopeItems, setScopeItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
@@ -261,16 +261,28 @@ const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], 
     return () => {
       isMounted = false;
     };
-  }, [project.id]);
+  }, [project.id, initialScopeItems]);
 
   const loadScopeItems = async () => {
     try {
       setLoading(true);
-      const items = await apiService.getScopeItems(project.id);
-      setScopeItems(items || []);
+      
+      // Use initial scope items if provided (for demo purposes), otherwise load from API
+      if (initialScopeItems && initialScopeItems.length > 0) {
+        setScopeItems(initialScopeItems);
+        showNotification(`Loaded ${initialScopeItems.length} demo scope items for ${project.name}`);
+      } else {
+        const items = await apiService.getScopeItems(project.id);
+        setScopeItems(items || []);
+      }
     } catch (error) {
       console.error('Error loading scope items:', error);
       showNotification('Failed to load scope items', 'error');
+      // Fallback to initial scope items if API fails
+      if (initialScopeItems && initialScopeItems.length > 0) {
+        setScopeItems(initialScopeItems);
+        showNotification('Using demo data due to API error', 'warning');
+      }
     } finally {
       setLoading(false);
     }
@@ -402,284 +414,88 @@ const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], 
   }, [scopeItems]);
 
   return (
-    <PageWrapper
-      pageType="project-scope"
-      pageTitle="Scope Management"
-      pageData={{
-        projectId: project.id,
-        projectName: project.name,
-        status: project.status,
-        type: project.type
-      }}
-      subtitle={`${summaryStats.totalItems} items • $${summaryStats.totalValue.toLocaleString()} total value`}
-      actions={[
-        {
-          icon: <DownloadIcon />,
-          label: 'Download Template',
-          onClick: downloadExcelTemplate,
-          color: 'success'
-        },
-        {
-          icon: <ImportIcon />,
-          label: 'Import Excel',
-          onClick: () => setImportDialogOpen(true),
-          color: 'default'
-        },
-        {
-          icon: <AddIcon />,
-          label: 'Add Item',
-          onClick: () => setAddDialogOpen(true),
-          color: 'primary'
-        }
-      ]}
-      onNavigate={(path) => {
-        if (path === '/projects') {
-          onClose();
-        }
-      }}
-      contentPadding={0}
-    >
-      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-
-        {/* Enhanced Summary Cards with Group Progress */}
-        <Box sx={{ p: 3 }}>
-          <Grid container spacing={3}>
-            {/* Overall Progress */}
-            <Grid item xs={12} md={3}>
-              <Card sx={{ borderRadius: 3, border: '1px solid #E9ECEF', boxShadow: 'none' }}>
-                <CardContent sx={{ textAlign: 'center', py: 3 }}>
-                  <Box sx={{ 
-                    width: 60, height: 60, backgroundColor: '#3498DB', borderRadius: 2,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    margin: '0 auto 16px'
-                  }}>
-                    <ProgressIcon sx={{ color: 'white', fontSize: 30 }} />
-                  </Box>
-                  <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#2C3E50', mb: 1 }}>
-                    {summaryStats.overallProgress}%
-                  </Typography>
-                  <Typography variant="body1" color="textSecondary">
-                    Overall Progress
-                  </Typography>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={summaryStats.overallProgress} 
-                    sx={{ mt: 2, height: 8, borderRadius: 4 }}
-                  />
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Total Items */}
-            <Grid item xs={12} md={3}>
-              <Card sx={{ borderRadius: 3, border: '1px solid #E9ECEF', boxShadow: 'none' }}>
-                <CardContent sx={{ textAlign: 'center', py: 3 }}>
-                  <Box sx={{ 
-                    width: 60, height: 60, backgroundColor: '#27AE60', borderRadius: 2,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    margin: '0 auto 16px'
-                  }}>
-                    <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold' }}>📋</Typography>
-                  </Box>
-                  <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#2C3E50', mb: 1 }}>
-                    {summaryStats.totalItems}
-                  </Typography>
-                  <Typography variant="body1" color="textSecondary">
-                    Total Items
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Total Value */}
-            <Grid item xs={12} md={3}>
-              <Card sx={{ borderRadius: 3, border: '1px solid #E9ECEF', boxShadow: 'none' }}>
-                <CardContent sx={{ textAlign: 'center', py: 3 }}>
-                  <Box sx={{ 
-                    width: 60, height: 60, backgroundColor: '#F39C12', borderRadius: 2,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    margin: '0 auto 16px'
-                  }}>
-                    <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold' }}>💰</Typography>
-                  </Box>
-                  <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#2C3E50', mb: 1 }}>
-                    ${summaryStats.totalValue.toLocaleString()}
-                  </Typography>
-                  <Typography variant="body1" color="textSecondary">
-                    Total Value
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Timeline */}
-            <Grid item xs={12} md={3}>
-              <Card sx={{ borderRadius: 3, border: '1px solid #E9ECEF', boxShadow: 'none' }}>
-                <CardContent sx={{ textAlign: 'center', py: 3 }}>
-                  <Box sx={{ 
-                    width: 60, height: 60, backgroundColor: '#9B59B6', borderRadius: 2,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    margin: '0 auto 16px'
-                  }}>
-                    <TimeIcon sx={{ color: 'white', fontSize: 30 }} />
-                  </Box>
-                  <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#2C3E50', mb: 1 }}>
-                    {Object.values(groupTimelines).reduce((sum, group) => sum + group.duration, 0)}
-                  </Typography>
-                  <Typography variant="body1" color="textSecondary">
-                    Total Weeks
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
+    <Box sx={{ 
+      height: 'calc(100vh - 120px)', 
+      display: 'flex', 
+      flexDirection: 'column',
+      overflow: 'hidden'
+    }}>
+      {/* Minimal Action Bar */}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        px: 1,
+        py: 0.5,
+        borderBottom: '1px solid #e0e0e0',
+        backgroundColor: '#f8f9fa'
+      }}>
+        <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 600 }}>
+          Scope Management ({summaryStats.totalItems} items)
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 0.5 }}>
+          <IconButton size="small" onClick={downloadExcelTemplate} title="Download Template">
+            <DownloadIcon fontSize="small" />
+          </IconButton>
+          <IconButton size="small" onClick={() => setImportDialogOpen(true)} title="Import Excel">
+            <ImportIcon fontSize="small" />
+          </IconButton>
+          <IconButton size="small" onClick={() => setAddDialogOpen(true)} title="Add Item">
+            <AddIcon fontSize="small" />
+          </IconButton>
         </Box>
+      </Box>
 
-        {/* Scope Groups with Timeline Management */}
-        <Box sx={{ p: 3, pt: 0 }}>
-          <Typography variant="h5" fontWeight={600} gutterBottom>
-            Scope Groups & Timeline
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            Manage scope items by groups with timeline and progress tracking
-          </Typography>
-
-          <Grid container spacing={3}>
-            {Object.entries(groupStatistics).map(([groupKey, stats]) => (
-              <Grid item xs={12} md={6} lg={3} key={groupKey}>
-                <Card 
-                  sx={{ 
-                    borderRadius: 3, 
-                    border: selectedGroup === groupKey ? `2px solid ${stats.color}` : '1px solid #E9ECEF',
-                    boxShadow: selectedGroup === groupKey ? `0 4px 12px ${stats.color}20` : 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onClick={() => setSelectedGroup(groupKey)}
-                >
-                  <CardContent sx={{ p: 3 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Typography variant="h4" sx={{ mr: 1 }}>{stats.icon}</Typography>
-                      <Box sx={{ flexGrow: 1 }}>
-                        <Typography variant="h6" fontWeight={600}>
-                          {stats.name}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {stats.totalItems} items • {stats.duration} weeks
-                        </Typography>
-                      </Box>
-                    </Box>
-
-                    <Box sx={{ mb: 2 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                        <Typography variant="body2" color="text.secondary">Progress</Typography>
-                        <Typography variant="body2" fontWeight={600}>{stats.progress}%</Typography>
-                      </Box>
-                      <LinearProgress 
-                        variant="determinate" 
-                        value={stats.progress}
-                        sx={{ 
-                          height: 8, 
-                          borderRadius: 4,
-                          backgroundColor: '#f0f0f0',
-                          '& .MuiLinearProgress-bar': {
-                            backgroundColor: stats.color
-                          }
-                        }}
-                      />
-                    </Box>
-
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="body2" color="text.secondary">
-                        ${stats.totalValue.toLocaleString()}
-                      </Typography>
-                      <TextField
-                        size="small"
-                        type="number"
-                        value={stats.duration}
-                        onChange={(e) => handleUpdateGroupTimeline(groupKey, e.target.value)}
-                        sx={{ width: 80 }}
-                        InputProps={{
-                          endAdornment: <Typography variant="caption">wks</Typography>
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-
-        {/* View Mode Tabs */}
-        <Box sx={{ px: 3 }}>
-          <Tabs 
-            value={showWorkflowDashboard ? 'workflow' : selectedGroup} 
-            onChange={(_, value) => {
-              if (value === 'workflow') {
-                setShowWorkflowDashboard(true);
-              } else {
-                setShowWorkflowDashboard(false);
-                setSelectedGroup(value);
-              }
-            }}
-            variant="scrollable"
-            scrollButtons="auto"
-            sx={{
-              '& .MuiTab-root': {
-                textTransform: 'none',
-                fontWeight: 500
-              }
-            }}
-          >
-            <Tab 
-              icon={<DashboardIcon />}
-              label="Workflow Dashboard" 
-              value="workflow"
-              iconPosition="start"
+      {/* Simple Group Filter */}
+      <Box sx={{ px: 1, py: 0.5, borderBottom: '1px solid #e0e0e0' }}>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <Select
+              value={selectedGroup}
+              onChange={(e) => setSelectedGroup(e.target.value)}
+              displayEmpty
+              sx={{ height: 32 }}
+            >
+              <MenuItem value="all">All Items</MenuItem>
+              {Object.entries(scopeGroups).map(([groupKey, group]) => (
+                <MenuItem key={groupKey} value={groupKey}>
+                  {group.icon} {group.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {Object.entries(groupStatistics).map(([groupKey, stats]) => (
+            <Chip
+              key={groupKey}
+              label={`${stats.name}: ${stats.progress}%`}
+              size="small"
+              sx={{ fontSize: '0.7rem', height: 24 }}
+              color={selectedGroup === groupKey ? 'primary' : 'default'}
             />
-            <Tab label="All Items" value="all" />
-            {Object.entries(scopeGroups).map(([groupKey, group]) => (
-              <Tab 
-                key={groupKey}
-                label={`${group.icon} ${group.name}`} 
-                value={groupKey}
-              />
-            ))}
-          </Tabs>
+          ))}
         </Box>
+      </Box>
 
-        {/* Main Content Area */}
-        <Box sx={{ flexGrow: 1, mx: 3, mb: 3 }}>
-          {showWorkflowDashboard ? (
-            <WorkflowDashboard
-              project={project}
-              scopeItems={scopeItems}
-              shopDrawings={shopDrawings}
-              materialSpecs={materialSpecs}
-              onItemSelect={(item) => {
-                setShowWorkflowDashboard(false);
-                handleManageConnections(item);
-              }}
-            />
-          ) : (
-            <Paper sx={{ 
-              borderRadius: 3, 
-              border: '1px solid #E9ECEF',
-              boxShadow: 'none',
-              overflow: 'hidden'
-            }}>
-              <Box sx={{ p: 2, backgroundColor: '#F8F9FA', borderBottom: '1px solid #E9ECEF' }}>
-                <Typography variant="h6" fontWeight={600}>
-                  {selectedGroup === 'all' 
-                    ? `All Scope Items (${filteredItems.length})`
-                    : `${scopeGroups[selectedGroup]?.name} Items (${filteredItems.length})`
-                  }
-                </Typography>
-              </Box>
-            
-            <TableContainer sx={{ maxHeight: 'calc(100vh - 500px)' }}>
+      {/* Main Content Area - Full Page Table */}
+      <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
+        {showWorkflowDashboard ? (
+          <WorkflowDashboard
+            project={project}
+            scopeItems={scopeItems}
+            shopDrawings={shopDrawings}
+            materialSpecs={materialSpecs}
+            onItemSelect={(item) => {
+              setShowWorkflowDashboard(false);
+              handleManageConnections(item);
+            }}
+          />
+        ) : (
+          <TableContainer sx={{ 
+            height: '100%',
+            '& .MuiTableRow-root:hover': {
+              backgroundColor: 'transparent'
+            }
+          }}>
               <Table stickyHeader>
                 <TableHead>
                   <TableRow>
@@ -704,7 +520,7 @@ const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], 
                     </TableRow>
                   ) : (
                     filteredItems.map((item) => (
-                      <TableRow key={item.id} hover>
+                      <TableRow key={item.id}>
                         {/* Item Details */}
                         <TableCell sx={{ minWidth: 300 }}>
                           <Box>
@@ -748,25 +564,18 @@ const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], 
                                 }}
                               />
                             </Box>
-                            <Slider
+                            <LinearProgress
+                              variant="determinate"
                               value={item.progress || 0}
-                              onChange={(_, value) => handleUpdateItemProgress(item.id, value)}
-                              valueLabelDisplay="auto"
-                              valueLabelFormat={(value) => `${value}%`}
-                              step={5}
-                              min={0}
-                              max={100}
-                              size="small"
                               sx={{
-                                '& .MuiSlider-thumb': {
-                                  width: 16,
-                                  height: 16
-                                },
-                                '& .MuiSlider-track': {
-                                  height: 6
-                                }
+                                height: 6,
+                                borderRadius: 3,
+                                backgroundColor: '#f0f0f0'
                               }}
                             />
+                            <Typography variant="caption" sx={{ mt: 0.5, fontWeight: 600 }}>
+                              {item.progress || 0}%
+                            </Typography>
                           </Box>
                         </TableCell>
 
@@ -895,7 +704,6 @@ const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], 
                 </TableBody>
               </Table>
             </TableContainer>
-            </Paper>
           )}
         </Box>
 
@@ -960,8 +768,7 @@ const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], 
           {notification.message}
         </Alert>
       </Snackbar>
-      </Box>
-    </PageWrapper>
+    </Box>
   );
 });
 

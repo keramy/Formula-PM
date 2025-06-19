@@ -30,7 +30,7 @@ import {
 import { format, differenceInDays, differenceInMonths } from 'date-fns';
 import { exportProjectsToExcel } from '../../../services/export/excelExport';
 
-const ModernProjectOverview = ({ projects, tasks, teamMembers, onViewProject }) => {
+const ModernProjectOverview = ({ projects, tasks, teamMembers, clients = [], onViewProject }) => {
   const [filter, setFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
@@ -219,6 +219,17 @@ const ModernProjectOverview = ({ projects, tasks, teamMembers, onViewProject }) 
   // Handle export
   const handleExportProjects = async () => {
     try {
+      console.log('Starting export with:', {
+        projectsCount: filteredAndSortedProjects.length,
+        clientsCount: clients.length,
+        teamMembersCount: teamMembers.length
+      });
+
+      if (filteredAndSortedProjects.length === 0) {
+        alert('No projects to export. Please adjust your filters.');
+        return;
+      }
+
       const exportData = filteredAndSortedProjects.map(project => {
         const stats = getProjectStats(project.id);
         const dueInfo = calculateDaysRemaining(project.endDate);
@@ -233,9 +244,18 @@ const ModernProjectOverview = ({ projects, tasks, teamMembers, onViewProject }) 
         };
       });
 
-      await exportProjectsToExcel(exportData, [], teamMembers);
+      const result = await exportProjectsToExcel(exportData, clients, teamMembers);
+      
+      if (result.success) {
+        console.log('Export successful:', result.filename);
+        // You could add a success notification here
+      } else {
+        console.error('Export failed with result:', result);
+        alert(`Export failed: ${result.error || 'Unknown error'}`);
+      }
     } catch (error) {
       console.error('Export failed:', error);
+      alert(`Export failed: ${error.message || 'Unknown error occurred'}`);
     }
   };
 

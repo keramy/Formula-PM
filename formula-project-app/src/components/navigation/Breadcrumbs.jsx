@@ -11,7 +11,9 @@ import {
   Home as HomeIcon,
   ChevronRight as ChevronRightIcon,
   ArrowBack as ArrowBackIcon,
-  ArrowForward as ArrowForwardIcon
+  ArrowForward as ArrowForwardIcon,
+  Edit as EditIcon,
+  Settings as SettingsIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 
@@ -23,7 +25,10 @@ const Breadcrumbs = ({
   onNext,
   canGoBack = false,
   canGoNext = false,
-  currentSection = null
+  currentSection = null,
+  showProjectActions = false,
+  onEditProject = null,
+  onProjectSettings = null
 }) => {
   const { user } = useAuth();
 
@@ -146,6 +151,46 @@ const Breadcrumbs = ({
           );
         })}
       </MUIBreadcrumbs>
+
+      {/* Project Action Buttons */}
+      {showProjectActions && (
+        <Box sx={{ display: 'flex', gap: 1, mr: 1 }}>
+          {onEditProject && (
+            <IconButton
+              size="small"
+              onClick={onEditProject}
+              sx={{
+                border: '1px solid #e0e0e0',
+                borderRadius: 1,
+                width: 32,
+                height: 32,
+                '&:hover': {
+                  backgroundColor: '#f5f5f5'
+                }
+              }}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+          )}
+          {onProjectSettings && (
+            <IconButton
+              size="small"
+              onClick={onProjectSettings}
+              sx={{
+                border: '1px solid #e0e0e0',
+                borderRadius: 1,
+                width: 32,
+                height: 32,
+                '&:hover': {
+                  backgroundColor: '#f5f5f5'
+                }
+              }}
+            >
+              <SettingsIcon fontSize="small" />
+            </IconButton>
+          )}
+        </Box>
+      )}
 
       {/* User Context Indicator */}
       {user && (

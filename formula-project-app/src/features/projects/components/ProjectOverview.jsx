@@ -13,7 +13,8 @@ import {
   ListItemIcon,
   Paper,
   Avatar,
-  Divider
+  Divider,
+  Button
 } from '@mui/material';
 import {
   Assignment as TaskIcon,
@@ -199,54 +200,135 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
 
       {/* Sidebar */}
       <Grid item xs={12} md={4}>
-        {/* Task Statistics */}
+        {/* Enhanced Task & Project Overview */}
         <Card elevation={2}>
           <CardContent>
             <Typography variant="h6" fontWeight={600} gutterBottom>
-              Task Overview
+              Project Overview
+            </Typography>
+            
+            {/* Project Summary Section */}
+            <Box sx={{ mb: 3, p: 2, bgcolor: '#f8f9fa', borderRadius: 2 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Typography variant="body2" color="text.secondary">Budget</Typography>
+                  <Typography variant="h6" fontWeight={600} color="info.main">
+                    {project.budget || 'N/A'}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2" color="text.secondary">Due Date</Typography>
+                  <Typography variant="h6" fontWeight={600} color="warning.main">
+                    {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'TBD'}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    Overall Progress
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <LinearProgress
+                      variant="determinate"
+                      value={taskProgress}
+                      sx={{ flexGrow: 1, height: 8, borderRadius: 4 }}
+                    />
+                    <Typography variant="h6" fontWeight={600} color="success.main">
+                      {taskProgress.toFixed(0)}%
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Box>
+
+            {/* Task Breakdown */}
+            <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ mb: 2 }}>
+              Task Breakdown
             </Typography>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f8f9fa' }}>
-                  <Typography variant="h4" color="primary">
+                <Box sx={{ 
+                  p: 2, 
+                  textAlign: 'center', 
+                  border: '2px solid',
+                  borderColor: 'primary.main',
+                  borderRadius: 2,
+                  bgcolor: 'primary.50'
+                }}>
+                  <Typography variant="h4" color="primary.main" fontWeight={600}>
                     {taskStats.total}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Total Tasks
+                    Total
                   </Typography>
-                </Paper>
+                </Box>
               </Grid>
               <Grid item xs={6}>
-                <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f8f9fa' }}>
-                  <Typography variant="h4" sx={{ color: '#4CAF50' }}>
+                <Box sx={{ 
+                  p: 2, 
+                  textAlign: 'center', 
+                  border: '2px solid #4CAF50',
+                  borderRadius: 2,
+                  bgcolor: '#E8F5E8'
+                }}>
+                  <Typography variant="h4" sx={{ color: '#4CAF50', fontWeight: 600 }}>
                     {taskStats.completed}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Completed
                   </Typography>
-                </Paper>
+                </Box>
               </Grid>
               <Grid item xs={6}>
-                <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f8f9fa' }}>
-                  <Typography variant="h4" sx={{ color: '#FF9800' }}>
+                <Box sx={{ 
+                  p: 2, 
+                  textAlign: 'center', 
+                  border: '2px solid #FF9800',
+                  borderRadius: 2,
+                  bgcolor: '#FFF3E0'
+                }}>
+                  <Typography variant="h4" sx={{ color: '#FF9800', fontWeight: 600 }}>
                     {taskStats.inProgress}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     In Progress
                   </Typography>
-                </Paper>
+                </Box>
               </Grid>
               <Grid item xs={6}>
-                <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f8f9fa' }}>
-                  <Typography variant="h4" sx={{ color: '#2196F3' }}>
+                <Box sx={{ 
+                  p: 2, 
+                  textAlign: 'center', 
+                  border: '2px solid #2196F3',
+                  borderRadius: 2,
+                  bgcolor: '#E3F2FD'
+                }}>
+                  <Typography variant="h4" sx={{ color: '#2196F3', fontWeight: 600 }}>
                     {taskStats.pending}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Pending
                   </Typography>
-                </Paper>
+                </Box>
               </Grid>
             </Grid>
+
+            {/* Quick Actions */}
+            <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid #e0e0e0' }}>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                Quick Actions
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                <Button size="small" variant="outlined" sx={{ fontSize: '0.75rem' }}>
+                  Add Task
+                </Button>
+                <Button size="small" variant="outlined" sx={{ fontSize: '0.75rem' }}>
+                  View Timeline
+                </Button>
+                <Button size="small" variant="outlined" sx={{ fontSize: '0.75rem' }}>
+                  Export Data
+                </Button>
+              </Box>
+            </Box>
           </CardContent>
         </Card>
 

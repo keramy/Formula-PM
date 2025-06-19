@@ -210,7 +210,7 @@ router.post('/', (req, res) => {
     // Generate new specification ID
     const newId = `SPEC${String(specifications.length + 1).padStart(3, '0')}`;
     
-    const totalCost = (parseFloat(unitCost) || 0) * (parseInt(quantity) || 1);
+    const totalCost = parseFloat(((parseFloat(unitCost) || 0) * (parseInt(quantity) || 1)).toFixed(2));
     
     const newSpec = {
       id: newId,
@@ -287,9 +287,9 @@ router.put('/:id', (req, res) => {
     
     // Recalculate total cost if unit cost or quantity changed
     if (updates.unitCost !== undefined || updates.quantity !== undefined) {
-      const unitCost = updates.unitCost !== undefined ? parseFloat(updates.unitCost) : specifications[specIndex].unitCost;
-      const quantity = updates.quantity !== undefined ? parseInt(updates.quantity) : specifications[specIndex].quantity;
-      updates.totalCost = unitCost * quantity;
+      const unitCost = updates.unitCost !== undefined ? parseFloat(updates.unitCost) || 0 : specifications[specIndex].unitCost;
+      const quantity = updates.quantity !== undefined ? parseInt(updates.quantity) || 1 : specifications[specIndex].quantity;
+      updates.totalCost = parseFloat((unitCost * quantity).toFixed(2));
     }
     
     specifications[specIndex] = {
