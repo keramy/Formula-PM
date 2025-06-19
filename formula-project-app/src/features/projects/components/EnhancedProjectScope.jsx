@@ -53,6 +53,7 @@ import {
 import EnhancedScopeItemForm from './EnhancedScopeItemForm';
 import ScopeImportDialog from './ScopeImportDialog';
 import ConnectionManagementDialog from './ConnectionManagementDialog';
+import ProductionBlockedDialog from './ProductionBlockedDialog';
 import WorkflowDashboard from './WorkflowDashboard';
 import apiService from '../../../services/api/apiService';
 import PageWrapper from '../../../components/layout/PageWrapper';
@@ -88,6 +89,11 @@ const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], 
   const [connectionDialogOpen, setConnectionDialogOpen] = useState(false);
   const [selectedItemForConnection, setSelectedItemForConnection] = useState(null);
   const [showWorkflowDashboard, setShowWorkflowDashboard] = useState(false);
+  
+  // Production blocked dialog state
+  const [productionBlockedDialogOpen, setProductionBlockedDialogOpen] = useState(false);
+  const [selectedBlockedItem, setSelectedBlockedItem] = useState(null);
+  const [selectedBlockedItemStatus, setSelectedBlockedItemStatus] = useState(null);
 
   // Enhanced scope groups and categories
   const scopeGroups = {
@@ -231,6 +237,13 @@ const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], 
   const handleConnectionsUpdated = useCallback(() => {
     // Refresh any dependency analysis or notifications
     showNotification('Connections updated successfully');
+  }, []);
+  
+  // Handler for production blocked chip click
+  const handleProductionBlockedClick = useCallback((item, connectionStatus) => {
+    setSelectedBlockedItem(item);
+    setSelectedBlockedItemStatus(connectionStatus);
+    setProductionBlockedDialogOpen(true);
   }, []);
 
   // Memoized connection status to avoid recalculation
@@ -641,6 +654,8 @@ const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], 
                                     size="small" 
                                     color="error"
                                     icon={<WarningIcon />}
+                                    onClick={() => handleProductionBlockedClick(item, connectionStatus)}
+                                    sx={{ cursor: 'pointer' }}
                                   />
                                 )}
                               </Box>
@@ -752,6 +767,19 @@ const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], 
         shopDrawings={shopDrawings}
         materialSpecs={materialSpecs}
         onConnectionsUpdated={handleConnectionsUpdated}
+      />
+
+      {/* Production Blocked Dialog */}
+      <ProductionBlockedDialog
+        open={productionBlockedDialogOpen}
+        onClose={() => {
+          setProductionBlockedDialogOpen(false);
+          setSelectedBlockedItem(null);
+          setSelectedBlockedItemStatus(null);
+        }}
+        scopeItem={selectedBlockedItem}
+        connectionStatus={selectedBlockedItemStatus}
+        onManageConnections={handleManageConnections}
       />
 
       {/* Notification Snackbar */}
