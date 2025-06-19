@@ -1,5 +1,5 @@
 // Centralized exports for standardized UI components
-export { default as StatusChip } from './StatusChip';
+export { default as StatusChip, PriorityChip, TaskStatusChip, ProjectStatusChip, ProjectTypeChip } from './StatusChip';
 export { default as ActionTooltip } from './ActionTooltip';
 export { default as StandardCard } from './StandardCard';
 
@@ -12,10 +12,6 @@ export { default as OptionsMenu } from './OptionsMenu';
 
 // Backward compatibility exports (temporary)
 export { default as ActionIconButton } from './ActionTooltip';
-export { default as TaskStatusChip } from './StatusChip';
-export { default as PriorityChip } from './StatusChip';
-export { default as ProjectStatusChip } from './StatusChip';
-export { default as ProjectTypeChip } from './StatusChip';
 export { default as TaskCard } from './StandardCard';
 export { default as ProjectCard } from './StandardCard';
 

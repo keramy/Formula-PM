@@ -126,4 +126,10 @@ const StatusChip = ({
   return chip;
 };
 
+// Backward compatibility exports
+export const PriorityChip = (props) => <StatusChip type="priority" {...props} />;
+export const TaskStatusChip = (props) => <StatusChip type="task" {...props} />;
+export const ProjectStatusChip = (props) => <StatusChip type="project" {...props} />;
+export const ProjectTypeChip = (props) => <StatusChip type="projectType" {...props} />;
+
 export default StatusChip;
