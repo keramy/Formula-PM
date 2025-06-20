@@ -38,25 +38,16 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
   const { isInProjectContext, exitProjectContext } = useNavigation();
   const darkMode = isDarkMode;
   
-  // Formula International brand colors
-  const colors = darkMode ? {
-    background: '#1B2951',     // Navy background
-    text: '#F5F2E8',          // Light cream text
-    textSecondary: '#E8E2D5', // Cream secondary text
-    textMuted: '#A8B8D1',     // Muted text
-    accent: '#F5F2E8',        // Light cream accent
-    border: '#566BA3',        // Medium navy border
-    hover: 'rgba(245, 242, 232, 0.08)',
-    active: 'rgba(245, 242, 232, 0.12)'
-  } : {
-    background: '#FDFCFA',    // Light cream background
-    text: '#1B2951',          // Navy text
-    textSecondary: '#566BA3', // Medium navy secondary
-    textMuted: '#7A8FB8',     // Muted navy text
-    accent: '#1B2951',        // Navy accent
-    border: '#D1D8E6',        // Light border
-    hover: 'rgba(27, 41, 81, 0.05)',
-    active: 'rgba(27, 41, 81, 0.08)'
+  // Use theme colors instead of hardcoded values
+  const colors = {
+    background: darkMode ? theme.palette.formulaBrand.navy : theme.palette.formulaBrand.lightBackground,
+    text: darkMode ? theme.palette.formulaBrand.lightCream : theme.palette.formulaBrand.navy,
+    textSecondary: theme.palette.text.secondary,
+    textMuted: theme.palette.text.disabled,
+    accent: darkMode ? theme.palette.formulaBrand.lightCream : theme.palette.formulaBrand.navy,
+    border: theme.palette.divider,
+    hover: theme.palette.action.hover,
+    active: theme.palette.action.selected
   };
 
   const menuGroups = [

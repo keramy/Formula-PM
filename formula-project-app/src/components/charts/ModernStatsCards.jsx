@@ -102,8 +102,7 @@ const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
               justifyContent: 'space-between',
               transition: 'all 0.2s ease-in-out',
               '&:hover': {
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-                transform: 'translateY(-2px)'
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
               }
             }}
           >

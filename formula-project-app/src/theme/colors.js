@@ -105,11 +105,11 @@ export const colors = {
     }
   },
   
-  // Border Colors - Enhanced contrast
+  // Border Colors - Enhanced contrast  
   border: {
-    light: '#d0d0d0',       // Enhanced light border (was #e2e8f0)
-    medium: '#b0b0b0',      // Enhanced medium border (was #cbd5e0)
-    dark: '#909090'         // Enhanced dark border (was #a0aec0)
+    light: '#c0c0c0',       // Stronger light border for better definition
+    medium: '#a0a0a0',      // Stronger medium border 
+    dark: '#808080'         // Stronger dark border
   },
   
   // Construction-specific colors

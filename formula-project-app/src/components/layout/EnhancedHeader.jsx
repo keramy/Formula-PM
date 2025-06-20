@@ -84,13 +84,13 @@ const EnhancedHeader = ({
     }
   };
 
-  // Formula brand colors
+  // Use theme colors instead of hardcoded values
   const headerColors = {
-    background: darkMode ? theme.palette.formulaBrand.darkBackground : theme.palette.formulaBrand.lightBackground,
-    border: darkMode ? theme.palette.formulaBrand.navy : '#D1D8E6',
-    text: darkMode ? theme.palette.formulaBrand.lightCream : theme.palette.formulaBrand.navy,
-    textSecondary: darkMode ? '#E8E2D5' : '#566BA3',
-    hover: darkMode ? theme.palette.formulaBrand.lightCream : theme.palette.formulaBrand.navy
+    background: theme.palette.background.paper,
+    border: theme.palette.divider,
+    text: theme.palette.text.primary,
+    textSecondary: theme.palette.text.secondary,
+    hover: theme.palette.primary.main
   };
 
   return (
@@ -445,7 +445,6 @@ const EnhancedHeader = ({
                 height: 38,
                 '&:hover': { 
                   backgroundColor: theme.palette.primary.dark,
-                  transform: 'translateY(-1px)',
                   boxShadow: darkMode 
                     ? '0 4px 12px rgba(245, 242, 232, 0.3)'
                     : '0 4px 12px rgba(27, 41, 81, 0.3)'
