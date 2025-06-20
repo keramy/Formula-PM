@@ -15,6 +15,7 @@ import {
   Business
 } from '@mui/icons-material';
 import { StatusChip, ActionTooltip, StandardCard, ProjectStatusChip, ProjectTypeChip, ProjectCard, ActionIconButton, commonTooltips } from '../../../components/ui';
+import ProjectTeamAvatars from '../../../components/ui/ProjectTeamAvatars';
 import { 
   getProjectStatusConfig, 
   getProjectTypeConfig
@@ -22,7 +23,7 @@ import {
 
 // Using centralized configurations
 
-function ProjectsList({ projects, tasks, clients = [], onDeleteProject, onManageScope, onViewProject }) {
+function ProjectsList({ projects, tasks, clients = [], teamMembers = [], onDeleteProject, onManageScope, onViewProject }) {
   if (projects.length === 0) {
     return (
       <Box sx={{ textAlign: 'center', py: 4 }}>
@@ -195,6 +196,20 @@ function ProjectsList({ projects, tasks, clients = [], onDeleteProject, onManage
                       </span>
                     )}
                   </Box>
+                </Box>
+
+                {/* Team Members */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontSize: '0.875rem' }}>
+                    Team Members
+                  </Typography>
+                  <ProjectTeamAvatars
+                    teamMembers={teamMembers}
+                    projectTeamIds={project.teamMembers || []}
+                    maxAvatars={3}
+                    size="small"
+                    projectName={project.name}
+                  />
                 </Box>
                 
                 <Button

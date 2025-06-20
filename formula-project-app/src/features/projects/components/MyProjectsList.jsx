@@ -806,6 +806,7 @@ const MyProjectsList = ({
                     projects={filteredAndSortedProjects}
                     tasks={tasks}
                     clients={clients}
+                    teamMembers={teamMembers}
                     onDeleteProject={onDeleteProject}
                     onManageScope={onManageScope}
                     onViewProject={onViewProject}

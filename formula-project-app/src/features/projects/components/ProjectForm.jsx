@@ -30,7 +30,7 @@ const projectStatuses = [
   { value: 'completed', label: 'Completed' }
 ];
 
-function ProjectForm({ onSubmit, clients = [], initialProject = null }) {
+function ProjectForm({ onSubmit, onCancel, clients = [], initialProject = null }) {
   const [formData, setFormData] = useState(
     initialProject ? {
       name: initialProject.name || '',
@@ -252,14 +252,38 @@ function ProjectForm({ onSubmit, clients = [], initialProject = null }) {
           fullWidth
         />
 
-        <Button
-          type="submit"
-          variant="contained"
-          size="large"
-          sx={{ mt: 2 }}
-        >
-          Create Project
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={onCancel}
+            sx={{ 
+              flex: 1,
+              borderColor: '#dee2e6',
+              color: '#6c757d',
+              '&:hover': {
+                borderColor: '#adb5bd',
+                backgroundColor: '#f8f9fa'
+              }
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            sx={{ 
+              flex: 1,
+              backgroundColor: '#1976d2',
+              '&:hover': {
+                backgroundColor: '#1565c0'
+              }
+            }}
+          >
+            {initialProject ? 'Update Project' : 'Create Project'}
+          </Button>
+        </Box>
       </Box>
     </LocalizationProvider>
   );

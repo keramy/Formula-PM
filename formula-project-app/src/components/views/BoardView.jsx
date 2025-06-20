@@ -7,72 +7,129 @@ import {
   Card, 
   CardContent,
   Tooltip,
-  Chip
+  Chip,
+  LinearProgress
 } from '@mui/material';
 import {
   CalendarToday,
-  Person as PersonIcon
+  Person as PersonIcon,
+  Business,
+  AccountTree
 } from '@mui/icons-material';
-import { PriorityChip } from '../ui/StatusChip';
-import { getPriorityConfig, isTaskCompleted } from '../../utils/statusConfig';
+import { ProjectStatusChip, ProjectTypeChip, PriorityChip } from '../ui/StatusChip';
+import ProjectTeamAvatars from '../ui/ProjectTeamAvatars';
+import { getProjectStatusConfig, getProjectTypeConfig, getPriorityConfig } from '../../utils/statusConfig';
 
-const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }) => {
+const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], onProjectUpdate, showProjects = true }) => {
 
-  // Group tasks by status
+  // Group projects by status
   const columns = useMemo(() => {
-    const columnConfig = [
-      {
-        id: 'pending',
-        title: 'TO DO',
-        color: '#f39c12',
-        bgColor: '#fef9e7'
-      },
-      {
-        id: 'in-progress',
-        title: 'IN PROGRESS', 
-        color: '#3498db',
-        bgColor: '#ebf5fb'
-      },
-      {
-        id: 'completed',
-        title: 'DONE',
-        color: '#27ae60',
-        bgColor: '#eafaf1'
-      }
-    ];
+    if (showProjects) {
+      const columnConfig = [
+        {
+          id: 'on-tender',
+          title: 'ON TENDER',
+          color: '#3498db',
+          bgColor: '#ebf3fd'
+        },
+        {
+          id: 'awarded',
+          title: 'AWARDED', 
+          color: '#27ae60',
+          bgColor: '#eafaf1'
+        },
+        {
+          id: 'active',
+          title: 'ACTIVE',
+          color: '#9b59b6',
+          bgColor: '#f4ecf7'
+        },
+        {
+          id: 'completed',
+          title: 'COMPLETED',
+          color: '#2c3e50',
+          bgColor: '#eaeded'
+        }
+      ];
 
-    const grouped = {};
-    
-    // Initialize columns
-    columnConfig.forEach(col => {
-      grouped[col.id] = {
-        ...col,
-        tasks: []
-      };
-    });
-
-    // Group tasks by status
-    tasks.forEach(task => {
-      let status = task.status || 'pending';
+      const grouped = {};
       
-      // Handle different status formats
-      if (status === 'in_progress') {
-        status = 'in-progress';
-      }
+      // Initialize columns
+      columnConfig.forEach(col => {
+        grouped[col.id] = {
+          ...col,
+          items: []
+        };
+      });
+
+      // Group projects by status
+      projects.forEach(project => {
+        let status = project.status || 'on-tender';
+        
+        if (grouped[status]) {
+          grouped[status].items.push(project);
+        } else {
+          // Fallback to on-tender if status doesn't match
+          grouped['on-tender'].items.push(project);
+        }
+      });
+
+      return grouped;
+    } else {
+      // Original task-based columns
+      const columnConfig = [
+        {
+          id: 'pending',
+          title: 'TO DO',
+          color: '#f39c12',
+          bgColor: '#fef9e7'
+        },
+        {
+          id: 'in-progress',
+          title: 'IN PROGRESS', 
+          color: '#3498db',
+          bgColor: '#ebf5fb'
+        },
+        {
+          id: 'completed',
+          title: 'DONE',
+          color: '#27ae60',
+          bgColor: '#eafaf1'
+        }
+      ];
+
+      const grouped = {};
       
-      if (grouped[status]) {
-        grouped[status].tasks.push(task);
-      } else {
-        // Fallback to pending if status doesn't match
-        grouped['pending'].tasks.push(task);
-      }
-    });
+      // Initialize columns
+      columnConfig.forEach(col => {
+        grouped[col.id] = {
+          ...col,
+          items: []
+        };
+      });
 
-    return grouped;
-  }, [tasks]);
+      // Group tasks by status
+      tasks.forEach(task => {
+        let status = task.status || 'pending';
+        
+        // Handle different status formats
+        if (status === 'in_progress') {
+          status = 'in-progress';
+        }
+        
+        if (grouped[status]) {
+          grouped[status].items.push(task);
+        } else {
+          // Fallback to pending if status doesn't match
+          grouped['pending'].items.push(task);
+        }
+      });
 
-  // Using centralized priority configuration
+      return grouped;
+    }
+  }, [tasks, projects, showProjects]);
 
+  // Utility functions
   const getAssignedMember = (assignedTo) => {
     return teamMembers.find(member => member.id === assignedTo);
   };
@@ -80,6 +137,19 @@ const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }
   const getProjectName = (projectId) => {
     const project = projects.find(p => p.id === projectId);
     return project ? project.name : 'Unknown Project';
+  };
+
+  const getClientName = (clientId) => {
+    const client = clients.find(c => c.id === clientId);
+    return client ? client.companyName : 'No Client';
+  };
+
+  const calculateProjectProgress = (projectId) => {
+    const projectTasks = tasks.filter(task => task.projectId === projectId);
+    if (projectTasks.length === 0) return 0;
+    
+    const completedTasks = projectTasks.filter(task => task.status === 'completed').length;
+    return Math.round((completedTasks / projectTasks.length) * 100);
   };
 
   const formatDueDate = (dueDate) => {
@@ -94,6 +164,115 @@ const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }
     if (diffDays === 1) return { text: 'Due tomorrow', color: '#e67e22', urgent: false };
     if (diffDays <= 7) return { text: `${diffDays} days left`, color: '#3498db', urgent: false };
     return { text: date.toLocaleDateString(), color: '#7f8c8d', urgent: false };
+  };
+
+  const ProjectCard = ({ project }) => {
+    const typeConfig = getProjectTypeConfig(project.type);
+    const statusConfig = getProjectStatusConfig(project.status);
+    const progress = calculateProjectProgress(project.id);
+    
+    const formatDate = (dateString) => {
+      if (!dateString) return 'Not set';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    };
+
+    return (
+      <Card
+        sx={{
+          mb: 1.5,
+          cursor: 'pointer',
+          backgroundColor: 'white',
+          border: '1px solid #E9ECEF',
+          borderRadius: 2,
+          transition: 'all 0.2s ease-in-out',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          '&:hover': {
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            transform: 'translateY(-1px)'
+          }
+        }}
+      >
+        <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+          {/* Project Name */}
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              fontWeight: 600, 
+              mb: 1,
+              color: '#2C3E50',
+              lineHeight: 1.4
+            }}
+          >
+            {project.name}
+          </Typography>
+
+          {/* Type and Status */}
+          <Box sx={{ display: 'flex', gap: 1, mb: 1.5, flexWrap: 'wrap' }}>
+            <ProjectTypeChip type={project.type} size="small" />
+            <ProjectStatusChip status={project.status} size="small" />
+          </Box>
+
+          {/* Client */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+            <Business sx={{ fontSize: 16, color: '#7f8c8d' }} />
+            <Typography variant="caption" color="text.secondary">
+              {getClientName(project.clientId)}
+            </Typography>
+          </Box>
+
+          {/* Timeline */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+            <CalendarToday sx={{ fontSize: 16, color: '#7f8c8d' }} />
+            <Typography variant="caption" color="text.secondary">
+              {formatDate(project.startDate)} - {formatDate(project.endDate)}
+            </Typography>
+          </Box>
+
+          {/* Progress */}
+          {progress > 0 && (
+            <Box sx={{ mb: 1.5 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                <Typography variant="caption" color="text.secondary">
+                  Progress
+                </Typography>
+                <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                  {progress}%
+                </Typography>
+              </Box>
+              <LinearProgress
+                variant="determinate"
+                value={progress}
+                sx={{ 
+                  height: 4,
+                  borderRadius: 2,
+                  backgroundColor: '#E9ECEF',
+                  '& .MuiLinearProgress-bar': {
+                    backgroundColor: progress === 100 ? '#27ae60' : '#3498db',
+                    borderRadius: 2
+                  }
+                }}
+              />
+            </Box>
+          )}
+
+          {/* Team Members */}
+          <Box>
+            <ProjectTeamAvatars
+              teamMembers={teamMembers}
+              projectTeamIds={project.teamMembers || []}
+              maxAvatars={3}
+              size="small"
+              compact={true}
+              projectName={project.name}
+            />
+          </Box>
+        </CardContent>
+      </Card>
+    );
   };
 
   const TaskCard = ({ task }) => {
@@ -277,7 +456,7 @@ const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }
                     {column.title}
                   </Typography>
                   <Chip 
-                    label={column.tasks.length} 
+                    label={column.items?.length || 0} 
                     size="small" 
                     sx={{ 
                       height: 20,
@@ -290,7 +469,7 @@ const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }
                 </Box>
               </Box>
               
-              {/* Tasks List */}
+              {/* Items List */}
               <Box
                 sx={{ 
                   p: 2, 
@@ -301,7 +480,7 @@ const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }
                   transition: 'background-color 0.2s ease'
                 }}
               >
-                {column.tasks.length === 0 ? (
+                {(!column.items || column.items.length === 0) ? (
                   <Box 
                     sx={{ 
                       textAlign: 'center', 
@@ -313,15 +492,22 @@ const BoardView = ({ tasks = [], onTaskUpdate, teamMembers = [], projects = [] }
                     }}
                   >
                     <Typography variant="body2">
-                      No tasks in this column
+                      No {showProjects ? 'projects' : 'tasks'} in this column
                     </Typography>
                   </Box>
                 ) : (
-                  column.tasks.map((task) => (
-                    <TaskCard 
-                      key={task.id} 
-                      task={task} 
-                    />
+                  column.items.map((item) => (
+                    showProjects ? (
+                      <ProjectCard 
+                        key={item.id} 
+                        project={item} 
+                      />
+                    ) : (
+                      <TaskCard 
+                        key={item.id} 
+                        task={item} 
+                      />
+                    )
                   ))
                 )}
               </Box>

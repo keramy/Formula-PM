@@ -6,6 +6,7 @@ import {
   Link, 
   Chip,
   IconButton,
+  Button,
   Avatar,
   InputBase,
   Paper,
@@ -41,6 +42,7 @@ const EnhancedHeader = ({
   breadcrumbs = [], 
   onSearch, 
   onAdd, 
+  createButtonText = null,
   isStarred = false,
   onToggleStar,
   teamMembers = [],
@@ -56,6 +58,9 @@ const EnhancedHeader = ({
   const theme = useMuiTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { mode, toggleTheme, isDarkMode } = useFormulaTheme();
+
+  // Debug logging
+  console.log('EnhancedHeader props:', { createButtonText, onAdd, title });
   const darkMode = isDarkMode;
   
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
@@ -435,25 +440,54 @@ const EnhancedHeader = ({
             </IconButton>
           </Tooltip>
           
-          <Tooltip title="Add New">
-            <IconButton 
-              onClick={onAdd}
-              sx={{ 
-                backgroundColor: theme.palette.primary.main, 
-                color: theme.palette.primary.contrastText,
-                borderRadius: 2,
-                width: 38,
-                height: 38,
-                '&:hover': { 
-                  backgroundColor: theme.palette.primary.dark,
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
-                },
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <Add sx={{ fontSize: 18 }} />
-            </IconButton>
-          </Tooltip>
+          {/* Debug: Check button rendering logic */}
+          {console.log('Button render check:', { hasCreateButtonText: !!createButtonText, createButtonText, hasOnAdd: !!onAdd })}
+          {onAdd && (
+            (createButtonText || title === 'All Projects') ? (
+              <Button
+                variant="contained"
+                startIcon={<Add />}
+                onClick={onAdd}
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: theme.palette.primary.contrastText,
+                  borderRadius: 2,
+                  px: 3,
+                  py: 1,
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  textTransform: 'none',
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.dark,
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                  },
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                {createButtonText || 'Create New Project'}
+              </Button>
+            ) : (
+              <Tooltip title="Add New">
+                <IconButton 
+                  onClick={onAdd}
+                  sx={{ 
+                    backgroundColor: theme.palette.primary.main, 
+                    color: theme.palette.primary.contrastText,
+                    borderRadius: 2,
+                    width: 38,
+                    height: 38,
+                    '&:hover': { 
+                      backgroundColor: theme.palette.primary.dark,
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                    },
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <Add sx={{ fontSize: 18 }} />
+                </IconButton>
+              </Tooltip>
+            )
+          )}
 
           <Tooltip title="More options">
             <IconButton 

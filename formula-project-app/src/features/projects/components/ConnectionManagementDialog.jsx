@@ -34,6 +34,7 @@ import {
   Inventory as MaterialIcon,
   Assignment as ScopeIcon
 } from '@mui/icons-material';
+import { FaSave } from 'react-icons/fa';
 import connectionService from '../../../services/connectionService';
 
 const ConnectionManagementDialog = ({ 
@@ -400,6 +401,14 @@ const ConnectionManagementDialog = ({
       </DialogContent>
 
       <DialogActions>
+        <Button 
+          onClick={onClose}
+          startIcon={<FaSave />}
+          variant="contained"
+          color="primary"
+        >
+          Save Changes
+        </Button>
         <Button onClick={onClose}>
           Close
         </Button>

@@ -42,6 +42,9 @@ const ProjectsPage = ({
     onAddProject();
   }, [onAddProject]);
 
+  // Debug logging
+  console.log('ProjectsPage: About to render EnhancedHeader with createButtonText="Create New Project"');
+
   return (
     <Box>
       <EnhancedHeader
@@ -52,6 +55,7 @@ const ProjectsPage = ({
         searchValue={projectsSearchTerm}
         onSearchChange={setProjectsSearchTerm}
         onAdd={handleAddProject}
+        createButtonText="Create New Project"
         isStarred={false}
         onToggleStar={() => {}}
         teamMembers={teamMembers.slice(0, 5)}
@@ -86,9 +90,11 @@ const ProjectsPage = ({
           <Suspense fallback={<LoadingFallback message="Loading board view..." />}>
             <BoardView
               tasks={tasks}
-              onTaskUpdate={onUpdateTask}
-              teamMembers={teamMembers}
               projects={projects}
+              teamMembers={teamMembers}
+              clients={clients}
+              onProjectUpdate={onUpdateTask}
+              showProjects={true}
             />
           </Suspense>
         </ErrorBoundary>
@@ -117,8 +123,10 @@ const ProjectsPage = ({
               projects={filteredProjects}
               tasks={tasks}
               clients={clients}
+              teamMembers={teamMembers}
               onDeleteProject={onDeleteProject}
               onManageScope={onManageScope}
+              onViewProject={onViewProject}
             />
           </Suspense>
         </ErrorBoundary>

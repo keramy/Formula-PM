@@ -30,6 +30,7 @@ import {
   CalendarToday as CalendarIcon,
   AccountTree as ScopeIcon
 } from '@mui/icons-material';
+import ProjectTeamAvatars from '../../../components/ui/ProjectTeamAvatars';
 
 const ProjectsTableView = ({ 
   projects = [], 
@@ -169,6 +170,7 @@ const ProjectsTableView = ({
     { id: 'type', label: 'Type', sortable: true, minWidth: 130 },
     { id: 'status', label: 'Status', sortable: true, minWidth: 120 },
     { id: 'manager', label: 'Manager', sortable: true, minWidth: 150 },
+    { id: 'team', label: 'Team', sortable: false, minWidth: 140 },
     { id: 'startDate', label: 'Start Date', sortable: true, minWidth: 120 },
     { id: 'endDate', label: 'End Date', sortable: true, minWidth: 120 },
     { id: 'progress', label: 'Progress', sortable: false, minWidth: 120 },
@@ -330,6 +332,18 @@ const ProjectsTableView = ({
                         {getProjectManager(project.projectManager)}
                       </Typography>
                     </Box>
+                  </TableCell>
+
+                  {/* Team Members */}
+                  <TableCell>
+                    <ProjectTeamAvatars
+                      teamMembers={teamMembers}
+                      projectTeamIds={project.teamMembers || []}
+                      maxAvatars={3}
+                      size="small"
+                      compact={true}
+                      projectName={project.name}
+                    />
                   </TableCell>
 
                   {/* Start Date */}

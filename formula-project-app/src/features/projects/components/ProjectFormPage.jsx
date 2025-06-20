@@ -47,6 +47,7 @@ const ProjectFormPage = ({
         <ProjectForm
           clients={clients}
           onSubmit={onSubmit}
+          onCancel={onCancel}
           initialProject={project}
         />
       </Box>

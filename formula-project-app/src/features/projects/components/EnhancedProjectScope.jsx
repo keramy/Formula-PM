@@ -537,9 +537,22 @@ const EnhancedProjectScope = React.memo(({ project, onClose, shopDrawings = [], 
                         {/* Item Details */}
                         <TableCell sx={{ minWidth: 300 }}>
                           <Box>
-                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                              {item.description}
-                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                {item.description}
+                              </Typography>
+                              <Chip 
+                                label={item.id} 
+                                size="small"
+                                sx={{ 
+                                  backgroundColor: '#F5F5F5', 
+                                  color: '#666666',
+                                  fontFamily: 'monospace',
+                                  fontSize: '0.7rem',
+                                  height: 20
+                                }}
+                              />
+                            </Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
                               <Chip 
                                 label={item.category || 'Uncategorized'} 

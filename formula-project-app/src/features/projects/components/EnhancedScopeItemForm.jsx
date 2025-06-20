@@ -21,6 +21,7 @@ import { AttachFile as AttachFileIcon } from '@mui/icons-material';
 
 const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
+    id: '',
     description: '',
     quantity: '',
     unitPrice: '',
@@ -120,10 +121,28 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-        {/* 1. Description */}
+        {/* 1. Item Code */}
         <TextField
           fullWidth
-          label="1. Description"
+          label="1. Item Code"
+          required
+          value={formData.id}
+          onChange={handleChange('id')}
+          placeholder="Enter item code (e.g., SCOPE001)..."
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                🏷️
+              </InputAdornment>
+            ),
+            style: { fontFamily: 'monospace' }
+          }}
+        />
+
+        {/* 2. Description */}
+        <TextField
+          fullWidth
+          label="2. Description"
           required
           value={formData.description}
           onChange={handleChange('description')}
@@ -137,13 +156,13 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
           }}
         />
 
-        {/* 2. Category */}
+        {/* 3. Category */}
         <FormControl fullWidth>
-          <InputLabel>2. Category</InputLabel>
+          <InputLabel>3. Category</InputLabel>
           <Select
             value={formData.category}
             onChange={handleChange('category')}
-            label="2. Category"
+            label="3. Category"
             displayEmpty
           >
             <MenuItem value="">
@@ -157,10 +176,10 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
           </Select>
         </FormControl>
 
-        {/* 3. Quantity */}
+        {/* 4. Quantity */}
         <TextField
           fullWidth
-          label="3. Quantity"
+          label="4. Quantity"
           required
           type="number"
           value={formData.quantity}
@@ -175,13 +194,13 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
           }}
         />
 
-        {/* 4. Unit */}
+        {/* 5. Unit */}
         <FormControl fullWidth>
-          <InputLabel>4. Unit</InputLabel>
+          <InputLabel>5. Unit</InputLabel>
           <Select
             value={formData.unit}
             onChange={handleChange('unit')}
-            label="4. Unit"
+            label="5. Unit"
           >
             {unitOptions.map(unit => (
               <MenuItem key={unit} value={unit}>
@@ -191,10 +210,10 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
           </Select>
         </FormControl>
 
-        {/* 5. Unit Price */}
+        {/* 6. Unit Price */}
         <TextField
           fullWidth
-          label="5. Unit Price"
+          label="6. Unit Price"
           required
           type="number"
           value={formData.unitPrice}
@@ -215,7 +234,7 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
         {/* Progress & Status Section */}
         <Box>
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#2C3E50' }}>
-            6. Progress & Status
+            7. Progress & Status
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
@@ -275,7 +294,7 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
         {/* Connections Section */}
         <Box>
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#2C3E50' }}>
-            7. Connections & Requirements
+            8. Connections & Requirements
           </Typography>
           <Paper sx={{ p: 3, backgroundColor: '#F8F9FA', borderRadius: 2 }}>
             <Grid container spacing={2}>
@@ -331,10 +350,10 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
           </Paper>
         </Box>
 
-        {/* 8. Notes */}
+        {/* 9. Notes */}
         <TextField
           fullWidth
-          label="8. Notes (Optional)"
+          label="9. Notes (Optional)"
           multiline
           rows={3}
           value={formData.notes}

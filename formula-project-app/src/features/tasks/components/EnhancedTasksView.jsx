@@ -10,8 +10,6 @@ import {
   Grid,
   Avatar,
   LinearProgress,
-  Tabs,
-  Tab,
   List,
   ListItem,
   ListItemText,
@@ -35,9 +33,6 @@ import {
   Flag,
   Error,
   PriorityHigh,
-  ViewList,
-  ViewModule,
-  Today
 } from '@mui/icons-material';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
@@ -80,7 +75,7 @@ const statusConfig = {
 const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTask, onAddTask, onViewTask, onEditTask }) {
   const [searchValue, setSearchValue] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [currentTab, setCurrentTab] = useState(0); // 0: List, 1: Board, 2: Calendar
+  // Removed internal tab system for consistency with other tabs
   const [sortBy, setSortBy] = useState('dueDate');
   const [sortDirection, setSortDirection] = useState('asc');
   const [filters, setFilters] = useState({
@@ -619,13 +614,9 @@ const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, project
   if (tasks.length === 0) {
     return (
       <Box sx={{ 
-        maxWidth: 900, 
-        mx: 'auto', 
-        px: 2,
         width: '100%',
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
+        flexDirection: 'column'
       }}>
         <UnifiedHeader
           title="Tasks"
@@ -639,7 +630,7 @@ const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, project
           addButtonText="Add Task"
           activeFilters={activeFilters}
           onClearFilter={handleClearFilter}
-          showViewToggle={false}
+          showViewToggle={true}
         />
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <Assignment sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
@@ -653,13 +644,9 @@ const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, project
 
   return (
     <Box sx={{ 
-      maxWidth: 900, 
-      mx: 'auto', 
-      px: 2,
       width: '100%',
       display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center'
+      flexDirection: 'column'
     }}>
       {/* Unified Header */}
       <UnifiedHeader
@@ -688,19 +675,8 @@ const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, project
         quickFilters={quickFilters}
       />
 
-      {/* View Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-        <Tabs value={currentTab} onChange={(e, newValue) => setCurrentTab(newValue)}>
-          <Tab icon={<ViewList />} label="List" />
-          <Tab icon={<ViewModule />} label="Board" />
-          <Tab icon={<Today />} label="Calendar" />
-        </Tabs>
-      </Box>
-
-      {/* Content based on selected tab */}
-      {currentTab === 0 && renderListView()}
-      {currentTab === 1 && renderBoardView()}
-      {currentTab === 2 && renderCalendarView()}
+      {/* Main Content - List View */}
+      {renderListView()}
     </Box>
   );
 });

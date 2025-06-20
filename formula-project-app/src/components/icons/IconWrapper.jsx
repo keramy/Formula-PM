@@ -97,7 +97,7 @@ export const NavigationIcon = ({ name, active = false, size = 24, ...props }) =>
   <IconWrapper
     name={name}
     size={size}
-    color={active ? 'primary' : 'currentColor'}
+    color={active ? 'inherit' : 'currentColor'}
     {...props}
   />
 );

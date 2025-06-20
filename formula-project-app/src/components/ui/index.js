@@ -36,6 +36,7 @@ export { default as UnifiedFilters } from './UnifiedFilters';
 export { default as UnifiedTableView } from './UnifiedTableView';
 export { default as GlobalSearchResults } from './GlobalSearchResults';
 export { default as OptionsMenu } from './OptionsMenu';
+export { default as ProjectTeamAvatars } from './ProjectTeamAvatars';
 
 // Backward compatibility exports (temporary)
 export { default as ActionIconButton } from './ActionTooltip';
