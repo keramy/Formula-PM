@@ -103,7 +103,9 @@
       "Bash(PORT=5014 node server.js)",
       "Bash(git checkout:*)",
       "Bash(npx gh-pages:*)",
-      "Bash(git branch:*)"
+      "Bash(git branch:*)",
+      "Bash(npm uninstall:*)",
+      "WebFetch(domain:react-icons.github.io)"
     ],
     "deny": []
   }

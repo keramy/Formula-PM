@@ -16,13 +16,23 @@ import {
   Build,
   ElectricalServices,
   Engineering,
-  AccountTree
+  AccountTree,
+  DesignServices,
+  DocumentScanner,
+  Foundation,
+  HomeRepairService,
+  FormatPaint,
+  VpnKey,
+  Security
 } from '@mui/icons-material';
 import { 
   getTaskStatusConfig, 
   getProjectStatusConfig, 
   getPriorityConfig,
-  getProjectTypeConfig 
+  getProjectTypeConfig,
+  getConstructionPhaseConfig,
+  getQualityStatusConfig,
+  getSafetyLevelConfig
 } from '../../utils/statusConfig';
 
 // Icon mapping
@@ -42,11 +52,19 @@ const ICON_MAP = {
   Build: Build,
   ElectricalServices: ElectricalServices,
   Engineering: Engineering,
-  AccountTree: AccountTree
+  AccountTree: AccountTree,
+  // Construction phase icons
+  DesignIdeas: DesignServices,
+  DocumentApprove: DocumentScanner,
+  Hammer: Build,
+  Foundation: Foundation,
+  PaintBrush: FormatPaint,
+  Key: VpnKey,
+  Shield: Security
 };
 
 const StatusChip = ({ 
-  type = 'task', // 'task', 'project', 'priority', 'projectType'
+  type = 'task', // 'task', 'project', 'priority', 'projectType', 'phase', 'quality', 'safety'
   status, 
   priority, // backward compatibility for PriorityChip
   size = 'small',
@@ -77,6 +95,15 @@ const StatusChip = ({
         return getPriorityConfig(actualStatus);
       case 'projectType':
         return getProjectTypeConfig(actualStatus);
+      case 'phase':
+      case 'constructionPhase':
+        return getConstructionPhaseConfig(actualStatus);
+      case 'quality':
+      case 'qualityStatus':
+        return getQualityStatusConfig(actualStatus);
+      case 'safety':
+      case 'safetyLevel':
+        return getSafetyLevelConfig(actualStatus);
       default:
         return getTaskStatusConfig(actualStatus);
     }
@@ -131,5 +158,10 @@ export const PriorityChip = (props) => <StatusChip type="priority" {...props} />
 export const TaskStatusChip = (props) => <StatusChip type="task" {...props} />;
 export const ProjectStatusChip = (props) => <StatusChip type="project" {...props} />;
 export const ProjectTypeChip = (props) => <StatusChip type="projectType" {...props} />;
+
+// Construction-specific chip exports
+export const ConstructionPhaseChip = (props) => <StatusChip type="phase" {...props} />;
+export const QualityStatusChip = (props) => <StatusChip type="quality" {...props} />;
+export const SafetyLevelChip = (props) => <StatusChip type="safety" {...props} />;
 
 export default StatusChip;

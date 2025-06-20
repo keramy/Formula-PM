@@ -314,6 +314,199 @@ export const isProjectCompleted = (status) => {
   return normalizeProjectStatus(status) === PROJECT_STATUS.COMPLETED;
 };
 
+// Construction-specific status configurations
+export const CONSTRUCTION_PHASE = {
+  PLANNING: 'planning',
+  PERMITTING: 'permitting', 
+  DEMOLITION: 'demolition',
+  FOUNDATION: 'foundation',
+  FRAMING: 'framing',
+  MEP_ROUGH: 'mep-rough',
+  FINISHING: 'finishing',
+  HANDOVER: 'handover'
+};
+
+export const constructionPhaseConfig = {
+  [CONSTRUCTION_PHASE.PLANNING]: {
+    label: 'Planning & Design',
+    color: '#1976D2',
+    bgColor: '#E3F2FD',
+    borderColor: '#1976D2',
+    iconName: 'DesignIdeas',
+    textColor: '#1976D2'
+  },
+  [CONSTRUCTION_PHASE.PERMITTING]: {
+    label: 'Permitting',
+    color: '#F57C00',
+    bgColor: '#FFF3E0',
+    borderColor: '#F57C00',
+    iconName: 'DocumentApprove',
+    textColor: '#F57C00'
+  },
+  [CONSTRUCTION_PHASE.DEMOLITION]: {
+    label: 'Demolition',
+    color: '#D32F2F',
+    bgColor: '#FFEBEE',
+    borderColor: '#D32F2F',
+    iconName: 'Hammer',
+    textColor: '#D32F2F'
+  },
+  [CONSTRUCTION_PHASE.FOUNDATION]: {
+    label: 'Foundation',
+    color: '#5D4037',
+    bgColor: '#EFEBE9',
+    borderColor: '#5D4037',
+    iconName: 'Construction',
+    textColor: '#5D4037'
+  },
+  [CONSTRUCTION_PHASE.FRAMING]: {
+    label: 'Framing',
+    color: '#8BC34A',
+    bgColor: '#F1F8E9',
+    borderColor: '#8BC34A',
+    iconName: 'Build',
+    textColor: '#8BC34A'
+  },
+  [CONSTRUCTION_PHASE.MEP_ROUGH]: {
+    label: 'MEP Systems',
+    color: '#FF9800',
+    bgColor: '#FFF3E0',
+    borderColor: '#FF9800',
+    iconName: 'Engineering',
+    textColor: '#FF9800'
+  },
+  [CONSTRUCTION_PHASE.FINISHING]: {
+    label: 'Finishing',
+    color: '#9C27B0',
+    bgColor: '#F3E5F5',
+    borderColor: '#9C27B0',
+    iconName: 'PaintBrush',
+    textColor: '#9C27B0'
+  },
+  [CONSTRUCTION_PHASE.HANDOVER]: {
+    label: 'Handover',
+    color: '#4CAF50',
+    bgColor: '#E8F5E9',
+    borderColor: '#4CAF50',
+    iconName: 'Key',
+    textColor: '#4CAF50'
+  }
+};
+
+// Quality status configuration
+export const QUALITY_STATUS = {
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  REJECTED: 'rejected',
+  CONDITIONAL: 'conditional'
+};
+
+export const qualityStatusConfig = {
+  [QUALITY_STATUS.PENDING]: {
+    label: 'Pending Inspection',
+    color: '#FF9800',
+    bgColor: '#FFF3E0',
+    borderColor: '#FF9800',
+    iconName: 'Schedule',
+    textColor: '#FF9800'
+  },
+  [QUALITY_STATUS.APPROVED]: {
+    label: 'Approved',
+    color: '#4CAF50',
+    bgColor: '#E8F5E9',
+    borderColor: '#4CAF50',
+    iconName: 'CheckCircle',
+    textColor: '#4CAF50'
+  },
+  [QUALITY_STATUS.REJECTED]: {
+    label: 'Rejected',
+    color: '#F44336',
+    bgColor: '#FFEBEE',
+    borderColor: '#F44336',
+    iconName: 'Cancel',
+    textColor: '#F44336'
+  },
+  [QUALITY_STATUS.CONDITIONAL]: {
+    label: 'Conditional',
+    color: '#FF5722',
+    bgColor: '#FBE9E7',
+    borderColor: '#FF5722',
+    iconName: 'Warning',
+    textColor: '#FF5722'
+  }
+};
+
+// Safety level configuration
+export const SAFETY_LEVEL = {
+  EXCELLENT: 'excellent',
+  GOOD: 'good',
+  FAIR: 'fair',
+  POOR: 'poor',
+  CRITICAL: 'critical'
+};
+
+export const safetyLevelConfig = {
+  [SAFETY_LEVEL.EXCELLENT]: {
+    label: 'Excellent Safety',
+    color: '#1e8449',
+    bgColor: '#eafaf1',
+    borderColor: '#1e8449',
+    iconName: 'Shield',
+    textColor: '#1e8449'
+  },
+  [SAFETY_LEVEL.GOOD]: {
+    label: 'Good Safety',
+    color: '#2874a6',
+    bgColor: '#ebf5fb',
+    borderColor: '#2874a6',
+    iconName: 'Shield',
+    textColor: '#2874a6'
+  },
+  [SAFETY_LEVEL.FAIR]: {
+    label: 'Fair Safety',
+    color: '#d68910',
+    bgColor: '#fef9e7',
+    borderColor: '#d68910',
+    iconName: 'Warning',
+    textColor: '#d68910'
+  },
+  [SAFETY_LEVEL.POOR]: {
+    label: 'Poor Safety',
+    color: '#ca6f1e',
+    bgColor: '#fef5e7',
+    borderColor: '#ca6f1e',
+    iconName: 'Warning',
+    textColor: '#ca6f1e'
+  },
+  [SAFETY_LEVEL.CRITICAL]: {
+    label: 'Critical Safety',
+    color: '#c0392b',
+    bgColor: '#fdf2f2',
+    borderColor: '#c0392b',
+    iconName: 'PriorityHigh',
+    textColor: '#c0392b'
+  }
+};
+
+// Helper functions for construction-specific statuses
+export const getConstructionPhaseConfig = (phase) => {
+  if (!phase) return constructionPhaseConfig[CONSTRUCTION_PHASE.PLANNING];
+  const normalizedPhase = phase.toLowerCase().trim().replace(/ /g, '-');
+  return constructionPhaseConfig[normalizedPhase] || constructionPhaseConfig[CONSTRUCTION_PHASE.PLANNING];
+};
+
+export const getQualityStatusConfig = (status) => {
+  if (!status) return qualityStatusConfig[QUALITY_STATUS.PENDING];
+  const normalizedStatus = status.toLowerCase().trim();
+  return qualityStatusConfig[normalizedStatus] || qualityStatusConfig[QUALITY_STATUS.PENDING];
+};
+
+export const getSafetyLevelConfig = (level) => {
+  if (!level) return safetyLevelConfig[SAFETY_LEVEL.GOOD];
+  const normalizedLevel = level.toLowerCase().trim();
+  return safetyLevelConfig[normalizedLevel] || safetyLevelConfig[SAFETY_LEVEL.GOOD];
+};
+
 // Get all available options for dropdowns
 export const getTaskStatusOptions = () => {
   return Object.values(TASK_STATUS).map(status => ({
@@ -344,5 +537,29 @@ export const getProjectTypeOptions = () => {
     value: type,
     label: projectTypeConfig[type].label,
     color: projectTypeConfig[type].color
+  }));
+};
+
+export const getConstructionPhaseOptions = () => {
+  return Object.values(CONSTRUCTION_PHASE).map(phase => ({
+    value: phase,
+    label: constructionPhaseConfig[phase].label,
+    color: constructionPhaseConfig[phase].color
+  }));
+};
+
+export const getQualityStatusOptions = () => {
+  return Object.values(QUALITY_STATUS).map(status => ({
+    value: status,
+    label: qualityStatusConfig[status].label,
+    color: qualityStatusConfig[status].color
+  }));
+};
+
+export const getSafetyLevelOptions = () => {
+  return Object.values(SAFETY_LEVEL).map(level => ({
+    value: level,
+    label: safetyLevelConfig[level].label,
+    color: safetyLevelConfig[level].color
   }));
 };

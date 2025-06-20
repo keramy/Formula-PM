@@ -15,6 +15,12 @@ export * from './generators/idGenerator';
 export * from './constants';
 export * from './helpers';
 
+// Status configuration utilities
+export * from './statusConfig';
+
+// Accessibility utilities
+export * from './accessibilityUtils';
+
 // Future utility exports can be added here:
 // export * from './validators';
 // export * from './formatters';

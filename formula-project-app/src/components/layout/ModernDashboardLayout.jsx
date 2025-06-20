@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Container, Typography, IconButton, Tooltip, useTheme } from '@mui/material';
+import { Box, Container, Typography, IconButton, Tooltip, useTheme as useMuiTheme } from '@mui/material';
 import { 
   Notifications as NotificationsIcon,
   DarkMode as DarkModeIcon,
@@ -17,7 +17,7 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
   const { user } = useAuth();
   const { mode, toggleTheme, isDarkMode } = useTheme();
   const { isInProjectContext, currentProjectId, currentSection } = useNavigation();
-  const theme = useTheme();
+  const theme = useMuiTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     localStorage.getItem('sidebarCollapsed') === 'true'
   );
@@ -99,7 +99,11 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
+    <Box sx={{ 
+      display: 'flex', 
+      minHeight: '100vh', 
+      backgroundColor: theme.palette.background.default 
+    }}>
       {/* Sidebar */}
       <ModernSidebar 
         currentTab={getCurrentTab()} 
@@ -129,7 +133,8 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            minHeight: 80
+            minHeight: 80,
+            boxShadow: 'none'
           }}
         >
           {/* Left side - Title and subtitle */}

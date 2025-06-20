@@ -753,7 +753,7 @@ export const AppContent = ({
                 sx={{ 
                   p: 3, 
                   backgroundColor: 'white',
-                  border: '1px solid #E9ECEF',
+                  border: (theme) => `1px solid ${theme.palette.divider}`,
                   borderRadius: 3
                 }}
               >
@@ -778,7 +778,7 @@ export const AppContent = ({
                 sx={{ 
                   p: 3, 
                   backgroundColor: 'white',
-                  border: '1px solid #E9ECEF',
+                  border: (theme) => `1px solid ${theme.palette.divider}`,
                   borderRadius: 3
                 }}
               >
@@ -903,7 +903,7 @@ export const AppContent = ({
                 sx={{ 
                   p: 3, 
                   backgroundColor: 'white',
-                  border: '1px solid #E9ECEF',
+                  border: (theme) => `1px solid ${theme.palette.divider}`,
                   borderRadius: 3
                 }}
               >
@@ -931,7 +931,7 @@ export const AppContent = ({
             sx={{ 
               p: 3, 
               backgroundColor: 'white',
-              border: '1px solid #E9ECEF',
+              border: (theme) => `1px solid ${theme.palette.divider}`,
               borderRadius: 3
             }}
           >
@@ -1009,7 +1009,7 @@ export const AppContent = ({
           {/* Error Alert */}
           {error && (
             <Box sx={{ mb: 3 }}>
-              <Paper sx={{ p: 2, backgroundColor: '#fff3e0', border: '1px solid #ff9800' }}>
+              <Paper sx={{ p: 2, backgroundColor: (theme) => theme.palette.warning.light, border: (theme) => `1px solid ${theme.palette.warning.main}` }}>
                 <Typography variant="body2" color="error">
                   ⚠️ {error}
                 </Typography>

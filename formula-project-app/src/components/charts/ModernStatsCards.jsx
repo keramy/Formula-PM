@@ -100,9 +100,10 @@ const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              transition: 'all 0.2s ease-in-out',
+              transition: 'box-shadow 0.2s ease-in-out',
               '&:hover': {
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.12)',
+                borderColor: theme.palette.primary.light
               }
             }}
           >
@@ -138,7 +139,7 @@ const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
               <Typography
                 variant="caption"
                 sx={{
-                  color: '#95A5A6',
+                  color: theme.palette.text.secondary,
                   fontSize: '0.75rem'
                 }}
               >
@@ -150,7 +151,7 @@ const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 0.5,
-                  color: stat.isPositive ? '#27AE60' : '#E74C3C'
+                  color: stat.isPositive ? theme.palette.success.main : theme.palette.error.main
                 }}
               >
                 {stat.isPositive ? (

@@ -8,32 +8,18 @@ import {
   ListItemText,
   Typography,
   Divider,
-  useTheme,
+  useTheme as useMuiTheme,
   IconButton,
   Tooltip
 } from '@mui/material';
 import FormulaLogo, { FormulaLogoCompact } from '../branding/FormulaLogo';
-import {
-  Dashboard as DashboardIcon,
-  FolderOpen as ProjectsIcon,
-  Assignment as TaskIcon,
-  People as TeamIcon,
-  Timeline as TimelineIcon,
-  Help as HelpIcon,
-  Settings as SettingsIcon,
-  Person as MyProjectsIcon,
-  ShoppingCart as ProcurementIcon,
-  Business as ClientsIcon,
-  ChevronLeft as ChevronLeftIcon,
-  Menu as MenuIcon,
-  Architecture as ShopDrawingsIcon,
-  DynamicFeed as FeedIcon
-} from '@mui/icons-material';
+// React Icons system
+import { NavigationIcon, IconWrapper } from '../icons';
 import { useTheme as useFormulaTheme } from '../../context/ThemeContext';
 import { useNavigation } from '../../context/NavigationContext';
 
 const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse }) => {
-  const theme = useTheme();
+  const theme = useMuiTheme();
   const { isDarkMode } = useFormulaTheme();
   const { isInProjectContext, exitProjectContext } = useNavigation();
   const darkMode = isDarkMode;
@@ -54,44 +40,44 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
     {
       title: 'Overview',
       items: [
-        { id: 0, label: 'Dashboard', icon: <DashboardIcon />, description: 'Project overview and stats' }
+        { id: 0, label: 'Dashboard', icon: <NavigationIcon name="dashboard" active={currentTab === 0} />, description: 'Project overview and stats' }
       ]
     },
     {
       title: 'Projects',
       items: [
-        { id: 1, label: 'All Projects', icon: <ProjectsIcon />, description: 'All company projects' },
-        { id: 2, label: 'My Work', icon: <MyProjectsIcon />, description: 'My projects and assigned tasks' }
+        { id: 1, label: 'All Projects', icon: <NavigationIcon name="projects" active={currentTab === 1} />, description: 'All company projects' },
+        { id: 2, label: 'My Work', icon: <NavigationIcon name="myWork" active={currentTab === 2} />, description: 'My projects and assigned tasks' }
       ]
     },
     {
       title: 'Work',
       items: [
-        { id: 3, label: 'Tasks', icon: <TaskIcon />, description: 'Task management' },
-        { id: 8, label: 'Shop Drawings', icon: <ShopDrawingsIcon />, description: 'Millwork drawings & approvals' },
-        { id: 7, label: 'Timeline', icon: <TimelineIcon />, description: 'Gantt charts and timelines' }
+        { id: 3, label: 'Tasks', icon: <NavigationIcon name="tasks" active={currentTab === 3} />, description: 'Task management' },
+        { id: 8, label: 'Shop Drawings', icon: <NavigationIcon name="shopDrawings" active={currentTab === 8} />, description: 'Millwork drawings & approvals' },
+        { id: 7, label: 'Timeline', icon: <NavigationIcon name="timeline" active={currentTab === 7} />, description: 'Gantt charts and timelines' }
       ]
     },
     {
       title: 'Activity',
       items: [
-        { id: 10, label: 'Activity Feed', icon: <FeedIcon />, description: 'Recent activity and updates' }
+        { id: 10, label: 'Activity Feed', icon: <NavigationIcon name="activityFeed" active={currentTab === 10} />, description: 'Recent activity and updates' }
       ]
     },
     {
       title: 'Resources',
       items: [
-        { id: 4, label: 'Team', icon: <TeamIcon />, description: 'Team member management' },
-        { id: 5, label: 'Clients', icon: <ClientsIcon />, description: 'Client database' },
-        { id: 9, label: 'Material Specs', icon: <ProcurementIcon />, description: 'Material specifications & Excel import' },
-        { id: 6, label: 'Procurement', icon: <ProcurementIcon />, description: 'Purchase and suppliers' }
+        { id: 4, label: 'Team', icon: <NavigationIcon name="team" active={currentTab === 4} />, description: 'Team member management' },
+        { id: 5, label: 'Clients', icon: <NavigationIcon name="clients" active={currentTab === 5} />, description: 'Client database' },
+        { id: 9, label: 'Material Specs', icon: <NavigationIcon name="materials" active={currentTab === 9} />, description: 'Material specifications & Excel import' },
+        { id: 6, label: 'Procurement', icon: <NavigationIcon name="procurement" active={currentTab === 6} />, description: 'Purchase and suppliers' }
       ]
     }
   ];
 
   const bottomItems = [
-    { id: 'settings', label: 'Settings', icon: <SettingsIcon /> },
-    { id: 'help', label: 'Help & Feedback', icon: <HelpIcon /> }
+    { id: 'settings', label: 'Settings', icon: <IconWrapper name="settings" size={20} /> },
+    { id: 'help', label: 'Help & Feedback', icon: <IconWrapper name="help" size={20} /> }
   ];
 
   const handleItemClick = (id) => {
@@ -168,14 +154,14 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
               width: 32,
               height: 32,
               '&:hover': {
-                backgroundColor: 'transparent',
-                transform: 'scale(1.05)'
+                backgroundColor: theme.palette.action.hover,
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
               },
               transition: 'all 0.2s ease',
               ml: isCollapsed ? 0 : 1
             }}
           >
-            {isCollapsed ? <MenuIcon sx={{ fontSize: 18 }} /> : <ChevronLeftIcon sx={{ fontSize: 18 }} />}
+            {isCollapsed ? <IconWrapper name="menu" size={18} /> : <IconWrapper name="chevronLeft" size={18} />}
           </IconButton>
         </Tooltip>
       </Box>
@@ -218,9 +204,9 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                         minHeight: 48,
                         borderLeft: currentTab === item.id ? `3px solid ${colors.accent}` : 'none',
                         '&:hover': {
-                          backgroundColor: currentTab === item.id ? colors.accent : 'transparent',
+                          backgroundColor: currentTab === item.id ? colors.accent : theme.palette.action.hover,
                           color: currentTab === item.id ? '#ffffff !important' : colors.text,
-                          transform: 'translateX(4px)'
+                          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                         },
                         transition: 'all 0.2s ease-in-out'
                       }}
@@ -279,9 +265,9 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                     justifyContent: isCollapsed ? 'center' : 'flex-start',
                     minHeight: 48,
                     '&:hover': {
-                      backgroundColor: 'transparent',
+                      backgroundColor: theme.palette.action.hover,
                       color: colors.text,
-                      transform: 'translateX(4px)'
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                     },
                     transition: 'all 0.2s ease-in-out'
                   }}

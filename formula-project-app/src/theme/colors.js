@@ -105,11 +105,14 @@ export const colors = {
     }
   },
   
-  // Border Colors - Enhanced contrast  
+  // Border Colors - Enhanced contrast for better visual definition
   border: {
     light: '#c0c0c0',       // Stronger light border for better definition
     medium: '#a0a0a0',      // Stronger medium border 
-    dark: '#808080'         // Stronger dark border
+    dark: '#808080',        // Stronger dark border
+    divider: '#e0e0e0',     // Standard divider border
+    focus: '#3498db',       // Focus state border
+    hover: '#b0b0b0'        // Hover state border
   },
   
   // Construction-specific colors
@@ -117,7 +120,30 @@ export const colors = {
     steel: '#708090',       // Steel gray
     wood: '#8B4513',        // Saddle brown
     glass: '#87CEEB',       // Sky blue
-    concrete: '#696969'     // Dim gray
+    concrete: '#696969',    // Dim gray
+    
+    // Construction phases
+    planning: '#1976D2',    // Blue
+    permitting: '#F57C00',  // Orange
+    demolition: '#D32F2F',  // Red
+    foundation: '#5D4037',  // Brown
+    framing: '#8BC34A',     // Light green
+    mep: '#FF9800',         // Orange
+    finishing: '#9C27B0',   // Purple
+    handover: '#4CAF50',    // Green
+    
+    // Safety levels
+    safetyExcellent: '#1e8449',
+    safetyGood: '#2874a6',
+    safetyFair: '#d68910',
+    safetyPoor: '#ca6f1e',
+    safetyCritical: '#c0392b',
+    
+    // Quality status
+    qualityApproved: '#4CAF50',
+    qualityPending: '#FF9800',
+    qualityRejected: '#F44336',
+    qualityConditional: '#FF5722'
   }
 };
 

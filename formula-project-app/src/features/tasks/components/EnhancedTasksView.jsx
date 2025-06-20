@@ -618,7 +618,15 @@ const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, project
 
   if (tasks.length === 0) {
     return (
-      <Box sx={{ maxWidth: 900, mx: 'auto', px: 2 }}>
+      <Box sx={{ 
+        maxWidth: 900, 
+        mx: 'auto', 
+        px: 2,
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      }}>
         <UnifiedHeader
           title="Tasks"
           searchValue={searchValue}
@@ -644,7 +652,15 @@ const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, project
   }
 
   return (
-    <Box sx={{ maxWidth: 900, mx: 'auto', px: 2 }}>
+    <Box sx={{ 
+      maxWidth: 900, 
+      mx: 'auto', 
+      px: 2,
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }}>
       {/* Unified Header */}
       <UnifiedHeader
         title="Tasks"

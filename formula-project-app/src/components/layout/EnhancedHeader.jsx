@@ -14,7 +14,7 @@ import {
   Menu,
   MenuItem,
   Divider,
-  useTheme,
+  useTheme as useMuiTheme,
   useMediaQuery
 } from '@mui/material';
 import { 
@@ -53,7 +53,7 @@ const EnhancedHeader = ({
   user = { name: 'Admin User', avatar: null },
   onUserMenuClick
 }) => {
-  const theme = useTheme();
+  const theme = useMuiTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { mode, toggleTheme, isDarkMode } = useFormulaTheme();
   const darkMode = isDarkMode;
@@ -139,11 +139,12 @@ const EnhancedHeader = ({
             <IconButton 
               onClick={toggleTheme}
               sx={{ 
-                color: headerColors.text,
-                backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)',
+                color: theme.palette.text.primary,
+                backgroundColor: theme.palette.action.hover,
+                border: `1px solid ${theme.palette.divider}`,
                 '&:hover': {
-                  backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)',
-                  transform: 'scale(1.05)'
+                  backgroundColor: theme.palette.action.selected,
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                 },
                 transition: 'all 0.2s ease'
               }}
@@ -160,7 +161,7 @@ const EnhancedHeader = ({
                 p: 0,
                 ml: 1,
                 '&:hover': {
-                  transform: 'scale(1.05)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                 },
                 transition: 'transform 0.2s ease'
               }}
@@ -278,8 +279,8 @@ const EnhancedHeader = ({
                   color: isStarred ? theme.palette.warning.main : headerColors.textSecondary,
                   '&:hover': {
                     color: isStarred ? theme.palette.warning.dark : theme.palette.warning.main,
-                    backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)',
-                    transform: 'scale(1.1)'
+                    backgroundColor: theme.palette.action.hover,
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                   },
                   transition: 'all 0.2s ease'
                 }}
@@ -318,7 +319,7 @@ const EnhancedHeader = ({
                     cursor: 'pointer',
                     transition: 'transform 0.2s ease',
                     '&:hover': {
-                      transform: 'scale(1.1)',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
                       zIndex: 10
                     }
                   }
@@ -347,13 +348,13 @@ const EnhancedHeader = ({
                       height: 24,
                       fontSize: '0.75rem',
                       fontWeight: 600,
-                      backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)',
-                      color: headerColors.text,
+                      backgroundColor: theme.palette.action.hover,
+                      color: theme.palette.text.primary,
                       cursor: 'pointer',
-                      border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
+                      border: `1px solid ${theme.palette.divider}`,
                       '&:hover': {
-                        backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)',
-                        transform: 'scale(1.05)'
+                        backgroundColor: theme.palette.action.selected,
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                       },
                       transition: 'all 0.2s ease'
                     }}
@@ -374,19 +375,19 @@ const EnhancedHeader = ({
               width: 240,
               height: 38,
               px: 1.5,
-              backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.08)' : 'rgba(27, 41, 81, 0.05)',
-              border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
+              backgroundColor: theme.palette.action.hover,
+              border: `1px solid ${theme.palette.divider}`,
               borderRadius: 2,
               boxShadow: 'none',
               transition: 'all 0.2s ease',
               '&:hover': {
-                backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.12)' : 'rgba(27, 41, 81, 0.08)',
-                border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.3)' : 'rgba(27, 41, 81, 0.3)'}`
+                backgroundColor: theme.palette.action.selected,
+                border: `1px solid ${theme.palette.primary.light}`
               },
               '&:focus-within': {
-                backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.15)' : 'rgba(27, 41, 81, 0.1)',
+                backgroundColor: theme.palette.action.selected,
                 border: `1px solid ${theme.palette.primary.main}`,
-                boxShadow: `0 0 0 3px ${darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)'}`
+                boxShadow: `0 0 0 3px ${theme.palette.action.focus}`
               }
             }}
           >
@@ -416,16 +417,16 @@ const EnhancedHeader = ({
           <Tooltip title="Share">
             <IconButton 
               sx={{ 
-                backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.08)',
-                border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
+                backgroundColor: theme.palette.action.hover,
+                border: `1px solid ${theme.palette.divider}`,
                 borderRadius: 2,
                 width: 38,
                 height: 38,
-                color: headerColors.text,
+                color: theme.palette.text.primary,
                 '&:hover': { 
-                  backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.15)',
-                  border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.3)' : 'rgba(27, 41, 81, 0.3)'}`,
-                  transform: 'scale(1.05)'
+                  backgroundColor: theme.palette.action.selected,
+                  border: `1px solid ${theme.palette.primary.light}`,
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                 },
                 transition: 'all 0.2s ease'
               }}
@@ -445,9 +446,7 @@ const EnhancedHeader = ({
                 height: 38,
                 '&:hover': { 
                   backgroundColor: theme.palette.primary.dark,
-                  boxShadow: darkMode 
-                    ? '0 4px 12px rgba(245, 242, 232, 0.3)'
-                    : '0 4px 12px rgba(27, 41, 81, 0.3)'
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
                 },
                 transition: 'all 0.2s ease'
               }}
@@ -459,16 +458,16 @@ const EnhancedHeader = ({
           <Tooltip title="More options">
             <IconButton 
               sx={{ 
-                backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.08)',
-                border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
+                backgroundColor: theme.palette.action.hover,
+                border: `1px solid ${theme.palette.divider}`,
                 borderRadius: 2,
                 width: 38,
                 height: 38,
-                color: headerColors.text,
+                color: theme.palette.text.primary,
                 '&:hover': { 
-                  backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.15)',
-                  border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.3)' : 'rgba(27, 41, 81, 0.3)'}`,
-                  transform: 'scale(1.05)'
+                  backgroundColor: theme.palette.action.selected,
+                  border: `1px solid ${theme.palette.primary.light}`,
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                 },
                 transition: 'all 0.2s ease'
               }}
@@ -485,7 +484,7 @@ const EnhancedHeader = ({
                 p: 0,
                 ml: 1,
                 '&:hover': { 
-                  transform: 'scale(1.05)'
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                 },
                 transition: 'all 0.2s ease'
               }}
@@ -499,7 +498,7 @@ const EnhancedHeader = ({
                   color: theme.palette.primary.contrastText,
                   fontWeight: 600,
                   fontSize: '0.875rem',
-                  border: `2px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
+                  border: `2px solid ${theme.palette.divider}`,
                 }}
               >
                 {!user.avatar && user.name?.charAt(0)?.toUpperCase()}
@@ -520,19 +519,17 @@ const EnhancedHeader = ({
           sx: {
             mt: 1.5,
             minWidth: 200,
-            backgroundColor: darkMode ? theme.palette.formulaBrand.darkBackground : theme.palette.background.paper,
-            border: `1px solid ${darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)'}`,
+            backgroundColor: theme.palette.background.paper,
+            border: `1px solid ${theme.palette.divider}`,
             borderRadius: 2,
-            boxShadow: darkMode 
-              ? '0 8px 32px rgba(0, 0, 0, 0.4)'
-              : '0 8px 32px rgba(27, 41, 81, 0.15)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
             '& .MuiMenuItem-root': {
-              color: headerColors.text,
+              color: theme.palette.text.primary,
               borderRadius: 1,
               mx: 1,
               my: 0.5,
               '&:hover': {
-                backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.08)',
+                backgroundColor: theme.palette.action.hover,
               },
             },
           },
@@ -557,7 +554,7 @@ const EnhancedHeader = ({
           {darkMode ? 'Light Mode' : 'Dark Mode'}
         </MenuItem>
         <Divider sx={{ 
-          borderColor: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)',
+          borderColor: theme.palette.divider,
           my: 1,
         }} />
         <MenuItem onClick={() => handleUserMenuItemClick('logout')}>
