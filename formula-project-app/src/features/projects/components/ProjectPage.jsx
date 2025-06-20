@@ -16,6 +16,7 @@ import ProjectShopDrawings from './ProjectShopDrawings';
 import ProjectSpecifications from './ProjectSpecifications';
 import ComplianceDocumentation from './ComplianceDocumentation';
 import EnhancedGanttChart from '../../../components/charts/EnhancedGanttChart';
+import ProjectActivityFeed from './ProjectActivityFeed';
 
 const ProjectPage = ({ 
   projectId, 
@@ -537,6 +538,15 @@ const ProjectPage = ({
             onUpdateCompliance={(updates) => {
               console.log('Compliance updated:', updates);
             }}
+          />
+        );
+      case 6: // Activity Feed
+        return (
+          <ProjectActivityFeed
+            project={project}
+            projectId={projectId}
+            tasks={projectTasks}
+            teamMembers={teamMembers}
           />
         );
       default:

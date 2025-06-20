@@ -212,41 +212,594 @@ export const useRealTime = (options = {}) => {
   };
 };
 
+// Enhanced mock activity data for development with project-specific activities
+const mockActivities = [
+  // Global activities
+  {
+    id: 1,
+    type: 'project',
+    action: 'created',
+    description: 'New project "Downtown Office Complex" has been created',
+    userName: 'John Smith',
+    timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(), // 15 minutes ago
+    metadata: { projectId: 1, projectName: 'Downtown Office Complex', targetTab: 'overview' }
+  },
+  {
+    id: 2,
+    type: 'task',
+    action: 'completed',
+    description: 'Task "Foundation inspection" completed in project "Downtown Office Complex"',
+    userName: 'Sarah Johnson',
+    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
+    metadata: { projectId: 1, taskId: 1, taskName: 'Foundation inspection', targetTab: 'overview' }
+  },
+  {
+    id: 3,
+    type: 'project',
+    action: 'updated',
+    description: 'Project "Residential Tower" status updated to In Progress',
+    userName: 'Mike Davis',
+    timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(), // 45 minutes ago
+    metadata: { projectId: 2, projectName: 'Residential Tower', targetTab: 'overview' }
+  },
+  {
+    id: 4,
+    type: 'task',
+    action: 'created',
+    description: 'New task "Electrical wiring installation" assigned to Alex Chen in project "Residential Tower"',
+    userName: 'Emily Brown',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(), // 1 hour ago
+    metadata: { projectId: 2, taskId: 2, taskName: 'Electrical wiring installation', assignee: 'Alex Chen', targetTab: 'overview' }
+  },
+  {
+    id: 5,
+    type: 'team_member',
+    action: 'created',
+    description: 'New team member "David Wilson" has been added to the team',
+    userName: 'Admin User',
+    timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(), // 1.5 hours ago
+    metadata: { memberId: 5, memberName: 'David Wilson' }
+  },
+  {
+    id: 6,
+    type: 'task',
+    action: 'started',
+    description: 'Task "Concrete pouring" started in project "Downtown Office Complex"',
+    userName: 'Robert Garcia',
+    timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(), // 2 hours ago
+    metadata: { projectId: 1, taskId: 3, taskName: 'Concrete pouring', targetTab: 'overview' }
+  },
+
+  // Project-specific activities for project 1 (Downtown Office Complex)
+  {
+    id: 101,
+    type: 'scope',
+    action: 'updated',
+    description: 'Scope item "Kitchen Upper Cabinets" progress updated to 75% in project "Downtown Office Complex"',
+    userName: 'John Smith',
+    timestamp: new Date(Date.now() - 1000 * 60 * 10).toISOString(), // 10 minutes ago
+    metadata: { projectId: 1, scopeItemId: 'SCOPE001', scopeItemName: 'Kitchen Upper Cabinets', targetTab: 'scope' }
+  },
+  {
+    id: 102,
+    type: 'shop_drawing',
+    action: 'approved',
+    description: 'Shop drawing "Kitchen_Upper_Cabinets_Rev_C.pdf" approved in project "Downtown Office Complex"',
+    userName: 'Sarah Johnson',
+    timestamp: new Date(Date.now() - 1000 * 60 * 25).toISOString(), // 25 minutes ago
+    metadata: { projectId: 1, drawingId: 'SD001', drawingName: 'Kitchen_Upper_Cabinets_Rev_C.pdf', targetTab: 'drawings' }
+  },
+  {
+    id: 103,
+    type: 'material_spec',
+    action: 'approved',
+    description: 'Material specification "Maple Wood Grade A" approved in project "Downtown Office Complex"',
+    userName: 'Mike Wilson',
+    timestamp: new Date(Date.now() - 1000 * 60 * 35).toISOString(), // 35 minutes ago
+    metadata: { projectId: 1, specId: 'SPEC001', specName: 'Maple Wood Grade A', targetTab: 'specifications' }
+  },
+  {
+    id: 104,
+    type: 'timeline',
+    action: 'updated',
+    description: 'Project timeline updated - new milestone added in project "Downtown Office Complex"',
+    userName: 'Emily Brown',
+    timestamp: new Date(Date.now() - 1000 * 60 * 50).toISOString(), // 50 minutes ago
+    metadata: { projectId: 1, milestoneId: 'M001', milestoneName: 'Kitchen Installation Complete', targetTab: 'timeline' }
+  },
+  {
+    id: 105,
+    type: 'compliance',
+    action: 'updated',
+    description: 'Building permit documentation uploaded for project "Downtown Office Complex"',
+    userName: 'Lisa Chen',
+    timestamp: new Date(Date.now() - 1000 * 60 * 70).toISOString(), // 70 minutes ago
+    metadata: { projectId: 1, documentId: 'DOC001', documentName: 'Building Permit BP-2024-001', targetTab: 'compliance' }
+  },
+
+  // Project-specific activities for project 2 (Residential Tower)
+  {
+    id: 201,
+    type: 'scope',
+    action: 'created',
+    description: 'New scope item "Lobby Reception Desk" added to project "Residential Tower"',
+    userName: 'Alex Chen',
+    timestamp: new Date(Date.now() - 1000 * 60 * 40).toISOString(), // 40 minutes ago
+    metadata: { projectId: 2, scopeItemId: 'SCOPE201', scopeItemName: 'Lobby Reception Desk', targetTab: 'scope' }
+  },
+  {
+    id: 202,
+    type: 'shop_drawing',
+    action: 'pending',
+    description: 'Shop drawing "Lobby_Reception_Rev_A.pdf" pending review in project "Residential Tower"',
+    userName: 'David Rodriguez',
+    timestamp: new Date(Date.now() - 1000 * 60 * 55).toISOString(), // 55 minutes ago
+    metadata: { projectId: 2, drawingId: 'SD201', drawingName: 'Lobby_Reception_Rev_A.pdf', targetTab: 'drawings' }
+  },
+  {
+    id: 203,
+    type: 'task',
+    action: 'reassigned',
+    description: 'Task "Structural engineering review" reassigned to Robert Garcia in project "Residential Tower"',
+    userName: 'Project Manager',
+    timestamp: new Date(Date.now() - 1000 * 60 * 80).toISOString(), // 80 minutes ago
+    metadata: { projectId: 2, taskId: 201, taskName: 'Structural engineering review', assignee: 'Robert Garcia', targetTab: 'overview' }
+  }
+];
+
 // Hook for activity feed
 export const useActivityFeed = (limit = 20) => {
   const [activities, setActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const socketRef = useRef(null);
   
   useEffect(() => {
-    socketRef.current = createSocket();
-    const socket = socketRef.current;
-    
-    const handleActivity = (activity) => {
-      setActivities(prev => {
-        const newActivities = [activity, ...prev];
-        return newActivities.slice(0, limit);
-      });
+    // Generate realistic activities based on actual demo data
+    const generateRealisticActivities = async () => {
+      try {
+        // This would normally fetch from API, but for demo we'll generate realistic activities
+        // Using ACTUAL project data from Formula International's demo database
+        const realisticActivities = [
+          // Akbank Head Office Renovation (Project ID: 2001) activities
+          {
+            id: 1,
+            type: 'project',
+            action: 'updated',
+            description: 'Project "Akbank Head Office Renovation" status updated to Completed',
+            userName: 'Kubilay Ilgın',
+            timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+            metadata: { projectId: 2001, projectName: 'Akbank Head Office Renovation', targetTab: 'overview' }
+          },
+          {
+            id: 2,
+            type: 'task',
+            action: 'completed',
+            description: 'Task "Executive Kitchen Cabinet Design Review" completed in project "Akbank Head Office Renovation"',
+            userName: 'Hande Selen Karaman',
+            timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+            metadata: { projectId: 2001, taskId: 3001, taskName: 'Executive Kitchen Cabinet Design Review', targetTab: 'overview' }
+          },
+          {
+            id: 3,
+            type: 'scope',
+            action: 'updated',
+            description: 'Scope item "Executive Kitchen Upper Cabinets - Maple Hardwood with LED Lighting" progress updated to 75% in project "Akbank Head Office Renovation"',
+            userName: 'Hande Selen Karaman',
+            timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+            metadata: { projectId: 2001, scopeItemId: 'SCOPE001', scopeItemName: 'Executive Kitchen Upper Cabinets - Maple Hardwood with LED Lighting', targetTab: 'scope' }
+          },
+          {
+            id: 4,
+            type: 'shop_drawing',
+            action: 'approved',
+            description: 'Shop drawing "Executive_Kitchen_Cabinets_Rev_C.pdf" approved in project "Akbank Head Office Renovation"',
+            userName: 'Kubilay Ilgın',
+            timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+            metadata: { projectId: 2001, drawingId: 'SD001', drawingName: 'Executive_Kitchen_Cabinets_Rev_C.pdf', targetTab: 'drawings' }
+          },
+          {
+            id: 5,
+            type: 'task',
+            action: 'completed',
+            description: 'Task "Material Procurement - Kitchen Cabinets" completed in project "Akbank Head Office Renovation"',
+            userName: 'Serra Uluveren',
+            timestamp: new Date(Date.now() - 1000 * 60 * 75).toISOString(),
+            metadata: { projectId: 2001, taskId: 3002, taskName: 'Material Procurement - Kitchen Cabinets', targetTab: 'overview' }
+          },
+          {
+            id: 6,
+            type: 'scope',
+            action: 'updated',
+            description: 'Scope item "Custom Executive Reception Desk with Technology Integration" progress updated to 90% in project "Akbank Head Office Renovation"',
+            userName: 'Hande Selen Karaman',
+            timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+            metadata: { projectId: 2001, scopeItemId: 'SCOPE003', scopeItemName: 'Custom Executive Reception Desk with Technology Integration', targetTab: 'scope' }
+          },
+          {
+            id: 7,
+            type: 'shop_drawing',
+            action: 'approved',
+            description: 'Shop drawing "Executive_Reception_Desk_Rev_B.pdf" approved in project "Akbank Head Office Renovation"',
+            userName: 'Ömer Onan',
+            timestamp: new Date(Date.now() - 1000 * 60 * 105).toISOString(),
+            metadata: { projectId: 2001, drawingId: 'SD002', drawingName: 'Executive_Reception_Desk_Rev_B.pdf', targetTab: 'drawings' }
+          },
+          
+          // Garanti BBVA Tech Center MEP (Project ID: 2002) activities
+          {
+            id: 8,
+            type: 'task',
+            action: 'completed',
+            description: 'Task "HVAC System Design - Data Center" completed in project "Garanti BBVA Tech Center MEP"',
+            userName: 'Emre Koc',
+            timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+            metadata: { projectId: 2002, taskId: 3003, taskName: 'HVAC System Design - Data Center', targetTab: 'overview' }
+          },
+          {
+            id: 9,
+            type: 'shop_drawing',
+            action: 'approved',
+            description: 'Shop drawing "Data_Center_HVAC_System_Rev_A.pdf" approved in project "Garanti BBVA Tech Center MEP"',
+            userName: 'Mehmet Demir',
+            timestamp: new Date(Date.now() - 1000 * 60 * 135).toISOString(),
+            metadata: { projectId: 2002, drawingId: 'SD003', drawingName: 'Data_Center_HVAC_System_Rev_A.pdf', targetTab: 'drawings' }
+          },
+          {
+            id: 10,
+            type: 'scope',
+            action: 'updated',
+            description: 'Scope item "Data Center Precision Air Conditioning - 20 Ton Unit" progress updated to 25% in project "Garanti BBVA Tech Center MEP"',
+            userName: 'Emre Koc',
+            timestamp: new Date(Date.now() - 1000 * 60 * 150).toISOString(),
+            metadata: { projectId: 2002, scopeItemId: 'SCOPE009', scopeItemName: 'Data Center Precision Air Conditioning - 20 Ton Unit', targetTab: 'scope' }
+          },
+          {
+            id: 11,
+            type: 'task',
+            action: 'in_progress',
+            description: 'Task "Electrical Infrastructure Installation" is in progress in project "Garanti BBVA Tech Center MEP"',
+            userName: 'Fatma Arslan',
+            timestamp: new Date(Date.now() - 1000 * 60 * 165).toISOString(),
+            metadata: { projectId: 2002, taskId: 3004, taskName: 'Electrical Infrastructure Installation', targetTab: 'overview' }
+          },
+          {
+            id: 12,
+            type: 'shop_drawing',
+            action: 'revision_required',
+            description: 'Shop drawing "Main_Electrical_Distribution_Rev_A.pdf" requires revision - load calculations need verification in project "Garanti BBVA Tech Center MEP"',
+            userName: 'Fatma Arslan',
+            timestamp: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+            metadata: { projectId: 2002, drawingId: 'SD004', drawingName: 'Main_Electrical_Distribution_Rev_A.pdf', targetTab: 'drawings' }
+          },
+          
+          // Zorlu Center Luxury Retail Fit-out (Project ID: 2004) activities
+          {
+            id: 13,
+            type: 'task',
+            action: 'completed',
+            description: 'Task "Luxury Display Case Design Review" completed in project "Zorlu Center Luxury Retail Fit-out"',
+            userName: 'İpek Gönenç',
+            timestamp: new Date(Date.now() - 1000 * 60 * 195).toISOString(),
+            metadata: { projectId: 2004, taskId: 3024, taskName: 'Luxury Display Case Design Review', targetTab: 'overview' }
+          },
+          {
+            id: 14,
+            type: 'shop_drawing',
+            action: 'approved',
+            description: 'Shop drawing "Luxury_Display_Cases_Rev_A.pdf" approved in project "Zorlu Center Luxury Retail Fit-out"',
+            userName: 'İpek Gönenç',
+            timestamp: new Date(Date.now() - 1000 * 60 * 210).toISOString(),
+            metadata: { projectId: 2004, drawingId: 'SD007', drawingName: 'Luxury_Display_Cases_Rev_A.pdf', targetTab: 'drawings' }
+          },
+          {
+            id: 15,
+            type: 'task',
+            action: 'active',
+            description: 'Task "Retail Floor Layout Planning" is active in project "Zorlu Center Luxury Retail Fit-out"',
+            userName: 'Hakan Ayseli',
+            timestamp: new Date(Date.now() - 1000 * 60 * 225).toISOString(),
+            metadata: { projectId: 2004, taskId: 3025, taskName: 'Retail Floor Layout Planning', targetTab: 'overview' }
+          },
+          
+          // Formula HQ Showroom & Office Renovation (Project ID: 2007) activities
+          {
+            id: 16,
+            type: 'task',
+            action: 'completed',
+            description: 'Task "Formula Branded Reception Wall Design" completed in project "Formula HQ Showroom & Office Renovation"',
+            userName: 'Yusuf Sağlam',
+            timestamp: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
+            metadata: { projectId: 2007, taskId: 3033, taskName: 'Formula Branded Reception Wall Design', targetTab: 'overview' }
+          },
+          {
+            id: 17,
+            type: 'shop_drawing',
+            action: 'approved',
+            description: 'Shop drawing "Formula_Branded_Reception_Wall_Rev_B.pdf" approved in project "Formula HQ Showroom & Office Renovation"',
+            userName: 'Yusuf Sağlam',
+            timestamp: new Date(Date.now() - 1000 * 60 * 255).toISOString(),
+            metadata: { projectId: 2007, drawingId: 'SD010', drawingName: 'Formula_Branded_Reception_Wall_Rev_B.pdf', targetTab: 'drawings' }
+          },
+          {
+            id: 18,
+            type: 'task',
+            action: 'active',
+            description: 'Task "Showroom Display System Setup" is active in project "Formula HQ Showroom & Office Renovation"',
+            userName: 'Hakan Ayseli',
+            timestamp: new Date(Date.now() - 1000 * 60 * 270).toISOString(),
+            metadata: { projectId: 2007, taskId: 3034, taskName: 'Showroom Display System Setup', targetTab: 'overview' }
+          },
+          
+          // Tekfen Plaza Office Modernization (Project ID: 2005) activities
+          {
+            id: 19,
+            type: 'task',
+            action: 'completed',
+            description: 'Task "Acoustic Ceiling System Design" completed in project "Tekfen Plaza Office Modernization"',
+            userName: 'Hande Selen Karaman',
+            timestamp: new Date(Date.now() - 1000 * 60 * 285).toISOString(),
+            metadata: { projectId: 2005, taskId: 3027, taskName: 'Acoustic Ceiling System Design', targetTab: 'overview' }
+          },
+          {
+            id: 20,
+            type: 'shop_drawing',
+            action: 'approved',
+            description: 'Shop drawing "Acoustic_Ceiling_System_Rev_A.pdf" approved in project "Tekfen Plaza Office Modernization"',
+            userName: 'Hande Selen Karaman',
+            timestamp: new Date(Date.now() - 1000 * 60 * 300).toISOString(),
+            metadata: { projectId: 2005, drawingId: 'SD008', drawingName: 'Acoustic_Ceiling_System_Rev_A.pdf', targetTab: 'drawings' }
+          }
+        ];
+        
+        setActivities(realisticActivities.slice(0, limit));
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error generating activities:', error);
+        // Fallback to original mock data
+        setActivities(mockActivities.slice(0, limit));
+        setIsLoading(false);
+      }
     };
-    
-    const handleActivityHistory = (history) => {
-      setActivities(history);
-      setIsLoading(false);
-    };
-    
-    socket.on('activity', handleActivity);
-    socket.on('activityHistory', handleActivityHistory);
-    
-    // Connect and request history if not connected
-    if (!socket.connected) {
-      socket.connect();
-    }
-    
-    return () => {
-      socket.off('activity', handleActivity);
-      socket.off('activityHistory', handleActivityHistory);
-    };
+
+    const timer = setTimeout(generateRealisticActivities, 500);
+    return () => clearTimeout(timer);
   }, [limit]);
+  
+  return {
+    activities,
+    isLoading
+  };
+};
+
+// Hook for project-specific activity feed
+export const useProjectActivityFeed = (projectId, limit = 20) => {
+  const [activities, setActivities] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    const generateProjectActivities = async () => {
+      try {
+        // Generate project-specific activities based on the projectId using ACTUAL Formula International demo data
+        const projectSpecificActivities = [
+          // Akbank Head Office Renovation activities (Project ID: 2001)
+          ...(projectId === 2001 || projectId === '2001' ? [
+            {
+              id: `${projectId}_1`,
+              type: 'scope',
+              action: 'updated',
+              description: 'Scope item "Executive Kitchen Upper Cabinets - Maple Hardwood with LED Lighting" progress updated to 75% in project "Akbank Head Office Renovation"',
+              userName: 'Hande Selen Karaman',
+              timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+              metadata: { projectId: 2001, scopeItemId: 'SCOPE001', scopeItemName: 'Executive Kitchen Upper Cabinets - Maple Hardwood with LED Lighting', targetTab: 'scope' }
+            },
+            {
+              id: `${projectId}_2`,
+              type: 'shop_drawing',
+              action: 'approved',
+              description: 'Shop drawing "Executive_Kitchen_Cabinets_Rev_C.pdf" approved in project "Akbank Head Office Renovation"',
+              userName: 'Kubilay Ilgın',
+              timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+              metadata: { projectId: 2001, drawingId: 'SD001', drawingName: 'Executive_Kitchen_Cabinets_Rev_C.pdf', targetTab: 'drawings' }
+            },
+            {
+              id: `${projectId}_3`,
+              type: 'task',
+              action: 'completed',
+              description: 'Task "Executive Kitchen Cabinet Design Review" completed in project "Akbank Head Office Renovation"',
+              userName: 'Hande Selen Karaman',
+              timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+              metadata: { projectId: 2001, taskId: 3001, taskName: 'Executive Kitchen Cabinet Design Review', targetTab: 'overview' }
+            },
+            {
+              id: `${projectId}_4`,
+              type: 'scope',
+              action: 'updated',
+              description: 'Scope item "Custom Executive Reception Desk with Technology Integration" progress updated to 90% in project "Akbank Head Office Renovation"',
+              userName: 'Hande Selen Karaman',
+              timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+              metadata: { projectId: 2001, scopeItemId: 'SCOPE003', scopeItemName: 'Custom Executive Reception Desk with Technology Integration', targetTab: 'scope' }
+            },
+            {
+              id: `${projectId}_5`,
+              type: 'task',
+              action: 'in_progress',
+              description: 'Task "Reception Desk Fabrication Coordination" is in progress in project "Akbank Head Office Renovation"',
+              userName: 'Hande Selen Karaman',
+              timestamp: new Date(Date.now() - 1000 * 60 * 75).toISOString(),
+              metadata: { projectId: 2001, taskId: 3005, taskName: 'Reception Desk Fabrication Coordination', targetTab: 'overview' }
+            },
+            {
+              id: `${projectId}_6`,
+              type: 'scope',
+              action: 'completed',
+              description: 'Scope item "Interior Wall Demolition - Executive Areas" marked as completed (100%) in project "Akbank Head Office Renovation"',
+              userName: 'Ebru Alkın',
+              timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+              metadata: { projectId: 2001, scopeItemId: 'SCOPE004', scopeItemName: 'Interior Wall Demolition - Executive Areas', targetTab: 'scope' }
+            }
+          ] : []),
+          
+          // Garanti BBVA Tech Center MEP activities (Project ID: 2002)
+          ...(projectId === 2002 || projectId === '2002' ? [
+            {
+              id: `${projectId}_1`,
+              type: 'task',
+              action: 'completed',
+              description: 'Task "HVAC System Design - Data Center" completed in project "Garanti BBVA Tech Center MEP"',
+              userName: 'Emre Koc',
+              timestamp: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+              metadata: { projectId: 2002, taskId: 3003, taskName: 'HVAC System Design - Data Center', targetTab: 'overview' }
+            },
+            {
+              id: `${projectId}_2`,
+              type: 'shop_drawing',
+              action: 'approved',
+              description: 'Shop drawing "Data_Center_HVAC_System_Rev_A.pdf" approved in project "Garanti BBVA Tech Center MEP"',
+              userName: 'Mehmet Demir',
+              timestamp: new Date(Date.now() - 1000 * 60 * 35).toISOString(),
+              metadata: { projectId: 2002, drawingId: 'SD003', drawingName: 'Data_Center_HVAC_System_Rev_A.pdf', targetTab: 'drawings' }
+            },
+            {
+              id: `${projectId}_3`,
+              type: 'scope',
+              action: 'updated',
+              description: 'Scope item "Data Center Precision Air Conditioning - 20 Ton Unit" progress updated to 25% in project "Garanti BBVA Tech Center MEP"',
+              userName: 'Emre Koc',
+              timestamp: new Date(Date.now() - 1000 * 60 * 50).toISOString(),
+              metadata: { projectId: 2002, scopeItemId: 'SCOPE009', scopeItemName: 'Data Center Precision Air Conditioning - 20 Ton Unit', targetTab: 'scope' }
+            },
+            {
+              id: `${projectId}_4`,
+              type: 'shop_drawing',
+              action: 'revision_required',
+              description: 'Shop drawing "Main_Electrical_Distribution_Rev_A.pdf" requires revision - load calculations need verification in project "Garanti BBVA Tech Center MEP"',
+              userName: 'Fatma Arslan',
+              timestamp: new Date(Date.now() - 1000 * 60 * 65).toISOString(),
+              metadata: { projectId: 2002, drawingId: 'SD004', drawingName: 'Main_Electrical_Distribution_Rev_A.pdf', targetTab: 'drawings' }
+            },
+            {
+              id: `${projectId}_5`,
+              type: 'scope',
+              action: 'updated',
+              description: 'Scope item "HVAC Ductwork Distribution System - Galvanized Steel" progress updated to 25% in project "Garanti BBVA Tech Center MEP"',
+              userName: 'Emre Koc',
+              timestamp: new Date(Date.now() - 1000 * 60 * 80).toISOString(),
+              metadata: { projectId: 2002, scopeItemId: 'SCOPE010', scopeItemName: 'HVAC Ductwork Distribution System - Galvanized Steel', targetTab: 'scope' }
+            }
+          ] : []),
+          
+          // Zorlu Center Luxury Retail Fit-out activities (Project ID: 2004)
+          ...(projectId === 2004 || projectId === '2004' ? [
+            {
+              id: `${projectId}_1`,
+              type: 'task',
+              action: 'completed',
+              description: 'Task "Luxury Display Case Design Review" completed in project "Zorlu Center Luxury Retail Fit-out"',
+              userName: 'İpek Gönenç',
+              timestamp: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
+              metadata: { projectId: 2004, taskId: 3024, taskName: 'Luxury Display Case Design Review', targetTab: 'overview' }
+            },
+            {
+              id: `${projectId}_2`,
+              type: 'shop_drawing',
+              action: 'approved',
+              description: 'Shop drawing "Luxury_Display_Cases_Rev_A.pdf" approved in project "Zorlu Center Luxury Retail Fit-out"',
+              userName: 'İpek Gönenç',
+              timestamp: new Date(Date.now() - 1000 * 60 * 40).toISOString(),
+              metadata: { projectId: 2004, drawingId: 'SD007', drawingName: 'Luxury_Display_Cases_Rev_A.pdf', targetTab: 'drawings' }
+            },
+            {
+              id: `${projectId}_3`,
+              type: 'task',
+              action: 'active',
+              description: 'Task "Retail Floor Layout Planning" is active with 75% progress in project "Zorlu Center Luxury Retail Fit-out"',
+              userName: 'Hakan Ayseli',
+              timestamp: new Date(Date.now() - 1000 * 60 * 55).toISOString(),
+              metadata: { projectId: 2004, taskId: 3025, taskName: 'Retail Floor Layout Planning', targetTab: 'overview' }
+            },
+            {
+              id: `${projectId}_4`,
+              type: 'shop_drawing',
+              action: 'pending',
+              description: 'Shop drawing "Retail_Floor_Layout_Rev_A.pdf" pending review in project "Zorlu Center Luxury Retail Fit-out"',
+              userName: 'Serra Uluveren',
+              timestamp: new Date(Date.now() - 1000 * 60 * 70).toISOString(),
+              metadata: { projectId: 2004, drawingId: 'SD011', drawingName: 'Retail_Floor_Layout_Rev_A.pdf', targetTab: 'drawings' }
+            }
+          ] : []),
+          
+          // Formula HQ Showroom & Office Renovation activities (Project ID: 2007)
+          ...(projectId === 2007 || projectId === '2007' ? [
+            {
+              id: `${projectId}_1`,
+              type: 'task',
+              action: 'completed',
+              description: 'Task "Formula Branded Reception Wall Design" completed in project "Formula HQ Showroom & Office Renovation"',
+              userName: 'Yusuf Sağlam',
+              timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+              metadata: { projectId: 2007, taskId: 3033, taskName: 'Formula Branded Reception Wall Design', targetTab: 'overview' }
+            },
+            {
+              id: `${projectId}_2`,
+              type: 'shop_drawing',
+              action: 'approved',
+              description: 'Shop drawing "Formula_Branded_Reception_Wall_Rev_B.pdf" approved in project "Formula HQ Showroom & Office Renovation"',
+              userName: 'Yusuf Sağlam',
+              timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+              metadata: { projectId: 2007, drawingId: 'SD010', drawingName: 'Formula_Branded_Reception_Wall_Rev_B.pdf', targetTab: 'drawings' }
+            },
+            {
+              id: `${projectId}_3`,
+              type: 'task',
+              action: 'active',
+              description: 'Task "Showroom Display System Setup" is active with 30% progress in project "Formula HQ Showroom & Office Renovation"',
+              userName: 'Hakan Ayseli',
+              timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+              metadata: { projectId: 2007, taskId: 3034, taskName: 'Showroom Display System Setup', targetTab: 'overview' }
+            },
+            {
+              id: `${projectId}_4`,
+              type: 'task',
+              action: 'pending',
+              description: 'Task "Office Furniture Coordination" is pending start in project "Formula HQ Showroom & Office Renovation"',
+              userName: 'Serra Uluveren',
+              timestamp: new Date(Date.now() - 1000 * 60 * 75).toISOString(),
+              metadata: { projectId: 2007, taskId: 3035, taskName: 'Office Furniture Coordination', targetTab: 'overview' }
+            }
+          ] : []),
+          
+          // Generic activities for any project
+          {
+            id: `${projectId}_generic_1`,
+            type: 'project',
+            action: 'updated',
+            description: `Project status updated to Active`,
+            userName: 'Project Manager',
+            timestamp: new Date(Date.now() - 1000 * 60 * 100).toISOString(),
+            metadata: { projectId: parseInt(projectId), targetTab: 'overview' }
+          },
+          {
+            id: `${projectId}_generic_2`,
+            type: 'compliance',
+            action: 'updated',
+            description: `Building permit documentation uploaded`,
+            userName: 'Quality Assurance',
+            timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+            metadata: { projectId: parseInt(projectId), documentId: 'DOC_GEN', documentName: 'Building Permit Documentation', targetTab: 'compliance' }
+          }
+        ];
+        
+        setActivities(projectSpecificActivities.slice(0, limit));
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error generating project activities:', error);
+        setActivities([]);
+        setIsLoading(false);
+      }
+    };
+
+    const timer = setTimeout(generateProjectActivities, 500);
+    return () => clearTimeout(timer);
+  }, [projectId, limit]);
   
   return {
     activities,

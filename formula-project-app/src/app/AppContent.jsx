@@ -6,6 +6,7 @@ import { useFilteredData, useActiveFilters } from '../hooks/useFormula';
 import { useEnhancedSearch } from '../hooks/useEnhancedSearch';
 import { useNavigation } from '../context/NavigationContext';
 import { useDialogManager } from '../hooks/useDialogManager';
+import { useNotification } from '../context/NotificationContext';
 import {
   Grid,
   Paper,
@@ -49,7 +50,8 @@ import {
   ProjectCardSkeleton,
   TaskRowSkeleton,
   TeamMemberSkeleton,
-  FormSkeleton
+  FormSkeleton,
+  FeedTab
 } from '../components/lazy';
 
 /**
@@ -86,6 +88,9 @@ export const AppContent = ({
     isInProjectContext, 
     navigateToProject
   } = useNavigation();
+
+  // Notification hook
+  const { showSuccess, showError, showWarning } = useNotification();
 
   // Dialog management
   const {
@@ -168,6 +173,9 @@ export const AppContent = ({
       const createdProject = await addProject(newProject);
       navigateToMain();
       
+      // Show success notification
+      showSuccess(`Project "${project.name}" created successfully`, { action: 'save' });
+      
       // Add notification for project assignment
       if (project.managerId) {
         const manager = teamMembers.find(m => m.id === project.managerId);
@@ -180,6 +188,7 @@ export const AppContent = ({
     } catch (error) {
       console.error('Error creating project:', error);
       setError('Failed to create project');
+      showError('Failed to create project. Please try again.');
     }
   }, [addProject, navigateToMain, setError, teamMembers]);
 
@@ -195,6 +204,9 @@ export const AppContent = ({
       const updatedProject = await updateProject(project.id, project);
       closeEditProjectDialog();
       
+      // Show success notification
+      showSuccess(`Project "${project.name}" updated successfully`, { action: 'save' });
+      
       // Add notification for project status change
       if (oldProject && project.status !== oldProject.status) {
         const currentUser = teamMembers.find(m => m.id === 1008); // Current user ID
@@ -203,8 +215,20 @@ export const AppContent = ({
     } catch (error) {
       console.error('Error updating project:', error);
       setError('Failed to update project');
+      showError('Failed to update project. Please try again.');
     }
   }, [updateProject, setError, projects, teamMembers, closeEditProjectDialog]);
+
+  const handleDeleteProject = useCallback(async (projectId) => {
+    try {
+      const project = projects.find(p => p.id === projectId);
+      await deleteProject(projectId);
+      showSuccess(`Project "${project?.name || 'Unknown'}" deleted successfully`, { action: 'delete' });
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      showError('Failed to delete project. Please try again.');
+    }
+  }, [deleteProject, projects, showSuccess, showError]);
 
   const handleAddTask = useCallback(async (task) => {
     try {
@@ -218,6 +242,9 @@ export const AppContent = ({
       
       const createdTask = await addTask(newTask);
       navigateToMain();
+      
+      // Show success notification
+      showSuccess(`Task "${task.name}" created successfully`, { action: 'save' });
       
       // Add notification for task assignment
       if (task.assignedTo) {
@@ -239,6 +266,7 @@ export const AppContent = ({
     } catch (error) {
       console.error('Error creating task:', error);
       setError('Failed to create task');
+      showError('Failed to create task. Please try again.');
     }
   }, [addTask, navigateToMain, teamMembers, projects, setError]);
 
@@ -247,11 +275,13 @@ export const AppContent = ({
       const updatedTask = await apiService.updateTask(task.id, task);
       setTasks(tasks.map(t => t.id === task.id ? updatedTask : t));
       closeEditTaskDialog();
+      showSuccess(`Task "${task.name}" updated successfully`, { action: 'save' });
     } catch (error) {
       console.error('Error updating task:', error);
       setError('Failed to update task');
+      showError('Failed to update task. Please try again.');
     }
-  }, [tasks, setTasks, setError, closeEditTaskDialog]);
+  }, [tasks, setTasks, setError, closeEditTaskDialog, showSuccess, showError]);
 
   const updateTaskStatus = useCallback(async (taskId, updates) => {
     try {
@@ -261,6 +291,11 @@ export const AppContent = ({
       setTasks(tasks.map(task => 
         task.id === taskId ? updatedTask : task
       ));
+
+      // Show success notification for status update
+      if (updates.status) {
+        showSuccess(`Task status updated to "${updates.status}"`, { action: 'save' });
+      }
 
       // Add notifications for task changes
       if (updates.status === 'completed' && oldTask.status !== 'completed') {
@@ -294,6 +329,17 @@ export const AppContent = ({
       setError('Failed to update task');
     }
   }, [tasks, setTasks, teamMembers, projects, setError]);
+
+  const handleDeleteTask = useCallback(async (taskId) => {
+    try {
+      const task = tasks.find(t => t.id === taskId);
+      await deleteTask(taskId);
+      showSuccess(`Task "${task?.name || 'Unknown'}" deleted successfully`, { action: 'delete' });
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      showError('Failed to delete task. Please try again.');
+    }
+  }, [deleteTask, tasks, showSuccess, showError]);
 
   const handleViewTask = useCallback((task) => {
     openViewTaskDialog(task);
@@ -693,7 +739,7 @@ export const AppContent = ({
                     clients={clients}
                     teamMembers={teamMembers}
                     onEditProject={handleEditProject}
-                    onDeleteProject={deleteProject}
+                    onDeleteProject={handleDeleteProject}
                     onViewProject={handleViewProject}
                     onManageScope={handleManageScope}
                   />
@@ -717,7 +763,7 @@ export const AppContent = ({
                       projects={filteredProjects}
                       tasks={tasks}
                       clients={clients}
-                      onDeleteProject={deleteProject}
+                      onDeleteProject={handleDeleteProject}
                       onManageScope={handleManageScope}
                       onViewProject={handleViewProject}
                     />
@@ -770,7 +816,7 @@ export const AppContent = ({
                 tasks={tasks}
                 clients={clients}
                 teamMembers={teamMembers}
-                onDeleteProject={deleteProject}
+                onDeleteProject={handleDeleteProject}
                 onEditProject={handleEditProject}
                 onViewProject={handleViewProject}
                 onManageScope={handleManageScope}
@@ -792,7 +838,7 @@ export const AppContent = ({
                 projects={projects}
                 teamMembers={teamMembers}
                 onUpdateTask={updateTask}
-                onDeleteTask={deleteTask}
+                onDeleteTask={handleDeleteTask}
                 onAddTask={handleNavigateToAddTask}
                 onViewTask={handleViewTask}
                 onEditTask={handleEditTask}
@@ -924,6 +970,19 @@ export const AppContent = ({
                 projects={projects}
                 teamMembers={teamMembers}
                 shopDrawings={[]} // This will be connected to shop drawings data later
+              />
+            </Suspense>
+          </ErrorBoundary>
+        );
+
+      case 10: // Activity Feed
+        return (
+          <ErrorBoundary fallbackMessage="Failed to load activity feed">
+            <Suspense fallback={<LoadingFallback message="Loading activity feed..." />}>
+              <FeedTab 
+                onTabChange={setCurrentTab}
+                projects={projects}
+                onNavigateToProject={handleNavigateToProject}
               />
             </Suspense>
           </ErrorBoundary>

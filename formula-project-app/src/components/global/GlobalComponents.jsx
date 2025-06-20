@@ -1,7 +1,8 @@
 import React from 'react';
-import { Snackbar, Alert, Portal } from '@mui/material';
+import { Snackbar, Alert, Portal, Box } from '@mui/material';
 import { useNotification } from '../../context/NotificationContext';
 import NotificationContainer from '../ui/NotificationContainer';
+import EnhancedNotification from '../ui/EnhancedNotification';
 import { PerformanceMonitorComponent as PerformanceMonitor } from '../../utils/performance';
 
 /**
@@ -16,26 +17,27 @@ const GlobalComponents = () => {
       {/* Global notification container for browser notifications */}
       <NotificationContainer />
 
-      {/* Snackbars for in-app notifications */}
-      {notifications.map((notification) => (
-        <Snackbar
-          key={notification.id}
-          open={true}
-          autoHideDuration={notification.duration || 6000}
-          onClose={() => removeNotification(notification.id)}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          sx={{ mb: notifications.indexOf(notification) * 7 }}
-        >
-          <Alert
-            onClose={() => removeNotification(notification.id)}
-            severity={notification.type}
-            sx={{ width: '100%' }}
-            variant="filled"
-          >
-            {notification.message}
-          </Alert>
-        </Snackbar>
-      ))}
+      {/* Enhanced notifications container */}
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          zIndex: 2000,
+          display: 'flex',
+          flexDirection: 'column-reverse',
+          gap: 1
+        }}
+      >
+        {notifications.map((notification, index) => (
+          <EnhancedNotification
+            key={notification.id}
+            notification={notification}
+            onClose={removeNotification}
+            index={index}
+          />
+        ))}
+      </Box>
 
       {/* Performance monitor in development */}
       {process.env.NODE_ENV === 'development' && (

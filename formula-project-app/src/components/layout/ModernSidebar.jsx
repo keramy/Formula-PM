@@ -26,7 +26,8 @@ import {
   Business as ClientsIcon,
   ChevronLeft as ChevronLeftIcon,
   Menu as MenuIcon,
-  Architecture as ShopDrawingsIcon
+  Architecture as ShopDrawingsIcon,
+  DynamicFeed as FeedIcon
 } from '@mui/icons-material';
 import { useTheme as useFormulaTheme } from '../../context/ThemeContext';
 import { useNavigation } from '../../context/NavigationContext';
@@ -78,6 +79,12 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
         { id: 3, label: 'Tasks', icon: <TaskIcon />, description: 'Task management' },
         { id: 8, label: 'Shop Drawings', icon: <ShopDrawingsIcon />, description: 'Millwork drawings & approvals' },
         { id: 7, label: 'Timeline', icon: <TimelineIcon />, description: 'Gantt charts and timelines' }
+      ]
+    },
+    {
+      title: 'Activity',
+      items: [
+        { id: 10, label: 'Activity Feed', icon: <FeedIcon />, description: 'Recent activity and updates' }
       ]
     },
     {
@@ -166,11 +173,11 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
             onClick={onToggleCollapse}
             sx={{
               color: colors.text,
-              backgroundColor: colors.hover,
+              backgroundColor: 'transparent',
               width: 32,
               height: 32,
               '&:hover': {
-                backgroundColor: colors.active,
+                backgroundColor: 'transparent',
                 transform: 'scale(1.05)'
               },
               transition: 'all 0.2s ease',
@@ -220,7 +227,7 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                         minHeight: 48,
                         borderLeft: currentTab === item.id ? `3px solid ${colors.accent}` : 'none',
                         '&:hover': {
-                          backgroundColor: currentTab === item.id ? colors.accent : colors.hover,
+                          backgroundColor: currentTab === item.id ? colors.accent : 'transparent',
                           color: currentTab === item.id ? '#ffffff !important' : colors.text,
                           transform: 'translateX(4px)'
                         },
@@ -281,7 +288,7 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                     justifyContent: isCollapsed ? 'center' : 'flex-start',
                     minHeight: 48,
                     '&:hover': {
-                      backgroundColor: colors.hover,
+                      backgroundColor: 'transparent',
                       color: colors.text,
                       transform: 'translateX(4px)'
                     },

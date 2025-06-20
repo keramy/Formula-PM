@@ -105,6 +105,11 @@ export const MaterialSpecificationsList = lazy(() =>
   import('../../features/specifications/components/MaterialSpecificationsList')
 );
 
+// Feed components
+export const FeedTab = lazy(() => 
+  import('../../features/feed/components/FeedTab')
+);
+
 // Admin components
 export const PerformanceDashboard = lazy(() => 
   import('../admin/PerformanceDashboard')

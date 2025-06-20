@@ -10,16 +10,12 @@ import {
   ListItemText,
   Avatar,
   Chip,
-  IconButton,
-  Collapse,
   Box,
   Skeleton,
   Tooltip,
   Badge
 } from '@mui/material';
 import {
-  ExpandMore,
-  ExpandLess,
   Assignment,
   People,
   Business,
@@ -35,6 +31,7 @@ import {
 } from '@mui/icons-material';
 import { formatDistanceToNow } from 'date-fns';
 import { useActivityFeed } from '../../hooks/useRealTime';
+import EnhancedActivityDescription from './EnhancedActivityDescription';
 
 // Activity type icons mapping
 const getActivityIcon = (type, action) => {
@@ -63,10 +60,34 @@ const getActivityIcon = (type, action) => {
     comment: {
       added: <Comment color="info" />,
     },
-    data_update: <Update color="info" />,
+    data_update: {
+      updated: <Update color="info" />,
+    },
+    // Add new activity types
+    scope: {
+      created: <Add color="primary" />,
+      updated: <Edit color="info" />,
+      deleted: <Delete color="error" />,
+    },
+    shop_drawing: {
+      approved: <Check color="success" />,
+      pending: <Update color="warning" />,
+      rejected: <Block color="error" />,
+    },
+    material_spec: {
+      approved: <Check color="success" />,
+      pending: <Update color="warning" />,
+      rejected: <Block color="error" />,
+    },
+    timeline: {
+      updated: <Edit color="info" />,
+    },
+    compliance: {
+      updated: <Edit color="info" />,
+    },
   };
 
-  return iconMap[type]?.[action] || iconMap[type] || <Update color="info" />;
+  return iconMap[type]?.[action] || <Update color="info" />;
 };
 
 // Activity type colors
@@ -96,30 +117,80 @@ const getActivityColor = (type, action) => {
     comment: {
       added: 'info',
     },
-    data_update: 'info',
+    data_update: {
+      updated: 'info',
+    },
+    scope: {
+      created: 'primary',
+      updated: 'info',
+      deleted: 'error',
+    },
+    shop_drawing: {
+      approved: 'success',
+      pending: 'warning',
+      rejected: 'error',
+    },
+    material_spec: {
+      approved: 'success',
+      pending: 'warning',
+      rejected: 'error',
+    },
+    timeline: {
+      updated: 'info',
+    },
+    compliance: {
+      updated: 'info',
+    },
   };
 
-  return colorMap[type]?.[action] || colorMap[type] || 'default';
+  return colorMap[type]?.[action] || 'default';
+};
+
+// Get proper display name for activity types
+const getActivityDisplayName = (type) => {
+  const displayNames = {
+    project: 'Project',
+    task: 'Task',
+    team_member: 'Team Member',
+    client: 'Client',
+    comment: 'Comment',
+    data_update: 'Data Update',
+    scope: 'Scope',
+    shop_drawing: 'Shop Drawing',
+    material_spec: 'Material Specification',
+    timeline: 'Timeline',
+    compliance: 'Compliance'
+  };
+  return displayNames[type] || 'Activity';
 };
 
 // Individual activity item component
-const ActivityItem = ({ activity, showDetails = false }) => {
-  const [expanded, setExpanded] = useState(false);
+const ActivityItem = ({ activity, onActivityClick, onProjectClick, onTaskClick, onScopeClick, onDrawingClick, onSpecClick }) => {
+  // Safety check for activity object
+  if (!activity || typeof activity !== 'object') {
+    return null;
+  }
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+  const handleActivityClick = () => {
+    if (onActivityClick) {
+      onActivityClick(activity);
+    }
   };
 
-  const timeAgo = formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true });
-  const icon = getActivityIcon(activity.type, activity.action);
-  const color = getActivityColor(activity.type, activity.action);
+  const timestamp = activity.timestamp || new Date().toISOString();
+  const timeAgo = formatDistanceToNow(new Date(timestamp), { addSuffix: true });
+  const activityType = activity.type || 'unknown';
+  const activityAction = activity.action || 'updated';
+  const icon = getActivityIcon(activityType, activityAction);
+  const color = getActivityColor(activityType, activityAction);
 
   return (
     <ListItem
       sx={{
         borderBottom: '1px solid #f0f0f0',
         '&:last-child': { borderBottom: 'none' },
-        '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.02)' }
+        py: 1.5,
+        cursor: 'default'
       }}
     >
       <ListItemAvatar>
@@ -130,53 +201,42 @@ const ActivityItem = ({ activity, showDetails = false }) => {
       
       <ListItemText
         primary={
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography variant="body2" sx={{ flex: 1 }}>
-              {activity.description}
-            </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+            <Box sx={{ flex: 1 }}>
+              <EnhancedActivityDescription
+                activity={activity}
+                onProjectClick={onProjectClick}
+                onTaskClick={onTaskClick}
+                onScopeClick={onScopeClick}
+                onDrawingClick={onDrawingClick}
+                onSpecClick={onSpecClick}
+              />
+            </Box>
             <Chip
-              label={activity.type}
+              label={getActivityDisplayName(activityType)}
               size="small"
-              color={color}
               variant="outlined"
-              sx={{ fontSize: '0.7rem', height: '20px' }}
+              sx={{ 
+                fontSize: '0.7rem',
+                height: '20px',
+                color: '#1976d2',
+                borderColor: '#1976d2',
+                backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                '& .MuiChip-label': {
+                  px: 1,
+                  color: '#1976d2',
+                  fontWeight: 500
+                }
+              }}
             />
           </Box>
         }
         secondary={
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 0.5 }}>
-            <Typography variant="caption" color="textSecondary">
-              {activity.userName && `by ${activity.userName} • `}{timeAgo}
-            </Typography>
-            {showDetails && activity.metadata && (
-              <IconButton
-                size="small"
-                onClick={handleExpandClick}
-                sx={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}
-              >
-                <ExpandMore fontSize="small" />
-              </IconButton>
-            )}
-          </Box>
+          <Typography variant="caption" color="textSecondary">
+            {activity.userName && `by ${String(activity.userName)} • `}{timeAgo}
+          </Typography>
         }
       />
-      
-      {showDetails && activity.metadata && (
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <Box sx={{ pl: 7, pb: 1 }}>
-            <Typography variant="caption" color="textSecondary">
-              Details:
-            </Typography>
-            <Box sx={{ mt: 0.5 }}>
-              {Object.entries(activity.metadata).map(([key, value]) => (
-                <Typography key={key} variant="caption" display="block">
-                  <strong>{key}:</strong> {String(value)}
-                </Typography>
-              ))}
-            </Box>
-          </Box>
-        </Collapse>
-      )}
     </ListItem>
   );
 };
@@ -199,12 +259,21 @@ const ActivityFeed = ({
   limit = 20, 
   showHeader = true, 
   maxHeight = 400,
-  showDetails = false,
   showBadge = true,
-  title = "Recent Activity"
+  title = "Recent Activity",
+  activities: providedActivities,
+  onActivityClick,
+  onProjectClick,
+  onTaskClick,
+  onScopeClick,
+  onDrawingClick,
+  onSpecClick
 }) => {
-  const { activities, isLoading } = useActivityFeed(limit);
+  const { activities: fetchedActivities, isLoading } = useActivityFeed(limit);
   const [filter, setFilter] = useState('all');
+  
+  // Use provided activities if available, otherwise use fetched activities
+  const activities = providedActivities || fetchedActivities;
   
   // Filter activities by type
   const filteredActivities = activities.filter(activity => {
@@ -243,7 +312,7 @@ const ActivityFeed = ({
                 {activityTypes.map(type => (
                   <Chip
                     key={type}
-                    label={type}
+                    label={getActivityDisplayName(type)}
                     size="small"
                     color={filter === type ? 'primary' : 'default'}
                     onClick={() => setFilter(type)}
@@ -277,7 +346,12 @@ const ActivityFeed = ({
                 <ActivityItem
                   key={activity.id}
                   activity={activity}
-                  showDetails={showDetails}
+                  onActivityClick={onActivityClick}
+                  onProjectClick={onProjectClick}
+                  onTaskClick={onTaskClick}
+                  onScopeClick={onScopeClick}
+                  onDrawingClick={onDrawingClick}
+                  onSpecClick={onSpecClick}
                 />
               ))}
             </List>
@@ -289,28 +363,60 @@ const ActivityFeed = ({
 };
 
 // Compact activity feed for sidebars
-export const CompactActivityFeed = ({ limit = 10, maxHeight = 300 }) => {
+export const CompactActivityFeed = ({ 
+  limit = 10, 
+  maxHeight = 300, 
+  activities, 
+  onActivityClick,
+  onProjectClick,
+  onTaskClick,
+  onScopeClick,
+  onDrawingClick,
+  onSpecClick
+}) => {
   return (
     <ActivityFeed
       limit={limit}
       showHeader={false}
       maxHeight={maxHeight}
-      showDetails={false}
       showBadge={false}
+      activities={activities}
+      onActivityClick={onActivityClick}
+      onProjectClick={onProjectClick}
+      onTaskClick={onTaskClick}
+      onScopeClick={onScopeClick}
+      onDrawingClick={onDrawingClick}
+      onSpecClick={onSpecClick}
     />
   );
 };
 
 // Activity feed with detailed view
-export const DetailedActivityFeed = ({ limit = 50 }) => {
+export const DetailedActivityFeed = ({ 
+  limit = 50, 
+  activities, 
+  onActivityClick, 
+  title,
+  onProjectClick,
+  onTaskClick,
+  onScopeClick,
+  onDrawingClick,
+  onSpecClick
+}) => {
   return (
     <ActivityFeed
       limit={limit}
       showHeader={true}
       maxHeight={600}
-      showDetails={true}
       showBadge={true}
-      title="Activity Log"
+      title={title || "Activity Log"}
+      activities={activities}
+      onActivityClick={onActivityClick}
+      onProjectClick={onProjectClick}
+      onTaskClick={onTaskClick}
+      onScopeClick={onScopeClick}
+      onDrawingClick={onDrawingClick}
+      onSpecClick={onSpecClick}
     />
   );
 };

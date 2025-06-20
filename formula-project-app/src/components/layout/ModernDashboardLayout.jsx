@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Container, Typography, IconButton, Tooltip } from '@mui/material';
+import { Box, Container, Typography, IconButton, Tooltip, useTheme } from '@mui/material';
 import { 
   Notifications as NotificationsIcon,
   DarkMode as DarkModeIcon,
@@ -17,6 +17,7 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
   const { user } = useAuth();
   const { mode, toggleTheme, isDarkMode } = useTheme();
   const { isInProjectContext, currentProjectId, currentSection } = useNavigation();
+  const theme = useTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     localStorage.getItem('sidebarCollapsed') === 'true'
   );
@@ -51,6 +52,7 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
       case 7: return 'Timeline';
       case 8: return 'Shop Drawings';
       case 9: return 'Material Specs';
+      case 10: return 'Activity Feed';
       default: return 'Dashboard';
     }
   };
@@ -87,6 +89,7 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
       case 7: return 'Project timelines and Gantt chart overview.';
       case 8: return 'Shop drawings and technical documentation.';
       case 9: return 'Material specifications and requirements.';
+      case 10: return 'Track all project updates and team activities in real-time.';
       default: return `Welcome back, ${userName}. Here's what's happening.`;
     }
   };
@@ -96,7 +99,7 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F8F9FA' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
       {/* Sidebar */}
       <ModernSidebar 
         currentTab={getCurrentTab()} 
@@ -119,8 +122,8 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
         {/* Top Header */}
         <Box
           sx={{
-            backgroundColor: 'white',
-            borderBottom: '1px solid #E9ECEF',
+            backgroundColor: theme.palette.background.paper,
+            borderBottom: `1px solid ${theme.palette.divider}`,
             px: 4,
             py: 3,
             display: 'flex',
@@ -135,7 +138,7 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
               variant="h4"
               sx={{
                 fontWeight: 700,
-                color: '#2C3E50',
+                color: theme.palette.text.primary,
                 mb: 0.5,
                 fontSize: '1.75rem'
               }}
@@ -145,7 +148,7 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
             <Typography
               variant="body1"
               sx={{
-                color: '#7F8C8D',
+                color: theme.palette.text.secondary,
                 fontSize: '0.95rem'
               }}
             >
@@ -170,9 +173,9 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
                 onClick={toggleTheme}
                 size="small"
                 sx={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                  backgroundColor: theme.palette.action.hover,
                   '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                    backgroundColor: theme.palette.action.selected,
                   },
                   width: 40,
                   height: 40
