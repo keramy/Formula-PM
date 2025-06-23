@@ -681,6 +681,11 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
             onUpload={handleImageUpload}
             maxImages={10}
             existingImages={currentImages}
+            projectId={projectId}
+            projectName={projectData?.name}
+            projectPhase={projectData?.type || 'construction'}
+            enableAdvancedFeatures={true}
+            showLocationMap={true}
           />
         </DialogContent>
       </Dialog>

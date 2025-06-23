@@ -12,7 +12,10 @@ import {
   TextField,
   Chip,
   Alert,
-  LinearProgress
+  LinearProgress,
+  Menu,
+  MenuItem,
+  Divider
 } from '@mui/material';
 import {
   FaCloudUploadAlt,
@@ -20,15 +23,36 @@ import {
   FaImage,
   FaCamera,
   FaTimes,
-  FaCheck
+  FaCheck,
+  FaEdit,
+  FaMapMarkerAlt,
+  FaEllipsisV
 } from 'react-icons/fa';
 import { useDropzone } from 'react-dropzone';
+import PhotoCapture from './PhotoCapture';
+import PhotoMetadataEditor from './PhotoMetadataEditor';
+import LocationPhotoMap from './LocationPhotoMap';
+import photoService from '../services/photoService';
 
-const ImageManager = ({ onUpload, maxImages = 10, existingImages = [] }) => {
+const ImageManager = ({ 
+  onUpload, 
+  maxImages = 10, 
+  existingImages = [],
+  projectId,
+  projectName,
+  projectPhase = 'construction',
+  enableAdvancedFeatures = true,
+  showLocationMap = true
+}) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [captions, setCaptions] = useState({});
   const [previews, setPreviews] = useState([]);
   const [errors, setErrors] = useState([]);
+  const [photoCaptureOpen, setPhotoCaptureOpen] = useState(false);
+  const [metadataEditorOpen, setMetadataEditorOpen] = useState(false);
+  const [selectedPhotosForEdit, setSelectedPhotosForEdit] = useState([]);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [allPhotos, setAllPhotos] = useState([]);
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     // Handle rejected files
@@ -99,6 +123,59 @@ const ImageManager = ({ onUpload, maxImages = 10, existingImages = [] }) => {
     setPreviews([]);
   };
 
+  const handlePhotoCaptured = (capturedPhotos) => {
+    // Convert captured photos to the format expected by the parent component
+    const files = capturedPhotos.map(photo => {
+      // Create a mock file object from the captured photo data
+      return {
+        name: photo.originalName,
+        size: photo.fileSize,
+        type: photo.mimeType,
+        url: photo.url
+      };
+    });
+    const captions = capturedPhotos.map(photo => photo.caption || '');
+    
+    if (onUpload) {
+      onUpload(files, captions);
+    }
+    
+    setPhotoCaptureOpen(false);
+  };
+
+  const handleEditMetadata = () => {
+    if (existingImages.length > 0) {
+      // Convert existing images to photo objects for metadata editing
+      const photosForEdit = existingImages.map((img, index) => ({
+        id: `existing_${index}`,
+        url: img.url || img,
+        originalName: img.name || `Image ${index + 1}`,
+        caption: img.caption || '',
+        tags: img.tags || [],
+        category: img.category || 'general',
+        location: img.location || {},
+        project: {
+          id: projectId,
+          name: projectName,
+          phase: projectPhase
+        }
+      }));
+      setSelectedPhotosForEdit(photosForEdit);
+      setMetadataEditorOpen(true);
+    }
+  };
+
+  const loadProjectPhotos = async () => {
+    if (projectId && enableAdvancedFeatures) {
+      try {
+        const photos = await photoService.getPhotosByProject(projectId);
+        setAllPhotos(photos);
+      } catch (error) {
+        console.error('Error loading project photos:', error);
+      }
+    }
+  };
+
   const clearAll = () => {
     selectedFiles.forEach(f => URL.revokeObjectURL(f.preview));
     setSelectedFiles([]);
@@ -145,6 +222,46 @@ const ImageManager = ({ onUpload, maxImages = 10, existingImages = [] }) => {
             </Typography>
           ))}
         </Alert>
+      )}
+
+      {/* Enhanced Controls */}
+      {enableAdvancedFeatures && (
+        <Box sx={{ mb: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          <Button
+            variant="contained"
+            startIcon={<FaCamera />}
+            onClick={() => setPhotoCaptureOpen(true)}
+          >
+            Capture with Metadata
+          </Button>
+          {existingImages.length > 0 && (
+            <Button
+              variant="outlined"
+              startIcon={<FaEdit />}
+              onClick={handleEditMetadata}
+            >
+              Edit Metadata
+            </Button>
+          )}
+          <IconButton
+            onClick={(e) => setMenuAnchor(e.currentTarget)}
+            size="small"
+          >
+            <FaEllipsisV />
+          </IconButton>
+        </Box>
+      )}
+
+      {/* Location Map */}
+      {showLocationMap && enableAdvancedFeatures && allPhotos.length > 0 && (
+        <Box sx={{ mb: 3 }}>
+          <LocationPhotoMap
+            projectId={projectId}
+            photos={allPhotos}
+            onPhotoSelect={(photo) => console.log('Photo selected:', photo)}
+            onLocationSelect={(location, photos) => console.log('Location selected:', location, photos)}
+          />
+        </Box>
       )}
 
       {/* Selected Files Preview */}
@@ -239,6 +356,51 @@ const ImageManager = ({ onUpload, maxImages = 10, existingImages = [] }) => {
           This line already has {existingImages.length} image{existingImages.length > 1 ? 's' : ''} attached.
           You can add up to {maxImages - existingImages.length} more.
         </Alert>
+      )}
+
+      {/* Menu */}
+      <Menu
+        anchorEl={menuAnchor}
+        open={Boolean(menuAnchor)}
+        onClose={() => setMenuAnchor(null)}
+      >
+        <MenuItem onClick={() => { loadProjectPhotos(); setMenuAnchor(null); }}>
+          <FaImage style={{ marginRight: 8 }} />
+          Load Project Photos
+        </MenuItem>
+        <MenuItem onClick={() => setMenuAnchor(null)}>
+          <FaMapMarkerAlt style={{ marginRight: 8 }} />
+          View Location Map
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={() => setMenuAnchor(null)}>
+          Export Photo Data
+        </MenuItem>
+      </Menu>
+
+      {/* Photo Capture Dialog */}
+      {enableAdvancedFeatures && (
+        <PhotoCapture
+          open={photoCaptureOpen}
+          onClose={() => setPhotoCaptureOpen(false)}
+          onPhotoCaptured={handlePhotoCaptured}
+          projectId={projectId}
+          projectName={projectName}
+          projectPhase={projectPhase}
+        />
+      )}
+
+      {/* Metadata Editor Dialog */}
+      {enableAdvancedFeatures && (
+        <PhotoMetadataEditor
+          open={metadataEditorOpen}
+          onClose={() => setMetadataEditorOpen(false)}
+          photos={selectedPhotosForEdit}
+          onSave={(updatedPhotos) => {
+            console.log('Metadata updated:', updatedPhotos);
+            setMetadataEditorOpen(false);
+          }}
+        />
       )}
     </Box>
   );
