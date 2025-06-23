@@ -236,7 +236,8 @@ export const NavigationProvider = ({ children }) => {
       { id: 'drawings', label: 'Shop Drawings', icon: '🏗️', path: 'drawings' },
       { id: 'specifications', label: 'Material Specs', icon: '📄', path: 'specifications' },
       { id: 'compliance', label: 'Compliance', icon: '✅', path: 'compliance' },
-      { id: 'activity', label: 'Activity Feed', icon: '📢', path: 'activity' }
+      { id: 'activity', label: 'Activity Feed', icon: '📢', path: 'activity' },
+      { id: 'reports', label: 'Reports', icon: '📝', path: 'reports' }
     ];
   }, []);
 

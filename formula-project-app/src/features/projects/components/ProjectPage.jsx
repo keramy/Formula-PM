@@ -17,6 +17,8 @@ import ProjectSpecifications from './ProjectSpecifications';
 import ComplianceDocumentation from './ComplianceDocumentation';
 import EnhancedGanttChart from '../../../components/charts/EnhancedGanttChart';
 import ProjectActivityFeed from './ProjectActivityFeed';
+import ReportsList from '../../reports/components/ReportsList';
+import ReportEditor from '../../reports/components/ReportEditor';
 
 const ProjectPage = ({ 
   projectId, 
@@ -39,6 +41,7 @@ const ProjectPage = ({
   } = useNavigation();
   
   const [activeTab, setActiveTab] = useState(0);
+  const [editingReportId, setEditingReportId] = useState(null);
   
   // Find the current project
   const project = projects.find(p => p.id === projectId);
@@ -547,6 +550,23 @@ const ProjectPage = ({
             projectId={projectId}
             tasks={projectTasks}
             teamMembers={teamMembers}
+          />
+        );
+      case 7: // Reports
+        if (editingReportId) {
+          return (
+            <ReportEditor
+              reportId={editingReportId}
+              projectId={projectId}
+              onBack={() => setEditingReportId(null)}
+            />
+          );
+        }
+        return (
+          <ReportsList
+            projectId={projectId}
+            onEditReport={(reportId) => setEditingReportId(reportId)}
+            onCreateReport={() => setEditingReportId(null)}
           />
         );
       default:

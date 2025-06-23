@@ -3,7 +3,7 @@
  * Advanced reporting system for Formula PM
  */
 
-import { generateId } from '../../../utils/generators/idGenerator';
+import { generateUniqueId } from '../../../utils/generators/idGenerator';
 
 class ReportService {
   constructor() {
@@ -39,7 +39,7 @@ class ReportService {
   // Create a new report
   async createReport(reportData) {
     const newReport = {
-      id: generateId('RPT'),
+      id: generateUniqueId('RPT'),
       ...reportData,
       createdAt: new Date().toISOString(),
       lastModified: new Date().toISOString(),
@@ -96,7 +96,7 @@ class ReportService {
     }
 
     const newSection = {
-      id: generateId('SEC'),
+      id: generateUniqueId('SEC'),
       order: report.sections.length + 1,
       lines: [],
       ...sectionData
@@ -122,7 +122,7 @@ class ReportService {
     }
 
     const newLine = {
-      id: generateId('LINE'),
+      id: generateUniqueId('LINE'),
       order: section.lines.length + 1,
       description: '',
       images: [],
@@ -170,7 +170,7 @@ class ReportService {
   async uploadImage(reportId, sectionId, lineId, imageFile, caption = '') {
     // Simulate image upload
     const imageData = {
-      id: generateId('IMG'),
+      id: generateUniqueId('IMG'),
       fileName: `${Date.now()}_${imageFile.name}`,
       originalName: imageFile.name,
       fileSize: imageFile.size,
@@ -245,13 +245,13 @@ class ReportService {
   // Helper methods
   createDefaultSection() {
     return {
-      id: generateId('SEC'),
+      id: generateUniqueId('SEC'),
       title: 'New Section',
       type: 'general',
       order: 1,
       lines: [
         {
-          id: generateId('LINE'),
+          id: generateUniqueId('LINE'),
           order: 1,
           description: '',
           images: [],
