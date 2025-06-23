@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Paper } from '@mui/material';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { FaExclamationTriangle as ErrorOutlineIcon } from 'react-icons/fa';
 
 const NotFound = () => {
   const navigate = useNavigate();

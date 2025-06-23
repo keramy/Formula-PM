@@ -9,7 +9,7 @@ let socketInstance = null;
 // Create socket connection
 const createSocket = () => {
   if (!socketInstance) {
-    const serverUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+    const serverUrl = process.env.REACT_APP_API_URL || 'http://localhost:5014';
     
     socketInstance = io(serverUrl, {
       autoConnect: false,

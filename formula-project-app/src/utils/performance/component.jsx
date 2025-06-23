@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, IconButton, Paper, Collapse, Divider, Chip } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import SpeedIcon from '@mui/icons-material/Speed';
+import { FaTimes as CloseIcon, FaChevronUp as ExpandLessIcon, FaChevronDown as ExpandMoreIcon, FaTachometerAlt as SpeedIcon } from 'react-icons/fa';
 import PerformanceMonitor from './monitor';
 
 /**

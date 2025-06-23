@@ -19,21 +19,21 @@ import {
   Tooltip
 } from '@mui/material';
 import { 
-  Assignment, 
-  CheckCircle,
-  Flag,
-  Warning,
-  PriorityHigh,
-  Schedule,
-  Pause,
-  Visibility as ViewIcon,
-  Edit as EditIcon,
-  DoneAll as CompleteIcon,
-  PlayArrow,
-  FolderOpen as ProjectIcon,
-  Today as TodayIcon,
-  Error as OverdueIcon
-} from '@mui/icons-material';
+  FaClipboardList as Assignment, 
+  FaCheckCircle as CheckCircle,
+  FaFlag as Flag,
+  FaExclamationTriangle as Warning,
+  FaExclamation as PriorityHigh,
+  FaClock as Schedule,
+  FaPause as Pause,
+  FaEye as ViewIcon,
+  FaEdit as EditIcon,
+  FaCheckDouble as CompleteIcon,
+  FaPlay as PlayArrow,
+  FaFolder as ProjectIcon,
+  FaCalendarAlt as TodayIcon,
+  FaExclamationCircle as OverdueIcon
+} from 'react-icons/fa';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import { StatusChip, ActionTooltip, StandardCard } from '../../../components/ui';

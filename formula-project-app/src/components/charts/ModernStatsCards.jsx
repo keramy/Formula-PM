@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Paper, Typography, Box, useTheme } from '@mui/material';
-import { TrendingUp, TrendingDown } from '@mui/icons-material';
+import { FaArrowUp as TrendingUp, FaArrowDown as TrendingDown } from 'react-icons/fa';
 
 const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
   const theme = useTheme();

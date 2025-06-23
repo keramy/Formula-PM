@@ -13,13 +13,13 @@ import {
   useTheme
 } from '@mui/material';
 import {
-  AccountCircle,
-  Logout,
-  Settings,
-  Dashboard,
-  AdminPanelSettings,
-  Business
-} from '@mui/icons-material';
+  FaUserCircle as AccountCircle,
+  FaSignOutAlt as Logout,
+  FaCog as Settings,
+  FaTachometerAlt as Dashboard,
+  FaUserShield as AdminPanelSettings,
+  FaBuilding as Business
+} from 'react-icons/fa';
 import { useAuth, USER_ROLES } from '../../context/AuthContext';
 
 const UserProfileMenu = () => {

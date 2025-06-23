@@ -13,12 +13,12 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: ["http://localhost:3000", "https://keramy.github.io"],
+    origin: ["http://localhost:3003", "http://localhost:3000", "https://keramy.github.io"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
 });
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5014;
 
 // Initialize Database
 const db = new SimpleDB('./data');

@@ -35,21 +35,21 @@ import {
   Divider
 } from '@mui/material';
 import {
-  Add as AddIcon,
-  FileUpload as ImportIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  AttachFile as AttachFileIcon,
-  Download as DownloadIcon,
-  ExpandMore as ExpandMoreIcon,
-  Schedule as ScheduleIcon,
-  Warning as WarningIcon,
-  CheckCircle as CheckCircleIcon,
-  AccessTime as TimeIcon,
-  TrendingUp as ProgressIcon,
-  Link as LinkIcon,
-  Dashboard as DashboardIcon
-} from '@mui/icons-material';
+  FaPlus as AddIcon,
+  FaFileUpload as ImportIcon,
+  FaEdit as EditIcon,
+  FaTrash as DeleteIcon,
+  FaPaperclip as AttachFileIcon,
+  FaDownload as DownloadIcon,
+  FaChevronDown as ExpandMoreIcon,
+  FaClock as ScheduleIcon,
+  FaExclamationTriangle as WarningIcon,
+  FaCheckCircle as CheckCircleIcon,
+  FaClock as TimeIcon,
+  FaChartLine as ProgressIcon,
+  FaLink as LinkIcon,
+  FaTachometerAlt as DashboardIcon
+} from 'react-icons/fa';
 import EnhancedScopeItemForm from './EnhancedScopeItemForm';
 import ScopeImportDialog from './ScopeImportDialog';
 import ConnectionManagementDialog from './ConnectionManagementDialog';

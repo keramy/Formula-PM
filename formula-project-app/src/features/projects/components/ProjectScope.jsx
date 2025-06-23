@@ -89,7 +89,7 @@ const ProjectScope = ({ project, onClose }) => {
   const loadScopeItems = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5001/api/projects/${project.id}/scope`);
+      const response = await fetch(`http://localhost:5014/api/projects/${project.id}/scope`);
       if (response.ok) {
         const data = await response.json();
         setScopeItems(data);
@@ -107,8 +107,8 @@ const ProjectScope = ({ project, onClose }) => {
   const handleSubmit = async () => {
     try {
       const url = isEditing 
-        ? `http://localhost:5001/api/scope/${selectedItem.id}`
-        : `http://localhost:5001/api/projects/${project.id}/scope`;
+        ? `http://localhost:5014/api/scope/${selectedItem.id}`
+        : `http://localhost:5014/api/projects/${project.id}/scope`;
       
       const method = isEditing ? 'PUT' : 'POST';
       
@@ -140,7 +140,7 @@ const ProjectScope = ({ project, onClose }) => {
   const handleDelete = async (item) => {
     if (window.confirm(`Are you sure you want to delete "${item.description}"?`)) {
       try {
-        const response = await fetch(`http://localhost:5001/api/scope/${item.id}`, {
+        const response = await fetch(`http://localhost:5014/api/scope/${item.id}`, {
           method: 'DELETE',
         });
 

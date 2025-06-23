@@ -17,18 +17,15 @@ import {
   IconButton
 } from '@mui/material';
 import {
-  Clear as ClearIcon,
-  FilterList as FilterIcon,
-  Today as TodayIcon,
-  DateRange as DateRangeIcon,
-  Business as BusinessIcon,
-  Person as PersonIcon,
-  Category as CategoryIcon,
-  Flag as StatusIcon
-} from '@mui/icons-material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+  FaTimes as ClearIcon,
+  FaFilter as FilterIcon,
+  FaCalendarAlt as TodayIcon,
+  FaCalendarWeek as DateRangeIcon,
+  FaBuilding as BusinessIcon,
+  FaUser as PersonIcon,
+  FaTags as CategoryIcon,
+  FaFlag as StatusIcon
+} from 'react-icons/fa';
 
 const ProjectsFilters = ({
   open,
@@ -100,12 +97,6 @@ const ProjectsFilters = ({
     });
   };
 
-  const handleDateChange = (field) => (date) => {
-    onFiltersChange({
-      ...filters,
-      [field]: date
-    });
-  };
 
   const handleQuickFilter = (quickFilter) => {
     onFiltersChange({
@@ -364,79 +355,63 @@ const ProjectsFilters = ({
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Start Date From"
-                  value={filters.startDateFrom || null}
-                  onChange={handleDateChange('startDateFrom')}
-                  slotProps={{
-                    textField: {
-                      size: 'small',
-                      fullWidth: true,
-                      InputProps: {
-                        startAdornment: <DateRangeIcon sx={{ mr: 1, color: 'action.active' }} />
-                      }
-                    }
-                  }}
-                />
-              </LocalizationProvider>
+              <TextField
+                label="Start Date From"
+                type="date"
+                size="small"
+                fullWidth
+                value={filters.startDateFrom || ''}
+                onChange={(e) => handleFilterChange('startDateFrom', e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  startAdornment: <DateRangeIcon style={{ marginRight: 8, color: 'rgba(0, 0, 0, 0.54)' }} />
+                }}
+              />
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Start Date To"
-                  value={filters.startDateTo || null}
-                  onChange={handleDateChange('startDateTo')}
-                  slotProps={{
-                    textField: {
-                      size: 'small',
-                      fullWidth: true,
-                      InputProps: {
-                        startAdornment: <DateRangeIcon sx={{ mr: 1, color: 'action.active' }} />
-                      }
-                    }
-                  }}
-                />
-              </LocalizationProvider>
+              <TextField
+                label="Start Date To"
+                type="date"
+                size="small"
+                fullWidth
+                value={filters.startDateTo || ''}
+                onChange={(e) => handleFilterChange('startDateTo', e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  startAdornment: <DateRangeIcon style={{ marginRight: 8, color: 'rgba(0, 0, 0, 0.54)' }} />
+                }}
+              />
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="End Date From"
-                  value={filters.endDateFrom || null}
-                  onChange={handleDateChange('endDateFrom')}
-                  slotProps={{
-                    textField: {
-                      size: 'small',
-                      fullWidth: true,
-                      InputProps: {
-                        startAdornment: <DateRangeIcon sx={{ mr: 1, color: 'action.active' }} />
-                      }
-                    }
-                  }}
-                />
-              </LocalizationProvider>
+              <TextField
+                label="End Date From"
+                type="date"
+                size="small"
+                fullWidth
+                value={filters.endDateFrom || ''}
+                onChange={(e) => handleFilterChange('endDateFrom', e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  startAdornment: <DateRangeIcon style={{ marginRight: 8, color: 'rgba(0, 0, 0, 0.54)' }} />
+                }}
+              />
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="End Date To"
-                  value={filters.endDateTo || null}
-                  onChange={handleDateChange('endDateTo')}
-                  slotProps={{
-                    textField: {
-                      size: 'small',
-                      fullWidth: true,
-                      InputProps: {
-                        startAdornment: <DateRangeIcon sx={{ mr: 1, color: 'action.active' }} />
-                      }
-                    }
-                  }}
-                />
-              </LocalizationProvider>
+              <TextField
+                label="End Date To"
+                type="date"
+                size="small"
+                fullWidth
+                value={filters.endDateTo || ''}
+                onChange={(e) => handleFilterChange('endDateTo', e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  startAdornment: <DateRangeIcon style={{ marginRight: 8, color: 'rgba(0, 0, 0, 0.54)' }} />
+                }}
+              />
             </Grid>
 
             {/* Budget Range */}

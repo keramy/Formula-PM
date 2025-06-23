@@ -8,7 +8,7 @@ import {
   AlertTitle,
   Stack
 } from '@mui/material';
-import { Refresh, BugReport } from '@mui/icons-material';
+import { FaRedo as Refresh, FaBug as BugReport } from 'react-icons/fa';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {

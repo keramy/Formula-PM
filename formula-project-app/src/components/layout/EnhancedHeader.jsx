@@ -19,20 +19,20 @@ import {
   useMediaQuery
 } from '@mui/material';
 import { 
-  Search, 
-  Add, 
-  Share, 
-  MoreHoriz,
-  Star,
-  StarBorder,
-  Home,
-  Business,
-  Brightness4,
-  Brightness7,
-  Settings,
-  Person,
-  Logout
-} from '@mui/icons-material';
+  FaSearch as Search, 
+  FaPlus as Add, 
+  FaShare as Share, 
+  FaEllipsisH as MoreHoriz,
+  FaStar as Star,
+  FaRegStar as StarBorder,
+  FaHome as Home,
+  FaBuilding as Business,
+  FaMoon as Brightness4,
+  FaSun as Brightness7,
+  FaCog as Settings,
+  FaUser as Person,
+  FaSignOutAlt as Logout
+} from 'react-icons/fa';
 import FormulaLogo from '../branding/FormulaLogo';
 import { FormulaLogoCompact } from '../branding/LogoVariations';
 import { useTheme as useFormulaTheme } from '../../context/ThemeContext';

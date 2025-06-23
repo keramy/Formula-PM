@@ -13,7 +13,7 @@ import {
   ListItem,
   ListItemText
 } from '@mui/material';
-import { CloudUpload as UploadIcon } from '@mui/icons-material';
+import { FaCloudUploadAlt as UploadIcon } from 'react-icons/fa';
 
 const ScopeImportDialog = ({ open, onClose, onImport, categories }) => {
   const [file, setFile] = useState(null);

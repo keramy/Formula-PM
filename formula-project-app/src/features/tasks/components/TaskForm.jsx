@@ -7,9 +7,7 @@ import {
   Alert,
   Avatar
 } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+// Removed @mui/x-date-pickers dependencies - using standard HTML date inputs
 import FileUpload from '../../../components/common/FileUpload';
 
 const priorityLevels = [
@@ -54,10 +52,10 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
     }
   };
 
-  const handleDateChange = (date) => {
+  const handleDateChange = (e) => {
     setFormData({
       ...formData,
-      dueDate: date
+      dueDate: e.target.value
     });
     if (errors.dueDate) {
       setErrors({
@@ -127,7 +125,6 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {success && (
           <Alert severity="success">
@@ -208,19 +205,17 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
           ))}
         </TextField>
 
-        <DatePicker
+        <TextField
           label="Due Date"
+          type="date"
           value={formData.dueDate}
           onChange={handleDateChange}
-          minDate={new Date()}
-          slotProps={{
-            textField: {
-              error: !!errors.dueDate,
-              helperText: errors.dueDate,
-              fullWidth: true,
-              required: true
-            }
-          }}
+          error={!!errors.dueDate}
+          helperText={errors.dueDate}
+          fullWidth
+          required
+          InputLabelProps={{ shrink: true }}
+          inputProps={{ min: new Date().toISOString().split('T')[0] }}
         />
 
         <TextField
@@ -253,7 +248,6 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
           {initialTask ? 'Save Changes' : 'Add Task'}
         </Button>
       </Box>
-    </LocalizationProvider>
   );
 }
 

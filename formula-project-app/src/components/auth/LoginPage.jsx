@@ -18,14 +18,14 @@ import {
   useMediaQuery
 } from '@mui/material';
 import {
-  Visibility,
-  VisibilityOff,
-  Email,
-  Lock,
-  Business,
-  Brightness4,
-  Brightness7
-} from '@mui/icons-material';
+  FaEye as Visibility,
+  FaEyeSlash as VisibilityOff,
+  FaEnvelope as Email,
+  FaLock as Lock,
+  FaBuilding as Business,
+  FaMoon as Brightness4,
+  FaSun as Brightness7
+} from 'react-icons/fa';
 import { useAuth, USER_ROLES } from '../../context/AuthContext';
 import { FormulaLogoWithTagline } from '../branding/LogoVariations';
 import { useTheme as useFormulaTheme } from '../../context/ThemeContext';

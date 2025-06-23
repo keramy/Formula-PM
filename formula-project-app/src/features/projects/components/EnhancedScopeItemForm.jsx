@@ -17,7 +17,7 @@ import {
   Chip,
   Divider
 } from '@mui/material';
-import { AttachFile as AttachFileIcon } from '@mui/icons-material';
+import { FaPaperclip as AttachFileIcon } from 'react-icons/fa';
 
 const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({

@@ -165,25 +165,20 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                       </ListItemIcon>
                       <ListItemText
                         primary={task.name}
-                        secondary={
-                          <Box>
-                            <Typography variant="caption" display="block">
-                              Assigned to: {teamMembers.find(m => m.id === task.assignedTo)?.fullName || 'Unassigned'}
-                            </Typography>
-                            <Chip
-                              label={task.status}
-                              size="small"
-                              sx={{
-                                backgroundColor: getTaskStatusColor(task.status),
-                                color: 'white',
-                                fontSize: '0.7rem',
-                                height: 18,
-                                mt: 0.5
-                              }}
-                            />
-                          </Box>
-                        }
+                        secondary={`Assigned to: ${teamMembers.find(m => m.id === task.assignedTo)?.fullName || 'Unassigned'}`}
                       />
+                      <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
+                        <Chip
+                          label={task.status}
+                          size="small"
+                          sx={{
+                            backgroundColor: getTaskStatusColor(task.status),
+                            color: 'white',
+                            fontSize: '0.7rem',
+                            height: 18
+                          }}
+                        />
+                      </Box>
                     </ListItem>
                     {index < recentTasks.length - 1 && <Divider />}
                   </React.Fragment>

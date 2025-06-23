@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Container, Typography, IconButton, Tooltip, useTheme as useMuiTheme } from '@mui/material';
 import { 
-  Notifications as NotificationsIcon,
-  DarkMode as DarkModeIcon,
-  LightMode as LightModeIcon 
-} from '@mui/icons-material';
+  FaBell as NotificationsIcon,
+  FaMoon as DarkModeIcon,
+  FaSun as LightModeIcon 
+} from 'react-icons/fa';
 import ModernSidebar from './ModernSidebar';
 import UserProfileMenu from '../auth/UserProfileMenu';
 import LiveSearchDropdown from '../ui/LiveSearchDropdown';

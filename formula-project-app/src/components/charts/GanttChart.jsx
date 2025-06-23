@@ -8,7 +8,7 @@ import {
   Button,
   Grid
 } from '@mui/material';
-import { Timeline as TimelineIcon, Upgrade as UpgradeIcon } from '@mui/icons-material';
+import { FaCalendarAlt as TimelineIcon, FaArrowUp as UpgradeIcon } from 'react-icons/fa';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import EnhancedGanttChart from './EnhancedGanttChart';
 import { useAuthenticatedData } from '../../hooks/useAuthenticatedData';

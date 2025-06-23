@@ -21,15 +21,15 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  MoreVert as MoreVertIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Visibility as ViewIcon,
-  Business as BusinessIcon,
-  Person as PersonIcon,
-  CalendarToday as CalendarIcon,
-  AccountTree as ScopeIcon
-} from '@mui/icons-material';
+  FaEllipsisV as MoreVertIcon,
+  FaEdit as EditIcon,
+  FaTrash as DeleteIcon,
+  FaEye as ViewIcon,
+  FaBuilding as BusinessIcon,
+  FaUser as PersonIcon,
+  FaCalendarAlt as CalendarIcon,
+  FaSitemap as ScopeIcon
+} from 'react-icons/fa';
 import ProjectTeamAvatars from '../../../components/ui/ProjectTeamAvatars';
 
 const ProjectsTableView = ({ 

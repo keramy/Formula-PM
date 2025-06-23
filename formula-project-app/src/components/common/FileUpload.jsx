@@ -19,16 +19,16 @@ import {
   Alert
 } from '@mui/material';
 import {
-  CloudUpload,
-  AttachFile,
-  Delete,
-  Download,
-  Image,
-  PictureAsPdf,
-  Description,
-  InsertDriveFile,
-  Visibility
-} from '@mui/icons-material';
+  FaCloudUploadAlt as CloudUpload,
+  FaPaperclip as AttachFile,
+  FaTrash as Delete,
+  FaDownload as Download,
+  FaImage as Image,
+  FaFilePdf as PictureAsPdf,
+  FaFileAlt as Description,
+  FaFile as InsertDriveFile,
+  FaEye as Visibility
+} from 'react-icons/fa';
 
 // File type icons and colors
 const fileTypeConfig = {
