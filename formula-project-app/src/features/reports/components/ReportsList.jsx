@@ -63,23 +63,24 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
     loadReports();
   }, [projectId]);
 
-  const loadReports = () => {
+  const loadReports = async () => {
     setLoading(true);
     try {
-      const projectReports = reportService.getReportsByProject(projectId);
-      setReports(projectReports);
+      const projectReports = await reportService.getReportsByProject(projectId);
+      setReports(Array.isArray(projectReports) ? projectReports : []);
     } catch (error) {
       console.error('Error loading reports:', error);
+      setReports([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreateReport = () => {
+  const handleCreateReport = async () => {
     if (!reportTitle || !selectedTemplate) return;
 
     try {
-      const newReport = reportService.createReport({
+      const newReport = await reportService.createReport({
         projectId,
         title: reportTitle,
         templateId: selectedTemplate,
@@ -92,19 +93,19 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
       setSelectedTemplate('');
       
       // Navigate to the editor for the new report
-      if (onCreateReport) {
-        onCreateReport();
+      if (onEditReport) {
+        onEditReport(newReport.id);
       }
     } catch (error) {
       console.error('Error creating report:', error);
     }
   };
 
-  const handleDeleteReport = () => {
+  const handleDeleteReport = async () => {
     if (!selectedReport) return;
 
     try {
-      reportService.deleteReport(selectedReport.id);
+      await reportService.deleteReport(selectedReport.id);
       setReports(reports.filter(r => r.id !== selectedReport.id));
       setDeleteDialogOpen(false);
       setSelectedReport(null);
@@ -143,6 +144,7 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
   };
 
   const filteredReports = useMemo(() => {
+    if (!Array.isArray(reports)) return [];
     let filtered = [...reports];
 
     // Apply search filter
@@ -163,7 +165,9 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'date':
-          return new Date(b.createdAt) - new Date(a.createdAt);
+          const dateA = new Date(a.createdAt || Date.now());
+          const dateB = new Date(b.createdAt || Date.now());
+          return dateB - dateA;
         case 'title':
           return a.title.localeCompare(b.title);
         case 'status':
@@ -297,9 +301,9 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
                   </TableCell>
                   <TableCell>{report.createdBy}</TableCell>
                   <TableCell>
-                    <Tooltip title={new Date(report.createdAt).toLocaleString()}>
+                    <Tooltip title={new Date(report.createdAt || Date.now()).toLocaleString()}>
                       <Typography variant="body2" color="textSecondary">
-                        {formatDistanceToNow(new Date(report.createdAt), { addSuffix: true })}
+                        {formatDistanceToNow(new Date(report.createdAt || Date.now()), { addSuffix: true })}
                       </Typography>
                     </Tooltip>
                   </TableCell>

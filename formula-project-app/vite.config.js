@@ -11,12 +11,12 @@ export default defineConfig({
     })
   ],
   server: {
-    port: 3002,
+    port: 3003,
     host: '0.0.0.0', // Essential for WSL2 localhost access
     open: false, // Disable auto-open due to WSL2 localhost issues
     hmr: {
       overlay: true,
-      port: 3002
+      port: 3003
     },
     watch: {
       usePolling: true, // Essential for WSL2 file watching

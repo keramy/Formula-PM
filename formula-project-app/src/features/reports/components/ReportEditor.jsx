@@ -71,10 +71,10 @@ const ReportEditor = ({ reportId, projectId, onBack }) => {
     }
   }, [reportId]);
 
-  const loadReport = () => {
+  const loadReport = async () => {
     setLoading(true);
     try {
-      const loadedReport = reportService.getReportById(reportId);
+      const loadedReport = await reportService.getReport(reportId);
       if (loadedReport) {
         setReport(loadedReport);
         setWeather(loadedReport.metadata?.weather || '');
@@ -84,7 +84,7 @@ const ReportEditor = ({ reportId, projectId, onBack }) => {
         
         // Expand all sections by default
         const expanded = {};
-        loadedReport.sections.forEach(section => {
+        (loadedReport.sections || []).forEach(section => {
           expanded[section.id] = true;
         });
         setExpandedSections(expanded);
@@ -96,15 +96,23 @@ const ReportEditor = ({ reportId, projectId, onBack }) => {
     }
   };
 
-  const createNewReport = () => {
-    const newReport = reportService.createReport({
-      projectId,
-      title: 'New Report',
-      createdBy: user.name
-    });
-    setReport(newReport);
-    setExpandedSections({ [newReport.sections[0].id]: true });
-    setLoading(false);
+  const createNewReport = async () => {
+    setLoading(true);
+    try {
+      const newReport = await reportService.createReport({
+        projectId,
+        title: 'New Report',
+        createdBy: user.name
+      });
+      setReport(newReport);
+      if (newReport.sections && newReport.sections.length > 0) {
+        setExpandedSections({ [newReport.sections[0].id]: true });
+      }
+    } catch (error) {
+      console.error('Error creating new report:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSave = async () => {
@@ -153,29 +161,29 @@ const ReportEditor = ({ reportId, projectId, onBack }) => {
     setExpandedSections(newExpanded);
   };
 
-  const handleSectionTitleChange = (sectionId, newTitle) => {
-    reportService.updateSection(report.id, sectionId, { title: newTitle });
-    const updatedReport = reportService.getReportById(report.id);
+  const handleSectionTitleChange = async (sectionId, newTitle) => {
+    await reportService.updateSection(report.id, sectionId, { title: newTitle });
+    const updatedReport = await reportService.getReport(report.id);
     setReport(updatedReport);
   };
 
-  const handleAddLine = (sectionId) => {
-    reportService.addLine(report.id, sectionId, {
+  const handleAddLine = async (sectionId) => {
+    await reportService.addLine(report.id, sectionId, {
       description: ''
     });
-    const updatedReport = reportService.getReportById(report.id);
+    const updatedReport = await reportService.getReport(report.id);
     setReport(updatedReport);
   };
 
-  const handleUpdateLine = (sectionId, lineId, lineData) => {
-    reportService.updateLine(report.id, sectionId, lineId, lineData);
-    const updatedReport = reportService.getReportById(report.id);
+  const handleUpdateLine = async (sectionId, lineId, lineData) => {
+    await reportService.updateLine(report.id, sectionId, lineId, lineData);
+    const updatedReport = await reportService.getReport(report.id);
     setReport(updatedReport);
   };
 
-  const handleDeleteLine = (sectionId, lineId) => {
-    reportService.deleteLine(report.id, sectionId, lineId);
-    const updatedReport = reportService.getReportById(report.id);
+  const handleDeleteLine = async (sectionId, lineId) => {
+    await reportService.deleteLine(report.id, sectionId, lineId);
+    const updatedReport = await reportService.getReport(report.id);
     setReport(updatedReport);
   };
 
@@ -211,7 +219,7 @@ const ReportEditor = ({ reportId, projectId, onBack }) => {
     });
   };
 
-  if (loading) {
+  if (loading || !report) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 5 }}>
         <CircularProgress />
@@ -233,7 +241,7 @@ const ReportEditor = ({ reportId, projectId, onBack }) => {
                 {report?.reportNumber}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Created by {report?.createdBy} on {new Date(report?.createdAt).toLocaleDateString()}
+                Created by {report?.createdBy} on {new Date(report?.createdAt || Date.now()).toLocaleDateString()}
               </Typography>
             </Box>
           </Box>
@@ -379,7 +387,7 @@ const ReportEditor = ({ reportId, projectId, onBack }) => {
         <Droppable droppableId="sections" type="section">
           {(provided) => (
             <Box {...provided.droppableProps} ref={provided.innerRef}>
-              {report?.sections.map((section, index) => (
+              {(report?.sections || []).map((section, index) => (
                 <Draggable
                   key={section.id}
                   draggableId={section.id}
@@ -417,7 +425,7 @@ const ReportEditor = ({ reportId, projectId, onBack }) => {
                               sx={{ flexGrow: 1, mr: 2 }}
                             />
                             <Chip
-                              label={`${section.lines.length} items`}
+                              label={`${(section.lines || []).length} items`}
                               size="small"
                               sx={{ mr: 2 }}
                             />
@@ -434,7 +442,7 @@ const ReportEditor = ({ reportId, projectId, onBack }) => {
                         </AccordionSummary>
                         <AccordionDetails>
                           <Box>
-                            {section.lines.map((line, lineIndex) => (
+                            {(section.lines || []).map((line, lineIndex) => (
                               <LineEditor
                                 key={line.id}
                                 line={line}

@@ -18,7 +18,7 @@ import ComplianceDocumentation from './ComplianceDocumentation';
 import EnhancedGanttChart from '../../../components/charts/EnhancedGanttChart';
 import ProjectActivityFeed from './ProjectActivityFeed';
 import ReportsList from '../../reports/components/ReportsList';
-import ReportEditor from '../../reports/components/ReportEditor';
+import SimpleReportEditor from '../../reports/components/SimpleReportEditor';
 
 const ProjectPage = ({ 
   projectId, 
@@ -555,7 +555,7 @@ const ProjectPage = ({
       case 7: // Reports
         if (editingReportId) {
           return (
-            <ReportEditor
+            <SimpleReportEditor
               reportId={editingReportId}
               projectId={projectId}
               onBack={() => setEditingReportId(null)}
@@ -566,7 +566,6 @@ const ProjectPage = ({
           <ReportsList
             projectId={projectId}
             onEditReport={(reportId) => setEditingReportId(reportId)}
-            onCreateReport={() => setEditingReportId(null)}
           />
         );
       default:
