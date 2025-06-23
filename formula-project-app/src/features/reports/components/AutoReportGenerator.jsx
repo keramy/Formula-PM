@@ -50,12 +50,12 @@ import {
   FaCheckCircle,
   FaExclamationTriangle,
   FaInfoCircle,
-  FaExpandMore,
   FaCalendarAlt,
   FaMapMarkerAlt,
   FaTags,
   FaChartLine
 } from 'react-icons/fa';
+import { MdExpandMore } from 'react-icons/md';
 
 import autoReportService from '../services/autoReportService';
 import photoService from '../services/photoService';
@@ -349,7 +349,7 @@ const AutoReportGenerator = ({
         {/* Date Range */}
         <Grid item xs={12} md={6}>
           <Accordion>
-            <AccordionSummary expandIcon={<FaExpandMore />}>
+            <AccordionSummary expandIcon={<MdExpandMore />}>
               <FaCalendarAlt style={{ marginRight: 8 }} />
               <Typography>Date Range</Typography>
             </AccordionSummary>
@@ -385,7 +385,7 @@ const AutoReportGenerator = ({
         {/* Categories */}
         <Grid item xs={12} md={6}>
           <Accordion>
-            <AccordionSummary expandIcon={<FaExpandMore />}>
+            <AccordionSummary expandIcon={<MdExpandMore />}>
               <FaTags style={{ marginRight: 8 }} />
               <Typography>Photo Categories</Typography>
             </AccordionSummary>
@@ -418,7 +418,7 @@ const AutoReportGenerator = ({
         {/* Locations */}
         <Grid item xs={12} md={6}>
           <Accordion>
-            <AccordionSummary expandIcon={<FaExpandMore />}>
+            <AccordionSummary expandIcon={<MdExpandMore />}>
               <FaMapMarkerAlt style={{ marginRight: 8 }} />
               <Typography>Locations</Typography>
             </AccordionSummary>
@@ -451,7 +451,7 @@ const AutoReportGenerator = ({
         {/* Work Categories */}
         <Grid item xs={12} md={6}>
           <Accordion>
-            <AccordionSummary expandIcon={<FaExpandMore />}>
+            <AccordionSummary expandIcon={<MdExpandMore />}>
               <FaChartLine style={{ marginRight: 8 }} />
               <Typography>Work Categories</Typography>
             </AccordionSummary>
@@ -857,7 +857,7 @@ const AutoReportGenerator = ({
               </Typography>
               {generatedReport.sections?.map((section, index) => (
                 <Accordion key={section.id}>
-                  <AccordionSummary expandIcon={<FaExpandMore />}>
+                  <AccordionSummary expandIcon={<MdExpandMore />}>
                     <Typography>{section.title} ({section.lines?.length || 0} items)</Typography>
                   </AccordionSummary>
                   <AccordionDetails>

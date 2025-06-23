@@ -353,9 +353,24 @@ export const useActivityFeed = (limit = 20) => {
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    // Generate realistic activities based on actual demo data
+    // Import activity service dynamically to avoid circular imports
+    let activityService;
+    
+    const loadActivityService = async () => {
+      try {
+        const module = await import('../services/activityService');
+        activityService = module.default;
+        return activityService;
+      } catch (error) {
+        console.error('Error loading activity service:', error);
+        return null;
+      }
+    };
+    
+    // Generate realistic activities based on actual demo data and logged activities
     const generateRealisticActivities = async () => {
       try {
+        const service = await loadActivityService();
         // This would normally fetch from API, but for demo we'll generate realistic activities
         // Using ACTUAL project data from Formula International's demo database
         const realisticActivities = [
@@ -443,8 +458,36 @@ export const useActivityFeed = (limit = 20) => {
             timestamp: new Date(Date.now() - 1000 * 60 * 135).toISOString(),
             metadata: { projectId: 2002, drawingId: 'SD003', drawingName: 'Data_Center_HVAC_System_Rev_A.pdf', targetTab: 'drawings' }
           },
+          // Report activities examples
           {
             id: 10,
+            type: 'report',
+            action: 'created',
+            description: 'Report "Weekly Progress Report - Week 12" created in project "Akbank Head Office Renovation"',
+            userName: 'Hande Selen Karaman',
+            timestamp: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+            metadata: { projectId: 2001, reportId: 'RPT-001', reportTitle: 'Weekly Progress Report - Week 12', targetTab: 'reports' }
+          },
+          {
+            id: 11,
+            type: 'report',
+            action: 'exported',
+            description: 'Report "Quality Inspection Report - Kitchen Cabinets" exported as PDF from project "Akbank Head Office Renovation"',
+            userName: 'Kubilay Ilgın',
+            timestamp: new Date(Date.now() - 1000 * 60 * 40).toISOString(),
+            metadata: { projectId: 2001, reportId: 'RPT-002', reportTitle: 'Quality Inspection Report - Kitchen Cabinets', exportFormat: 'PDF', targetTab: 'reports' }
+          },
+          {
+            id: 12,
+            type: 'report',
+            action: 'published',
+            description: 'Report "Issue Report - Electrical Systems" published with team visibility in project "Garanti BBVA Tech Center MEP"',
+            userName: 'Emre Koc',
+            timestamp: new Date(Date.now() - 1000 * 60 * 65).toISOString(),
+            metadata: { projectId: 2002, reportId: 'RPT-003', reportTitle: 'Issue Report - Electrical Systems', visibility: 'team', targetTab: 'reports' }
+          },
+          {
+            id: 13,
             type: 'scope',
             action: 'updated',
             description: 'Scope item "Data Center Precision Air Conditioning - 20 Ton Unit" progress updated to 25% in project "Garanti BBVA Tech Center MEP"',
@@ -550,7 +593,15 @@ export const useActivityFeed = (limit = 20) => {
           }
         ];
         
-        setActivities(realisticActivities.slice(0, limit));
+        // Combine mock activities with real logged activities
+        const loggedActivities = service ? service.getActivities(limit) : [];
+        const allActivities = [...loggedActivities, ...realisticActivities];
+        
+        const finalActivities = allActivities
+          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+          .slice(0, limit);
+        
+        setActivities(finalActivities);
         setIsLoading(false);
       } catch (error) {
         console.error('Error generating activities:', error);
@@ -561,7 +612,19 @@ export const useActivityFeed = (limit = 20) => {
     };
 
     const timer = setTimeout(generateRealisticActivities, 500);
-    return () => clearTimeout(timer);
+    
+    // Listen for new activities from the activity service
+    const handleNewActivity = (event) => {
+      const newActivity = event.detail;
+      setActivities(prev => [newActivity, ...prev].slice(0, limit));
+    };
+    
+    window.addEventListener('newActivity', handleNewActivity);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('newActivity', handleNewActivity);
+    };
   }, [limit]);
   
   return {

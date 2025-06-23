@@ -37,7 +37,7 @@ class ReportService {
   }
 
   // Create a new report
-  async createReport(reportData) {
+  async createReport(reportData, projectData = null) {
     const newReport = {
       id: generateUniqueId('RPT'),
       ...reportData,
@@ -46,7 +46,7 @@ class ReportService {
       status: 'draft',
       sections: reportData.sections || [this.createDefaultSection()],
       metadata: {
-        reportNumber: this.generateReportNumber(),
+        reportNumber: await this.generateReportNumber(reportData.projectId, projectData),
         reportDate: new Date().toISOString().split('T')[0],
         ...reportData.metadata
       },
@@ -124,6 +124,7 @@ class ReportService {
     const newLine = {
       id: generateUniqueId('LINE'),
       order: section.lines.length + 1,
+      title: '',
       description: '',
       images: [],
       tags: [],
@@ -262,12 +263,94 @@ class ReportService {
     };
   }
 
-  generateReportNumber() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const sequence = Array.from(this.reports.values()).length + 1;
-    return `RPT-${year}-${month}-${String(sequence).padStart(3, '0')}`;
+  async generateReportNumber(projectId, projectData = null) {
+    try {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      
+      // Get project data if not provided
+      let project = projectData;
+      if (!project && projectId) {
+        // Try to fetch project data (fallback to demo data for now)
+        project = await this.getProjectData(projectId);
+      }
+      
+      // Generate project initials
+      const projectInitials = this.generateProjectInitials(project?.name || 'Unknown Project');
+      
+      // Get sequence number for this project
+      const projectReports = Array.from(this.reports.values())
+        .filter(report => report.projectId === projectId);
+      const sequence = projectReports.length + 1;
+      
+      return `${projectInitials}-RPT-${year}-${month}-${String(sequence).padStart(3, '0')}`;
+    } catch (error) {
+      console.error('Error generating report number:', error);
+      // Fallback to old format
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const sequence = Array.from(this.reports.values()).length + 1;
+      return `RPT-${year}-${month}-${String(sequence).padStart(3, '0')}`;
+    }
+  }
+
+  generateProjectInitials(projectName) {
+    if (!projectName || projectName === 'Unknown Project') {
+      return 'PRJ';
+    }
+
+    // Clean the project name and split into words
+    const cleanName = projectName
+      .replace(/[^\w\s]/g, '') // Remove special characters
+      .trim();
+    
+    const words = cleanName.split(/\s+/)
+      .filter(word => word.length > 0)
+      .filter(word => !['the', 'and', 'of', 'at', 'in', 'on', 'to', 'for', 'a', 'an'].includes(word.toLowerCase()));
+
+    if (words.length === 0) {
+      return 'PRJ';
+    }
+
+    let initials = '';
+    
+    if (words.length === 1) {
+      // Single word: take first 3 characters
+      initials = words[0].substring(0, 3).toUpperCase();
+    } else if (words.length === 2) {
+      // Two words: take first 2 chars of first, 1 char of second
+      initials = (words[0].substring(0, 2) + words[1].substring(0, 1)).toUpperCase();
+    } else {
+      // Multiple words: take first character of first 3 words
+      initials = words.slice(0, 3)
+        .map(word => word.charAt(0))
+        .join('')
+        .toUpperCase();
+    }
+
+    // Ensure we have at least 2 characters and max 4
+    initials = initials.substring(0, 4);
+    if (initials.length < 2) {
+      initials = (initials + 'XX').substring(0, 3);
+    }
+
+    return initials;
+  }
+
+  async getProjectData(projectId) {
+    // For demo purposes, return mock project data
+    // In real implementation, this would fetch from API
+    const mockProjects = {
+      '2001': { name: 'One Sixty Sixth Street Residential' },
+      '2002': { name: 'Sophisticated Hotel Manhattan' },
+      '2003': { name: 'Corporate Office Building Brooklyn' },
+      '2004': { name: 'Luxury Apartment Complex Queens' },
+      '2005': { name: 'Modern Shopping Center Bronx' }
+    };
+
+    return mockProjects[projectId] || { name: 'Unknown Project' };
   }
 
   generateDemoReports() {
@@ -282,7 +365,7 @@ class ReportService {
         createdAt: '2025-01-21T09:00:00Z',
         lastModified: '2025-01-21T15:30:00Z',
         metadata: {
-          reportNumber: 'RPT-2025-01-003',
+          reportNumber: 'OSS-RPT-2025-01-001',
           reportDate: '2025-01-21',
           reportPeriod: { from: '2025-01-15', to: '2025-01-21' },
           projectPhase: 'construction',

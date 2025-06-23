@@ -124,6 +124,7 @@ const ExportOptionsModal = ({ open, onClose, onExport, reportTitle }) => {
                       onChange={(e) => handleChange('pageSize', e.target.value)}
                       label="Page Size"
                     >
+                      <MenuItem value="A3">A3 (297 × 420 mm)</MenuItem>
                       <MenuItem value="A4">A4 (210 × 297 mm)</MenuItem>
                       <MenuItem value="Letter">Letter (8.5 × 11 in)</MenuItem>
                       <MenuItem value="Legal">Legal (8.5 × 14 in)</MenuItem>

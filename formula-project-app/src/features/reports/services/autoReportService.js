@@ -45,6 +45,9 @@ class AutoReportService {
         options.templateType
       );
 
+      // Get project data for report numbering
+      const projectData = await this.getProjectData(projectId);
+
       // Create actual report using report service
       const report = await reportService.createReport({
         projectId,
@@ -59,7 +62,7 @@ class AutoReportService {
           smartAnalysis: smartReport.analysisResult
         },
         exportSettings: smartReport.reportStructure.exportSettings
-      });
+      }, projectData);
 
       // Store generation history
       const generationRecord = {
@@ -743,6 +746,20 @@ class AutoReportService {
     }
     
     return history.sort((a, b) => new Date(b.generatedAt) - new Date(a.generatedAt));
+  }
+
+  async getProjectData(projectId) {
+    // Mock project data for demo purposes
+    // In real implementation, this would fetch from API
+    const mockProjects = {
+      '2001': { name: 'One Sixty Sixth Street Residential' },
+      '2002': { name: 'Sophisticated Hotel Manhattan' },
+      '2003': { name: 'Corporate Office Building Brooklyn' },
+      '2004': { name: 'Luxury Apartment Complex Queens' },
+      '2005': { name: 'Modern Shopping Center Bronx' }
+    };
+
+    return mockProjects[projectId] || { name: 'Unknown Project' };
   }
 }
 

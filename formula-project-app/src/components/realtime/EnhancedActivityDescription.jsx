@@ -2,6 +2,9 @@ import React from 'react';
 import { Typography, Link, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
+import { useNavigation } from '../../context/NavigationContext';
+import mentionService from '../../services/mentionService';
+
 // Enhanced activity description component with clickable elements
 const EnhancedActivityDescription = ({ 
   activity, 
@@ -9,9 +12,11 @@ const EnhancedActivityDescription = ({
   onTaskClick, 
   onScopeClick, 
   onDrawingClick, 
-  onSpecClick 
+  onSpecClick,
+  onReportClick
 }) => {
   const theme = useTheme();
+  const { navigateTo } = useNavigation();
   
   if (!activity || !activity.description) {
     return (
@@ -47,6 +52,21 @@ const EnhancedActivityDescription = ({
           }
           if (activity.type === 'material_spec' && metadata.specName === match) {
             return () => onSpecClick && onSpecClick(metadata.projectId, metadata.specId, metadata.specName);
+          }
+          if (activity.type === 'report' && (metadata.reportTitle === match || metadata.reportNumber === match)) {
+            return () => {
+              if (onReportClick) {
+                onReportClick(metadata.projectId, metadata.reportId, metadata.reportTitle);
+              } else {
+                // Default navigation for reports
+                navigateTo({
+                  title: metadata.reportTitle || 'Report',
+                  path: `/projects/${metadata.projectId}/reports/${metadata.reportId}`,
+                  type: 'report',
+                  data: { reportId: metadata.reportId, reportTitle: metadata.reportTitle }
+                });
+              }
+            };
           }
           return null;
         }

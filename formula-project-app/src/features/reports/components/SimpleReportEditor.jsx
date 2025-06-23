@@ -32,14 +32,17 @@ import {
   FaFileExport,
   FaTimes,
   FaCheck,
-  FaCamera
+  FaCamera,
+  // FaMagic removed
 } from 'react-icons/fa';
 import reportService from '../services/reportService';
 import pdfExportService from '../services/pdfExportService';
 import ImageManager from './ImageManager';
 import ExportOptionsModal from './ExportOptionsModal';
 import PublishOptionsModal from './PublishOptionsModal';
+// Removed AutoReportGenerator import as per feedback
 import { useAuth } from '../../../context/AuthContext';
+import activityService from '../../../services/activityService';
 
 const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
   const { user } = useAuth();
@@ -56,8 +59,10 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
   const [projectData, setProjectData] = useState(null);
   const [exportModalOpen, setExportModalOpen] = useState(false);
   const [publishModalOpen, setPublishModalOpen] = useState(false);
+  // Removed autoGeneratorOpen state as per feedback
   
   // Current line data
+  const [currentTitle, setCurrentTitle] = useState('');
   const [currentDescription, setCurrentDescription] = useState('');
   const [currentImages, setCurrentImages] = useState([]);
 
@@ -78,6 +83,7 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
     // Update current line data when switching lines
     if (allLines[currentLineIndex]) {
       const currentLine = allLines[currentLineIndex];
+      setCurrentTitle(currentLine.title || '');
       setCurrentDescription(currentLine.description || '');
       setCurrentImages(currentLine.images || []);
     }
@@ -146,19 +152,49 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
 
   const loadProjectData = async () => {
     try {
-      // Simulate project data - in real implementation, fetch from API
-      const mockProjectData = {
-        id: projectId,
-        name: `Construction Project ${projectId}`,
-        client: 'ABC Construction Ltd.',
-        location: '123 Main Street, City',
-        startDate: '2024-01-15',
-        manager: 'John Smith',
-        type: 'Commercial Building'
-      };
-      setProjectData(mockProjectData);
+      // Load real project data from the API
+      const response = await fetch(`http://localhost:5014/api/projects/${projectId}`);
+      if (response.ok) {
+        const realProjectData = await response.json();
+        setProjectData({
+          id: realProjectData.id,
+          name: realProjectData.name || `Project ${projectId}`,
+          client: realProjectData.client || 'Client Name',
+          location: realProjectData.location || realProjectData.address || 'Project Location',
+          startDate: realProjectData.startDate || realProjectData.createdAt || new Date().toISOString().split('T')[0],
+          manager: realProjectData.projectManager || realProjectData.manager || 'Project Manager',
+          type: realProjectData.type || realProjectData.category || 'Construction Project',
+          description: realProjectData.description,
+          status: realProjectData.status,
+          budget: realProjectData.budget
+        });
+      } else {
+        // Fallback to basic project data if API fails
+        console.warn('Could not load project data from API, using fallback');
+        const fallbackProjectData = {
+          id: projectId,
+          name: `Project ${projectId}`,
+          client: 'Client Name',
+          location: 'Project Location',
+          startDate: new Date().toISOString().split('T')[0],
+          manager: 'Project Manager',
+          type: 'Construction Project'
+        };
+        setProjectData(fallbackProjectData);
+      }
     } catch (error) {
       console.error('Error loading project data:', error);
+      // Fallback project data for error cases
+      const fallbackProjectData = {
+        id: projectId,
+        name: `Project ${projectId}`,
+        client: 'Client Name',
+        location: 'Project Location',
+        startDate: new Date().toISOString().split('T')[0],
+        manager: 'Project Manager',
+        type: 'Construction Project'
+      };
+      setProjectData(fallbackProjectData);
     }
   };
 
@@ -173,6 +209,7 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
         currentLine.sectionId, 
         currentLine.id, 
         {
+          title: currentTitle,
           description: currentDescription,
           images: currentImages
         }
@@ -182,6 +219,7 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
       const updatedLines = [...allLines];
       updatedLines[currentLineIndex] = {
         ...updatedLines[currentLineIndex],
+        title: currentTitle,
         description: currentDescription,
         images: currentImages
       };
@@ -241,6 +279,24 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
     }
   };
 
+  const handleSaveAndNextLine = async () => {
+    try {
+      // Save current line first
+      await saveCurrentLine();
+      
+      // Check if we're at the last line
+      if (currentLineIndex === allLines.length - 1) {
+        // Add a new line if we're at the end
+        await addNewLine();
+      } else {
+        // Otherwise, go to next existing line
+        setCurrentLineIndex(currentLineIndex + 1);
+      }
+    } catch (error) {
+      console.error('Error in save and next line:', error);
+    }
+  };
+
   const handleImageUpload = async (imageFiles, captions) => {
     try {
       const uploadedImages = [];
@@ -267,6 +323,38 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
       const newImages = [...currentImages, ...uploadedImages];
       setCurrentImages(newImages);
       setImageDialogOpen(false);
+      
+      // Immediately save the line with new images to prevent data loss
+      setTimeout(async () => {
+        if (!report || currentLineIndex >= allLines.length) return;
+        
+        try {
+          const currentLine = allLines[currentLineIndex];
+          await reportService.updateLine(
+            report.id, 
+            currentLine.sectionId, 
+            currentLine.id, 
+            {
+              title: currentTitle,
+              description: currentDescription,
+              images: newImages // Use the updated images
+            }
+          );
+          
+          // Update local state
+          const updatedLines = [...allLines];
+          updatedLines[currentLineIndex] = {
+            ...updatedLines[currentLineIndex],
+            title: currentTitle,
+            description: currentDescription,
+            images: newImages
+          };
+          setAllLines(updatedLines);
+        } catch (error) {
+          console.error('Error auto-saving line after image upload:', error);
+        }
+      }, 100); // Small delay to ensure state is updated
+      
     } catch (error) {
       console.error('Error uploading images:', error);
     }
@@ -299,17 +387,38 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
   const exportToPDF = async (exportOptions) => {
     setExporting(true);
     try {
-      // Save current line first
-      await saveCurrentLine();
+      let reportForExport;
       
-      // Get the updated report
-      const updatedReport = await reportService.getReport(report.id);
-      
-      // Update with current title
-      const reportForExport = {
-        ...updatedReport,
-        title: reportTitle
-      };
+      if (previewMode) {
+        // In preview mode: use preview data directly (includes current unsaved changes)
+        const previewLines = [...allLines];
+        if (currentLineIndex < previewLines.length) {
+          previewLines[currentLineIndex] = {
+            ...previewLines[currentLineIndex],
+            title: currentTitle,
+            description: currentDescription,
+            images: currentImages
+          };
+        }
+        
+        // Create report structure using preview data
+        reportForExport = {
+          ...report,
+          title: reportTitle,
+          sections: report.sections.map(section => ({
+            ...section,
+            lines: previewLines.filter(line => line.sectionId === section.id)
+          }))
+        };
+      } else {
+        // In edit mode: save current line first, then get updated report
+        await saveCurrentLine();
+        const updatedReport = await reportService.getReport(report.id);
+        reportForExport = {
+          ...updatedReport,
+          title: reportTitle
+        };
+      }
       
       // Configure PDF options based on user selection
       const pdfOptions = {
@@ -331,6 +440,18 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
       // Download the PDF
       const filename = `${exportOptions.filename || 'report'}.pdf`;
       pdfExportService.downloadPDF(pdf, filename);
+      
+      // Log activity for report export
+      await activityService.logReportExported({
+        reportId: report.id,
+        reportTitle: reportTitle,
+        projectId: projectId,
+        projectName: projectData?.name,
+        userName: user.name,
+        exportFormat: 'PDF',
+        pageSize: exportOptions.pageSize,
+        filename: filename
+      });
       
       alert('PDF exported successfully!');
     } catch (error) {
@@ -365,6 +486,17 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
         publishOptions: publishOptions
       }));
       
+      // Log activity for report publishing
+      await activityService.logReportPublished({
+        reportId: report.id,
+        reportTitle: reportTitle,
+        projectId: projectId,
+        projectName: projectData?.name,
+        userName: user.name,
+        visibility: publishOptions.visibility,
+        publishOptions: publishOptions
+      });
+      
       // Simulate sending notifications
       if (publishOptions.sendNotifications) {
         console.log('Sending notifications to:', publishOptions.recipients);
@@ -378,6 +510,8 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
       setPublishing(false);
     }
   };
+
+  // Removed handleAutoGenerateReport function as per feedback
 
   if (loading) {
     return (
@@ -393,6 +527,7 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
     if (currentLineIndex < previewLines.length) {
       previewLines[currentLineIndex] = {
         ...previewLines[currentLineIndex],
+        title: currentTitle,
         description: currentDescription,
         images: currentImages
       };
@@ -430,7 +565,7 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
           {previewLines.map((line, index) => (
             <Box key={line.id} sx={{ mb: 4 }}>
               <Typography variant="h6" color="primary" gutterBottom>
-                Line {index + 1}
+                {line.title || `Line ${index + 1}`}
               </Typography>
               <Typography variant="body1" paragraph>
                 {line.description || 'No description'}
@@ -541,7 +676,7 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
       <Paper sx={{ p: 2, mb: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
           <Typography variant="body2">
-            Line {currentLineIndex + 1} of {allLines.length}
+            {currentLine?.title ? `${currentLine.title} (${currentLineIndex + 1}/${allLines.length})` : `Line ${currentLineIndex + 1} of ${allLines.length}`}
           </Typography>
           <Typography variant="body2">
             {Math.round(progress)}% Complete
@@ -554,16 +689,29 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
       {currentLine ? (
         <Paper sx={{ p: 3, mb: 3 }}>
           <Typography variant="h6" gutterBottom>
-            Line {currentLineIndex + 1}: Description
+            Line {currentLineIndex + 1}
           </Typography>
           
+          {/* Line Title Input */}
+          <TextField
+            fullWidth
+            value={currentTitle}
+            onChange={(e) => setCurrentTitle(e.target.value)}
+            placeholder="Enter line title (e.g., Foundation Work, Electrical Installation, etc.)"
+            label="Line Title"
+            variant="outlined"
+            sx={{ mb: 2 }}
+          />
+          
+          {/* Line Description Input */}
           <TextField
             fullWidth
             multiline
             rows={6}
             value={currentDescription}
             onChange={(e) => setCurrentDescription(e.target.value)}
-            placeholder="Enter description for this line..."
+            placeholder="Enter detailed description for this line..."
+            label="Description"
             variant="outlined"
             sx={{ mb: 3 }}
           />
@@ -634,20 +782,12 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
             </Button>
 
             <Button
-              variant="outlined"
-              startIcon={<FaPlus />}
-              onClick={addNewLine}
-            >
-              Add New Line
-            </Button>
-
-            <Button
               variant="contained"
               endIcon={<FaArrowRight />}
-              onClick={goToNextLine}
-              disabled={currentLineIndex === allLines.length - 1}
+              onClick={handleSaveAndNextLine}
+              color="primary"
             >
-              Next Line
+              Save & Next Line
             </Button>
           </Box>
         </Paper>
@@ -706,6 +846,8 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
         reportTitle={reportTitle}
         currentStatus={report?.status}
       />
+
+      {/* Auto Report Generator Dialog removed as per feedback */}
     </Box>
   );
 };

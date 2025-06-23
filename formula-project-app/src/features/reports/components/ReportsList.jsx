@@ -39,11 +39,14 @@ import {
   FaFileAlt,
   FaCheckCircle,
   FaClock,
-  FaExclamationTriangle
+  FaExclamationTriangle,
+  // FaMagic removed
 } from 'react-icons/fa';
 import { formatDistanceToNow } from 'date-fns';
 import reportService from '../services/reportService';
+// Removed AutoReportGenerator import as per feedback
 import { useAuth } from '../../../context/AuthContext';
+import activityService from '../../../services/activityService';
 
 const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
   const { user } = useAuth();
@@ -56,6 +59,7 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
   const [selectedReport, setSelectedReport] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  // Removed autoGeneratorOpen state as per feedback
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [reportTitle, setReportTitle] = useState('');
 
@@ -76,15 +80,52 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
     }
   };
 
+  const getProjectData = async (projectId) => {
+    try {
+      // Fetch real project data from API
+      const response = await fetch(`http://localhost:5014/api/projects/${projectId}`);
+      if (response.ok) {
+        const projectData = await response.json();
+        return {
+          name: projectData.name || `Project ${projectId}`,
+          client: projectData.client,
+          location: projectData.location || projectData.address,
+          manager: projectData.projectManager || projectData.manager,
+          type: projectData.type || projectData.category
+        };
+      } else {
+        console.warn(`Project ${projectId} not found in API, using fallback`);
+        return { name: `Project ${projectId}` };
+      }
+    } catch (error) {
+      console.error('Error fetching project data:', error);
+      // Fallback for API errors
+      return { name: `Project ${projectId}` };
+    }
+  };
+
   const handleCreateReport = async () => {
     if (!reportTitle || !selectedTemplate) return;
 
     try {
+      // Get project data for report numbering
+      const projectData = await getProjectData(projectId);
+      
       const newReport = await reportService.createReport({
         projectId,
         title: reportTitle,
         templateId: selectedTemplate,
         createdBy: user.name
+      }, projectData);
+      
+      // Log activity for report creation
+      await activityService.logReportCreated({
+        reportId: newReport.id,
+        reportTitle: newReport.title,
+        reportNumber: newReport.metadata?.reportNumber,
+        projectId: projectId,
+        projectName: projectData.name,
+        userName: user.name
       });
       
       setReports([...reports, newReport]);
@@ -113,6 +154,8 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
       console.error('Error deleting report:', error);
     }
   };
+
+  // Removed handleAutoGenerateReport function as per feedback
 
   const handleMenuOpen = (event, report) => {
     setAnchorEl(event.currentTarget);
@@ -189,14 +232,16 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
         <Typography variant="h5" fontWeight="bold">
           Project Reports
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<FaPlus />}
-          onClick={() => setCreateDialogOpen(true)}
-          sx={{ textTransform: 'none' }}
-        >
-          Create Report
-        </Button>
+        <Stack direction="row" spacing={2}>
+          <Button
+            variant="contained"
+            startIcon={<FaPlus />}
+            onClick={() => setCreateDialogOpen(true)}
+            sx={{ textTransform: 'none' }}
+          >
+            Create Report
+          </Button>
+        </Stack>
       </Box>
 
       {/* Filters and Search */}
@@ -440,6 +485,8 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Auto Report Generator Dialog removed as per feedback */}
     </Box>
   );
 };

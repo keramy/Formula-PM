@@ -27,7 +27,10 @@ import {
   Check,
   PlayArrow,
   Pause,
-  Block
+  Block,
+  Description,
+  FileDownload,
+  Publish
 } from '@mui/icons-material';
 import { formatDistanceToNow } from 'date-fns';
 import { useActivityFeed } from '../../hooks/useRealTime';
@@ -85,6 +88,11 @@ const getActivityIcon = (type, action) => {
     compliance: {
       updated: <Edit color="info" />,
     },
+    report: {
+      created: <Description color="primary" />,
+      exported: <FileDownload color="info" />,
+      published: <Publish color="success" />,
+    },
   };
 
   return iconMap[type]?.[action] || <Update color="info" />;
@@ -141,6 +149,11 @@ const getActivityColor = (type, action) => {
     compliance: {
       updated: 'info',
     },
+    report: {
+      created: 'primary',
+      exported: 'info',
+      published: 'success',
+    },
   };
 
   return colorMap[type]?.[action] || 'default';
@@ -159,13 +172,14 @@ const getActivityDisplayName = (type) => {
     shop_drawing: 'Shop Drawing',
     material_spec: 'Material Specification',
     timeline: 'Timeline',
-    compliance: 'Compliance'
+    compliance: 'Compliance',
+    report: 'Report'
   };
   return displayNames[type] || 'Activity';
 };
 
 // Individual activity item component
-const ActivityItem = ({ activity, onActivityClick, onProjectClick, onTaskClick, onScopeClick, onDrawingClick, onSpecClick }) => {
+const ActivityItem = ({ activity, onActivityClick, onProjectClick, onTaskClick, onScopeClick, onDrawingClick, onSpecClick, onReportClick }) => {
   // Safety check for activity object
   if (!activity || typeof activity !== 'object') {
     return null;
@@ -210,6 +224,7 @@ const ActivityItem = ({ activity, onActivityClick, onProjectClick, onTaskClick, 
                 onScopeClick={onScopeClick}
                 onDrawingClick={onDrawingClick}
                 onSpecClick={onSpecClick}
+                onReportClick={onReportClick}
               />
             </Box>
             <Chip
@@ -267,7 +282,8 @@ const ActivityFeed = ({
   onTaskClick,
   onScopeClick,
   onDrawingClick,
-  onSpecClick
+  onSpecClick,
+  onReportClick
 }) => {
   const { activities: fetchedActivities, isLoading } = useActivityFeed(limit);
   const [filter, setFilter] = useState('all');
@@ -352,6 +368,7 @@ const ActivityFeed = ({
                   onScopeClick={onScopeClick}
                   onDrawingClick={onDrawingClick}
                   onSpecClick={onSpecClick}
+                  onReportClick={onReportClick}
                 />
               ))}
             </List>
@@ -372,7 +389,8 @@ export const CompactActivityFeed = ({
   onTaskClick,
   onScopeClick,
   onDrawingClick,
-  onSpecClick
+  onSpecClick,
+  onReportClick
 }) => {
   return (
     <ActivityFeed
@@ -387,6 +405,7 @@ export const CompactActivityFeed = ({
       onScopeClick={onScopeClick}
       onDrawingClick={onDrawingClick}
       onSpecClick={onSpecClick}
+      onReportClick={onReportClick}
     />
   );
 };
@@ -401,7 +420,8 @@ export const DetailedActivityFeed = ({
   onTaskClick,
   onScopeClick,
   onDrawingClick,
-  onSpecClick
+  onSpecClick,
+  onReportClick
 }) => {
   return (
     <ActivityFeed
@@ -417,6 +437,7 @@ export const DetailedActivityFeed = ({
       onScopeClick={onScopeClick}
       onDrawingClick={onDrawingClick}
       onSpecClick={onSpecClick}
+      onReportClick={onReportClick}
     />
   );
 };

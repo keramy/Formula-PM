@@ -61,20 +61,24 @@ import {
 
 const TimelineProgressTracker = ({ 
   photos = [], 
+  previousPhotos = [], // For comparison with previous reports
   onPhotoSelect,
   onTimeRangeChange,
   showControls = true,
   autoProgress = false,
-  groupBy = 'day' // 'hour', 'day', 'week', 'month'
+  groupBy = 'day', // 'hour', 'day', 'week', 'month'
+  enableComparison = false
 }) => {
   const [currentTimeIndex, setCurrentTimeIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(autoProgress);
   const [playSpeed, setPlaySpeed] = useState(2000);
-  const [viewMode, setViewMode] = useState('timeline'); // 'timeline', 'grid', 'chart'
+  const [viewMode, setViewMode] = useState('timeline'); // 'timeline', 'grid', 'chart', 'comparison'
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [filterLocation, setFilterLocation] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
   const [showProgressOnly, setShowProgressOnly] = useState(false);
+  const [comparisonMode, setComparisonMode] = useState(false);
+  const [selectedPeriods, setSelectedPeriods] = useState([]);
 
   // Process photos into timeline groups
   const timelineData = useMemo(() => {
@@ -141,6 +145,66 @@ const TimelineProgressTracker = ({
       progressRate: totalPhotos > 0 ? (progressPhotos / totalPhotos * 100) : 0
     };
   }, [timelineData, photos]);
+
+  // Comparison data processing
+  const comparisonData = useMemo(() => {
+    if (!enableComparison || !previousPhotos.length) return null;
+
+    const previousTimelineData = groupPhotosByTime(previousPhotos, groupBy).map((group, index) => ({
+      ...group,
+      index,
+      progressMetrics: calculateProgressMetrics(group.photos),
+      completionStatus: getCompletionStatus(group.photos)
+    }));
+
+    // Calculate deltas between current and previous data
+    const deltas = timelineData.map(currentGroup => {
+      const previousGroup = previousTimelineData.find(pg => pg.period === currentGroup.period);
+      
+      if (!previousGroup) {
+        return {
+          ...currentGroup,
+          delta: {
+            photos: currentGroup.photos.length,
+            progress: currentGroup.progressMetrics.progressRate,
+            quality: currentGroup.progressMetrics.qualityScore,
+            issues: currentGroup.photos.filter(p => p.category === 'issue').length,
+            type: 'new'
+          }
+        };
+      }
+
+      const photoDelta = currentGroup.photos.length - previousGroup.photos.length;
+      const progressDelta = currentGroup.progressMetrics.progressRate - previousGroup.progressMetrics.progressRate;
+      const qualityDelta = currentGroup.progressMetrics.qualityScore - previousGroup.progressMetrics.qualityScore;
+      const currentIssues = currentGroup.photos.filter(p => p.category === 'issue').length;
+      const previousIssues = previousGroup.photos.filter(p => p.category === 'issue').length;
+      const issuesDelta = currentIssues - previousIssues;
+
+      return {
+        ...currentGroup,
+        previous: previousGroup,
+        delta: {
+          photos: photoDelta,
+          progress: progressDelta,
+          quality: qualityDelta,
+          issues: issuesDelta,
+          type: photoDelta > 0 ? 'increased' : photoDelta < 0 ? 'decreased' : 'unchanged'
+        }
+      };
+    });
+
+    return {
+      current: timelineData,
+      previous: previousTimelineData,
+      deltas,
+      summary: {
+        totalPhotoDelta: deltas.reduce((sum, d) => sum + d.delta.photos, 0),
+        averageProgressDelta: deltas.reduce((sum, d) => sum + d.delta.progress, 0) / deltas.length,
+        totalIssuesDelta: deltas.reduce((sum, d) => sum + d.delta.issues, 0)
+      }
+    };
+  }, [timelineData, previousPhotos, enableComparison, groupBy]);
 
   // Auto-progress functionality
   useEffect(() => {
@@ -279,6 +343,35 @@ const TimelineProgressTracker = ({
     }
   };
 
+  const getDeltaColor = (deltaValue, type = 'default') => {
+    if (deltaValue === 0) return '#9E9E9E'; // Grey for no change
+    
+    switch (type) {
+      case 'progress':
+      case 'quality':
+        return deltaValue > 0 ? '#4CAF50' : '#f44336'; // Green for improvement, red for decline
+      case 'issues':
+        return deltaValue > 0 ? '#f44336' : '#4CAF50'; // Red for more issues, green for fewer
+      default:
+        return deltaValue > 0 ? '#4CAF50' : '#f44336';
+    }
+  };
+
+  const formatDelta = (deltaValue, type = 'number') => {
+    if (deltaValue === 0) return '0';
+    
+    const sign = deltaValue > 0 ? '+' : '';
+    
+    switch (type) {
+      case 'percentage':
+        return `${sign}${deltaValue.toFixed(1)}%`;
+      case 'number':
+        return `${sign}${deltaValue}`;
+      default:
+        return `${sign}${deltaValue}`;
+    }
+  };
+
   const getStatusColor = (status) => {
     const colors = {
       'completed': '#4CAF50',
@@ -309,9 +402,19 @@ const TimelineProgressTracker = ({
 
   const renderProgressOverview = () => (
     <Paper sx={{ p: 2, mb: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Progress Overview
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h6">
+          Progress Overview
+        </Typography>
+        {enableComparison && comparisonData && (
+          <Chip
+            label={`Compared to Previous Report`}
+            color="secondary"
+            size="small"
+            variant="outlined"
+          />
+        )}
+      </Box>
       <Grid container spacing={2}>
         <Grid item xs={6} sm={3}>
           <Box sx={{ textAlign: 'center' }}>
@@ -391,6 +494,15 @@ const TimelineProgressTracker = ({
             >
               Chart
             </Button>
+            {enableComparison && comparisonData && (
+              <Button 
+                variant={viewMode === 'comparison' ? 'contained' : 'outlined'}
+                onClick={() => setViewMode('comparison')}
+                color="secondary"
+              >
+                Compare
+              </Button>
+            )}
           </ButtonGroup>
         </Grid>
 
@@ -612,6 +724,136 @@ const TimelineProgressTracker = ({
     </Grid>
   );
 
+  const renderComparisonView = () => {
+    if (!comparisonData || !enableComparison) return null;
+
+    return (
+      <Paper sx={{ p: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Progress Comparison Analysis
+        </Typography>
+        
+        {/* Comparison Summary */}
+        <Box sx={{ mb: 3, p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
+          <Typography variant="subtitle2" gutterBottom>
+            Summary of Changes
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={4}>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography 
+                  variant="h4" 
+                  sx={{ color: getDeltaColor(comparisonData.summary.totalPhotoDelta) }}
+                >
+                  {formatDelta(comparisonData.summary.totalPhotoDelta)}
+                </Typography>
+                <Typography variant="caption">Total Photos</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={4}>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography 
+                  variant="h4" 
+                  sx={{ color: getDeltaColor(comparisonData.summary.averageProgressDelta, 'progress') }}
+                >
+                  {formatDelta(comparisonData.summary.averageProgressDelta, 'percentage')}
+                </Typography>
+                <Typography variant="caption">Avg Progress</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={4}>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography 
+                  variant="h4" 
+                  sx={{ color: getDeltaColor(comparisonData.summary.totalIssuesDelta, 'issues') }}
+                >
+                  {formatDelta(comparisonData.summary.totalIssuesDelta)}
+                </Typography>
+                <Typography variant="caption">Issues</Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+
+        {/* Period-by-Period Comparison */}
+        <Typography variant="subtitle2" sx={{ mb: 2 }}>
+          Changes by Time Period
+        </Typography>
+        {comparisonData.deltas.map((period, index) => (
+          <Card key={period.period} sx={{ mb: 2, border: period.delta.type === 'new' ? 2 : 0, borderColor: 'success.main' }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6">{period.period}</Typography>
+                {period.delta.type === 'new' && (
+                  <Chip label="New Period" color="success" size="small" />
+                )}
+              </Box>
+
+              <Grid container spacing={2}>
+                <Grid item xs={3}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography 
+                      variant="h5" 
+                      sx={{ color: getDeltaColor(period.delta.photos) }}
+                    >
+                      {formatDelta(period.delta.photos)}
+                    </Typography>
+                    <Typography variant="caption">Photos</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {period.photos.length} total
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={3}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography 
+                      variant="h5" 
+                      sx={{ color: getDeltaColor(period.delta.progress, 'progress') }}
+                    >
+                      {formatDelta(period.delta.progress, 'percentage')}
+                    </Typography>
+                    <Typography variant="caption">Progress</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {Math.round(period.progressMetrics.progressRate || 0)}% current
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={3}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography 
+                      variant="h5" 
+                      sx={{ color: getDeltaColor(period.delta.quality, 'quality') }}
+                    >
+                      {formatDelta(period.delta.quality, 'percentage')}
+                    </Typography>
+                    <Typography variant="caption">Quality</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {Math.round(period.progressMetrics.qualityScore || 0)}% current
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={3}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography 
+                      variant="h5" 
+                      sx={{ color: getDeltaColor(period.delta.issues, 'issues') }}
+                    >
+                      {formatDelta(period.delta.issues)}
+                    </Typography>
+                    <Typography variant="caption">Issues</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {period.photos.filter(p => p.category === 'issue').length} current
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        ))}
+      </Paper>
+    );
+  };
+
   const renderChartView = () => (
     <Paper sx={{ p: 2 }}>
       <Typography variant="h6" gutterBottom>
@@ -664,6 +906,7 @@ const TimelineProgressTracker = ({
       {viewMode === 'timeline' && renderTimelineView()}
       {viewMode === 'grid' && renderGridView()}
       {viewMode === 'chart' && renderChartView()}
+      {viewMode === 'comparison' && renderComparisonView()}
 
       {/* Photo Detail Dialog */}
       <Dialog

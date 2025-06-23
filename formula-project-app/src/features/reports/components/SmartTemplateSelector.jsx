@@ -51,7 +51,6 @@ import {
   FaClipboardCheck,
   FaExclamationTriangle,
   FaShieldAlt,
-  FaExpandMore,
   FaTags,
   FaImage,
   FaFileAlt,
@@ -59,8 +58,121 @@ import {
   FaSave,
   FaUndo
 } from 'react-icons/fa';
+import { MdExpandMore } from 'react-icons/md';
 
 import smartTemplateService from '../services/smartTemplateService';
+
+// Template Preview Component
+const TemplatePreview = ({ template, photos, confidence }) => {
+  const getSampleSections = () => {
+    if (!template) return [];
+    
+    // Generate sample sections based on template type
+    const sampleSections = template.sections.map((section, index) => ({
+      ...section,
+      sampleContent: generateSampleContent(section, photos)
+    }));
+    
+    return sampleSections;
+  };
+
+  const generateSampleContent = (section, photos) => {
+    const photoCount = photos?.length || 0;
+    
+    switch (section.type) {
+      case 'summary':
+        return `This ${template.name} covers ${photoCount} documented items across multiple locations. Key highlights include progress tracking, quality assessments, and action items.`;
+      
+      case 'location-based':
+        return `Analysis of ${Math.min(3, photoCount)} key locations showing work progress and current status. Each location includes detailed photo documentation and observations.`;
+      
+      case 'timeline':
+        return `Timeline analysis showing project progression over the documented period. ${photoCount > 10 ? 'Significant progress' : 'Initial progress'} has been recorded.`;
+      
+      case 'quality':
+        return `Quality control assessment based on ${photoCount} inspection photos. Areas reviewed include workmanship, compliance, and material specifications.`;
+      
+      case 'issues':
+        return `${Math.floor(photoCount * 0.2)} potential issues identified requiring attention. Each issue includes photo documentation and recommended actions.`;
+      
+      default:
+        return `Section containing relevant ${section.title.toLowerCase()} information based on ${photoCount} photos.`;
+    }
+  };
+
+  return (
+    <Box sx={{ p: 2 }}>
+      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h6">{template.name} Preview</Typography>
+        {confidence && (
+          <Chip 
+            label={`${Math.round(confidence * 100)}% confidence`}
+            color={confidence > 0.8 ? 'success' : confidence > 0.6 ? 'warning' : 'default'}
+            size="small"
+          />
+        )}
+      </Box>
+      
+      <Paper variant="outlined" sx={{ p: 2, mb: 2, bgcolor: 'grey.50' }}>
+        <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+          Template Description
+        </Typography>
+        <Typography variant="body2">
+          {template.description}
+        </Typography>
+      </Paper>
+
+      <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+        Report Structure Preview:
+      </Typography>
+      
+      <List dense>
+        {getSampleSections().map((section, index) => (
+          <Box key={section.id} sx={{ mb: 2 }}>
+            <ListItem sx={{ pl: 0 }}>
+              <ListItemIcon sx={{ minWidth: 36 }}>
+                <Chip label={index + 1} size="small" color="primary" />
+              </ListItemIcon>
+              <ListItemText
+                primary={
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {section.title}
+                  </Typography>
+                }
+                secondary={
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                      {section.sampleContent}
+                    </Typography>
+                    {section.requiredPhotos && (
+                      <Chip 
+                        label={`Requires ${section.requiredPhotos} photos`}
+                        size="small"
+                        sx={{ mt: 1 }}
+                      />
+                    )}
+                  </Box>
+                }
+              />
+            </ListItem>
+            {index < getSampleSections().length - 1 && <Divider />}
+          </Box>
+        ))}
+      </List>
+
+      <Box sx={{ mt: 3, p: 2, bgcolor: 'info.light', borderRadius: 1 }}>
+        <Typography variant="body2" color="info.dark">
+          <strong>Auto-Generation Features:</strong>
+          <br />• Intelligent photo grouping by {template.groupingStrategy}
+          <br />• Automatic {template.contentGeneration} generation
+          <br />• Smart {template.analysisType} analysis
+          {template.includeCharts && <br />}
+          {template.includeCharts && '• Visual charts and progress indicators'}
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
 
 const SmartTemplateSelector = ({ 
   onTemplateSelect,
@@ -317,7 +429,8 @@ const SmartTemplateSelector = ({
   const renderTemplateCard = (template) => {
     const IconComponent = template.icon;
     const suitabilityScore = getSuitabilityScore(template);
-    const isRecommended = recommendations.some(r => r.templateId === template.id);
+    const recommendation = recommendations.find(r => r.templateId === template.id);
+    const isRecommended = !!recommendation;
     const isSelected = selectedTemplate?.id === template.id;
 
     return (
@@ -338,18 +451,34 @@ const SmartTemplateSelector = ({
       >
         {/* Recommendation Badge */}
         {isRecommended && (
-          <Chip
-            label="Recommended"
-            size="small"
-            sx={{
-              position: 'absolute',
-              top: 8,
-              right: 8,
-              bgcolor: 'success.main',
-              color: 'white',
-              zIndex: 1
-            }}
-          />
+          <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1 }}>
+            <Chip
+              icon={<FaMagic />}
+              label={`${Math.round(recommendation.confidence * 100)}% Match`}
+              size="small"
+              sx={{
+                bgcolor: recommendation.confidence > 0.8 ? 'success.main' : 'warning.main',
+                color: 'white',
+                fontWeight: 600,
+                '& .MuiChip-icon': {
+                  color: 'white'
+                }
+              }}
+            />
+            <Typography 
+              variant="caption" 
+              sx={{ 
+                display: 'block', 
+                textAlign: 'right', 
+                mt: 0.5,
+                px: 1,
+                color: 'text.secondary',
+                fontSize: '0.7rem'
+              }}
+            >
+              {recommendation.reason}
+            </Typography>
+          </Box>
         )}
 
         <CardContent>
@@ -466,88 +595,59 @@ const SmartTemplateSelector = ({
   const renderTemplatePreview = () => {
     if (!selectedTemplate) return null;
 
+    // Find if this template has a recommendation
+    const recommendation = recommendations.find(r => r.templateId === selectedTemplate.id);
+    const confidence = recommendation ? recommendation.confidence : getSuitabilityScore(selectedTemplate) / 100;
+
     return (
       <Dialog
         open={previewMode}
         onClose={() => setPreviewMode(false)}
-        maxWidth="md"
+        maxWidth="lg"
         fullWidth
       >
         <DialogTitle>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <selectedTemplate.icon 
               size={24} 
               color={selectedTemplate.color}
-              style={{ marginRight: 12 }}
             />
-            {selectedTemplate.name}
+            Template Preview: {selectedTemplate.name}
           </Box>
         </DialogTitle>
 
         <DialogContent>
-          <Typography variant="body1" gutterBottom>
-            {selectedTemplate.description}
-          </Typography>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="h6" gutterBottom>
-            Report Sections
-          </Typography>
-
-          <List>
-            {selectedTemplate.sections?.map((section, index) => (
-              <ListItem key={index}>
-                <ListItemIcon>
-                  <FaFileAlt color={section.required ? '#4CAF50' : '#9E9E9E'} />
-                </ListItemIcon>
-                <ListItemText
-                  primary={section.title}
-                  secondary={`Type: ${section.type} ${section.required ? '(Required)' : '(Optional)'}`}
-                />
-              </ListItem>
-            ))}
-          </List>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="h6" gutterBottom>
-            Features & Capabilities
-          </Typography>
-
-          <Grid container spacing={1}>
-            {selectedTemplate.features?.map(feature => (
-              <Grid item key={feature}>
-                <Chip 
-                  label={feature} 
-                  variant="outlined" 
-                  size="small"
-                />
-              </Grid>
-            ))}
-          </Grid>
-
-          {analysisResult && (
-            <Box sx={{ mt: 2 }}>
-              <Alert severity="info">
-                <Typography variant="subtitle2" gutterBottom>
-                  Based on your photo analysis:
-                </Typography>
-                <Typography variant="body2">
-                  This template has a {getSuitabilityScore(selectedTemplate)}% suitability score 
-                  for your selected photos.
-                </Typography>
-              </Alert>
-            </Box>
+          <TemplatePreview 
+            template={selectedTemplate}
+            photos={photos}
+            confidence={confidence}
+          />
+          
+          {recommendation && (
+            <Alert severity="success" sx={{ mt: 2 }}>
+              <Typography variant="subtitle2">
+                Recommended: {recommendation.reason}
+              </Typography>
+            </Alert>
           )}
         </DialogContent>
 
         <DialogActions>
+          <Button 
+            startIcon={<FaEdit />}
+            onClick={() => {
+              setPreviewMode(false);
+              handleEditTemplate(selectedTemplate);
+            }}
+          >
+            Customize
+          </Button>
           <Button onClick={() => setPreviewMode(false)}>
             Close
           </Button>
           <Button 
             variant="contained"
+            startIcon={<FaMagic />}
             onClick={() => {
               handleTemplateSelect(selectedTemplate);
               setPreviewMode(false);

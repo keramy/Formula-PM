@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 // Removed @mui/x-date-pickers dependencies - using standard HTML date inputs
 import FileUpload from '../../../components/common/FileUpload';
+import SmartTextEditor from '../../../components/editors/SmartTextEditor';
 
 const priorityLevels = [
   { value: 'low', label: 'Low', color: '#27ae60' },
@@ -218,14 +219,16 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
           inputProps={{ min: new Date().toISOString().split('T')[0] }}
         />
 
-        <TextField
+        <SmartTextEditor
           label="Task Description"
           value={formData.description}
           onChange={handleChange('description')}
-          multiline
-          rows={2}
-          fullWidth
-          placeholder="Optional task details..."
+          projectId={formData.projectId}
+          multiline={true}
+          rows={3}
+          fullWidth={true}
+          placeholder="Optional task details... Use @ to mention scope items, drawings, reports, etc."
+          helperText="Tip: Type @ to mention scope items, shop drawings, projects, reports, team members, or specifications"
         />
 
         <FileUpload
