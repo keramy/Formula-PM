@@ -46,6 +46,11 @@ class PDFExportService {
       // Add header
       yPosition = this.addHeader(pdf, report, yPosition, contentWidth, opts);
       
+      // Add project information
+      if (opts.projectData) {
+        yPosition = this.addProjectInfo(pdf, opts.projectData, yPosition, contentWidth, opts);
+      }
+      
       // Add metadata
       yPosition = this.addMetadata(pdf, report, yPosition, contentWidth, opts);
       
@@ -107,6 +112,55 @@ class PDFExportService {
     
     pdf.text(`Created by: ${report.createdBy || 'Unknown'}`, 20, yPosition);
     yPosition += 15;
+
+    // Add horizontal line
+    pdf.setLineWidth(0.5);
+    pdf.line(20, yPosition, 20 + contentWidth, yPosition);
+    yPosition += 10;
+
+    return yPosition;
+  }
+
+  /**
+   * Add project information
+   */
+  addProjectInfo(pdf, projectData, yPosition, contentWidth, opts) {
+    const { fontSize } = opts;
+    
+    pdf.setFontSize(fontSize.heading);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Project Information', 20, yPosition);
+    yPosition += 10;
+
+    pdf.setFontSize(fontSize.body);
+    pdf.setFont(undefined, 'normal');
+
+    if (projectData.name) {
+      pdf.text(`Project: ${projectData.name}`, 20, yPosition);
+      yPosition += 6;
+    }
+
+    if (projectData.client) {
+      pdf.text(`Client: ${projectData.client}`, 20, yPosition);
+      yPosition += 6;
+    }
+
+    if (projectData.location) {
+      pdf.text(`Location: ${projectData.location}`, 20, yPosition);
+      yPosition += 6;
+    }
+
+    if (projectData.manager) {
+      pdf.text(`Project Manager: ${projectData.manager}`, 20, yPosition);
+      yPosition += 6;
+    }
+
+    if (projectData.type) {
+      pdf.text(`Project Type: ${projectData.type}`, 20, yPosition);
+      yPosition += 6;
+    }
+
+    yPosition += 10;
 
     // Add horizontal line
     pdf.setLineWidth(0.5);
@@ -191,32 +245,82 @@ class PDFExportService {
         
         try {
           // Check if we need a new page for the image
-          if (yPosition > pdf.internal.pageSize.getHeight() - 80) {
+          if (yPosition > pdf.internal.pageSize.getHeight() - 100) {
             pdf.addPage();
             yPosition = 20;
           }
           
-          // Add image if available (for demo, we'll add a placeholder)
-          const imageWidth = Math.min(contentWidth * 0.6, 80);
-          const imageHeight = 60;
+          // Calculate image dimensions
+          const maxImageWidth = Math.min(contentWidth * 0.7, 100);
+          const maxImageHeight = 70;
           
-          // Add placeholder rectangle for image
-          pdf.setFillColor(240, 240, 240);
-          pdf.rect(20, yPosition, imageWidth, imageHeight, 'F');
+          // Convert image to base64 if it's a file or blob
+          let imageData = image.url;
+          if (image.file) {
+            imageData = await this.fileToBase64(image.file);
+          }
           
-          // Add image placeholder text
-          pdf.setFontSize(fontSize.caption);
-          pdf.text('Image Placeholder', 25, yPosition + 30);
+          // Try to add actual image
+          try {
+            // Create a temporary image element to get dimensions
+            const img = new Image();
+            img.src = imageData;
+            
+            await new Promise((resolve, reject) => {
+              img.onload = () => {
+                // Calculate aspect ratio
+                const aspectRatio = img.width / img.height;
+                let imageWidth = maxImageWidth;
+                let imageHeight = imageWidth / aspectRatio;
+                
+                // If height is too large, scale down
+                if (imageHeight > maxImageHeight) {
+                  imageHeight = maxImageHeight;
+                  imageWidth = imageHeight * aspectRatio;
+                }
+                
+                // Add image to PDF
+                pdf.addImage(imageData, 'JPEG', 20, yPosition, imageWidth, imageHeight, undefined, 'FAST');
+                resolve();
+              };
+              img.onerror = reject;
+            });
+            
+            // Calculate final image dimensions for spacing
+            const aspectRatio = img.width / img.height;
+            let finalWidth = maxImageWidth;
+            let finalHeight = finalWidth / aspectRatio;
+            if (finalHeight > maxImageHeight) {
+              finalHeight = maxImageHeight;
+              finalWidth = finalHeight * aspectRatio;
+            }
+            
+            yPosition += finalHeight + 5;
+          } catch (imageError) {
+            console.warn('Could not embed image, using placeholder:', imageError);
+            
+            // Fallback to placeholder
+            const imageWidth = maxImageWidth;
+            const imageHeight = maxImageHeight;
+            
+            pdf.setFillColor(240, 240, 240);
+            pdf.rect(20, yPosition, imageWidth, imageHeight, 'F');
+            pdf.setFontSize(fontSize.caption);
+            pdf.text('Image Preview', 25, yPosition + imageHeight/2);
+            
+            yPosition += imageHeight + 5;
+          }
           
           // Add caption if available
           if (image.caption) {
             pdf.setFontSize(fontSize.caption);
-            const captionLines = pdf.splitTextToSize(image.caption, imageWidth);
-            pdf.text(captionLines, 20, yPosition + imageHeight + 5);
-            yPosition += imageHeight + (captionLines.length * 4) + 10;
-          } else {
-            yPosition += imageHeight + 10;
+            pdf.setFont(undefined, 'italic');
+            const captionLines = pdf.splitTextToSize(image.caption, maxImageWidth);
+            pdf.text(captionLines, 20, yPosition);
+            yPosition += (captionLines.length * 4) + 5;
           }
+          
+          yPosition += 5;
         } catch (error) {
           console.error('Error adding image to PDF:', error);
           yPosition += 20;
@@ -224,7 +328,7 @@ class PDFExportService {
       }
     }
 
-    yPosition += 10;
+    yPosition += 5;
     
     // Add separator line
     pdf.setLineWidth(0.2);
@@ -232,6 +336,18 @@ class PDFExportService {
     yPosition += 10;
 
     return yPosition;
+  }
+
+  /**
+   * Convert file to base64
+   */
+  async fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
   }
 
   /**

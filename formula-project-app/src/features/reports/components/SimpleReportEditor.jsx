@@ -37,6 +37,8 @@ import {
 import reportService from '../services/reportService';
 import pdfExportService from '../services/pdfExportService';
 import ImageManager from './ImageManager';
+import ExportOptionsModal from './ExportOptionsModal';
+import PublishOptionsModal from './PublishOptionsModal';
 import { useAuth } from '../../../context/AuthContext';
 
 const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
@@ -51,6 +53,9 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
   const [previewMode, setPreviewMode] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [projectData, setProjectData] = useState(null);
+  const [exportModalOpen, setExportModalOpen] = useState(false);
+  const [publishModalOpen, setPublishModalOpen] = useState(false);
   
   // Current line data
   const [currentDescription, setCurrentDescription] = useState('');
@@ -62,7 +67,12 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
     } else {
       createNewReport();
     }
-  }, [reportId]);
+    
+    // Load project data
+    if (projectId) {
+      loadProjectData();
+    }
+  }, [reportId, projectId]);
 
   useEffect(() => {
     // Update current line data when switching lines
@@ -131,6 +141,24 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
       console.error('Error creating new report:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadProjectData = async () => {
+    try {
+      // Simulate project data - in real implementation, fetch from API
+      const mockProjectData = {
+        id: projectId,
+        name: `Construction Project ${projectId}`,
+        client: 'ABC Construction Ltd.',
+        location: '123 Main Street, City',
+        startDate: '2024-01-15',
+        manager: 'John Smith',
+        type: 'Commercial Building'
+      };
+      setProjectData(mockProjectData);
+    } catch (error) {
+      console.error('Error loading project data:', error);
     }
   };
 
@@ -216,19 +244,23 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
   const handleImageUpload = async (imageFiles, captions) => {
     try {
       const uploadedImages = [];
-      const currentLine = allLines[currentLineIndex];
       
       for (let i = 0; i < imageFiles.length; i++) {
         const file = imageFiles[i];
         const caption = captions[i] || '';
         
-        const uploadedImage = await reportService.uploadImage(
-          report.id,
-          currentLine.sectionId,
-          currentLine.id,
-          file,
-          caption
-        );
+        // Create image object with simulated upload (no reportService call)
+        const uploadedImage = {
+          id: `img-${Date.now()}-${Math.random()}`,
+          url: URL.createObjectURL(file),
+          caption: caption,
+          file: file, // Keep file for PDF export
+          metadata: {
+            size: file.size,
+            type: file.type,
+            uploadedAt: new Date().toISOString()
+          }
+        };
         uploadedImages.push(uploadedImage);
       }
       
@@ -264,7 +296,7 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
     }
   };
 
-  const exportToPDF = async () => {
+  const exportToPDF = async (exportOptions) => {
     setExporting(true);
     try {
       // Save current line first
@@ -279,11 +311,25 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
         title: reportTitle
       };
       
-      // Generate PDF
-      const pdf = await pdfExportService.generateReportPDF(reportForExport);
+      // Configure PDF options based on user selection
+      const pdfOptions = {
+        projectData: exportOptions.includeProjectInfo ? projectData : null,
+        pageSize: exportOptions.pageSize,
+        orientation: exportOptions.orientation,
+        imageQuality: exportOptions.imageQuality === 'high' ? 0.9 : 
+                     exportOptions.imageQuality === 'medium' ? 0.7 : 0.5,
+        includeImages: exportOptions.includeImages,
+        includeMetadata: exportOptions.includeMetadata,
+        maxImageWidth: exportOptions.maxImageWidth,
+        margin: exportOptions.margins === 'narrow' ? 10 : 
+                exportOptions.margins === 'wide' ? 30 : 20
+      };
+      
+      // Generate PDF with options
+      const pdf = await pdfExportService.generateReportPDF(reportForExport, pdfOptions);
       
       // Download the PDF
-      const filename = `${reportTitle.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.pdf`;
+      const filename = `${exportOptions.filename || 'report'}.pdf`;
       pdfExportService.downloadPDF(pdf, filename);
       
       alert('PDF exported successfully!');
@@ -295,18 +341,19 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
     }
   };
 
-  const publishReport = async () => {
+  const publishReport = async (publishOptions) => {
     setPublishing(true);
     try {
       // Save current line first
       await saveCurrentLine();
       
-      // Update report status to published
+      // Update report status to published with options
       await reportService.updateReport(report.id, {
         title: reportTitle,
         status: 'published',
         publishedAt: new Date().toISOString(),
-        publishedBy: user.name
+        publishedBy: user.name,
+        publishOptions: publishOptions
       });
       
       // Update local state
@@ -314,10 +361,16 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
         ...prev,
         status: 'published',
         publishedAt: new Date().toISOString(),
-        publishedBy: user.name
+        publishedBy: user.name,
+        publishOptions: publishOptions
       }));
       
-      alert('Report published successfully!');
+      // Simulate sending notifications
+      if (publishOptions.sendNotifications) {
+        console.log('Sending notifications to:', publishOptions.recipients);
+      }
+      
+      alert(`Report published successfully with ${publishOptions.visibility} visibility!`);
     } catch (error) {
       console.error('Error publishing report:', error);
       alert('Error publishing report');
@@ -335,6 +388,16 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
   }
 
   if (previewMode) {
+    // Before showing preview, save current line and update allLines with latest data
+    const previewLines = [...allLines];
+    if (currentLineIndex < previewLines.length) {
+      previewLines[currentLineIndex] = {
+        ...previewLines[currentLineIndex],
+        description: currentDescription,
+        images: currentImages
+      };
+    }
+
     return (
       <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
         <Paper sx={{ p: 3 }}>
@@ -344,29 +407,27 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
               <Button
                 variant="contained"
                 startIcon={exporting ? <LinearProgress size={16} /> : <FaFileExport />}
-                onClick={exportToPDF}
+                onClick={() => setExportModalOpen(true)}
                 disabled={exporting}
               >
                 {exporting ? 'Exporting...' : 'Export PDF'}
               </Button>
-              {report?.status !== 'published' && (
-                <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={publishing ? <LinearProgress size={16} /> : <FaCheck />}
-                  onClick={publishReport}
-                  disabled={publishing}
-                >
-                  {publishing ? 'Publishing...' : 'Publish Report'}
-                </Button>
-              )}
+              <Button
+                variant="contained"
+                color="success"
+                startIcon={publishing ? <LinearProgress size={16} /> : <FaCheck />}
+                onClick={() => setPublishModalOpen(true)}
+                disabled={publishing}
+              >
+                {publishing ? 'Publishing...' : (report?.status === 'published' ? 'Update Publication' : 'Publish Report')}
+              </Button>
               <Button onClick={() => setPreviewMode(false)} startIcon={<FaTimes />}>
                 Exit Preview
               </Button>
             </Stack>
           </Box>
           
-          {allLines.map((line, index) => (
+          {previewLines.map((line, index) => (
             <Box key={line.id} sx={{ mb: 4 }}>
               <Typography variant="h6" color="primary" gutterBottom>
                 Line {index + 1}
@@ -420,7 +481,10 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
             <Button
               variant="outlined"
               startIcon={<FaEye />}
-              onClick={() => setPreviewMode(true)}
+              onClick={async () => {
+                await saveCurrentLine();
+                setPreviewMode(true);
+              }}
               size="small"
             >
               Preview
@@ -428,7 +492,7 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
             <Button
               variant="outlined"
               startIcon={exporting ? <LinearProgress size={16} /> : <FaFileExport />}
-              onClick={exportToPDF}
+              onClick={() => setExportModalOpen(true)}
               disabled={exporting}
               size="small"
             >
@@ -443,18 +507,16 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
             >
               {saving ? 'Saving...' : 'Save'}
             </Button>
-            {report?.status !== 'published' && (
-              <Button
-                variant="contained"
-                color="success"
-                startIcon={publishing ? <LinearProgress size={16} /> : <FaCheck />}
-                onClick={publishReport}
-                disabled={publishing}
-                size="small"
-              >
-                {publishing ? 'Publishing...' : 'Publish'}
-              </Button>
-            )}
+            <Button
+              variant="contained"
+              color="success"
+              startIcon={publishing ? <LinearProgress size={16} /> : <FaCheck />}
+              onClick={() => setPublishModalOpen(true)}
+              disabled={publishing}
+              size="small"
+            >
+              {publishing ? 'Publishing...' : (report?.status === 'published' ? 'Update' : 'Publish')}
+            </Button>
           </Stack>
         </Box>
         
@@ -622,6 +684,23 @@ const SimpleReportEditor = ({ reportId, projectId, onBack }) => {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Export Options Modal */}
+      <ExportOptionsModal
+        open={exportModalOpen}
+        onClose={() => setExportModalOpen(false)}
+        onExport={exportToPDF}
+        reportTitle={reportTitle}
+      />
+
+      {/* Publish Options Modal */}
+      <PublishOptionsModal
+        open={publishModalOpen}
+        onClose={() => setPublishModalOpen(false)}
+        onPublish={publishReport}
+        reportTitle={reportTitle}
+        currentStatus={report?.status}
+      />
     </Box>
   );
 };
