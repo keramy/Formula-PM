@@ -27,7 +27,8 @@ class MentionService {
         entities.push(...await this.getDrawingEntities(projectId, query));
       }
       
-      if (categories.includes('all') || categories.includes('project')) {
+      // Only include other projects if no specific project is selected
+      if ((categories.includes('all') || categories.includes('project')) && !projectId) {
         entities.push(...await this.getProjectEntities(query));
       }
       
@@ -59,7 +60,10 @@ class MentionService {
    * Get scope entities from project data
    */
   async getScopeEntities(projectId, query = '') {
-    // Mock scope data - in real implementation, fetch from API
+    // Return empty if no project context
+    if (!projectId) return [];
+    
+    // Mock scope data - in real implementation, fetch from API based on projectId
     const mockScopeItems = [
       { id: 'SCOPE001', name: 'Kitchen Upper Cabinets', description: 'Maple hardwood with LED lighting' },
       { id: 'SCOPE002', name: 'Bathroom Vanity Units', description: 'Custom marble countertops' },
@@ -86,7 +90,10 @@ class MentionService {
    * Get drawing entities from project data
    */
   async getDrawingEntities(projectId, query = '') {
-    // Mock drawing data
+    // Return empty if no project context
+    if (!projectId) return [];
+    
+    // Mock drawing data - in real implementation, fetch from API based on projectId
     const mockDrawings = [
       { id: 'SD001', name: 'Kitchen_Upper_Cabinets_Rev_C.pdf', type: 'Shop Drawing' },
       { id: 'SD002', name: 'Executive_Reception_Desk_Rev_B.pdf', type: 'Shop Drawing' },
@@ -139,7 +146,10 @@ class MentionService {
    * Get report entities from project data
    */
   async getReportEntities(projectId, query = '') {
-    // Mock report data
+    // Return empty if no project context
+    if (!projectId) return [];
+    
+    // Mock report data - in real implementation, fetch from API based on projectId
     const mockReports = [
       { id: 'RPT-001', title: 'Weekly Progress Report - Week 12', type: 'Progress Report' },
       { id: 'RPT-002', title: 'Quality Inspection Report - Kitchen Cabinets', type: 'Quality Report' },
@@ -165,7 +175,10 @@ class MentionService {
    * Get task entities from project data
    */
   async getTaskEntities(projectId, query = '') {
-    // Mock task data
+    // Return empty if no project context
+    if (!projectId) return [];
+    
+    // Mock task data - in real implementation, fetch from API based on projectId
     const mockTasks = [
       { id: 'TASK001', name: 'Foundation inspection', status: 'completed' },
       { id: 'TASK002', name: 'Executive Kitchen Cabinet Design Review', status: 'in_progress' },
@@ -217,7 +230,10 @@ class MentionService {
    * Get material specification entities
    */
   async getSpecEntities(projectId, query = '') {
-    // Mock specification data
+    // Return empty if no project context
+    if (!projectId) return [];
+    
+    // Mock specification data - in real implementation, fetch from API based on projectId
     const mockSpecs = [
       { id: 'SPEC001', name: 'Maple Wood Grade A', category: 'Wood Materials' },
       { id: 'SPEC002', name: 'LED Strip Lighting - Warm White', category: 'Electrical' },

@@ -948,5 +948,19 @@
       "technology"
     ],
     "files": []
+  },
+  {
+    "projectId": 2001,
+    "name": "deneme",
+    "assignedTo": 1008,
+    "priority": "medium",
+    "dueDate": "2025-06-25",
+    "description": "@scope:Executive Reception Desk ",
+    "files": [],
+    "id": "task_1750774100658_500_1",
+    "status": "pending",
+    "progress": 0,
+    "createdAt": "2025-06-24T14:08:20.658Z",
+    "updatedAt": "2025-06-24T14:09:09.587Z"
   }
 ]

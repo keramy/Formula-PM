@@ -80,9 +80,10 @@ const SmartTextEditor = ({
           const styles = window.getComputedStyle(textArea);
           const lineHeight = parseInt(styles.lineHeight, 10) || 20;
           
-          // Estimate position (simplified - could be enhanced with more precise calculation)
+          // Calculate position with proper offset below current line
           const lines = newValue.slice(0, cursor).split('\n').length;
-          const top = rect.bottom + (lines - 1) * lineHeight;
+          const lineOffset = 30; // Additional offset to position dropdown below typing area
+          const top = rect.bottom + (lines - 1) * lineHeight + lineOffset;
           const left = rect.left;
           
           openAutocomplete(mentionInfo.query, mentionInfo.type, { top, left });
@@ -99,7 +100,7 @@ const SmartTextEditor = ({
   }, []);
 
   // Handle keyboard events
-  const handleKeyDown = useCallback((event) => {
+  const handleKeyDownEvent = useCallback((event) => {
     const handled = handleKeyDown(event);
     if (handled) {
       return; // Autocomplete handled the event
@@ -183,7 +184,7 @@ const SmartTextEditor = ({
         value={internalValue}
         onChange={handleTextChange}
         onSelect={handleSelectionChange}
-        onKeyDown={handleKeyDown}
+        onKeyDown={handleKeyDownEvent}
         placeholder={placeholder}
         multiline={multiline}
         rows={multiline ? rows : undefined}

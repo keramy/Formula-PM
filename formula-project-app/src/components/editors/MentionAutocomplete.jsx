@@ -14,9 +14,11 @@ import {
   Box,
   Chip,
   Divider,
-  CircularProgress
+  CircularProgress,
+  IconButton
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { IoClose } from 'react-icons/io5';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   position: 'absolute',
@@ -28,6 +30,32 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
   borderRadius: theme.shape.borderRadius * 2
 }));
+
+// Helper function to calculate optimal position
+const calculateOptimalPosition = (position, dropdownHeight = 300, dropdownWidth = 300) => {
+  const viewport = {
+    width: window.innerWidth,
+    height: window.innerHeight
+  };
+  
+  let { top, left } = position;
+  
+  // Adjust horizontal position if dropdown would go off-screen
+  if (left + dropdownWidth > viewport.width) {
+    left = viewport.width - dropdownWidth - 20; // 20px padding from edge
+  }
+  
+  // Adjust vertical position if dropdown would go off-screen
+  if (top + dropdownHeight > viewport.height) {
+    top = position.top - dropdownHeight - 40; // Position above cursor instead
+  }
+  
+  // Ensure minimum distance from viewport edges
+  left = Math.max(10, left);
+  top = Math.max(10, top);
+  
+  return { top, left };
+};
 
 const StyledListItem = styled(ListItem)(({ theme, selected }) => ({
   cursor: 'pointer',
@@ -119,12 +147,32 @@ const MentionAutocomplete = ({
     );
   };
 
+  // Calculate optimal position for all render states
+  const optimalPosition = calculateOptimalPosition(position);
+
   if (isLoading) {
     return (
-      <StyledPaper style={{ top: position.top, left: position.left }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
-          <CircularProgress size={20} sx={{ mr: 1 }} />
-          <Typography variant="body2">Searching entities...</Typography>
+      <StyledPaper style={{ top: optimalPosition.top, left: optimalPosition.left }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <CircularProgress size={20} sx={{ mr: 1 }} />
+            <Typography variant="body2">Searching entities...</Typography>
+          </Box>
+          <IconButton
+            size="small"
+            onClick={onClose}
+            sx={{ 
+              p: 0.5,
+              color: 'text.secondary',
+              '&:hover': {
+                bgcolor: 'action.hover',
+                color: 'text.primary'
+              }
+            }}
+            aria-label="Close mention dropdown"
+          >
+            <IoClose size={16} />
+          </IconButton>
         </Box>
       </StyledPaper>
     );
@@ -132,21 +180,41 @@ const MentionAutocomplete = ({
 
   if (entities.length === 0) {
     return (
-      <StyledPaper style={{ top: position.top, left: position.left }}>
-        <Box sx={{ p: 2, textAlign: 'center' }}>
-          <Typography variant="body2" color="textSecondary">
-            {query ? `No results found for "${query}"` : 'Start typing to search entities...'}
-          </Typography>
-          <Typography variant="caption" color="textSecondary" sx={{ mt: 1, display: 'block' }}>
-            Try: @scope:, @drawing:, @project:, @report:, @task:, @member:, @spec:
-          </Typography>
+      <StyledPaper style={{ top: optimalPosition.top, left: optimalPosition.left }}>
+        <Box sx={{ position: 'relative' }}>
+          <Box sx={{ p: 2, textAlign: 'center', pr: 6 }}>
+            <Typography variant="body2" color="textSecondary">
+              {query ? `No results found for "${query}"` : 'Start typing to search entities...'}
+            </Typography>
+            <Typography variant="caption" color="textSecondary" sx={{ mt: 1, display: 'block' }}>
+              Try: @scope:, @drawing:, @project:, @report:, @task:, @member:, @spec:
+            </Typography>
+          </Box>
+          <IconButton
+            size="small"
+            onClick={onClose}
+            sx={{ 
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              p: 0.5,
+              color: 'text.secondary',
+              '&:hover': {
+                bgcolor: 'action.hover',
+                color: 'text.primary'
+              }
+            }}
+            aria-label="Close mention dropdown"
+          >
+            <IoClose size={16} />
+          </IconButton>
         </Box>
       </StyledPaper>
     );
   }
 
   return (
-    <StyledPaper style={{ top: position.top, left: position.left }}>
+    <StyledPaper style={{ top: optimalPosition.top, left: optimalPosition.left }}>
       <List ref={listRef} dense sx={{ maxHeight: 300, overflow: 'auto', py: 0 }}>
         {Object.entries(groupedEntities).map(([category, categoryEntities], categoryIndex) => (
           <React.Fragment key={category}>
@@ -210,11 +278,34 @@ const MentionAutocomplete = ({
         ))}
       </List>
       
-      {/* Footer with keyboard hints */}
-      <Box sx={{ p: 1, bgcolor: 'grey.50', borderTop: 1, borderColor: 'divider' }}>
+      {/* Footer with keyboard hints and cancel button */}
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        p: 1, 
+        bgcolor: 'grey.50', 
+        borderTop: 1, 
+        borderColor: 'divider' 
+      }}>
         <Typography variant="caption" color="textSecondary">
           ↑↓ Navigate • Enter Select • Esc Close
         </Typography>
+        <IconButton
+          size="small"
+          onClick={onClose}
+          sx={{ 
+            p: 0.5,
+            color: 'text.secondary',
+            '&:hover': {
+              bgcolor: 'action.hover',
+              color: 'text.primary'
+            }
+          }}
+          aria-label="Close mention dropdown"
+        >
+          <IoClose size={16} />
+        </IconButton>
       </Box>
     </StyledPaper>
   );

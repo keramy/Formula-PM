@@ -25,14 +25,14 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
       name: initialTask.name || '',
       assignedTo: initialTask.assignedTo || '',
       priority: initialTask.priority || 'medium',
-      dueDate: initialTask.dueDate ? new Date(initialTask.dueDate) : null,
+      dueDate: initialTask.dueDate ? (initialTask.dueDate instanceof Date ? initialTask.dueDate.toISOString().split('T')[0] : initialTask.dueDate) : '',
       description: initialTask.description || ''
     } : {
       projectId: '',
       name: '',
       assignedTo: '',
       priority: 'medium',
-      dueDate: null,
+      dueDate: '',
       description: ''
     }
   );
@@ -97,7 +97,7 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
         ...formData,
         projectId: parseInt(formData.projectId),
         assignedTo: parseInt(formData.assignedTo),
-        dueDate: formData.dueDate.toISOString().split('T')[0],
+        dueDate: formData.dueDate instanceof Date ? formData.dueDate.toISOString().split('T')[0] : formData.dueDate,
         files: taskFiles
       };
       
@@ -114,7 +114,7 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
           name: '',
           assignedTo: '',
           priority: 'medium',
-          dueDate: null,
+          dueDate: '',
           description: ''
         });
         setTaskFiles([]);
