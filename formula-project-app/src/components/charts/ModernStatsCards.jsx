@@ -53,35 +53,45 @@ const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
       value: formatCurrency(totalBudget),
       change: `${totalProjects} projects`,
       isPositive: true,
-      subtitle: 'Total project budgets'
+      subtitle: 'Total project budgets',
+      gradient: 'linear-gradient(135deg, rgba(227, 175, 100, 0.2) 0%, rgba(227, 175, 100, 0.1) 100%)',
+      color: '#E3AF64' // Caramel Essence
     },
     {
       title: 'Active Project Value',
       value: formatCurrency(activeBudget),
       change: `${activeProjects} active`,
       isPositive: true,
-      subtitle: 'Currently in progress'
+      subtitle: 'Currently in progress',
+      gradient: 'linear-gradient(135deg, rgba(81, 106, 200, 0.2) 0%, rgba(81, 106, 200, 0.1) 100%)',
+      color: '#516AC8' // Sapphire Dust
     },
     {
       title: 'Revenue Generated',
       value: formatCurrency(completedBudget),
       change: `${avgProgress}% avg progress`,
       isPositive: avgProgress > 50,
-      subtitle: 'From completed projects'
+      subtitle: 'From completed projects',
+      gradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%)',
+      color: '#10B981' // Success green
     },
     {
       title: 'Task Completion',
       value: `${completionPercentage}%`,
       change: `${completedTasks}/${totalTasks}`,
       isPositive: completionPercentage > 70,
-      subtitle: 'Tasks completed'
+      subtitle: 'Tasks completed',
+      gradient: 'linear-gradient(135deg, rgba(38, 66, 139, 0.2) 0%, rgba(38, 66, 139, 0.1) 100%)',
+      color: '#26428B' // Blue Oblivion
     },
     {
       title: 'Overall Progress',
       value: `${overallProgress}%`,
       change: `${Math.round((completedProjects / totalProjects) * 100)}% completed`,
       isPositive: overallProgress > 60,
-      subtitle: 'Project completion rate'
+      subtitle: 'Project completion rate',
+      gradient: 'linear-gradient(135deg, rgba(15, 25, 57, 0.2) 0%, rgba(15, 25, 57, 0.1) 100%)',
+      color: '#0F1939' // Cosmic Odyssey
     }
   ];
 
@@ -93,19 +103,23 @@ const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
             elevation={0}
             sx={{
               p: 3,
+              background: stat.gradient,
               backgroundColor: theme.palette.background.paper,
               border: `1px solid ${theme.palette.divider}`,
-              borderRadius: 3,
+              borderRadius: 'var(--border-radius-lg, 12px)',
               height: '140px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              transition: 'box-shadow 0.2s ease-in-out',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1))',
               '&:hover': {
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.12)',
-                borderColor: theme.palette.primary.light
+                boxShadow: 'var(--shadow-hover, 0 4px 20px rgba(0, 0, 0, 0.15))',
+                borderColor: stat.color,
+                transform: 'translateY(-2px)'
               }
             }}
+            className="card-entrance"
           >
             {/* Header */}
             <Box>
@@ -124,7 +138,7 @@ const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
               <Typography
                 variant="h4"
                 sx={{
-                  color: theme.palette.text.primary,
+                  color: stat.color,
                   fontWeight: 700,
                   fontSize: '1.8rem',
                   mb: 0.5

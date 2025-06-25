@@ -7,25 +7,27 @@ import { ModernProjectOverview, LoadingFallback } from '../components/lazy';
 
 const DashboardPage = ({ projects, tasks, teamMembers }) => {
   return (
-    <ErrorBoundary fallbackMessage="Failed to load dashboard">
-      <Box>
-        <ModernStatsCards 
-          projects={projects} 
-          tasks={tasks} 
-          teamMembers={teamMembers} 
-        />
-        <FinancialAnalytics 
-          projects={projects} 
-        />
-        <Suspense fallback={<LoadingFallback message="Loading project overview..." />}>
-          <ModernProjectOverview 
+    <Box sx={{ p: 3 }}>
+      <ErrorBoundary fallbackMessage="Failed to load dashboard">
+        <div className="clean-fade-in">
+          <ModernStatsCards 
             projects={projects} 
             tasks={tasks} 
             teamMembers={teamMembers} 
           />
-        </Suspense>
-      </Box>
-    </ErrorBoundary>
+          <FinancialAnalytics 
+            projects={projects} 
+          />
+          <Suspense fallback={<LoadingFallback message="Loading project overview..." />}>
+            <ModernProjectOverview 
+              projects={projects} 
+              tasks={tasks} 
+              teamMembers={teamMembers} 
+            />
+          </Suspense>
+        </div>
+      </ErrorBoundary>
+    </Box>
   );
 };
 

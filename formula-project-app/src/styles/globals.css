@@ -3,6 +3,23 @@
 
 /* Custom CSS Variables for easy color changes */
 :root {
+  /* Enhanced Color Palette */
+  --rapture-light: #F6F3E7;     /* Subtle backgrounds, hover states */
+  --milk-tooth: #FAEBD7;        /* Secondary backgrounds */
+  --caramel-essence: #E3AF64;   /* Primary actions, construction projects */
+  --sapphire-dust: #516AC8;     /* Secondary actions, millwork projects */
+  --blue-oblivion: #26428B;     /* MEP projects, navigation accents */
+  --cosmic-odyssey: #0F1939;    /* Headers, primary text */
+  
+  /* Supporting Colors */
+  --text-primary: #1A1A1A;
+  --text-secondary: #6B7280;
+  --border-light: #E5E7EB;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  
+  /* Original Formula Colors (for compatibility) */
   --formula-primary: #37444B;
   --formula-secondary: #C0B19E;
   --formula-background: #f8fafc;
@@ -24,10 +41,11 @@
   --border-radius-lg: 12px;
   --border-radius-xl: 16px;
   
-  /* Shadows */
+  /* Shadows - Enhanced */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* Reset and Base Styles */
@@ -128,9 +146,68 @@ body {
   animation: urgentPulse 2s infinite;
 }
 
+/* Enhanced Animations and Transitions */
+.smooth-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+
+.card-entrance {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced Card Styles */
+.custom-card {
+  border-radius: var(--border-radius-lg) !important;
+  box-shadow: var(--shadow-sm) !important;
+  border: 1px solid var(--border-light) !important;
+  background: linear-gradient(135deg, rgba(227, 175, 100, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.custom-card:hover {
+  box-shadow: var(--shadow-hover) !important;
+  border-color: var(--caramel-essence) !important;
+  transform: translateY(-2px) !important;
+}
+
 @keyframes urgentPulse {
   0%, 100% { box-shadow: 0 0 0 rgba(231, 76, 60, 0.4); }
   50% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+}
+
+/* Progress Bar Animations */
+@keyframes progress-bar-stripes {
+  from {
+    background-position: 40px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
 }
 
 /* Custom Material-UI Overrides - Enhanced contrast, no movement */

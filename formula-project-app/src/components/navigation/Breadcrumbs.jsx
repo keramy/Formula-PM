@@ -31,6 +31,17 @@ const Breadcrumbs = ({
   onProjectSettings = null
 }) => {
   const { user } = useAuth();
+  
+  // Formula PM theme colors
+  const colors = {
+    textPrimary: '#0F1939', // Cosmic Odyssey
+    textSecondary: '#6B7280',
+    textMuted: '#9CA3AF',
+    caramelEssence: '#E3AF64',
+    sapphireDust: '#516AC8',
+    raptureLight: '#F6F3E7',
+    border: '#E5E7EB'
+  };
 
   const handleBreadcrumbClick = (item, index) => {
     if (item.href && onNavigate) {
@@ -50,7 +61,7 @@ const Breadcrumbs = ({
   };
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 0 }}>
       {/* Back/Next Navigation */}
       {showBackNext && (
         <Box sx={{ display: 'flex', gap: 1 }}>
@@ -59,8 +70,16 @@ const Breadcrumbs = ({
             onClick={onBack}
             disabled={!canGoBack}
             sx={{
-              border: '1px solid #e0e0e0',
-              borderRadius: 1,
+              border: `1px solid ${colors.border}`,
+              borderRadius: 1.5,
+              width: 32,
+              height: 32,
+              color: colors.textSecondary,
+              '&:hover': {
+                backgroundColor: colors.raptureLight,
+                borderColor: colors.caramelEssence,
+                color: colors.textPrimary
+              },
               '&:disabled': {
                 opacity: 0.5,
                 cursor: 'not-allowed'
@@ -74,8 +93,16 @@ const Breadcrumbs = ({
             onClick={onNext}
             disabled={!canGoNext}
             sx={{
-              border: '1px solid #e0e0e0',
-              borderRadius: 1,
+              border: `1px solid ${colors.border}`,
+              borderRadius: 1.5,
+              width: 32,
+              height: 32,
+              color: colors.textSecondary,
+              '&:hover': {
+                backgroundColor: colors.raptureLight,
+                borderColor: colors.caramelEssence,
+                color: colors.textPrimary
+              },
               '&:disabled': {
                 opacity: 0.5,
                 cursor: 'not-allowed'
@@ -89,25 +116,29 @@ const Breadcrumbs = ({
 
       {/* Breadcrumb Navigation */}
       <MUIBreadcrumbs
-        separator={<ChevronRightIcon fontSize="small" />}
+        separator={<ChevronRightIcon fontSize="small" sx={{ color: colors.textMuted }} />}
         sx={{ flexGrow: 1 }}
       >
         {/* Home Link */}
         <Link
           underline="hover"
           color="inherit"
-          onClick={() => onNavigate && onNavigate('/')}
+          onClick={() => onNavigate && onNavigate('/dashboard')}
           sx={{
             display: 'flex',
             alignItems: 'center',
             cursor: 'pointer',
+            fontSize: '14px',
+            color: colors.textSecondary,
+            fontWeight: 500,
             '&:hover': {
-              color: 'primary.main'
-            }
+              color: colors.caramelEssence
+            },
+            transition: 'color 0.2s ease'
           }}
         >
-          <HomeIcon sx={{ mr: 0.5, fontSize: '1rem' }} />
-          Dashboard
+          <HomeIcon sx={{ mr: 0.5, fontSize: '16px' }} />
+          Formula PM
         </Link>
 
         {/* Dynamic Breadcrumb Items */}
@@ -117,7 +148,13 @@ const Breadcrumbs = ({
           if (isLast) {
             return (
               <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography color="text.primary" fontWeight={600}>
+                <Typography 
+                  sx={{ 
+                    color: colors.textPrimary, 
+                    fontWeight: 600,
+                    fontSize: '14px'
+                  }}
+                >
                   {item.label}
                 </Typography>
                 {currentSection && (
@@ -126,7 +163,13 @@ const Breadcrumbs = ({
                     label={currentSection.charAt(0).toUpperCase() + currentSection.slice(1)}
                     size="small"
                     variant="outlined"
-                    sx={{ height: 24, fontSize: '0.75rem' }}
+                    sx={{ 
+                      height: 24, 
+                      fontSize: '0.75rem',
+                      borderColor: colors.caramelEssence,
+                      color: colors.caramelEssence,
+                      backgroundColor: `${colors.caramelEssence}10`
+                    }}
                   />
                 )}
               </Box>
@@ -141,9 +184,13 @@ const Breadcrumbs = ({
               onClick={() => handleBreadcrumbClick(item, index)}
               sx={{
                 cursor: item.href ? 'pointer' : 'default',
+                fontSize: '14px',
+                color: colors.textSecondary,
+                fontWeight: 500,
                 '&:hover': {
-                  color: item.href ? 'primary.main' : 'inherit'
-                }
+                  color: item.href ? colors.caramelEssence : 'inherit'
+                },
+                transition: 'color 0.2s ease'
               }}
             >
               {item.label}
@@ -160,12 +207,15 @@ const Breadcrumbs = ({
               size="small"
               onClick={onEditProject}
               sx={{
-                border: '1px solid #e0e0e0',
-                borderRadius: 1,
+                border: `1px solid ${colors.border}`,
+                borderRadius: 1.5,
                 width: 32,
                 height: 32,
+                color: colors.textSecondary,
                 '&:hover': {
-                  backgroundColor: '#f5f5f5'
+                  backgroundColor: colors.raptureLight,
+                  borderColor: colors.caramelEssence,
+                  color: colors.textPrimary
                 }
               }}
             >
@@ -177,12 +227,15 @@ const Breadcrumbs = ({
               size="small"
               onClick={onProjectSettings}
               sx={{
-                border: '1px solid #e0e0e0',
-                borderRadius: 1,
+                border: `1px solid ${colors.border}`,
+                borderRadius: 1.5,
                 width: 32,
                 height: 32,
+                color: colors.textSecondary,
                 '&:hover': {
-                  backgroundColor: '#f5f5f5'
+                  backgroundColor: colors.raptureLight,
+                  borderColor: colors.caramelEssence,
+                  color: colors.textPrimary
                 }
               }}
             >
@@ -197,8 +250,26 @@ const Breadcrumbs = ({
         <Chip
           label={user.role === 'admin' ? 'Admin View' : user.role === 'co_founder' ? 'Executive View' : 'PM View'}
           size="small"
-          color={user.role === 'admin' ? 'error' : user.role === 'co_founder' ? 'secondary' : 'primary'}
-          sx={{ fontSize: '0.7rem', height: 24 }}
+          sx={{ 
+            fontSize: '0.7rem', 
+            height: 24,
+            backgroundColor: user.role === 'admin' 
+              ? '#fee2e2' 
+              : user.role === 'co_founder' 
+                ? colors.sapphireDust + '20'
+                : colors.caramelEssence + '20',
+            color: user.role === 'admin' 
+              ? '#dc2626' 
+              : user.role === 'co_founder' 
+                ? colors.sapphireDust
+                : colors.caramelEssence,
+            border: `1px solid ${user.role === 'admin' 
+              ? '#dc2626' 
+              : user.role === 'co_founder' 
+                ? colors.sapphireDust
+                : colors.caramelEssence}`,
+            fontWeight: 600
+          }}
         />
       )}
     </Box>

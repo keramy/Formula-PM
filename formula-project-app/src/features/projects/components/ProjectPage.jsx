@@ -575,30 +575,8 @@ const ProjectPage = ({
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f8f9fa' }}>
-      {/* Breadcrumb Navigation with Edit/Settings Buttons */}
-      <Box sx={{ p: 3, pb: 0 }}>
-        <Breadcrumbs
-          items={breadcrumbItems}
-          onNavigate={(href) => {
-            if (href === '/projects') {
-              exitProjectContext();
-            }
-          }}
-          showBackNext={true}
-          onBack={handleBack}
-          onNext={handleNext}
-          canGoBack={canGoBack()}
-          canGoNext={canGoNext()}
-          currentSection={currentSection}
-          showProjectActions={true}
-          onEditProject={canEditProject(projectId) ? handleEditProject : null}
-          onProjectSettings={handleSettings}
-        />
-      </Box>
-
-
       {/* Project Tabs */}
-      <Box sx={{ px: 3, pt: 0 }}>
+      <Box sx={{ px: 3, pt: 3 }}>
         <Paper elevation={1} sx={{ borderRadius: '8px 8px 0 0', border: '1px solid #e0e0e0' }}>
           <Tabs
             value={activeTab}

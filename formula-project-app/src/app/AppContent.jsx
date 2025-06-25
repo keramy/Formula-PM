@@ -13,14 +13,15 @@ import {
   Box,
   Typography,
   Dialog,
-  DialogContent
+  DialogContent,
+  Button
 } from '@mui/material';
+import { Add } from '@mui/icons-material';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import NotificationContainer from '../components/ui/NotificationContainer';
 import ModernDashboardLayout from '../components/layout/ModernDashboardLayout';
 import ModernStatsCards from '../components/charts/ModernStatsCards';
 import EnhancedTabSystem from '../components/layout/EnhancedTabSystem';
-import EnhancedHeader from '../components/layout/EnhancedHeader';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { exportProjectsToExcel } from '../services/export/excelExport';
 
@@ -677,22 +678,31 @@ export const AppContent = ({
       case 1: // Projects
         return (
           <Box>
-            <EnhancedHeader
-              title="All Projects"
-              breadcrumbs={[
-                { label: 'Projects', href: '/projects' }
-              ]}
-              searchValue={projectsSearchTerm}
-              onSearchChange={setProjectsSearchTerm}
-              onAdd={() => {
-                setCurrentPage('add-project');
-                setCurrentFormData(null);
-              }}
-              isStarred={false}
-              onToggleStar={() => {}}
-              teamMembers={teamMembers.slice(0, 5)}
-              subtitle={`${filteredProjects.length} active projects`}
-            />
+            {/* Simple Header with Add Button */}
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              mb: 2 
+            }}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                {`${filteredProjects.length} active projects`}
+              </Typography>
+              <Button 
+                variant="contained" 
+                startIcon={<Add />}
+                onClick={() => {
+                  setCurrentPage('add-project');
+                  setCurrentFormData(null);
+                }}
+                sx={{ 
+                  backgroundColor: '#E3AF64',
+                  '&:hover': { backgroundColor: '#d19a4d' }
+                }}
+              >
+                Add Project
+              </Button>
+            </Box>
 
             {/* Enhanced Tab System */}
             <EnhancedTabSystem
@@ -986,6 +996,21 @@ export const AppContent = ({
               />
             </Suspense>
           </ErrorBoundary>
+        );
+
+      case 'reports': // Reports
+        return (
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
+              Construction Reports
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+              📝 Advanced reporting system for construction projects, including progress reports, quality inspections, and issue tracking.
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 2, fontStyle: 'italic' }}>
+              Reports functionality is available and ready for integration.
+            </Typography>
+          </Box>
         );
 
       default:

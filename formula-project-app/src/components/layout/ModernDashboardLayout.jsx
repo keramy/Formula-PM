@@ -1,27 +1,17 @@
 import React, { useState } from 'react';
 import { Box, Container, Typography, IconButton, Tooltip, useTheme as useMuiTheme } from '@mui/material';
-import { 
-  FaBell as NotificationsIcon,
-  FaMoon as DarkModeIcon,
-  FaSun as LightModeIcon 
-} from 'react-icons/fa';
-import ModernSidebar from './ModernSidebar';
-import UserProfileMenu from '../auth/UserProfileMenu';
-import LiveSearchDropdown from '../ui/LiveSearchDropdown';
-import { NotificationPanel } from '../../services/notifications/notificationService';
+import NotionStyleSidebar from './NotionStyleSidebar';
+import Breadcrumbs from '../navigation/Breadcrumbs';
 import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
 import { useNavigation } from '../../context/NavigationContext';
 
 const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [] }) => {
   const { user } = useAuth();
-  const { mode, toggleTheme, isDarkMode } = useTheme();
   const { isInProjectContext, currentProjectId, currentSection } = useNavigation();
   const theme = useMuiTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     localStorage.getItem('sidebarCollapsed') === 'true'
   );
-  const [globalSearch, setGlobalSearch] = useState('');
   
   const handleToggleSidebar = () => {
     const newCollapsed = !sidebarCollapsed;
@@ -54,6 +44,86 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
       case 9: return 'Material Specs';
       case 10: return 'Activity Feed';
       default: return 'Dashboard';
+    }
+  };
+
+  const getBreadcrumbItems = () => {
+    // If we're in project context, build project breadcrumbs
+    if (isInProjectContext() && currentProjectId) {
+      const project = projects.find(p => p.id === currentProjectId);
+      const items = [
+        { label: 'Projects', href: '/projects' }
+      ];
+      
+      if (project) {
+        items.push({ 
+          label: project.name, 
+          href: `/projects/${project.id}` 
+        });
+      }
+      
+      return items;
+    }
+    
+    // Otherwise show tab-based breadcrumbs
+    switch (currentTab) {
+      case 0: 
+        return [{ label: 'Dashboard', href: '/dashboard' }];
+      case 1: 
+        return [{ label: 'Projects', href: '/projects' }];
+      case 2: 
+        return [{ label: 'My Work', href: '/my-work' }];
+      case 3: 
+        return [{ label: 'Tasks', href: '/tasks' }];
+      case 4: 
+        return [{ label: 'Team', href: '/team' }];
+      case 5: 
+        return [{ label: 'Clients', href: '/clients' }];
+      case 6: 
+        return [{ label: 'Procurement', href: '/procurement' }];
+      case 7: 
+        return [{ label: 'Timeline', href: '/timeline' }];
+      case 8: 
+        return [{ label: 'Shop Drawings', href: '/shop-drawings' }];
+      case 9: 
+        return [{ label: 'Material Specs', href: '/material-specs' }];
+      case 10: 
+        return [{ label: 'Activity Feed', href: '/activity-feed' }];
+      case 'reports':
+        return [{ label: 'Reports', href: '/reports' }];
+      default: 
+        return [{ label: 'Dashboard', href: '/dashboard' }];
+    }
+  };
+
+  const handleBreadcrumbNavigate = (href, item) => {
+    console.log('Breadcrumb navigation:', href, item);
+    
+    // Handle project navigation
+    if (href === '/projects') {
+      onTabChange(null, 1); // Navigate to All Projects tab
+      return;
+    }
+    
+    // Handle main tab navigation
+    const tabMapping = {
+      '/dashboard': 0,
+      '/projects': 1,
+      '/my-work': 2,
+      '/tasks': 3,
+      '/team': 4,
+      '/clients': 5,
+      '/procurement': 6,
+      '/timeline': 7,
+      '/shop-drawings': 8,
+      '/material-specs': 9,
+      '/activity-feed': 10,
+      '/reports': 'reports'
+    };
+    
+    const targetTab = tabMapping[href];
+    if (targetTab !== undefined) {
+      onTabChange(null, targetTab);
     }
   };
 
@@ -105,97 +175,51 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
       backgroundColor: theme.palette.background.default 
     }}>
       {/* Sidebar */}
-      <ModernSidebar 
+      <NotionStyleSidebar 
         currentTab={getCurrentTab()} 
         onTabChange={onTabChange}
+        user={user}
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={handleToggleSidebar}
-        darkMode={isDarkMode}
       />
       
       {/* Main Content */}
       <Box
         sx={{
           flexGrow: 1,
-          marginLeft: sidebarCollapsed ? '70px' : '280px',
           display: 'flex',
           flexDirection: 'column',
-          transition: 'margin-left 0.3s ease-in-out'
+          backgroundColor: '#FBFAF8',
+          minHeight: '100vh',
+          width: `calc(100vw - ${sidebarCollapsed ? '70px' : '240px'})`,
+          transition: 'width 0.3s ease'
         }}
       >
-        {/* Top Header */}
+        {/* Enhanced Breadcrumb Header */}
         <Box
           sx={{
             backgroundColor: theme.palette.background.paper,
             borderBottom: `1px solid ${theme.palette.divider}`,
             px: 4,
-            py: 3,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            minHeight: 80,
+            py: 2,
+            minHeight: 60,
             boxShadow: 'none'
           }}
         >
-          {/* Left side - Title and subtitle */}
-          <Box>
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 700,
-                color: theme.palette.text.primary,
-                mb: 0.5,
-                fontSize: '1.75rem'
-              }}
-            >
-              {getPageTitle()}
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                color: theme.palette.text.secondary,
-                fontSize: '0.95rem'
-              }}
-            >
-              {getWelcomeMessage()}
-            </Typography>
-          </Box>
-
-          {/* Right side - Search and notifications */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {/* Live Search Dropdown */}
-            <LiveSearchDropdown
-              value={globalSearch}
-              onChange={setGlobalSearch}
-              onResultSelect={() => {}}
-              onNavigate={() => {}}
-              placeholder="Search projects, tasks, team..."
-            />
-
-            {/* Theme Toggle */}
-            <Tooltip title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
-              <IconButton
-                onClick={toggleTheme}
-                size="small"
-                sx={{
-                  backgroundColor: theme.palette.action.hover,
-                  '&:hover': {
-                    backgroundColor: theme.palette.action.selected,
-                  },
-                  width: 40,
-                  height: 40
-                }}
-              >
-                {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
-              </IconButton>
-            </Tooltip>
-
-            {/* Notifications */}
-            <NotificationPanel />
-            
-            {/* User Profile Menu */}
-            <UserProfileMenu />
-          </Box>
+          <Breadcrumbs
+            items={getBreadcrumbItems()}
+            onNavigate={handleBreadcrumbNavigate}
+            currentSection={currentSection}
+            showProjectActions={isInProjectContext()}
+            onEditProject={() => {
+              console.log('Edit project clicked');
+              // This will be connected to edit project functionality
+            }}
+            onProjectSettings={() => {
+              console.log('Project settings clicked');
+              // This will be connected to project settings functionality
+            }}
+          />
         </Box>
 
         {/* Main Content Area */}

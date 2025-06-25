@@ -9,6 +9,7 @@ import { AppContent } from './AppContent';
 import './App.css';
 import '../styles/globals.css';
 import '../styles/modern-dashboard.css';
+import '../styles/clean-ui.css';
 
 /**
  * Main App component - Clean architecture implementation

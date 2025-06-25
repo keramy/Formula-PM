@@ -37,16 +37,21 @@ const StandardCard = ({
   const config = variants[variant] || variants.medium;
 
   const cardStyles = {
-    border: '1px solid #c0c0c0', // Enhanced border contrast
-    borderRadius: 3,
-    borderLeft: selected ? '4px solid #3498db' : undefined,
-    backgroundColor: selected ? '#f8fafe' : 'white',
+    border: '1px solid var(--border-light, #E5E7EB)',
+    borderRadius: 'var(--border-radius-lg, 12px)',
+    borderLeft: selected ? '4px solid var(--sapphire-dust, #516AC8)' : undefined,
+    backgroundColor: selected ? 'var(--rapture-light, #F6F3E7)' : 'white',
+    background: selected 
+      ? 'linear-gradient(135deg, rgba(81, 106, 200, 0.05) 0%, rgba(246, 243, 231, 1) 100%)'
+      : 'linear-gradient(135deg, rgba(227, 175, 100, 0.05) 0%, rgba(255, 255, 255, 1) 100%)',
     minHeight: config.minHeight,
     cursor: onClick ? 'pointer' : 'default',
-    transition: 'all 0.3s ease',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1))',
     '&:hover': hoverable ? {
-      boxShadow: '0 4px 20px rgba(0,0,0,0.15)', // Enhanced shadow, no transform
-      borderColor: '#a0a0a0', // Darker border on hover
+      boxShadow: 'var(--shadow-hover, 0 4px 20px rgba(0, 0, 0, 0.15))',
+      borderColor: 'var(--caramel-essence, #E3AF64)',
+      transform: 'translateY(-2px)',
     } : {},
     ...sx
   };
@@ -56,6 +61,7 @@ const StandardCard = ({
       elevation={0}
       onClick={onClick}
       sx={cardStyles}
+      className="card-entrance"
       {...props}
     >
       {header && (

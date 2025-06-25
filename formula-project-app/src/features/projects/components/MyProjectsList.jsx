@@ -32,7 +32,9 @@ import {
   FaPlay as PlayArrow,
   FaFolder as ProjectIcon,
   FaCalendarAlt as TodayIcon,
-  FaExclamationCircle as OverdueIcon
+  FaExclamationCircle as OverdueIcon,
+  FaTh as ViewGridIcon,
+  FaList as ViewListIcon
 } from 'react-icons/fa';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
@@ -394,20 +396,21 @@ const MyProjectsList = ({
       <Paper
         elevation={0}
         sx={{
-          backgroundColor: 'white',
-          border: '1px solid #E9ECEF',
-          borderRadius: 3,
+          background: 'linear-gradient(135deg, rgba(246, 243, 231, 0.3) 0%, rgba(255, 255, 255, 1) 100%)',
+          border: '1px solid var(--border-light, #E5E7EB)',
+          borderRadius: 'var(--border-radius-lg, 12px)',
           mb: 3,
-          overflow: 'hidden'
+          overflow: 'hidden',
+          boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1))'
         }}
       >
         <Box sx={{ p: 3 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
             <Box>
-              <Typography variant="h5" sx={{ fontWeight: 600, color: '#2C3E50', mb: 1 }}>
+              <Typography variant="h5" sx={{ fontWeight: 600, color: 'var(--cosmic-odyssey, #0F1939)', mb: 1 }}>
                 My Work
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{ color: 'var(--text-secondary, #6B7280)' }}>
                 Overview of your assigned projects and tasks
               </Typography>
             </Box>
@@ -488,20 +491,43 @@ const MyProjectsList = ({
         <Paper
           elevation={0}
           sx={{
-            backgroundColor: 'white',
-            border: '1px solid #E9ECEF',
-            borderRadius: 3,
-            overflow: 'hidden'
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(246, 243, 231, 0.1) 100%)',
+            border: '1px solid var(--border-light, #E5E7EB)',
+            borderRadius: 'var(--border-radius-lg, 12px)',
+            overflow: 'hidden',
+            boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1))'
           }}
         >
           {/* Task Statistics Header */}
           <Box sx={{ p: 3, borderBottom: '1px solid #E9ECEF' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, color: '#2C3E50' }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, color: 'var(--cosmic-odyssey, #0F1939)' }}>
                 My Tasks ({myTasks.length})
               </Typography>
               
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {/* View Toggle */}
+                <ButtonGroup size="small" variant="outlined">
+                  <Tooltip title="Card View">
+                    <Button
+                      onClick={() => setTaskViewMode('card')}
+                      variant={taskViewMode === 'card' ? 'contained' : 'outlined'}
+                      sx={{ minWidth: 'auto', px: 1.5 }}
+                    >
+                      <ViewGridIcon />
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="List View">
+                    <Button
+                      onClick={() => setTaskViewMode('list')}
+                      variant={taskViewMode === 'list' ? 'contained' : 'outlined'}
+                      sx={{ minWidth: 'auto', px: 1.5 }}
+                    >
+                      <ViewListIcon />
+                    </Button>
+                  </Tooltip>
+                </ButtonGroup>
+                
                 {/* Task Quick Stats */}
                 <Box sx={{ display: 'flex', gap: 1 }}>
                 {taskStats.overdue > 0 && (
@@ -559,6 +585,16 @@ const MyProjectsList = ({
                             hoverable={true}
                             sx={{
                               borderLeft: `4px solid ${taskOverdue ? '#e74c3c' : getPriorityConfig(task.priority).color}`,
+                              background: taskOverdue 
+                                ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(255, 255, 255, 1) 100%)'
+                                : taskDueSoon
+                                ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(255, 255, 255, 1) 100%)'
+                                : 'linear-gradient(135deg, rgba(227, 175, 100, 0.05) 0%, rgba(255, 255, 255, 1) 100%)',
+                              minHeight: 180,
+                              '&:hover': {
+                                transform: 'translateY(-2px)',
+                                borderColor: taskOverdue ? '#e74c3c' : 'var(--caramel-essence)',
+                              }
                             }}
                           >
                             {/* Task Header */}
@@ -678,10 +714,7 @@ const MyProjectsList = ({
                   
                   {/* Task List View */}
                   {taskViewMode === 'list' && (
-                    <Box sx={{ 
-                      maxWidth: 900, 
-                      margin: '0 auto'
-                    }}>
+                    <Box>
                       {myTasks.map((task) => {
                         const taskOverdue = isOverdue(task);
                         const taskDueSoon = isDueSoon(task);
@@ -691,8 +724,15 @@ const MyProjectsList = ({
                             key={task.id}
                             variant="compact"
                             sx={{
-                              mb: 1,
-                              borderLeft: `4px solid ${taskOverdue ? '#e74c3c' : getPriorityConfig(task.priority).color}`
+                              mb: 1.5,
+                              borderLeft: `4px solid ${taskOverdue ? '#e74c3c' : getPriorityConfig(task.priority).color}`,
+                              background: taskOverdue 
+                                ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(255, 255, 255, 1) 100%)'
+                                : 'linear-gradient(135deg, rgba(246, 243, 231, 0.3) 0%, rgba(255, 255, 255, 1) 100%)',
+                              '&:hover': {
+                                transform: 'translateY(-1px)',
+                                boxShadow: 'var(--shadow-hover, 0 4px 20px rgba(0, 0, 0, 0.15))'
+                              }
                             }}
                           >
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

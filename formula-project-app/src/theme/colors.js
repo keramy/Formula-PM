@@ -2,6 +2,16 @@
 // Official Brand Colors - Light and Dark Mode Support
 
 export const colors = {
+  // Enhanced Color Palette from UI Report
+  palette: {
+    raptureLight: '#F6F3E7',     // Subtle backgrounds, hover states
+    milkTooth: '#FAEBD7',        // Secondary backgrounds
+    caramelEssence: '#E3AF64',   // Primary actions, construction projects
+    sapphireDust: '#516AC8',     // Secondary actions, millwork projects
+    blueOblivion: '#26428B',     // MEP projects, navigation accents
+    cosmicOdyssey: '#0F1939',    // Headers, primary text
+  },
+  
   // Formula International Brand Colors
   brand: {
     navy: '#1B2951',        // Formula International Navy
@@ -80,13 +90,14 @@ export const colors = {
     urgent: '#c0392b'       // Darker red for better contrast
   },
   
-  // Project Type Colors
+  // Project Type Colors - Updated with new palette
   projectTypes: {
-    fitout: '#e67e22',      // Orange
-    millwork: '#8e44ad',    // Purple
+    construction: '#E3AF64', // Caramel Essence
+    fitout: '#E3AF64',      // Caramel Essence (construction)
+    millwork: '#516AC8',    // Sapphire Dust
     electrical: '#f1c40f',  // Yellow
-    mep: '#1abc9c',         // Teal
-    management: '#37444B'   // Dark gray
+    mep: '#26428B',         // Blue Oblivion
+    management: '#0F1939'   // Cosmic Odyssey
   },
   
   // Text Colors (Light Mode)

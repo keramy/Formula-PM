@@ -1,7 +1,6 @@
 import React, { Suspense, useState, useCallback } from 'react';
-import { Box } from '@mui/material';
-import EnhancedHeader from '../components/layout/EnhancedHeader';
-import EnhancedTabSystem from '../components/layout/EnhancedTabSystem';
+import { Box, Button, IconButton } from '@mui/material';
+import { Add, FilterList, ViewList, ViewModule, Timeline } from '@mui/icons-material';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { 
   ProjectsTableView,
@@ -45,32 +44,19 @@ const ProjectsPage = ({
   // Debug logging
   console.log('ProjectsPage: About to render EnhancedHeader with createButtonText="Create New Project"');
 
-  return (
-    <Box>
-      <EnhancedHeader
-        title="All Projects"
-        breadcrumbs={[
-          { label: 'Projects', href: '/projects' }
-        ]}
-        searchValue={projectsSearchTerm}
-        onSearchChange={setProjectsSearchTerm}
-        onAdd={handleAddProject}
-        createButtonText="Create New Project"
-        isStarred={false}
-        onToggleStar={() => {}}
-        teamMembers={teamMembers.slice(0, 5)}
-        subtitle={`${filteredProjects.length} active projects`}
-      />
+  const headerActions = (
+    <>
+      <IconButton className="clean-button-secondary" onClick={onToggleFilters}>
+        <FilterList />
+      </IconButton>
+      <Button className="clean-button-primary" startIcon={<Add />} onClick={handleAddProject}>
+        Add new project
+      </Button>
+    </>
+  );
 
-      <EnhancedTabSystem
-        currentView={projectsViewMode}
-        onViewChange={onViewModeChange}
-        onFilterToggle={onToggleFilters}
-        onExport={onExport}
-        hasActiveFilters={activeFilters.length > 0}
-        activeFiltersCount={activeFilters.length}
-        title="Projects"
-      />
+  return (
+    <Box sx={{ p: 3 }}>
 
       <Suspense fallback={<LoadingFallback message="Loading filters..." />}>
         <ProjectsFilters
@@ -85,6 +71,7 @@ const ProjectsPage = ({
       </Suspense>
       
       {/* Conditional View Rendering */}
+      <div className="clean-fade-in">
       {projectsViewMode === 'board' && (
         <ErrorBoundary fallbackMessage="Failed to load board view">
           <Suspense fallback={<LoadingFallback message="Loading board view..." />}>
@@ -143,6 +130,7 @@ const ProjectsPage = ({
           </Suspense>
         </ErrorBoundary>
       )}
+      </div>
     </Box>
   );
 };

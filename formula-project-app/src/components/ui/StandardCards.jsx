@@ -31,34 +31,59 @@ import { FaHardHat, FaSearch } from 'react-icons/fa';
 import StatusChip from './StatusChip';
 import { format } from 'date-fns';
 
-// Base card styles for construction industry
-const getCardStyles = (theme, { selected, hoverable, variant }) => ({
-  border: `1px solid ${theme.palette.mode === 'dark' ? '#404040' : '#c0c0c0'}`,
-  borderRadius: 2,
-  borderLeft: selected ? `4px solid ${theme.palette.primary.main}` : undefined,
-  backgroundColor: selected 
-    ? theme.palette.mode === 'dark' ? 'rgba(52, 152, 219, 0.08)' : '#f8fafe'
-    : theme.palette.background.paper,
-  cursor: hoverable ? 'pointer' : 'default',
-  transition: 'all 0.2s ease',
-  position: 'relative',
-  overflow: 'hidden',
-  minHeight: variant === 'compact' ? 'auto' : variant === 'full' ? 320 : 220,
-  '&:hover': hoverable ? {
-    boxShadow: theme.shadows[4],
-    borderColor: theme.palette.mode === 'dark' ? '#606060' : '#a0a0a0',
-  } : {},
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '4px',
-    background: 'transparent',
-    transition: 'background 0.2s ease'
-  }
-});
+// Base card styles for construction industry with enhanced palette
+const getCardStyles = (theme, { selected, hoverable, variant, projectType }) => {
+  // Project type gradients
+  const typeGradients = {
+    construction: 'linear-gradient(135deg, rgba(227, 175, 100, 0.1) 0%, rgba(255, 255, 255, 1) 100%)',
+    fitout: 'linear-gradient(135deg, rgba(227, 175, 100, 0.1) 0%, rgba(255, 255, 255, 1) 100%)',
+    millwork: 'linear-gradient(135deg, rgba(81, 106, 200, 0.1) 0%, rgba(255, 255, 255, 1) 100%)',
+    mep: 'linear-gradient(135deg, rgba(38, 66, 139, 0.1) 0%, rgba(255, 255, 255, 1) 100%)',
+    electrical: 'linear-gradient(135deg, rgba(241, 196, 15, 0.1) 0%, rgba(255, 255, 255, 1) 100%)',
+  };
+  
+  const typeBorderColors = {
+    construction: '#E3AF64', // Caramel Essence
+    fitout: '#E3AF64',
+    millwork: '#516AC8', // Sapphire Dust
+    mep: '#26428B', // Blue Oblivion
+    electrical: '#f1c40f'
+  };
+
+  return {
+    border: `1px solid var(--border-light, #E5E7EB)`,
+    borderRadius: 'var(--border-radius-lg, 12px)',
+    borderLeft: selected ? `4px solid ${typeBorderColors[projectType] || '#516AC8'}` : undefined,
+    background: selected 
+      ? typeGradients[projectType] || typeGradients.construction
+      : 'linear-gradient(135deg, rgba(246, 243, 231, 0.3) 0%, rgba(255, 255, 255, 1) 100%)',
+    cursor: hoverable ? 'pointer' : 'default',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    position: 'relative',
+    overflow: 'hidden',
+    minHeight: variant === 'compact' ? 'auto' : variant === 'full' ? 320 : 220,
+    boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1))',
+    '&:hover': hoverable ? {
+      boxShadow: 'var(--shadow-hover, 0 4px 20px rgba(0, 0, 0, 0.15))',
+      borderColor: typeBorderColors[projectType] || 'var(--caramel-essence)',
+      transform: 'translateY(-2px)',
+    } : {},
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: '4px',
+      background: typeBorderColors[projectType] || 'transparent',
+      opacity: 0.8,
+      transition: 'opacity 0.2s ease'
+    },
+    '&:hover::before': {
+      opacity: 1
+    }
+  };
+};
 
 // Construction Project Card Component
 export const ProjectCard = ({
@@ -83,7 +108,7 @@ export const ProjectCard = ({
     return theme.palette.error.main;
   };
 
-  const cardStyles = getCardStyles(theme, { selected, hoverable: !!onClick, variant });
+  const cardStyles = getCardStyles(theme, { selected, hoverable: !!onClick, variant, projectType: project.type });
 
   return (
     <Card
@@ -94,6 +119,7 @@ export const ProjectCard = ({
         }
       }}
       sx={cardStyles}
+      className="card-entrance"
       {...props}
     >
       {/* Construction Phase Indicator */}

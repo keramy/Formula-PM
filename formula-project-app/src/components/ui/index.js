@@ -38,6 +38,9 @@ export { default as GlobalSearchResults } from './GlobalSearchResults';
 export { default as OptionsMenu } from './OptionsMenu';
 export { default as ProjectTeamAvatars } from './ProjectTeamAvatars';
 
+// Enhanced UI components
+export { default as EnhancedProgressBar } from './EnhancedProgressBar';
+
 // Backward compatibility exports (temporary)
 export { default as ActionIconButton } from './ActionTooltip';
 

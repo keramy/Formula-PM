@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   List,
@@ -10,7 +10,8 @@ import {
   Divider,
   useTheme as useMuiTheme,
   IconButton,
-  Tooltip
+  Tooltip,
+  useMediaQuery
 } from '@mui/material';
 import FormulaLogo, { FormulaLogoCompact } from '../branding/FormulaLogo';
 // React Icons system
@@ -23,6 +24,14 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
   const { isDarkMode } = useFormulaTheme();
   const { isInProjectContext, exitProjectContext } = useNavigation();
   const darkMode = isDarkMode;
+  
+  // Mobile responsiveness
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+  
+  useEffect(() => {
+    setSidebarOpen(!isMobile);
+  }, [isMobile]);
   
   // Use theme colors instead of hardcoded values
   const colors = {
@@ -99,10 +108,10 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
-        left: 0,
+        left: isMobile && !sidebarOpen ? '-100%' : 0,
         top: 0,
         zIndex: 1200,
-        transition: 'width 0.3s ease-in-out',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         overflow: 'hidden',
         borderRight: `1px solid ${colors.border}`,
         boxShadow: darkMode ? '4px 0 8px rgba(0, 0, 0, 0.2)' : '4px 0 8px rgba(27, 41, 81, 0.1)'
@@ -197,16 +206,18 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                       sx={{
                         borderRadius: 2,
                         mx: 1,
-                        py: 1.5,
+                        py: isMobile ? 1.5 : 1.5,
+                        px: isMobile ? 2 : 1,
                         backgroundColor: currentTab === item.id ? colors.accent : 'transparent',
                         color: currentTab === item.id ? '#ffffff !important' : colors.textSecondary,
                         justifyContent: isCollapsed ? 'center' : 'flex-start',
-                        minHeight: 48,
+                        minHeight: isMobile ? 44 : 48, // Minimum 44px for mobile touch targets
                         borderLeft: currentTab === item.id ? `3px solid ${colors.accent}` : 'none',
                         '&:hover': {
-                          backgroundColor: currentTab === item.id ? colors.accent : theme.palette.action.hover,
+                          backgroundColor: currentTab === item.id ? colors.accent : 'var(--rapture-light)',
                           color: currentTab === item.id ? '#ffffff !important' : colors.text,
-                          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                          transform: 'translateX(4px)'
                         },
                         transition: 'all 0.2s ease-in-out'
                       }}
@@ -260,14 +271,16 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                   sx={{
                     borderRadius: 2,
                     mx: 1,
-                    py: 1.5,
+                    py: isMobile ? 1.5 : 1.5,
+                    px: isMobile ? 2 : 1,
                     color: colors.textSecondary,
                     justifyContent: isCollapsed ? 'center' : 'flex-start',
-                    minHeight: 48,
+                    minHeight: isMobile ? 44 : 48, // Minimum 44px for mobile touch targets
                     '&:hover': {
-                      backgroundColor: theme.palette.action.hover,
+                      backgroundColor: 'var(--rapture-light)',
                       color: colors.text,
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                      transform: 'translateX(4px)'
                     },
                     transition: 'all 0.2s ease-in-out'
                   }}
