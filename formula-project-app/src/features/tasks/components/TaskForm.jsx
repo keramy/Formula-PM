@@ -143,6 +143,7 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
           fullWidth
           required
           disabled={projects.length === 0}
+          className="clean-input"
         >
           {projects.map((project) => (
             <MenuItem key={project.id} value={project.id}>
@@ -159,6 +160,7 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
           helperText={errors.name}
           fullWidth
           required
+          className="clean-input"
         />
 
         <TextField
@@ -171,6 +173,7 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
           fullWidth
           required
           disabled={teamMembers.length === 0}
+          className="clean-input"
         >
           {teamMembers.filter(member => member.status === 'active').map((member) => (
             <MenuItem key={member.id} value={member.id}>
@@ -191,6 +194,7 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
           onChange={handleChange('priority')}
           fullWidth
           required
+          className="clean-input"
         >
           {priorityLevels.map((priority) => (
             <MenuItem 
@@ -215,6 +219,7 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
           helperText={errors.dueDate}
           fullWidth
           required
+          className="clean-input"
           InputLabelProps={{ shrink: true }}
           inputProps={{ min: new Date().toISOString().split('T')[0] }}
         />

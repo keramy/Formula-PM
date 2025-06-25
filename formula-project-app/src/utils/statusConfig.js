@@ -43,43 +43,43 @@ export const TASK_STATUS = {
 export const taskStatusConfig = {
   [TASK_STATUS.PENDING]: {
     label: 'To Do',
-    color: '#d68910', // Enhanced contrast
-    bgColor: '#fef9e7',
-    borderColor: '#d68910',
+    color: 'var(--construction-500)',
+    bgColor: 'var(--construction-50)',
+    borderColor: 'var(--construction-500)',
     iconName: TASK_ICONS.PENDING,
-    textColor: '#d68910'
+    textColor: 'var(--construction-600)'
   },
   [TASK_STATUS.IN_PROGRESS]: {
     label: 'In Progress',
-    color: '#2874a6', // Enhanced contrast
-    bgColor: '#ebf5fb',
-    borderColor: '#2874a6',
+    color: 'var(--warning-500)',
+    bgColor: 'var(--warning-50)',
+    borderColor: 'var(--warning-500)',
     iconName: TASK_ICONS.IN_PROGRESS,
-    textColor: '#2874a6'
+    textColor: 'var(--warning-500)'
   },
   [TASK_STATUS.COMPLETED]: {
     label: 'Completed',
-    color: '#1e8449', // Enhanced contrast
-    bgColor: '#eafaf1',
-    borderColor: '#1e8449',
+    color: 'var(--success-500)',
+    bgColor: 'var(--success-50)',
+    borderColor: 'var(--success-500)',
     iconName: TASK_ICONS.COMPLETED,
-    textColor: '#1e8449'
+    textColor: 'var(--success-500)'
   },
   [TASK_STATUS.ON_HOLD]: {
     label: 'On Hold',
-    color: '#6c757d', // Enhanced contrast
-    bgColor: '#f8f9fa',
-    borderColor: '#6c757d',
+    color: 'var(--gray-500)',
+    bgColor: 'var(--gray-50)',
+    borderColor: 'var(--gray-500)',
     iconName: TASK_ICONS.ON_HOLD,
-    textColor: '#6c757d'
+    textColor: 'var(--gray-600)'
   },
   [TASK_STATUS.CANCELLED]: {
     label: 'Cancelled',
-    color: '#c0392b', // Enhanced contrast
-    bgColor: '#fdf2f2',
-    borderColor: '#c0392b',
+    color: 'var(--error-500)',
+    bgColor: 'var(--error-50)',
+    borderColor: 'var(--error-500)',
     iconName: TASK_ICONS.CANCELLED,
-    textColor: '#c0392b'
+    textColor: 'var(--error-500)'
   }
 };
 
@@ -96,51 +96,51 @@ export const PROJECT_STATUS = {
 export const projectStatusConfig = {
   [PROJECT_STATUS.ON_TENDER]: {
     label: 'On Tender',
-    color: '#d68910', // Enhanced contrast
-    bgColor: '#fef9e7',
-    borderColor: '#d68910',
+    color: 'var(--construction-500)',
+    bgColor: 'var(--construction-50)',
+    borderColor: 'var(--construction-500)',
     iconName: PROJECT_ICONS.ON_TENDER,
-    textColor: '#d68910'
+    textColor: 'var(--construction-600)'
   },
   [PROJECT_STATUS.AWARDED]: {
     label: 'Awarded',
-    color: '#1e8449', // Enhanced contrast
-    bgColor: '#eafaf1',
-    borderColor: '#1e8449',
+    color: 'var(--success-500)',
+    bgColor: 'var(--success-50)',
+    borderColor: 'var(--success-500)',
     iconName: PROJECT_ICONS.AWARDED,
-    textColor: '#1e8449'
+    textColor: 'var(--success-500)'
   },
   [PROJECT_STATUS.ACTIVE]: {
     label: 'Active',
-    color: '#2874a6', // Enhanced contrast
-    bgColor: '#ebf5fb',
-    borderColor: '#2874a6',
+    color: 'var(--warning-500)',
+    bgColor: 'var(--warning-50)',
+    borderColor: 'var(--warning-500)',
     iconName: PROJECT_ICONS.ACTIVE,
-    textColor: '#2874a6'
+    textColor: 'var(--warning-500)'
   },
   [PROJECT_STATUS.ON_HOLD]: {
     label: 'On Hold',
-    color: '#6c757d', // Enhanced contrast
-    bgColor: '#f8f9fa',
-    borderColor: '#6c757d',
+    color: 'var(--gray-500)',
+    bgColor: 'var(--gray-50)',
+    borderColor: 'var(--gray-500)',
     iconName: PROJECT_ICONS.ON_HOLD,
-    textColor: '#6c757d'
+    textColor: 'var(--gray-600)'
   },
   [PROJECT_STATUS.COMPLETED]: {
     label: 'Completed',
-    color: '#1e8449', // Enhanced contrast
-    bgColor: '#eafaf1',
-    borderColor: '#1e8449',
+    color: 'var(--success-500)',
+    bgColor: 'var(--success-50)',
+    borderColor: 'var(--success-500)',
     iconName: PROJECT_ICONS.COMPLETED,
-    textColor: '#1e8449'
+    textColor: 'var(--success-500)'
   },
   [PROJECT_STATUS.NOT_AWARDED]: {
     label: 'Not Awarded',
-    color: '#c0392b', // Enhanced contrast
-    bgColor: '#fdf2f2',
-    borderColor: '#c0392b',
+    color: 'var(--error-500)',
+    bgColor: 'var(--error-50)',
+    borderColor: 'var(--error-500)',
     iconName: PROJECT_ICONS.NOT_AWARDED,
-    textColor: '#c0392b'
+    textColor: 'var(--error-500)'
   }
 };
 
@@ -155,35 +155,35 @@ export const PRIORITY = {
 export const priorityConfig = {
   [PRIORITY.LOW]: {
     label: 'Low',
-    color: '#1e8449', // Enhanced contrast
-    bgColor: '#eafaf1',
-    borderColor: '#1e8449',
+    color: 'var(--success-500)',
+    bgColor: 'var(--success-50)',
+    borderColor: 'var(--success-500)',
     iconName: PRIORITY_ICONS.LOW,
-    textColor: '#1e8449'
+    textColor: 'var(--success-500)'
   },
   [PRIORITY.MEDIUM]: {
     label: 'Medium',
-    color: '#d68910', // Enhanced contrast
-    bgColor: '#fef9e7',
-    borderColor: '#d68910',
+    color: 'var(--construction-500)',
+    bgColor: 'var(--construction-50)',
+    borderColor: 'var(--construction-500)',
     iconName: PRIORITY_ICONS.MEDIUM,
-    textColor: '#d68910'
+    textColor: 'var(--construction-600)'
   },
   [PRIORITY.HIGH]: {
     label: 'High',
-    color: '#ca6f1e', // Enhanced contrast
-    bgColor: '#fef5e7',
-    borderColor: '#ca6f1e',
+    color: 'var(--warning-500)',
+    bgColor: 'var(--warning-50)',
+    borderColor: 'var(--warning-500)',
     iconName: PRIORITY_ICONS.HIGH,
-    textColor: '#ca6f1e'
+    textColor: 'var(--warning-500)'
   },
   [PRIORITY.URGENT]: {
     label: 'Urgent',
-    color: '#c0392b', // Enhanced contrast
-    bgColor: '#fdf2f2',
-    borderColor: '#c0392b',
+    color: 'var(--error-500)',
+    bgColor: 'var(--error-50)',
+    borderColor: 'var(--error-500)',
     iconName: PRIORITY_ICONS.URGENT,
-    textColor: '#c0392b'
+    textColor: 'var(--error-500)'
   }
 };
 

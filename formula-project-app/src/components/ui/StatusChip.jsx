@@ -122,16 +122,29 @@ const StatusChip = ({
     variant,
     icon,
     onClick,
+    className: `clean-chip ${actualType === 'task' ? `status-${actualStatus}` : actualType === 'project' ? `status-${actualStatus}` : actualType === 'priority' ? `priority-${actualStatus}` : ''}`,
     sx: {
       backgroundColor: variant === 'filled' ? config.bgColor : 'transparent',
       color: config.textColor,
-      border: variant === 'outlined' ? `1px solid ${config.borderColor}` : 'none',
-      fontWeight: 600,
+      border: variant === 'outlined' ? `1px solid ${config.borderColor}` : `1px solid ${config.borderColor}`,
+      fontWeight: 500,
+      fontSize: 'var(--text-xs)',
+      height: '22px',
+      borderRadius: '6px',
+      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+      transition: 'all 0.2s ease',
+      '& .MuiChip-icon': {
+        fontSize: '14px',
+        color: config.textColor
+      },
       '&:hover': onClick ? {
         backgroundColor: config.color,
         color: 'white',
-        cursor: 'pointer'
-      } : {},
+        cursor: 'pointer',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+      } : {
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+      },
       ...sx
     },
     ...props

@@ -1,21 +1,71 @@
 /* src/styles/clean-ui.css */
 
-/* Your Color Palette Variables */
+/* Enhanced Design System Variables */
 :root {
+  /* Typography Scale (shadcn/ui inspired) */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+
+  /* Systematic Spacing */
+  --space-1: 0.25rem;    /* 4px */
+  --space-2: 0.5rem;     /* 8px */
+  --space-3: 0.75rem;    /* 12px */
+  --space-4: 1rem;       /* 16px */
+  --space-6: 1.5rem;     /* 24px */
+  --space-8: 2rem;       /* 32px */
+  --space-12: 3rem;      /* 48px */
+
+  /* Enhanced Color System (shadcn/ui inspired) */
+  /* Neutrals */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  
+  /* Construction-themed primaries */
+  --construction-50: #fef7ed;
+  --construction-200: #fed7aa;
+  --construction-500: #e3af64;  /* Your caramel essence */
+  --construction-600: #c99649;
+  --construction-700: #a77c3c;
+  
+  /* Status colors */
+  --success-50: #f0fdf4;
+  --success-200: #bbf7d0;
+  --success-500: #10b981;
+  --warning-50: #fffbeb;
+  --warning-200: #fed7aa;
+  --warning-500: #f59e0b;
+  --error-50: #fef2f2;
+  --error-200: #fecaca;
+  --error-500: #ef4444;
+
+  /* Legacy color mapping (maintain compatibility) */
   --rapture-light: #F6F3E7;
   --milk-tooth: #FAEBD7;
-  --caramel-essence: #E3AF64;
+  --caramel-essence: var(--construction-500);
   --sapphire-dust: #516AC8;
   --blue-oblivion: #26428B;
   --cosmic-odyssey: #0F1939;
   
-  --clean-background: #FBFAF8;
+  --clean-background: var(--gray-50);
   --clean-card-bg: #FFFFFF;
-  --clean-text-primary: #1A1A1A;
-  --clean-text-secondary: #6B7280;
-  --clean-text-muted: #9CA3AF;
-  --clean-border: #E5E7EB;
-  --clean-hover: #F6F3E7;
+  --clean-text-primary: var(--gray-900);
+  --clean-text-secondary: var(--gray-500);
+  --clean-text-muted: var(--gray-400);
+  --clean-border: var(--gray-200);
+  --clean-hover: var(--construction-50);
 }
 
 /* Global Clean UI Overrides */
@@ -26,51 +76,76 @@ body {
   line-height: 1.5 !important;
 }
 
-/* Clean Card Styling */
+/* Enhanced Card Styling (shadcn/ui inspired) */
 .clean-card {
   background: var(--clean-card-bg) !important;
-  border: 1px solid var(--clean-border) !important;
+  border: 1px solid var(--gray-200) !important;
   border-radius: 8px !important;
-  box-shadow: none !important;
-  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.2s ease-in-out !important;
 }
 
 .clean-card:hover {
-  border-color: var(--caramel-essence) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  border-color: var(--gray-300) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Clean Table Styling */
+/* Card variants */
+.clean-card-subtle {
+  background: var(--clean-card-bg) !important;
+  border: 1px solid var(--gray-100) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.clean-card-subtle:hover {
+  border-color: var(--gray-200) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Enhanced Table Styling (shadcn/ui inspired) */
 .clean-table {
   background: var(--clean-card-bg) !important;
   border-radius: 8px !important;
   overflow: hidden !important;
   border: 1px solid var(--clean-border) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
 .clean-table .MuiTableHead-root {
-  background-color: var(--rapture-light) !important;
+  background-color: var(--gray-50) !important;
+  border-bottom: 2px solid var(--gray-200) !important;
 }
 
 .clean-table .MuiTableCell-head {
-  font-weight: 600 !important;
-  font-size: 12px !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-  color: var(--clean-text-muted) !important;
-  border-bottom: 1px solid var(--clean-border) !important;
-  padding: 12px 16px !important;
+  font-weight: 500 !important;
+  font-size: var(--text-sm) !important;
+  color: var(--gray-600) !important;
+  border-bottom: none !important;
+  padding: var(--space-3) var(--space-4) !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
 }
 
 .clean-table .MuiTableCell-body {
-  font-size: 14px !important;
+  font-size: var(--text-sm) !important;
   color: var(--clean-text-primary) !important;
-  border-bottom: 1px solid var(--clean-border) !important;
-  padding: 12px 16px !important;
+  border-bottom: 1px solid var(--gray-100) !important;
+  padding: var(--space-3) var(--space-4) !important;
+  font-weight: 500 !important;
 }
 
 .clean-table .MuiTableRow-root:hover {
-  background-color: var(--clean-hover) !important;
+  background-color: var(--gray-50) !important;
+}
+
+.clean-table .MuiTableRow-root:not(:last-child) .MuiTableCell-body {
+  border-bottom: 1px solid var(--gray-100) !important;
+}
+
+.clean-table .MuiTableRow-root:last-child .MuiTableCell-body {
+  border-bottom: none !important;
 }
 
 /* Clean Button Styling */
@@ -110,23 +185,41 @@ body {
   color: var(--caramel-essence) !important;
 }
 
-/* Clean Input Styling */
+/* Enhanced Form Styling (shadcn/ui inspired) */
 .clean-input .MuiOutlinedInput-root {
   background-color: var(--clean-card-bg) !important;
   border-radius: 6px !important;
-  font-size: 14px !important;
+  font-size: var(--text-sm) !important;
+  transition: all 0.2s ease !important;
 }
 
 .clean-input .MuiOutlinedInput-notchedOutline {
-  border-color: var(--clean-border) !important;
+  border-color: var(--gray-300) !important;
 }
 
 .clean-input .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-  border-color: var(--caramel-essence) !important;
+  border-color: var(--construction-500) !important;
 }
 
 .clean-input .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-  border-color: var(--caramel-essence) !important;
+  border-color: var(--construction-500) !important;
+  box-shadow: 0 0 0 3px rgba(227, 175, 100, 0.1) !important;
+}
+
+/* Enhanced input field */
+.clean-input-field {
+  border: 1px solid var(--gray-300) !important;
+  border-radius: 6px !important;
+  padding: var(--space-2) var(--space-3) !important;
+  font-size: var(--text-sm) !important;
+  background-color: var(--clean-card-bg) !important;
+  transition: all 0.2s ease !important;
+}
+
+.clean-input-field:focus {
+  outline: none !important;
+  border-color: var(--construction-500) !important;
+  box-shadow: 0 0 0 3px rgba(227, 175, 100, 0.1) !important;
 }
 
 /* Clean Select Styling */
@@ -135,32 +228,87 @@ body {
   color: var(--clean-text-primary) !important;
 }
 
-/* Clean Chip Styling */
+/* Enhanced Chip Styling (shadcn/ui inspired) */
 .clean-chip {
-  border-radius: 16px !important;
-  font-size: 12px !important;
+  border-radius: 6px !important;
+  font-size: var(--text-xs) !important;
   font-weight: 500 !important;
-  height: 24px !important;
+  height: 22px !important;
+  border: 1px solid transparent !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 }
 
+.clean-chip:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Status-specific chip styling using CSS variables */
 .clean-chip.status-todo {
-  background-color: rgba(107, 114, 128, 0.1) !important;
-  color: var(--clean-text-secondary) !important;
+  background-color: var(--construction-50) !important;
+  color: var(--construction-600) !important;
+  border-color: var(--construction-200) !important;
 }
 
 .clean-chip.status-in-progress {
-  background-color: rgba(227, 175, 100, 0.1) !important;
-  color: var(--caramel-essence) !important;
+  background-color: var(--warning-50) !important;
+  color: var(--warning-500) !important;
+  border-color: var(--warning-200) !important;
 }
 
 .clean-chip.status-review {
-  background-color: rgba(81, 106, 200, 0.1) !important;
-  color: var(--sapphire-dust) !important;
+  background-color: var(--construction-50) !important;
+  color: var(--construction-600) !important;
+  border-color: var(--construction-200) !important;
 }
 
 .clean-chip.status-completed {
-  background-color: rgba(16, 185, 129, 0.1) !important;
-  color: #10B981 !important;
+  background-color: var(--success-50) !important;
+  color: var(--success-500) !important;
+  border-color: var(--success-200) !important;
+}
+
+.clean-chip.status-pending {
+  background-color: var(--construction-50) !important;
+  color: var(--construction-600) !important;
+  border-color: var(--construction-200) !important;
+}
+
+.clean-chip.status-on-hold {
+  background-color: var(--gray-50) !important;
+  color: var(--gray-600) !important;
+  border-color: var(--gray-200) !important;
+}
+
+.clean-chip.status-cancelled {
+  background-color: var(--error-50) !important;
+  color: var(--error-500) !important;
+  border-color: var(--error-200) !important;
+}
+
+/* Priority-specific chip styling */
+.clean-chip.priority-low {
+  background-color: var(--success-50) !important;
+  color: var(--success-500) !important;
+  border-color: var(--success-200) !important;
+}
+
+.clean-chip.priority-medium {
+  background-color: var(--construction-50) !important;
+  color: var(--construction-600) !important;
+  border-color: var(--construction-200) !important;
+}
+
+.clean-chip.priority-high {
+  background-color: var(--warning-50) !important;
+  color: var(--warning-500) !important;
+  border-color: var(--warning-200) !important;
+}
+
+.clean-chip.priority-urgent {
+  background-color: var(--error-50) !important;
+  color: var(--error-500) !important;
+  border-color: var(--error-200) !important;
 }
 
 /* Clean Progress Bar */
@@ -278,6 +426,44 @@ body {
   outline: 2px solid var(--caramel-essence) !important;
   outline-offset: 2px !important;
 }
+
+/* Typography Utility Classes */
+.text-xs { font-size: var(--text-xs) !important; }
+.text-sm { font-size: var(--text-sm) !important; }
+.text-base { font-size: var(--text-base) !important; }
+.text-lg { font-size: var(--text-lg) !important; }
+.text-xl { font-size: var(--text-xl) !important; }
+.text-2xl { font-size: var(--text-2xl) !important; }
+.text-3xl { font-size: var(--text-3xl) !important; }
+
+.font-medium { font-weight: 500 !important; }
+.font-semibold { font-weight: 600 !important; }
+.font-bold { font-weight: 700 !important; }
+
+.text-primary { color: var(--clean-text-primary) !important; }
+.text-secondary { color: var(--clean-text-secondary) !important; }
+.text-muted { color: var(--clean-text-muted) !important; }
+
+/* Spacing Utility Classes */
+.p-1 { padding: var(--space-1) !important; }
+.p-2 { padding: var(--space-2) !important; }
+.p-3 { padding: var(--space-3) !important; }
+.p-4 { padding: var(--space-4) !important; }
+.p-6 { padding: var(--space-6) !important; }
+.p-8 { padding: var(--space-8) !important; }
+
+.m-1 { margin: var(--space-1) !important; }
+.m-2 { margin: var(--space-2) !important; }
+.m-3 { margin: var(--space-3) !important; }
+.m-4 { margin: var(--space-4) !important; }
+.m-6 { margin: var(--space-6) !important; }
+.m-8 { margin: var(--space-8) !important; }
+
+.gap-1 { gap: var(--space-1) !important; }
+.gap-2 { gap: var(--space-2) !important; }
+.gap-3 { gap: var(--space-3) !important; }
+.gap-4 { gap: var(--space-4) !important; }
+.gap-6 { gap: var(--space-6) !important; }
 
 /* Animation Classes */
 .clean-fade-in {

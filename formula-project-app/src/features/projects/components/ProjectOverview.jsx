@@ -47,11 +47,11 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
   const getTaskStatusIcon = (status) => {
     switch (status) {
       case 'completed':
-        return <CheckIcon sx={{ color: '#4CAF50' }} />;
+        return <CheckIcon sx={{ color: 'var(--success-500)' }} />;
       case 'in-progress':
-        return <InProgressIcon sx={{ color: '#FF9800' }} />;
+        return <InProgressIcon sx={{ color: 'var(--warning-500)' }} />;
       default:
-        return <PendingIcon sx={{ color: '#2196F3' }} />;
+        return <PendingIcon sx={{ color: 'var(--construction-500)' }} />;
     }
   };
 
@@ -67,34 +67,43 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
     <Grid container spacing={3}>
       {/* Project Summary */}
       <Grid item xs={12} md={8}>
-        <Card elevation={2}>
-          <CardContent>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
+        <Card className="clean-card">
+          <CardContent sx={{ p: 'var(--space-6)' }}>
+            <Typography 
+              variant="h6" 
+              className="text-xl font-semibold text-primary"
+              sx={{ mb: 'var(--space-4)' }}
+            >
               Project Summary
             </Typography>
             
             <Grid container spacing={3}>
               {/* Timeline */}
               <Grid item xs={12} md={6}>
-                <Box sx={{ mb: 3 }}>
-                  <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                <Box sx={{ mb: 'var(--space-4)' }}>
+                  <Typography className="text-sm font-medium text-secondary" sx={{ mb: 'var(--space-2)' }}>
                     Timeline
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
                     <Box>
-                      <Typography variant="body2" fontWeight={600}>
+                      <Typography className="text-sm font-semibold">
                         Start Date
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography className="text-sm text-muted">
                         {project.startDate ? new Date(project.startDate).toLocaleDateString() : 'Not set'}
                       </Typography>
                     </Box>
-                    <TimelineIcon color="action" />
+                    <TimelineIcon 
+                      sx={{ 
+                        color: 'var(--gray-400)', 
+                        fontSize: 'var(--text-base)' 
+                      }} 
+                    />
                     <Box>
-                      <Typography variant="body2" fontWeight={600}>
+                      <Typography className="text-sm font-semibold">
                         End Date
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography className="text-sm text-muted">
                         {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'Not set'}
                       </Typography>
                     </Box>
@@ -104,17 +113,22 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
 
               {/* Budget */}
               <Grid item xs={12} md={6}>
-                <Box sx={{ mb: 3 }}>
-                  <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                <Box sx={{ mb: 'var(--space-4)' }}>
+                  <Typography className="text-sm font-medium text-secondary" sx={{ mb: 'var(--space-2)' }}>
                     Budget Information
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <MoneyIcon color="action" />
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                    <MoneyIcon 
+                      sx={{ 
+                        color: 'var(--construction-500)', 
+                        fontSize: 'var(--text-lg)' 
+                      }} 
+                    />
                     <Box>
-                      <Typography variant="h6" color="primary">
+                      <Typography className="text-lg font-semibold" sx={{ color: 'var(--construction-600)' }}>
                         {project.budget || 'Not specified'}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography className="text-sm text-muted">
                         Total Project Budget
                       </Typography>
                     </Box>
@@ -125,20 +139,21 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
               {/* Progress */}
               <Grid item xs={12}>
                 <Box>
-                  <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  <Typography className="text-sm font-medium text-secondary" sx={{ mb: 'var(--space-2)' }}>
                     Overall Progress
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', mb: 'var(--space-2)' }}>
                     <LinearProgress
                       variant="determinate"
                       value={taskProgress}
-                      sx={{ flexGrow: 1, height: 8, borderRadius: 4 }}
+                      className="clean-progress-bar"
+                      sx={{ flexGrow: 1 }}
                     />
-                    <Typography variant="body2" fontWeight={600}>
+                    <Typography className="text-sm font-semibold" sx={{ color: 'var(--construction-600)' }}>
                       {taskProgress.toFixed(0)}%
                     </Typography>
                   </Box>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography className="text-sm text-muted">
                     {taskStats.completed} of {taskStats.total} tasks completed
                   </Typography>
                 </Box>
@@ -148,36 +163,49 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
         </Card>
 
         {/* Recent Tasks */}
-        <Card elevation={2} sx={{ mt: 3 }}>
-          <CardContent>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
+        <Card className="clean-card" sx={{ mt: 'var(--space-4)' }}>
+          <CardContent sx={{ p: 'var(--space-6)' }}>
+            <Typography 
+              className="text-xl font-semibold text-primary"
+              sx={{ mb: 'var(--space-4)' }}
+            >
               Recent Tasks
             </Typography>
             {recentTasks.length > 0 ? (
-              <List dense>
+              <List dense sx={{ '& .MuiListItem-root': { px: 0, py: 'var(--space-2)' } }}>
                 {recentTasks.map((task, index) => (
                   <React.Fragment key={task.id}>
-                    <ListItem sx={{ px: 0 }}>
-                      <ListItemIcon>
+                    <ListItem>
+                      <ListItemIcon sx={{ minWidth: 'var(--space-8)' }}>
                         {getTaskStatusIcon(task.status)}
                       </ListItemIcon>
                       <ListItemText
-                        primary={task.name}
-                        secondary={`Assigned to: ${teamMembers.find(m => m.id === task.assignedTo)?.fullName || 'Unassigned'}`}
+                        primary={
+                          <Typography className="text-sm font-medium">
+                            {task.name}
+                          </Typography>
+                        }
+                        secondary={
+                          <Typography className="text-xs text-muted">
+                            Assigned to: {teamMembers.find(m => m.id === task.assignedTo)?.fullName || 'Unassigned'}
+                          </Typography>
+                        }
                       />
-                      <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
+                      <Box sx={{ ml: 'var(--space-2)' }}>
                         <TaskStatusChip 
                           status={task.status} 
                           size="small"
                         />
                       </Box>
                     </ListItem>
-                    {index < recentTasks.length - 1 && <Divider />}
+                    {index < recentTasks.length - 1 && (
+                      <Divider sx={{ borderColor: 'var(--gray-100)' }} />
+                    )}
                   </React.Fragment>
                 ))}
               </List>
             ) : (
-              <Typography variant="body2" color="text.secondary">
+              <Typography className="text-sm text-muted">
                 No tasks created yet.
               </Typography>
             )}
@@ -188,38 +216,48 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
       {/* Sidebar */}
       <Grid item xs={12} md={4}>
         {/* Enhanced Task & Project Overview */}
-        <Card elevation={2}>
-          <CardContent>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
+        <Card className="clean-card">
+          <CardContent sx={{ p: 'var(--space-6)' }}>
+            <Typography 
+              className="text-xl font-semibold text-primary"
+              sx={{ mb: 'var(--space-4)' }}
+            >
               Project Overview
             </Typography>
             
             {/* Project Summary Section */}
-            <Box sx={{ mb: 3, p: 2, bgcolor: '#f8f9fa', borderRadius: 2 }}>
+            <Box sx={{ 
+              mb: 'var(--space-6)', 
+              p: 'var(--space-4)', 
+              bgcolor: 'var(--gray-50)', 
+              borderRadius: 2,
+              border: '1px solid var(--gray-200)'
+            }}>
               <Grid container spacing={2}>
                 <Grid item xs={6}>
-                  <Typography variant="body2" color="text.secondary">Budget</Typography>
-                  <Typography variant="h6" fontWeight={600} color="info.main">
+                  <Typography className="text-xs font-medium text-secondary">Budget</Typography>
+                  <Typography className="text-base font-semibold" sx={{ color: 'var(--construction-600)' }}>
                     {project.budget || 'N/A'}
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="body2" color="text.secondary">Due Date</Typography>
-                  <Typography variant="h6" fontWeight={600} color="warning.main">
+                  <Typography className="text-xs font-medium text-secondary">Due Date</Typography>
+                  <Typography className="text-base font-semibold" sx={{ color: 'var(--warning-500)' }}>
                     {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'TBD'}
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                  <Typography className="text-xs font-medium text-secondary" sx={{ mb: 'var(--space-2)' }}>
                     Overall Progress
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
                     <LinearProgress
                       variant="determinate"
                       value={taskProgress}
-                      sx={{ flexGrow: 1, height: 8, borderRadius: 4 }}
+                      className="clean-progress-bar"
+                      sx={{ flexGrow: 1 }}
                     />
-                    <Typography variant="h6" fontWeight={600} color="success.main">
+                    <Typography className="text-base font-semibold" sx={{ color: 'var(--success-500)' }}>
                       {taskProgress.toFixed(0)}%
                     </Typography>
                   </Box>
@@ -228,71 +266,69 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
             </Box>
 
             {/* Task Breakdown */}
-            <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ mb: 2 }}>
+            <Typography 
+              className="text-base font-semibold text-primary"
+              sx={{ mb: 'var(--space-4)' }}
+            >
               Task Breakdown
             </Typography>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <Box sx={{ 
-                  p: 2, 
-                  textAlign: 'center', 
-                  border: '2px solid',
-                  borderColor: 'primary.main',
-                  borderRadius: 2,
-                  bgcolor: 'primary.50'
+                <Box className="clean-card-subtle" sx={{ 
+                  p: 'var(--space-4)', 
+                  textAlign: 'center',
+                  border: '1px solid var(--construction-500)',
+                  backgroundColor: 'var(--construction-50)'
                 }}>
-                  <Typography variant="h4" color="primary.main" fontWeight={600}>
+                  <Typography className="text-2xl font-bold" sx={{ color: 'var(--construction-600)' }}>
                     {taskStats.total}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography className="text-xs text-muted">
                     Total
                   </Typography>
                 </Box>
               </Grid>
               <Grid item xs={6}>
-                <Box sx={{ 
-                  p: 2, 
-                  textAlign: 'center', 
-                  border: '2px solid #4CAF50',
-                  borderRadius: 2,
-                  bgcolor: '#E8F5E8'
+                <Box className="clean-card-subtle" sx={{ 
+                  p: 'var(--space-4)', 
+                  textAlign: 'center',
+                  border: '1px solid var(--success-500)',
+                  backgroundColor: 'var(--success-50)'
                 }}>
-                  <Typography variant="h4" sx={{ color: '#4CAF50', fontWeight: 600 }}>
+                  <Typography className="text-2xl font-bold" sx={{ color: 'var(--success-500)' }}>
                     {taskStats.completed}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography className="text-xs text-muted">
                     Completed
                   </Typography>
                 </Box>
               </Grid>
               <Grid item xs={6}>
-                <Box sx={{ 
-                  p: 2, 
-                  textAlign: 'center', 
-                  border: '2px solid #FF9800',
-                  borderRadius: 2,
-                  bgcolor: '#FFF3E0'
+                <Box className="clean-card-subtle" sx={{ 
+                  p: 'var(--space-4)', 
+                  textAlign: 'center',
+                  border: '1px solid var(--warning-500)',
+                  backgroundColor: 'var(--warning-50)'
                 }}>
-                  <Typography variant="h4" sx={{ color: '#FF9800', fontWeight: 600 }}>
+                  <Typography className="text-2xl font-bold" sx={{ color: 'var(--warning-500)' }}>
                     {taskStats.inProgress}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography className="text-xs text-muted">
                     In Progress
                   </Typography>
                 </Box>
               </Grid>
               <Grid item xs={6}>
-                <Box sx={{ 
-                  p: 2, 
-                  textAlign: 'center', 
-                  border: '2px solid #2196F3',
-                  borderRadius: 2,
-                  bgcolor: '#E3F2FD'
+                <Box className="clean-card-subtle" sx={{ 
+                  p: 'var(--space-4)', 
+                  textAlign: 'center',
+                  border: '1px solid var(--gray-400)',
+                  backgroundColor: 'var(--gray-50)'
                 }}>
-                  <Typography variant="h4" sx={{ color: '#2196F3', fontWeight: 600 }}>
+                  <Typography className="text-2xl font-bold" sx={{ color: 'var(--gray-600)' }}>
                     {taskStats.pending}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography className="text-xs text-muted">
                     Pending
                   </Typography>
                 </Box>
@@ -303,35 +339,54 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
         </Card>
 
         {/* Team Members */}
-        <Card elevation={2} sx={{ mt: 3 }}>
-          <CardContent>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
+        <Card className="clean-card" sx={{ mt: 'var(--space-4)' }}>
+          <CardContent sx={{ p: 'var(--space-6)' }}>
+            <Typography 
+              className="text-xl font-semibold text-primary"
+              sx={{ mb: 'var(--space-4)' }}
+            >
               Team Members
             </Typography>
             {assignedMembers.length > 0 ? (
-              <List dense>
+              <List dense sx={{ '& .MuiListItem-root': { px: 0, py: 'var(--space-2)' } }}>
                 {assignedMembers.slice(0, 5).map((member, index) => (
                   <React.Fragment key={member.id}>
-                    <ListItem sx={{ px: 0 }}>
-                      <ListItemIcon>
+                    <ListItem>
+                      <ListItemIcon sx={{ minWidth: 'var(--space-8)' }}>
                         <Avatar
-                          sx={{ width: 32, height: 32 }}
+                          sx={{ 
+                            width: 32, 
+                            height: 32,
+                            backgroundColor: 'var(--construction-500)',
+                            fontSize: 'var(--text-sm)',
+                            fontWeight: 600
+                          }}
                           src={member.avatar}
                         >
                           {member.fullName?.charAt(0)}
                         </Avatar>
                       </ListItemIcon>
                       <ListItemText
-                        primary={member.fullName}
-                        secondary={member.role || member.department}
+                        primary={
+                          <Typography className="text-sm font-medium">
+                            {member.fullName}
+                          </Typography>
+                        }
+                        secondary={
+                          <Typography className="text-xs text-muted">
+                            {member.role || member.department}
+                          </Typography>
+                        }
                       />
                     </ListItem>
-                    {index < assignedMembers.length - 1 && <Divider />}
+                    {index < assignedMembers.length - 1 && (
+                      <Divider sx={{ borderColor: 'var(--gray-100)' }} />
+                    )}
                   </React.Fragment>
                 ))}
               </List>
             ) : (
-              <Typography variant="body2" color="text.secondary">
+              <Typography className="text-sm text-muted">
                 No team members assigned yet.
               </Typography>
             )}
@@ -339,33 +394,36 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
         </Card>
 
         {/* Project Details */}
-        <Card elevation={2} sx={{ mt: 3 }}>
-          <CardContent>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
+        <Card className="clean-card" sx={{ mt: 'var(--space-4)' }}>
+          <CardContent sx={{ p: 'var(--space-6)' }}>
+            <Typography 
+              className="text-xl font-semibold text-primary"
+              sx={{ mb: 'var(--space-4)' }}
+            >
               Project Details
             </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
               <Box>
-                <Typography variant="body2" color="text.secondary">
+                <Typography className="text-sm font-medium text-secondary" sx={{ mb: 'var(--space-2)' }}>
                   Project Type
                 </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                   <ProjectTypeChip type={project.type} size="small" />
                 </Box>
               </Box>
               <Box>
-                <Typography variant="body2" color="text.secondary">
+                <Typography className="text-sm font-medium text-secondary" sx={{ mb: 'var(--space-1)' }}>
                   Created Date
                 </Typography>
-                <Typography variant="body1" fontWeight={500}>
+                <Typography className="text-sm font-medium">
                   {project.createdAt ? new Date(project.createdAt).toLocaleDateString() : 'Unknown'}
                 </Typography>
               </Box>
               <Box>
-                <Typography variant="body2" color="text.secondary">
+                <Typography className="text-sm font-medium text-secondary" sx={{ mb: 'var(--space-1)' }}>
                   Last Updated
                 </Typography>
-                <Typography variant="body1" fontWeight={500}>
+                <Typography className="text-sm font-medium">
                   {project.updatedAt ? new Date(project.updatedAt).toLocaleDateString() : 'Never'}
                 </Typography>
               </Box>

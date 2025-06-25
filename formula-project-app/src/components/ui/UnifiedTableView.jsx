@@ -220,13 +220,14 @@ const UnifiedTableView = ({
       case 'progress':
         if (typeof value !== 'number') return '-';
         return (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 100 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', minWidth: 100 }}>
             <LinearProgress
               variant="determinate"
               value={value}
-              sx={{ flexGrow: 1, height: 8, borderRadius: 4 }}
+              className="clean-progress-bar"
+              sx={{ flexGrow: 1 }}
             />
-            <Typography variant="caption" sx={{ minWidth: 35 }}>
+            <Typography className="text-xs font-medium" sx={{ minWidth: 35, color: 'var(--gray-600)' }}>
               {value}%
             </Typography>
           </Box>
@@ -305,7 +306,7 @@ const UnifiedTableView = ({
   }
 
   return (
-    <TableContainer component={Paper} sx={{ mt: 2 }}>
+    <TableContainer className="clean-table" component={Paper} sx={{ mt: 'var(--space-4)' }}>
       <Table>
         <TableHead>
           <TableRow>
@@ -315,6 +316,7 @@ const UnifiedTableView = ({
                   indeterminate={selectedRows.length > 0 && selectedRows.length < data.length}
                   checked={data.length > 0 && selectedRows.length === data.length}
                   onChange={onSelectAll}
+                  sx={{ color: 'var(--construction-500)' }}
                 />
               </TableCell>
             )}
@@ -324,7 +326,6 @@ const UnifiedTableView = ({
                 key={column.key}
                 align={column.align || 'left'}
                 sx={{ 
-                  fontWeight: 600,
                   minWidth: column.minWidth,
                   width: column.width
                 }}
@@ -334,6 +335,11 @@ const UnifiedTableView = ({
                     active={sortBy === column.key}
                     direction={sortBy === column.key ? sortDirection : 'asc'}
                     onClick={() => handleSort(column)}
+                    sx={{
+                      '& .MuiTableSortLabel-icon': {
+                        color: 'var(--construction-500) !important'
+                      }
+                    }}
                   >
                     {column.label}
                   </TableSortLabel>
@@ -357,13 +363,13 @@ const UnifiedTableView = ({
               key={row.id || index}
               hover
               selected={selectedRows.includes(row.id)}
-              sx={{ '&:nth-of-type(odd)': { backgroundColor: 'action.hover' } }}
             >
               {showCheckboxes && (
                 <TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedRows.includes(row.id)}
                     onChange={() => onSelectRow && onSelectRow(row.id)}
+                    sx={{ color: 'var(--construction-500)' }}
                   />
                 </TableCell>
               )}
@@ -372,7 +378,6 @@ const UnifiedTableView = ({
                 <TableCell 
                   key={column.key} 
                   align={column.align || 'left'}
-                  sx={{ py: 2 }}
                 >
                   {renderCellContent(column, row)}
                 </TableCell>
@@ -383,6 +388,13 @@ const UnifiedTableView = ({
                   <IconButton
                     size="small"
                     onClick={(e) => handleMenuOpen(e, row)}
+                    sx={{
+                      color: 'var(--gray-400)',
+                      '&:hover': {
+                        color: 'var(--construction-500)',
+                        backgroundColor: 'var(--construction-50)'
+                      }
+                    }}
                   >
                     <MoreVertIcon />
                   </IconButton>

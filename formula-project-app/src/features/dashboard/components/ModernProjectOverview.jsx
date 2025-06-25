@@ -319,10 +319,11 @@ const ModernProjectOverview = ({ projects, tasks, teamMembers, clients = [], onV
             placeholder="Search projects..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            className="clean-input"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon sx={{ color: '#7F8C8D' }} />
+                  <SearchIcon sx={{ color: 'var(--gray-400)' }} />
                 </InputAdornment>
               ),
               endAdornment: searchTerm && (
@@ -330,7 +331,7 @@ const ModernProjectOverview = ({ projects, tasks, teamMembers, clients = [], onV
                   <IconButton
                     size="small"
                     onClick={() => setSearchTerm('')}
-                    sx={{ color: '#7F8C8D' }}
+                    sx={{ color: 'var(--gray-400)' }}
                   >
                     <ClearIcon />
                   </IconButton>

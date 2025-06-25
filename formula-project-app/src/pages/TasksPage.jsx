@@ -40,6 +40,7 @@ import {
   Trash as MoreVert
 } from 'iconoir-react';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
+import { TaskStatusChip, PriorityChip } from '../components/ui/StatusChip';
 
 const TasksPage = ({ 
   tasks = [],
@@ -288,19 +289,14 @@ const TasksPage = ({
 
         <Box sx={{ mb: 2 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-            <Chip
-              label={task.status?.replace('-', ' ') || 'pending'}
-              className={`clean-chip ${getStatusChipClass(task.status)}`}
+            <TaskStatusChip
+              status={task.status || 'pending'}
               size="small"
             />
             {task.priority && (
-              <Chip
-                label={task.priority}
+              <PriorityChip
+                priority={task.priority}
                 size="small"
-                sx={{
-                  backgroundColor: task.priority === 'urgent' ? '#EF444420' : task.priority === 'high' ? '#F59E0B20' : '#6B728020',
-                  color: task.priority === 'urgent' ? '#EF4444' : task.priority === 'high' ? '#F59E0B' : '#6B7280'
-                }}
               />
             )}
           </Box>
@@ -517,21 +513,16 @@ const TasksPage = ({
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Chip
-                      label={task.status?.replace('-', ' ') || 'pending'}
-                      className={`clean-chip ${getStatusChipClass(task.status)}`}
+                    <TaskStatusChip
+                      status={task.status || 'pending'}
                       size="small"
                     />
                   </TableCell>
                   <TableCell>
                     {task.priority && (
-                      <Chip
-                        label={task.priority}
+                      <PriorityChip
+                        priority={task.priority}
                         size="small"
-                        sx={{
-                          backgroundColor: task.priority === 'urgent' ? '#EF444420' : task.priority === 'high' ? '#F59E0B20' : '#6B728020',
-                          color: task.priority === 'urgent' ? '#EF4444' : task.priority === 'high' ? '#F59E0B' : '#6B7280'
-                        }}
                       />
                     )}
                   </TableCell>
@@ -565,20 +556,29 @@ const TasksPage = ({
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 100 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', minWidth: 100 }}>
                       <LinearProgress
                         variant="determinate"
                         value={task.progress || 0}
                         className="clean-progress-bar"
                         sx={{ flex: 1 }}
                       />
-                      <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '12px' }}>
+                      <Typography className="text-xs font-medium" sx={{ color: 'var(--gray-600)' }}>
                         {task.progress || 0}%
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell>
-                    <IconButton size="small" sx={{ color: '#9CA3AF' }}>
+                    <IconButton 
+                      size="small" 
+                      sx={{ 
+                        color: 'var(--gray-400)',
+                        '&:hover': {
+                          color: 'var(--construction-500)',
+                          backgroundColor: 'var(--construction-50)'
+                        }
+                      }}
+                    >
                       <MoreVert sx={{ fontSize: 16 }} />
                     </IconButton>
                   </TableCell>

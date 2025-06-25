@@ -199,6 +199,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
             helperText={errors.firstName}
             fullWidth
             required
+            className="clean-input"
             InputProps={{
               startAdornment: <Person sx={{ mr: 1, color: 'action.active' }} />,
             }}
@@ -214,6 +215,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
             helperText={errors.lastName}
             fullWidth
             required
+            className="clean-input"
           />
         </Grid>
       </Grid>
@@ -227,6 +229,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
         helperText={errors.email}
         fullWidth
         required
+        className="clean-input"
         InputProps={{
           startAdornment: <Email sx={{ mr: 1, color: 'action.active' }} />,
         }}
@@ -237,6 +240,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
         value={formData.phone}
         onChange={handleChange('phone')}
         fullWidth
+        className="clean-input"
         InputProps={{
           startAdornment: <Phone sx={{ mr: 1, color: 'action.active' }} />,
         }}
@@ -253,6 +257,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
             helperText={errors.role}
             fullWidth
             required
+            className="clean-input"
             InputProps={{
               startAdornment: <Star sx={{ mr: 1, color: 'action.active' }} />,
             }}
@@ -289,6 +294,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
             helperText={errors.department}
             fullWidth
             required
+            className="clean-input"
             InputProps={{
               startAdornment: <Work sx={{ mr: 1, color: 'action.active' }} />,
             }}
@@ -309,6 +315,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
           value={formData.reportsTo}
           onChange={handleChange('reportsTo')}
           fullWidth
+          className="clean-input"
           helperText="Select a manager (optional)"
         >
           {potentialManagers.map((manager) => (
@@ -330,6 +337,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
         value={formData.hourlyRate}
         onChange={handleChange('hourlyRate')}
         fullWidth
+        className="clean-input"
         helperText="Optional - for time tracking and billing"
       />
 
@@ -340,6 +348,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
         multiline
         rows={3}
         fullWidth
+        className="clean-input"
         placeholder="Additional notes about this team member..."
       />
 

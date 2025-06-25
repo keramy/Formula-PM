@@ -133,6 +133,7 @@ const UnifiedHeader = ({
           value={searchValue}
           onChange={(e) => onSearchChange(e.target.value)}
           size="small"
+          className="clean-input"
           sx={{ 
             minWidth: 300,
             flexGrow: 1,
@@ -141,7 +142,7 @@ const UnifiedHeader = ({
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon color="action" />
+                <SearchIcon sx={{ color: 'var(--gray-400)', fontSize: 'var(--text-base)' }} />
               </InputAdornment>
             ),
             endAdornment: searchValue && (

@@ -161,6 +161,7 @@ function ProjectForm({ onSubmit, onCancel, clients = [], initialProject = null }
           helperText={errors.name}
           fullWidth
           required
+          className="clean-input"
         />
 
         <TextField
@@ -172,6 +173,7 @@ function ProjectForm({ onSubmit, onCancel, clients = [], initialProject = null }
           helperText={errors.type}
           fullWidth
           required
+          className="clean-input"
         >
           {projectTypes.map((option) => (
             <MenuItem key={option.value} value={option.value}>
@@ -189,7 +191,8 @@ function ProjectForm({ onSubmit, onCancel, clients = [], initialProject = null }
               error: !!errors.startDate,
               helperText: errors.startDate,
               fullWidth: true,
-              required: true
+              required: true,
+              className: "clean-input"
             }
           }}
         />
@@ -203,12 +206,13 @@ function ProjectForm({ onSubmit, onCancel, clients = [], initialProject = null }
               error: !!errors.endDate,
               helperText: errors.endDate,
               fullWidth: true,
-              required: true
+              required: true,
+              className: "clean-input"
             }
           }}
         />
 
-        <FormControl fullWidth required error={!!errors.clientId}>
+        <FormControl fullWidth required error={!!errors.clientId} className="clean-input">
           <InputLabel>Client</InputLabel>
           <Select
             value={formData.clientId}
@@ -228,7 +232,7 @@ function ProjectForm({ onSubmit, onCancel, clients = [], initialProject = null }
           )}
         </FormControl>
 
-        <FormControl fullWidth>
+        <FormControl fullWidth className="clean-input">
           <InputLabel>Project Status</InputLabel>
           <Select
             value={formData.status}
@@ -250,6 +254,7 @@ function ProjectForm({ onSubmit, onCancel, clients = [], initialProject = null }
           multiline
           rows={3}
           fullWidth
+          className="clean-input"
         />
 
         <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
