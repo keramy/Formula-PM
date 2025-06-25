@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import { Box } from '@mui/material';
+import CleanPageLayout from '../components/layout/CleanPageLayout';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import ModernStatsCards from '../components/charts/ModernStatsCards';
 import FinancialAnalytics from '../components/charts/FinancialAnalytics';
@@ -7,9 +8,16 @@ import { ModernProjectOverview, LoadingFallback } from '../components/lazy';
 
 const DashboardPage = ({ projects, tasks, teamMembers }) => {
   return (
-    <Box sx={{ p: 3 }}>
-      <ErrorBoundary fallbackMessage="Failed to load dashboard">
-        <div className="clean-fade-in">
+    <CleanPageLayout
+      title="Dashboard"
+      subtitle="Overview of your construction and millwork projects performance"
+      breadcrumbs={[
+        { label: 'Team Space', href: '/workspace' },
+        { label: 'Dashboard', href: '/dashboard' }
+      ]}
+    >
+      <Box className="clean-fade-in">
+        <ErrorBoundary fallbackMessage="Failed to load dashboard">
           <ModernStatsCards 
             projects={projects} 
             tasks={tasks} 
@@ -25,9 +33,9 @@ const DashboardPage = ({ projects, tasks, teamMembers }) => {
               teamMembers={teamMembers} 
             />
           </Suspense>
-        </div>
-      </ErrorBoundary>
-    </Box>
+        </ErrorBoundary>
+      </Box>
+    </CleanPageLayout>
   );
 };
 

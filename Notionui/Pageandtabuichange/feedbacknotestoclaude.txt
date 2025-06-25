@@ -1,84 +1,60 @@
-import React, { Suspense, useState, useCallback, useMemo } from 'react';
+// Updated ProjectOverviewPage.jsx - Notion Style Implementation
+import React, { useState, useMemo } from 'react';
 import {
   Box,
-  Button,
-  IconButton,
+  Typography,
   Grid,
   Card,
   CardContent,
-  Typography,
   LinearProgress,
   Chip,
   Avatar,
+  AvatarGroup,
+  Button,
+  IconButton,
+  Divider,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper
+  Paper,
+  Dialog,
+  DialogContent
 } from '@mui/material';
 import {
-  Plus as Add,
+  Add,
+  MoreVert,
+  TrendingUp,
+  Schedule,
+  Assignment,
+  Group,
   FilterList,
-  List as ViewList,
-  ViewGrid as ViewModule,
-  Calendar as Timeline,
-  ArrowUp as TrendingUp,
-  ClipboardCheck as Assignment,
-  User as Group,
-  Calendar as CalendarToday,
-  Clock as Schedule,
-  Trash as MoreVert
-} from 'iconoir-react';
+  ViewList,
+  ViewModule,
+  CalendarToday,
+  Timeline
+} from '@mui/icons-material';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
-import ErrorBoundary from '../components/common/ErrorBoundary';
-import { 
-  ProjectsTableView,
-  ProjectsFilters,
-  ProjectsList,
-  BoardView,
-  GanttChart,
-  LoadingFallback,
-  ListSkeleton,
-  ProjectCardSkeleton
-} from '../components/lazy';
 
-const ProjectsPage = ({ 
-  projects = [],
-  tasks = [],
-  teamMembers = [],
+const ProjectOverviewPage = ({ 
+  projects = [], 
+  tasks = [], 
+  teamMembers = [], 
   clients = [],
-  filteredProjects,
-  projectsViewMode,
-  projectsSearchTerm,
-  setProjectsSearchTerm,
-  showProjectsFilters,
-  projectsFilters,
-  activeFilters,
-  onViewModeChange,
-  onToggleFilters,
-  onExport,
-  onFiltersChange,
-  onClearFilters,
-  onEditProject,
-  onDeleteProject,
   onViewProject,
-  onManageScope,
-  onUpdateTask,
-  onAddProject
+  onEditProject,
+  onAddProject 
 }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [viewMode, setViewMode] = useState('cards');
-
-  const handleAddProject = useCallback(() => {
-    onAddProject();
-  }, [onAddProject]);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   // Calculate project statistics
   const projectStats = useMemo(() => {
     const totalProjects = projects.length;
-    const activeProjects = projects.filter(p => p.status === 'active' || p.status === 'in-progress').length;
+    const activeProjects = projects.filter(p => p.status === 'in-progress').length;
     const completedProjects = projects.filter(p => p.status === 'completed').length;
     const overdueProjects = projects.filter(p => {
       const dueDate = new Date(p.endDate);
@@ -123,10 +99,19 @@ const ProjectsPage = ({
     return upcoming;
   }, [projects]);
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'completed': return '#10B981';
+      case 'in-progress': return '#E3AF64';
+      case 'planning': return '#516AC8';
+      case 'on-hold': return '#EF4444';
+      default: return '#6B7280';
+    }
+  };
+
   const getStatusChipClass = (status) => {
     switch (status) {
       case 'completed': return 'status-completed';
-      case 'active':
       case 'in-progress': return 'status-in-progress';
       case 'planning': return 'status-review';
       case 'on-hold': return 'status-todo';
@@ -149,20 +134,26 @@ const ProjectsPage = ({
 
   const getClientName = (clientId) => {
     const client = clients.find(c => c.id === clientId);
-    return client?.name || client?.companyName || 'Unknown Client';
+    return client?.name || 'Unknown Client';
   };
 
+  // Header actions for the page
   const headerActions = (
     <>
-      <IconButton className="clean-button-secondary" onClick={onToggleFilters}>
+      <IconButton className="clean-button-secondary">
         <FilterList />
       </IconButton>
-      <Button className="clean-button-primary" startIcon={<Add />} onClick={handleAddProject}>
+      <Button 
+        className="clean-button-primary" 
+        startIcon={<Add />}
+        onClick={onAddProject}
+      >
         New project
       </Button>
     </>
   );
 
+  // Tab configuration
   const tabs = (
     <>
       <CleanTab 
@@ -185,13 +176,132 @@ const ProjectsPage = ({
         icon={<Timeline sx={{ fontSize: 16 }} />}
       />
       <CleanTab 
-        label="Board" 
-        isActive={activeTab === 'board'}
-        onClick={() => setActiveTab('board')}
-        icon={<ViewModule sx={{ fontSize: 16 }} />}
+        label="Calendar" 
+        isActive={activeTab === 'calendar'}
+        onClick={() => setActiveTab('calendar')}
+        icon={<CalendarToday sx={{ fontSize: 16 }} />}
       />
     </>
   );
+
+  const ProjectCard = ({ project }) => {
+    const manager = getProjectManager(project.managerId);
+    const progressColor = project.progress >= 75 ? '#10B981' : project.progress >= 50 ? '#E3AF64' : '#516AC8';
+    
+    return (
+      <Card className="clean-card" sx={{ height: '100%', cursor: 'pointer' }}>
+        <CardContent sx={{ p: 3 }}>
+          {/* Project Header */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+            <Box sx={{ flex: 1 }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  fontSize: '16px', 
+                  fontWeight: 600, 
+                  color: '#0F1939',
+                  mb: 0.5,
+                  lineHeight: 1.3
+                }}
+              >
+                {project.name}
+              </Typography>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: '#6B7280', 
+                  fontSize: '13px',
+                  mb: 1
+                }}
+              >
+                {getClientName(project.clientId)}
+              </Typography>
+            </Box>
+            <IconButton size="small" sx={{ color: '#9CA3AF' }}>
+              <MoreVert sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Box>
+
+          {/* Status & Progress */}
+          <Box sx={{ mb: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+              <Chip
+                label={project.status?.replace('-', ' ') || 'planning'}
+                className={`clean-chip ${getStatusChipClass(project.status)}`}
+                size="small"
+              />
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  color: '#6B7280',
+                  fontSize: '12px',
+                  fontWeight: 500
+                }}
+              >
+                {project.progress || 0}%
+              </Typography>
+            </Box>
+            <LinearProgress
+              variant="determinate"
+              value={project.progress || 0}
+              className="clean-progress-bar"
+              sx={{
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: progressColor
+                }
+              }}
+            />
+          </Box>
+
+          {/* Project Details */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Schedule sx={{ fontSize: 14, color: '#9CA3AF' }} />
+              <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '12px' }}>
+                Due {new Date(project.endDate).toLocaleDateString()}
+              </Typography>
+            </Box>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                fontWeight: 600, 
+                color: '#0F1939',
+                fontSize: '14px'
+              }}
+            >
+              {formatCurrency(project.budget || 0)}
+            </Typography>
+          </Box>
+
+          {/* Team */}
+          {manager && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Avatar
+                sx={{
+                  width: 20,
+                  height: 20,
+                  fontSize: '10px',
+                  fontWeight: 600,
+                  bgcolor: '#E3AF64'
+                }}
+              >
+                {manager.fullName?.charAt(0) || 'M'}
+              </Avatar>
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  color: '#6B7280',
+                  fontSize: '12px'
+                }}
+              >
+                {manager.fullName}
+              </Typography>
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+    );
+  };
 
   const StatsCard = ({ title, value, subtitle, icon, color = '#E3AF64' }) => (
     <Card className="clean-card">
@@ -252,121 +362,6 @@ const ProjectsPage = ({
     </Card>
   );
 
-  const ProjectCard = ({ project }) => {
-    const manager = getProjectManager(project.managerId);
-    const progressColor = project.progress >= 75 ? '#10B981' : project.progress >= 50 ? '#E3AF64' : '#516AC8';
-    
-    return (
-      <Card className="clean-card" sx={{ height: '100%', cursor: 'pointer' }} onClick={() => onViewProject && onViewProject(project)}>
-        <CardContent sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-            <Box sx={{ flex: 1 }}>
-              <Typography 
-                variant="h6" 
-                sx={{ 
-                  fontSize: '16px', 
-                  fontWeight: 600, 
-                  color: '#0F1939',
-                  mb: 0.5,
-                  lineHeight: 1.3
-                }}
-              >
-                {project.name}
-              </Typography>
-              <Typography 
-                variant="body2" 
-                sx={{ 
-                  color: '#6B7280', 
-                  fontSize: '13px',
-                  mb: 1
-                }}
-              >
-                {getClientName(project.clientId)}
-              </Typography>
-            </Box>
-            <IconButton size="small" sx={{ color: '#9CA3AF' }}>
-              <MoreVert sx={{ fontSize: 18 }} />
-            </IconButton>
-          </Box>
-
-          <Box sx={{ mb: 2 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-              <Chip
-                label={project.status?.replace('-', ' ') || 'planning'}
-                className={`clean-chip ${getStatusChipClass(project.status)}`}
-                size="small"
-              />
-              <Typography 
-                variant="caption" 
-                sx={{ 
-                  color: '#6B7280',
-                  fontSize: '12px',
-                  fontWeight: 500
-                }}
-              >
-                {project.progress || 0}%
-              </Typography>
-            </Box>
-            <LinearProgress
-              variant="determinate"
-              value={project.progress || 0}
-              className="clean-progress-bar"
-              sx={{
-                '& .MuiLinearProgress-bar': {
-                  backgroundColor: progressColor
-                }
-              }}
-            />
-          </Box>
-
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Schedule sx={{ fontSize: 14, color: '#9CA3AF' }} />
-              <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '12px' }}>
-                Due {new Date(project.endDate).toLocaleDateString()}
-              </Typography>
-            </Box>
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                fontWeight: 600, 
-                color: '#0F1939',
-                fontSize: '14px'
-              }}
-            >
-              {formatCurrency(project.budget || 0)}
-            </Typography>
-          </Box>
-
-          {manager && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Avatar
-                sx={{
-                  width: 20,
-                  height: 20,
-                  fontSize: '10px',
-                  fontWeight: 600,
-                  bgcolor: '#E3AF64'
-                }}
-              >
-                {manager.fullName?.charAt(0) || 'M'}
-              </Avatar>
-              <Typography 
-                variant="caption" 
-                sx={{ 
-                  color: '#6B7280',
-                  fontSize: '12px'
-                }}
-              >
-                {manager.fullName}
-              </Typography>
-            </Box>
-          )}
-        </CardContent>
-      </Card>
-    );
-  };
-
   const renderOverviewContent = () => (
     <Box>
       {/* Stats Cards */}
@@ -384,7 +379,7 @@ const ProjectsPage = ({
           <StatsCard
             title="Completed"
             value={projectStats.completed}
-            subtitle={`${Math.round((projectStats.completed / projectStats.total) * 100) || 0}% completion rate`}
+            subtitle={`${Math.round((projectStats.completed / projectStats.total) * 100)}% completion rate`}
             icon={<TrendingUp />}
             color="#10B981"
           />
@@ -502,18 +497,6 @@ const ProjectsPage = ({
 
   const renderProjectsContent = () => (
     <Box>
-      <Suspense fallback={<LoadingFallback message="Loading filters..." />}>
-        <ProjectsFilters
-          open={showProjectsFilters}
-          filters={projectsFilters}
-          onFiltersChange={onFiltersChange}
-          onClearFilters={onClearFilters}
-          clients={clients}
-          teamMembers={teamMembers}
-          projects={projects}
-        />
-      </Suspense>
-
       {/* View Controls */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography 
@@ -547,55 +530,139 @@ const ProjectsPage = ({
       {/* Projects Display */}
       {viewMode === 'cards' ? (
         <Grid container spacing={3}>
-          {(filteredProjects || projects).map((project) => (
+          {projects.map((project) => (
             <Grid item xs={12} sm={6} lg={4} key={project.id}>
               <ProjectCard project={project} />
             </Grid>
           ))}
         </Grid>
       ) : (
-        <ErrorBoundary fallbackMessage="Failed to load projects list">
-          <Suspense fallback={<ListSkeleton SkeletonComponent={ProjectCardSkeleton} count={4} />}>
-            <ProjectsList 
-              projects={filteredProjects || projects}
-              tasks={tasks}
-              clients={clients}
-              teamMembers={teamMembers}
-              onDeleteProject={onDeleteProject}
-              onManageScope={onManageScope}
-              onViewProject={onViewProject}
-            />
-          </Suspense>
-        </ErrorBoundary>
+        <TableContainer component={Paper} className="clean-table">
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Project Name</TableCell>
+                <TableCell>Client</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Progress</TableCell>
+                <TableCell>Manager</TableCell>
+                <TableCell>Due Date</TableCell>
+                <TableCell>Budget</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {projects.map((project) => {
+                const manager = getProjectManager(project.managerId);
+                return (
+                  <TableRow key={project.id}>
+                    <TableCell>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 600,
+                          color: '#0F1939'
+                        }}
+                      >
+                        {project.name}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                        {getClientName(project.clientId)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={project.status?.replace('-', ' ') || 'planning'}
+                        className={`clean-chip ${getStatusChipClass(project.status)}`}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 100 }}>
+                        <LinearProgress
+                          variant="determinate"
+                          value={project.progress || 0}
+                          className="clean-progress-bar"
+                          sx={{ flex: 1 }}
+                        />
+                        <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '12px' }}>
+                          {project.progress || 0}%
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      {manager && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Avatar
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              fontSize: '11px',
+                              bgcolor: '#E3AF64'
+                            }}
+                          >
+                            {manager.fullName?.charAt(0)}
+                          </Avatar>
+                          <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '13px' }}>
+                            {manager.fullName}
+                          </Typography>
+                        </Box>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '13px' }}>
+                        {new Date(project.endDate).toLocaleDateString()}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 600,
+                          color: '#0F1939',
+                          fontSize: '13px'
+                        }}
+                      >
+                        {formatCurrency(project.budget || 0)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton size="small" sx={{ color: '#9CA3AF' }}>
+                        <MoreVert sx={{ fontSize: 16 }} />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
     </Box>
   );
 
   const renderTimelineContent = () => (
-    <ErrorBoundary fallbackMessage="Failed to load Gantt chart">
-      <Suspense fallback={<LoadingFallback message="Loading Gantt chart..." />}>
-        <GanttChart 
-          tasks={tasks}
-          projects={projects}
-          teamMembers={teamMembers}
-        />
-      </Suspense>
-    </ErrorBoundary>
+    <Box sx={{ p: 4, textAlign: 'center' }}>
+      <Typography variant="h6" sx={{ color: '#6B7280', mb: 2 }}>
+        🗓️ Timeline View
+      </Typography>
+      <Typography variant="body2" sx={{ color: '#9CA3AF' }}>
+        Timeline and Gantt chart visualization coming soon
+      </Typography>
+    </Box>
   );
 
-  const renderBoardContent = () => (
-    <ErrorBoundary fallbackMessage="Failed to load board view">
-      <Suspense fallback={<LoadingFallback message="Loading board view..." />}>
-        <BoardView
-          tasks={tasks}
-          projects={projects}
-          teamMembers={teamMembers}
-          clients={clients}
-          onProjectUpdate={onUpdateTask}
-          showProjects={true}
-        />
-      </Suspense>
-    </ErrorBoundary>
+  const renderCalendarContent = () => (
+    <Box sx={{ p: 4, textAlign: 'center' }}>
+      <Typography variant="h6" sx={{ color: '#6B7280', mb: 2 }}>
+        📅 Calendar View
+      </Typography>
+      <Typography variant="body2" sx={{ color: '#9CA3AF' }}>
+        Calendar integration with project milestones coming soon
+      </Typography>
+    </Box>
   );
 
   const renderTabContent = () => {
@@ -606,8 +673,8 @@ const ProjectsPage = ({
         return renderProjectsContent();
       case 'timeline':
         return renderTimelineContent();
-      case 'board':
-        return renderBoardContent();
+      case 'calendar':
+        return renderCalendarContent();
       default:
         return renderOverviewContent();
     }
@@ -631,4 +698,4 @@ const ProjectsPage = ({
   );
 };
 
-export default React.memo(ProjectsPage);
+export default ProjectOverviewPage;

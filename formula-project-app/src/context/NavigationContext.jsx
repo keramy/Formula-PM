@@ -230,13 +230,13 @@ export const NavigationProvider = ({ children }) => {
   // Get available project sections
   const getProjectSections = useCallback(() => {
     return [
-      { id: 'overview', label: 'Overview', icon: '📊', path: 'overview' },
-      { id: 'scope', label: 'Scope Management', icon: '📋', path: 'scope' },
-      { id: 'timeline', label: 'Timeline & Gantt', icon: '📅', path: 'timeline' },
-      { id: 'drawings', label: 'Shop Drawings', icon: '🏗️', path: 'drawings' },
-      { id: 'specifications', label: 'Material Specs', icon: '📄', path: 'specifications' },
-      { id: 'activity', label: 'Activity Feed', icon: '📢', path: 'activity' },
-      { id: 'reports', label: 'Reports', icon: '📝', path: 'reports' }
+      { id: 'overview', label: 'Overview', icon: 'ArrowUp', path: 'overview' },
+      { id: 'scope', label: 'Scope Management', icon: 'ClipboardCheck', path: 'scope' },
+      { id: 'timeline', label: 'Timeline & Gantt', icon: 'Calendar', path: 'timeline' },
+      { id: 'drawings', label: 'Shop Drawings', icon: 'EditPencil', path: 'drawings' },
+      { id: 'specifications', label: 'Material Specs', icon: 'Building', path: 'specifications' },
+      { id: 'activity', label: 'Activity Feed', icon: 'Bell', path: 'activity' },
+      { id: 'reports', label: 'Reports', icon: 'StatsReport', path: 'reports' }
     ];
   }, []);
 

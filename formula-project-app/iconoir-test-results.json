@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-06-25T13:05:04.373Z",
+  "workingIcons": [
+    "ArrowUp",
+    "ArrowUpRight",
+    "GraphUp",
+    "ArrowUpCircle",
+    "Page",
+    "EmptyPage",
+    "CandlestickChart",
+    "DatabaseStats"
+  ],
+  "missingIcons": [
+    "TrendingUp",
+    "StatsUp",
+    "ChartUp",
+    "TrendUp",
+    "UpTrend",
+    "Trending",
+    "FileText",
+    "File",
+    "Document",
+    "TextPage",
+    "DocText",
+    "FileDoc",
+    "TextFile",
+    "PageText",
+    "BarChart",
+    "Chart",
+    "BarGraph",
+    "Stats",
+    "Analytics",
+    "Graph",
+    "StatChart",
+    "DataChart"
+  ],
+  "recommendations": {
+    "TrendingUp": "ArrowUp",
+    "FileText": "Page",
+    "BarChart": "CandlestickChart"
+  }
+}

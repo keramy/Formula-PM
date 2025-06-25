@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Breadcrumbs, Link, Chip } from '@mui/material';
-import { Home, ChevronRight } from '@mui/icons-material';
+import { Home, ArrowRight as ChevronRight } from 'iconoir-react';
 
 const CleanPageLayout = ({ 
   title, 
@@ -12,6 +12,11 @@ const CleanPageLayout = ({
   showProjectHeader = false,
   projectInfo = null
 }) => {
+  // Helper function to capitalize status
+  const capitalizeStatus = (status) => {
+    if (!status) return 'Active';
+    return status.charAt(0).toUpperCase() + status.slice(1).replace('-', ' ');
+  };
   // Your color palette
   const colors = {
     background: '#FBFAF8',
@@ -82,13 +87,6 @@ const CleanPageLayout = ({
                 {crumb.label}
               </Link>
             ))}
-            <Typography sx={{ 
-              fontSize: '13px', 
-              color: colors.textPrimary,
-              fontWeight: 500
-            }}>
-              {title}
-            </Typography>
           </Breadcrumbs>
         )}
 
@@ -118,7 +116,7 @@ const CleanPageLayout = ({
               {projectInfo.name}
             </Typography>
             <Chip
-              label={projectInfo.status}
+              label={capitalizeStatus(projectInfo.status)}
               size="small"
               sx={{
                 height: 20,

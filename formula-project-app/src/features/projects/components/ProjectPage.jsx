@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Tabs,
-  Tab,
-  Alert,
-  Paper
+  Button,
+  IconButton,
+  Alert
 } from '@mui/material';
-// Icons are now handled by the Breadcrumbs component
+import {
+  ArrowUp as TrendingUp,
+  ClipboardCheck,
+  Calendar,
+  EditPencil as DesignPencil,
+  Building as Page,
+  Bell,
+  StatsReport as Reports,
+  EditPencil as Edit,
+  Settings,
+  ArrowLeft,
+  ArrowRight
+} from 'iconoir-react';
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigation } from '../../../context/NavigationContext';
-import Breadcrumbs from '../../../components/navigation/Breadcrumbs';
+import CleanPageLayout, { CleanTab } from '../../../components/layout/CleanPageLayout';
 import ProjectOverview from './ProjectOverview';
 import EnhancedProjectScope from './EnhancedProjectScope';
 import ProjectShopDrawings from './ProjectShopDrawings';
@@ -400,12 +411,27 @@ const ProjectPage = ({
     }
   }, [currentSection, sections]);
 
+  // Icon mapping for the tabs
+  const getIconComponent = (iconName) => {
+    const iconMap = {
+      'ArrowUp': TrendingUp,
+      'ClipboardCheck': ClipboardCheck,
+      'Calendar': Calendar,
+      'EditPencil': DesignPencil,
+      'Building': Page,
+      'Bell': Bell,
+      'StatsReport': Reports
+    };
+    const IconComponent = iconMap[iconName];
+    return IconComponent ? <IconComponent sx={{ fontSize: 16 }} /> : null;
+  };
+
   // Handle tab change
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-    const section = sections[newValue];
-    if (section) {
-      navigateToProjectSection(section.id);
+  const handleTabChange = (sectionId) => {
+    const sectionIndex = sections.findIndex(s => s.id === sectionId);
+    if (sectionIndex !== -1) {
+      setActiveTab(sectionIndex);
+      navigateToProjectSection(sectionId);
     }
   };
 
@@ -462,20 +488,66 @@ const ProjectPage = ({
 
   if (!project) {
     return (
-      <Box sx={{ p: 3 }}>
-        <Alert severity="error">
-          Project not found or you don't have access to this project.
-        </Alert>
-      </Box>
+      <CleanPageLayout
+        title="Project Not Found"
+        subtitle="The requested project could not be found"
+        breadcrumbs={[
+          { label: 'Team Space', href: '/workspace' },
+          { label: 'Projects', href: '/projects' }
+        ]}
+      >
+        <Box sx={{ p: 3 }}>
+          <Alert severity="error">
+            Project not found or you don't have access to this project.
+          </Alert>
+        </Box>
+      </CleanPageLayout>
     );
   }
 
 
-  // Create static breadcrumb items for reliable navigation
-  const breadcrumbItems = [
-    { label: 'Projects', href: '/projects' },
-    { label: project.name }
-  ];
+  // Header actions for the project page
+  const headerActions = (
+    <>
+      {canGoBack() && (
+        <IconButton className="clean-button-secondary" onClick={handleBack}>
+          <ArrowLeft />
+        </IconButton>
+      )}
+      {canGoNext() && (
+        <IconButton className="clean-button-secondary" onClick={handleNext}>
+          <ArrowRight />
+        </IconButton>
+      )}
+      {canEditProject(projectId) && (
+        <Button 
+          className="clean-button-secondary" 
+          startIcon={<Edit />} 
+          onClick={handleEditProject}
+        >
+          Edit
+        </Button>
+      )}
+      <IconButton className="clean-button-secondary" onClick={handleSettings}>
+        <Settings />
+      </IconButton>
+    </>
+  );
+
+  // Tab components
+  const tabs = (
+    <>
+      {sections.map((section) => (
+        <CleanTab
+          key={section.id}
+          label={section.label}
+          isActive={currentSection === section.id}
+          onClick={() => handleTabChange(section.id)}
+          icon={getIconComponent(section.icon)}
+        />
+      ))}
+    </>
+  );
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -564,57 +636,26 @@ const ProjectPage = ({
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f8f9fa' }}>
-      {/* Project Tabs */}
-      <Box sx={{ px: 3, pt: 3 }}>
-        <Paper elevation={1} sx={{ borderRadius: '8px 8px 0 0', border: '1px solid #e0e0e0' }}>
-          <Tabs
-            value={activeTab}
-            onChange={handleTabChange}
-            variant="scrollable"
-            scrollButtons="auto"
-            sx={{
-              borderBottom: '1px solid #e0e0e0',
-              '& .MuiTab-root': {
-                minHeight: 56,
-                textTransform: 'none',
-                fontSize: '0.9rem',
-                fontWeight: 500,
-                px: 2
-              }
-            }}
-          >
-            {sections.map((section, index) => (
-              <Tab
-                key={section.id}
-                icon={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <span style={{ fontSize: '1.1rem' }}>{section.icon}</span>
-                  </Box>
-                }
-                label={section.label}
-                iconPosition="start"
-                sx={{
-                  '& .MuiTab-iconWrapper': {
-                    marginBottom: 0,
-                    marginRight: 1
-                  }
-                }}
-              />
-            ))}
-          </Tabs>
-        </Paper>
+    <CleanPageLayout
+      title={project.name}
+      subtitle={`${project.type || 'Construction'} project with ${projectTasks.length} tasks`}
+      breadcrumbs={[
+        { label: 'Team Space', href: '/workspace' },
+        { label: 'Projects', href: '/projects' },
+        { label: project.name, href: `/project/${project.id}` }
+      ]}
+      headerActions={headerActions}
+      tabs={tabs}
+      showProjectHeader={true}
+      projectInfo={{
+        name: project.name,
+        status: project.status || 'active'
+      }}
+    >
+      <Box className="clean-fade-in">
+        {renderTabContent()}
       </Box>
-
-      {/* Tab Content */}
-      <Box sx={{ px: 3, pt: 0, pb: 3 }}>
-        <Paper elevation={1} sx={{ mt: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0, borderRadius: '0 0 8px 8px' }}>
-          <Box sx={{ p: 3 }}>
-            {renderTabContent()}
-          </Box>
-        </Paper>
-      </Box>
-    </Box>
+    </CleanPageLayout>
   );
 };
 
