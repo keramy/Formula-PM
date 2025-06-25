@@ -639,12 +639,6 @@ const ProjectPage = ({
     <CleanPageLayout
       title={project.name}
       subtitle={`${project.type || 'Construction'} project with ${projectTasks.length} tasks`}
-      breadcrumbs={[
-        { label: 'Team Space', href: '/workspace' },
-        { label: 'Projects', href: '/projects' },
-        { label: project.name, href: `/project/${project.id}` }
-      ]}
-      headerActions={headerActions}
       tabs={tabs}
       showProjectHeader={true}
       projectInfo={{
