@@ -5,7 +5,6 @@ import {
   CardContent,
   Typography,
   Grid,
-  Chip,
   LinearProgress,
   List,
   ListItem,
@@ -13,8 +12,7 @@ import {
   ListItemIcon,
   Paper,
   Avatar,
-  Divider,
-  Button
+  Divider
 } from '@mui/material';
 import {
   ClipboardCheck as TaskIcon,
@@ -25,6 +23,7 @@ import {
   Clock as PendingIcon,
   Play as InProgressIcon
 } from 'iconoir-react';
+import { TaskStatusChip, ProjectTypeChip } from '../../../components/ui/StatusChip';
 
 const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress = 0 }) => {
   // Calculate task statistics
@@ -56,14 +55,13 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
     }
   };
 
-  const getTaskStatusColor = (status) => {
-    switch (status) {
-      case 'completed': return '#4CAF50';
-      case 'in-progress': return '#FF9800';
-      case 'pending': return '#2196F3';
-      default: return '#757575';
-    }
+  const formatProjectType = (type) => {
+    if (!type) return 'Millwork Project';
+    return type.split('-').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
   };
+
 
   return (
     <Grid container spacing={3}>
@@ -168,15 +166,9 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                         secondary={`Assigned to: ${teamMembers.find(m => m.id === task.assignedTo)?.fullName || 'Unassigned'}`}
                       />
                       <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
-                        <Chip
-                          label={task.status}
+                        <TaskStatusChip 
+                          status={task.status} 
                           size="small"
-                          sx={{
-                            backgroundColor: getTaskStatusColor(task.status),
-                            color: 'white',
-                            fontSize: '0.7rem',
-                            height: 18
-                          }}
                         />
                       </Box>
                     </ListItem>
@@ -307,23 +299,6 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
               </Grid>
             </Grid>
 
-            {/* Quick Actions */}
-            <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid #e0e0e0' }}>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Quick Actions
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                <Button size="small" variant="outlined" sx={{ fontSize: '0.75rem' }}>
-                  Add Task
-                </Button>
-                <Button size="small" variant="outlined" sx={{ fontSize: '0.75rem' }}>
-                  View Timeline
-                </Button>
-                <Button size="small" variant="outlined" sx={{ fontSize: '0.75rem' }}>
-                  Export Data
-                </Button>
-              </Box>
-            </Box>
           </CardContent>
         </Card>
 
@@ -374,9 +349,9 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                 <Typography variant="body2" color="text.secondary">
                   Project Type
                 </Typography>
-                <Typography variant="body1" fontWeight={500}>
-                  {project.type || 'Millwork Project'}
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                  <ProjectTypeChip type={project.type} size="small" />
+                </Box>
               </Box>
               <Box>
                 <Typography variant="body2" color="text.secondary">
