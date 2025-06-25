@@ -105,7 +105,8 @@
       "Bash(npx gh-pages:*)",
       "Bash(git branch:*)",
       "Bash(npm uninstall:*)",
-      "WebFetch(domain:react-icons.github.io)"
+      "WebFetch(domain:react-icons.github.io)",
+      "WebFetch(domain:iconoir.com)"
     ],
     "deny": []
   }

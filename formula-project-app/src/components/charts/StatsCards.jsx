@@ -7,11 +7,11 @@ import {
   LinearProgress
 } from '@mui/material';
 import {
-  Assignment,
+  ClipboardCheck as Assignment,
   CheckCircle,
-  Schedule,
+  Clock as Schedule,
   Warning
-} from '@mui/icons-material';
+} from 'iconoir-react';
 
 function StatsCards({ projects, tasks }) {
   const totalProjects = projects.length;

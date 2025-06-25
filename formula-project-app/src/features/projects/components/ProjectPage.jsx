@@ -14,7 +14,6 @@ import ProjectOverview from './ProjectOverview';
 import EnhancedProjectScope from './EnhancedProjectScope';
 import ProjectShopDrawings from './ProjectShopDrawings';
 import ProjectSpecifications from './ProjectSpecifications';
-import ComplianceDocumentation from './ComplianceDocumentation';
 import EnhancedGanttChart from '../../../components/charts/EnhancedGanttChart';
 import ProjectActivityFeed from './ProjectActivityFeed';
 import ReportsList from '../../reports/components/ReportsList';
@@ -534,16 +533,7 @@ const ProjectPage = ({
             projectId={projectId}
           />
         );
-      case 5: // Compliance
-        return (
-          <ComplianceDocumentation
-            project={project}
-            onUpdateCompliance={(updates) => {
-              console.log('Compliance updated:', updates);
-            }}
-          />
-        );
-      case 6: // Activity Feed
+      case 5: // Activity Feed
         return (
           <ProjectActivityFeed
             project={project}
@@ -552,7 +542,7 @@ const ProjectPage = ({
             teamMembers={teamMembers}
           />
         );
-      case 7: // Reports
+      case 6: // Reports
         if (editingReportId) {
           return (
             <SimpleReportEditor

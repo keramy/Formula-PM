@@ -6,14 +6,14 @@ import {
   Button
 } from '@mui/material';
 import {
-  Build,
-  Carpenter,
-  ElectricalServices,
-  Engineering,
-  CalendarToday,
-  Delete,
-  Business
-} from '@mui/icons-material';
+  Settings as Build,
+  Tools as Carpenter,
+  Flash as ElectricalServices,
+  Settings as Engineering,
+  Calendar as CalendarToday,
+  Trash as Delete,
+  Building as Business
+} from 'iconoir-react';
 import { StatusChip, ActionTooltip, StandardCard, ProjectStatusChip, ProjectTypeChip, ProjectCard, ActionIconButton, commonTooltips } from '../../../components/ui';
 import ProjectTeamAvatars from '../../../components/ui/ProjectTeamAvatars';
 import { 
@@ -100,7 +100,6 @@ function ProjectsList({ projects, tasks, clients = [], teamMembers = [], onDelet
               type={typeConfig}
               status={projectStatus}
               className={`project-card construction-card type-${project.type}`}
-              clickable={true}
               onClick={() => onViewProject && onViewProject(project)}
             >
 

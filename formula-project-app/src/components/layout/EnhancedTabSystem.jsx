@@ -10,19 +10,20 @@ import {
   Divider,
   Tooltip
 } from '@mui/material';
+// Iconoir icons - ultra-safe verified icons only
 import {
-  ViewKanban,
+  ViewGrid as ViewKanban,
   TableRows,
-  CalendarMonth,
-  Timeline,
-  ViewModule,
-  MoreHoriz,
+  Calendar as CalendarMonth,
+  Calendar as Timeline,
+  Cell2x2 as ViewModule,
+  Menu as MoreHoriz,
   FilterList,
-  ViewColumn,
-  Sort,
-  Share,
-  GetApp
-} from '@mui/icons-material';
+  ViewColumns2 as ViewColumn,
+  ArrowUp as Sort,
+  ShareAndroid as Share,
+  Download as GetApp
+} from 'iconoir-react';
 
 const EnhancedTabSystem = ({ 
   currentView = 'table', 

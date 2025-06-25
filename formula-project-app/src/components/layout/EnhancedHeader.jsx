@@ -18,21 +18,22 @@ import {
   useTheme as useMuiTheme,
   useMediaQuery
 } from '@mui/material';
+// Iconoir icons - ultra-safe verified icons only
 import { 
-  FaSearch as Search, 
-  FaPlus as Add, 
-  FaShare as Share, 
-  FaEllipsisH as MoreHoriz,
-  FaStar as Star,
-  FaRegStar as StarBorder,
-  FaHome as Home,
-  FaBuilding as Business,
-  FaMoon as Brightness4,
-  FaSun as Brightness7,
-  FaCog as Settings,
-  FaUser as Person,
-  FaSignOutAlt as Logout
-} from 'react-icons/fa';
+  Search, 
+  Plus as Add, 
+  ShareAndroid as Share, 
+  Menu as MoreHoriz,
+  Star,
+  Star as StarBorder,
+  Home,
+  Building as Business,
+  HalfMoon as Brightness4, // Dark mode icon
+  SunLight as Brightness7, // Light mode icon
+  Settings,
+  User as Person,
+  LogOut as Logout // Logout icon
+} from 'iconoir-react';
 import FormulaLogo from '../branding/FormulaLogo';
 import { FormulaLogoCompact } from '../branding/LogoVariations';
 import { useTheme as useFormulaTheme } from '../../context/ThemeContext';

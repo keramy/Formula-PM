@@ -7,14 +7,15 @@ import {
   IconButton,
   Chip
 } from '@mui/material';
+// Iconoir icons - safe navigation icons
 import {
   Home as HomeIcon,
-  ChevronRight as ChevronRightIcon,
-  ArrowBack as ArrowBackIcon,
-  ArrowForward as ArrowForwardIcon,
+  ArrowRight as ChevronRightIcon,
+  ArrowLeft as ArrowBackIcon,
+  ArrowRight as ArrowForwardIcon,
   Edit as EditIcon,
   Settings as SettingsIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import { useAuth } from '../../context/AuthContext';
 
 const Breadcrumbs = ({ 
@@ -55,7 +56,6 @@ const Breadcrumbs = ({
       case 'scope': return '📋';
       case 'drawings': return '🏗️';
       case 'specifications': return '📄';
-      case 'compliance': return '✅';
       default: return null;
     }
   };

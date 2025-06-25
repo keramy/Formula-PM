@@ -15,12 +15,12 @@ import {
   Alert
 } from '@mui/material';
 import {
-  ViewList as ListIcon,
-  ViewModule as GridIcon,
+  List as ListIcon,
+  ViewGrid as GridIcon,
   Refresh as RefreshIcon,
   FilterList as FilterIcon,
-  OpenInNew as OpenIcon
-} from '@mui/icons-material';
+  OpenInWindow as OpenIcon
+} from 'iconoir-react';
 import ActivityFeed, { CompactActivityFeed, DetailedActivityFeed } from '../../../components/realtime/ActivityFeed';
 import { useTheme } from '../../../context/ThemeContext';
 import { useNavigation } from '../../../context/NavigationContext';
@@ -74,10 +74,6 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
       case 'timeline':
         // Navigate to timeline
         navigateToProjectSection('timeline');
-        break;
-      case 'compliance':
-        // Navigate to compliance
-        navigateToProjectSection('compliance');
         break;
       default:
         console.log('Unknown activity type:', activity.type);

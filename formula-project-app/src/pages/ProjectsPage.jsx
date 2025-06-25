@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useCallback } from 'react';
 import { Box, Button, IconButton } from '@mui/material';
-import { Add, FilterList, ViewList, ViewModule, Timeline } from '@mui/icons-material';
+import { Plus as Add, FilterList, List as ViewList, ViewGrid as ViewModule, Calendar as Timeline } from 'iconoir-react';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { 
   ProjectsTableView,

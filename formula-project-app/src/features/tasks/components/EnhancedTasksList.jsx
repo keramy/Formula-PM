@@ -12,18 +12,18 @@ import {
 } from '@mui/material';
 import {
   CheckCircle,
-  Delete,
-  Person,
-  CalendarToday,
-  Assignment,
+  Trash as Delete,
+  User as Person,
+  Calendar as CalendarToday,
+  ClipboardCheck as Assignment,
   Warning,
   Undo,
   Edit as EditIcon,
-  Visibility as ViewIcon,
-  ViewList,
-  ViewModule,
-  DateRange
-} from '@mui/icons-material';
+  Eye as ViewIcon,
+  List as ViewList,
+  ViewGrid as ViewModule,
+  Calendar as DateRange
+} from 'iconoir-react';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';

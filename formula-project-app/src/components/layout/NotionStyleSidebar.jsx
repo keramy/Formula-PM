@@ -15,29 +15,30 @@ import {
   Paper,
   Tooltip
 } from '@mui/material';
+// Iconoir icons - verified working icons only
 import {
   Home,
-  Notifications,
-  Inbox,
-  Assignment,
+  Bell as Notifications,
+  Mail as Inbox,
+  Check as Assignment,
   Group,
-  ViewList,
+  List as ViewList,
   Folder,
-  ExpandLess,
-  ExpandMore,
-  Add,
+  ArrowUp as ExpandLess,
+  ArrowDown as ExpandMore,
+  Plus as Add,
   Search,
   Settings,
-  Person,
+  User as Person,
   Dashboard,
-  FolderOpen,
-  Timeline,
-  Engineering,
-  MenuOpen,
+  Folder as FolderOpen,
+  Calendar as Timeline,
+  Building as Engineering,
+  Menu as MenuOpen,
   Menu,
-  Description,
-  Business
-} from '@mui/icons-material';
+  Page as Description,
+  Building as Business
+} from 'iconoir-react';
 import FormulaLogo from '../branding/FormulaLogo';
 
 const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onToggleCollapse }) => {

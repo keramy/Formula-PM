@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Paper, Typography, Box, useTheme } from '@mui/material';
-import { FaArrowUp as TrendingUp, FaArrowDown as TrendingDown } from 'react-icons/fa';
+// Iconoir icons - migrated trending icons
+import { ArrowUp as TrendingUp, ArrowDown as TrendingDown } from 'iconoir-react';
 
 const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
   const theme = useTheme();

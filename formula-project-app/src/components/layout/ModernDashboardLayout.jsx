@@ -7,7 +7,7 @@ import { useNavigation } from '../../context/NavigationContext';
 
 const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [] }) => {
   const { user } = useAuth();
-  const { isInProjectContext, currentProjectId, currentSection } = useNavigation();
+  const { isInProjectContext, currentProjectId, currentSection, exitProjectContext } = useNavigation();
   const theme = useMuiTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     localStorage.getItem('sidebarCollapsed') === 'true'
@@ -99,10 +99,9 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
   const handleBreadcrumbNavigate = (href, item) => {
     console.log('Breadcrumb navigation:', href, item);
     
-    // Handle project navigation
-    if (href === '/projects') {
-      onTabChange(null, 1); // Navigate to All Projects tab
-      return;
+    // Always exit project context when navigating via breadcrumbs
+    if (isInProjectContext()) {
+      exitProjectContext();
     }
     
     // Handle main tab navigation

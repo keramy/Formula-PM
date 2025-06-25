@@ -8,16 +8,16 @@ import {
   Divider
 } from '@mui/material';
 import {
-  MoreVert as MoreVertIcon,
+  MoreVertCircle as MoreVertIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
-  Visibility as ViewIcon,
+  Trash as DeleteIcon,
+  Eye as ViewIcon,
   Star as StarIcon,
-  StarBorder as StarBorderIcon,
-  Share as ShareIcon,
-  ContentCopy as DuplicateIcon,
+  Star as StarBorderIcon,
+  ShareAndroid as ShareIcon,
+  Copy as DuplicateIcon,
   Archive as ArchiveIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 
 const OptionsMenu = ({ 
   options = [],

@@ -22,11 +22,11 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  MoreVert as MoreVertIcon,
+  MoreVertCircle as MoreVertIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
-  Visibility as ViewIcon
-} from '@mui/icons-material';
+  Trash as DeleteIcon,
+  Eye as ViewIcon
+} from 'iconoir-react';
 
 const UnifiedTableView = ({
   data,

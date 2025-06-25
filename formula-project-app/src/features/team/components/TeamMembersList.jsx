@@ -21,17 +21,17 @@ import {
 } from '@mui/material';
 import {
   Edit,
-  Delete,
-  Email,
+  Trash as Delete,
+  Mail as Email,
   Phone,
-  Work,
-  Person,
+  Building as Work,
+  User as Person,
   Star,
-  AccountTree,
-  AccessTime,
-  Visibility,
+  Group as AccountTree,
+  Clock as AccessTime,
+  Eye as Visibility,
   Edit as EditIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';

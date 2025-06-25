@@ -19,14 +19,15 @@ import {
   Menu,
   MenuItem
 } from '@mui/material';
+// Iconoir icons - migrated dashboard icons
 import {
   Search as SearchIcon,
-  Clear as ClearIcon,
-  Sort as SortIcon,
-  KeyboardArrowUp as ArrowUpIcon,
-  KeyboardArrowDown as ArrowDownIcon,
-  FileDownload as ExportIcon
-} from '@mui/icons-material';
+  Xmark as ClearIcon,
+  ArrowUp as SortIcon,
+  ArrowUp as ArrowUpIcon,
+  ArrowDown as ArrowDownIcon,
+  Download as ExportIcon
+} from 'iconoir-react';
 import { format, differenceInDays, differenceInMonths } from 'date-fns';
 import { exportProjectsToExcel } from '../../../services/export/excelExport';
 

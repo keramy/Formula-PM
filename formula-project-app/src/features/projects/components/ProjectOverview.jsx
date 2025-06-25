@@ -17,14 +17,14 @@ import {
   Button
 } from '@mui/material';
 import {
-  Assignment as TaskIcon,
-  Person as PersonIcon,
-  AttachMoney as MoneyIcon,
-  Timeline as TimelineIcon,
+  ClipboardCheck as TaskIcon,
+  User as PersonIcon,
+  DollarCircle as MoneyIcon,
+  Calendar as TimelineIcon,
   CheckCircle as CheckIcon,
-  Schedule as PendingIcon,
-  PlayArrow as InProgressIcon
-} from '@mui/icons-material';
+  Clock as PendingIcon,
+  Play as InProgressIcon
+} from 'iconoir-react';
 
 const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress = 0 }) => {
   // Calculate task statistics

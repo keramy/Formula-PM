@@ -10,12 +10,13 @@ import {
   Chip,
   LinearProgress
 } from '@mui/material';
+// Iconoir icons - safe board view icons
 import {
-  CalendarToday,
-  Person as PersonIcon,
-  Business,
-  AccountTree
-} from '@mui/icons-material';
+  Calendar as CalendarToday,
+  User as PersonIcon,
+  Building as Business,
+  Group as AccountTree
+} from 'iconoir-react';
 import { ProjectStatusChip, ProjectTypeChip, PriorityChip } from '../ui/StatusChip';
 import ProjectTeamAvatars from '../ui/ProjectTeamAvatars';
 import { getProjectStatusConfig, getProjectTypeConfig, getPriorityConfig } from '../../utils/statusConfig';

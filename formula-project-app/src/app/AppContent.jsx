@@ -16,7 +16,8 @@ import {
   DialogContent,
   Button
 } from '@mui/material';
-import { Add } from '@mui/icons-material';
+// Iconoir icons - migrated from Material-UI
+import { Plus as Add } from 'iconoir-react';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import NotificationContainer from '../components/ui/NotificationContainer';
 import ModernDashboardLayout from '../components/layout/ModernDashboardLayout';
@@ -458,12 +459,6 @@ export const AppContent = ({
         // Navigate to project's specifications section
         if (result.projectId) {
           handleNavigateToProject(result.projectId, 'specifications');
-        }
-        break;
-      case 'compliance':
-        // Navigate to project's compliance section
-        if (result.projectId) {
-          handleNavigateToProject(result.projectId, 'compliance');
         }
         break;
       default:

@@ -16,22 +16,22 @@ import {
   Badge
 } from '@mui/material';
 import {
-  Assignment,
-  People,
-  Business,
-  Comment,
-  Update,
-  Add,
+  ClipboardCheck as Assignment,
+  Group as People,
+  Building as Business,
+  ChatBubble as Comment,
+  Refresh as Update,
+  Plus as Add,
   Edit,
-  Delete,
+  Trash as Delete,
   Check,
-  PlayArrow,
+  Play as PlayArrow,
   Pause,
-  Block,
-  Description,
-  FileDownload,
-  Publish
-} from '@mui/icons-material';
+  Xmark as Block,
+  Page as Description,
+  Download as FileDownload,
+  Send as Publish
+} from 'iconoir-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useActivityFeed } from '../../hooks/useRealTime';
 import EnhancedActivityDescription from './EnhancedActivityDescription';

@@ -10,15 +10,16 @@ import {
   Tooltip,
   Badge
 } from '@mui/material';
+// Iconoir icons - safe header icons
 import {
   Search as SearchIcon,
-  Clear as ClearIcon,
-  FilterList as FilterIcon,
-  ViewList as TableViewIcon,
-  ViewModule as CardViewIcon,
-  FileDownload as ExportIcon,
-  Add as AddIcon
-} from '@mui/icons-material';
+  Xmark as ClearIcon,
+  Filter as FilterIcon,
+  List as TableViewIcon,
+  ViewGrid as CardViewIcon,
+  Download as ExportIcon,
+  Plus as AddIcon
+} from 'iconoir-react';
 
 const UnifiedHeader = ({
   title,

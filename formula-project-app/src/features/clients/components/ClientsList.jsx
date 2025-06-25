@@ -20,17 +20,17 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  MoreVert as MoreVertIcon,
+  MoreVertCircle as MoreVertIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
-  Business as BusinessIcon,
-  Email as EmailIcon,
+  Trash as DeleteIcon,
+  Building as BusinessIcon,
+  Mail as EmailIcon,
   Phone as PhoneIcon,
-  LocationOn as LocationIcon,
-  Language as WebsiteIcon,
-  Person as PersonIcon,
-  Visibility as ViewIcon
-} from '@mui/icons-material';
+  MapPin as LocationIcon,
+  Globe as WebsiteIcon,
+  User as PersonIcon,
+  Eye as ViewIcon
+} from 'iconoir-react';
 import { useNotification } from '../../../context';
 import ClientForm from './ClientForm';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
