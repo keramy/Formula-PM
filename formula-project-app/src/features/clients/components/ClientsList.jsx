@@ -38,7 +38,7 @@ import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';
 import { exportClientsToExcel } from '../../../services/export/excelExport';
 
-const ClientsList = ({ clients, onUpdateClient, onDeleteClient, onAddClient, viewMode: propViewMode, onViewModeChange: propOnViewModeChange }) => {
+const ClientsList = ({ clients = [], onUpdateClient, onDeleteClient, onAddClient, viewMode: propViewMode, onViewModeChange: propOnViewModeChange }) => {
   const { showNotification } = useNotification();
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -255,7 +255,8 @@ const ClientsList = ({ clients, onUpdateClient, onDeleteClient, onAddClient, vie
 
   // Filter and sort clients
   const filteredAndSortedClients = useMemo(() => {
-    let filtered = clients.filter(client => {
+    const safeClients = Array.isArray(clients) ? clients : [];
+    let filtered = safeClients.filter(client => {
       // Search filter
       const searchLower = searchValue.toLowerCase();
       const matchesSearch = !searchValue || 

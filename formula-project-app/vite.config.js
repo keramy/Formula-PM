@@ -12,6 +12,7 @@ export default defineConfig({
   ],
   server: {
     port: 3003,
+    strictPort: false, // Allow fallback port for now
     host: '0.0.0.0', // Essential for WSL2 localhost access
     open: false, // Disable auto-open due to WSL2 localhost issues
     hmr: {
@@ -68,5 +69,5 @@ export default defineConfig({
       },
     },
   },
-  base: process.env.NODE_ENV === 'production' ? '/Formula-PM/' : '/',
+  base: '/',
 })

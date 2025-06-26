@@ -13,7 +13,7 @@ export const useAppInitialization = (teamMembers, projects, tasks) => {
       PerformanceMonitor.init();
       
       // Optional: Log performance metrics during development
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.MODE === 'development') {
         console.log('🚀 Performance monitoring initialized');
       }
     } catch (error) {
@@ -27,7 +27,7 @@ export const useAppInitialization = (teamMembers, projects, tasks) => {
       try {
         notificationService.init(teamMembers, projects, tasks);
         
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.MODE === 'development') {
           console.log('🔔 Notification service initialized with:', {
             teamMembers: teamMembers.length,
             projects: projects.length,
@@ -39,7 +39,7 @@ export const useAppInitialization = (teamMembers, projects, tasks) => {
         return () => {
           try {
             notificationService.destroy();
-            if (process.env.NODE_ENV === 'development') {
+            if (import.meta.env.MODE === 'development') {
               console.log('🔔 Notification service destroyed');
             }
           } catch (error) {
@@ -78,7 +78,7 @@ export const useAppInitialization = (teamMembers, projects, tasks) => {
 
   // Monitor performance and log warnings in development
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.MODE === 'development') {
       const checkPerformance = () => {
         const navigation = performance.getEntriesByType('navigation')[0];
         if (navigation) {

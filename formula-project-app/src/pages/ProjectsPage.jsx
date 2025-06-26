@@ -77,18 +77,19 @@ const ProjectsPage = ({
 
   // Calculate project statistics
   const projectStats = useMemo(() => {
-    const totalProjects = projects.length;
-    const activeProjects = projects.filter(p => p.status === 'active' || p.status === 'in-progress').length;
-    const completedProjects = projects.filter(p => p.status === 'completed').length;
-    const overdueProjects = projects.filter(p => {
+    const safeProjects = Array.isArray(projects) ? projects : [];
+    const totalProjects = safeProjects.length;
+    const activeProjects = safeProjects.filter(p => p.status === 'active' || p.status === 'in-progress').length;
+    const completedProjects = safeProjects.filter(p => p.status === 'completed').length;
+    const overdueProjects = safeProjects.filter(p => {
       const dueDate = new Date(p.endDate);
       const today = new Date();
       return p.status !== 'completed' && dueDate < today;
     }).length;
 
-    const totalBudget = projects.reduce((sum, p) => sum + (p.budget || 0), 0);
-    const averageProgress = projects.length > 0 
-      ? Math.round(projects.reduce((sum, p) => sum + (p.progress || 0), 0) / projects.length)
+    const totalBudget = safeProjects.reduce((sum, p) => sum + (p.budget || 0), 0);
+    const averageProgress = safeProjects.length > 0 
+      ? Math.round(safeProjects.reduce((sum, p) => sum + (p.progress || 0), 0) / safeProjects.length)
       : 0;
 
     return {

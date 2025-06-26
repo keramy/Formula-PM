@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import authService from '../services/auth/authService';
+import { AUTH_CONFIG } from '../config/auth.config';
 
 const AuthContext = createContext();
 
@@ -10,54 +12,8 @@ export const useAuth = () => {
   return context;
 };
 
-// User roles enum
-export const USER_ROLES = {
-  ADMIN: 'admin',
-  CO_FOUNDER: 'co_founder',
-  PROJECT_MANAGER: 'project_manager'
-};
-
-// Demo users for development
-const DEMO_USERS = [
-  {
-    id: 'USER001',
-    email: 'admin@formulapm.com',
-    password: 'admin123',
-    name: 'Formula Admin',
-    role: USER_ROLES.ADMIN,
-    avatar: '/avatars/admin.jpg',
-    department: 'Management'
-  },
-  {
-    id: 'USER002',
-    email: 'cofounder@formulapm.com',
-    password: 'cofounder123',
-    name: 'John Co-founder',
-    role: USER_ROLES.CO_FOUNDER,
-    avatar: '/avatars/cofounder.jpg',
-    department: 'Executive'
-  },
-  {
-    id: 'USER003',
-    email: 'pm1@formulapm.com',
-    password: 'pm123',
-    name: 'Sarah Wilson',
-    role: USER_ROLES.PROJECT_MANAGER,
-    avatar: '/avatars/pm1.jpg',
-    department: 'Projects',
-    assignedProjects: ['P001', 'P002']
-  },
-  {
-    id: 'USER004',
-    email: 'pm2@formulapm.com',
-    password: 'pm123',
-    name: 'Mike Johnson',
-    role: USER_ROLES.PROJECT_MANAGER,
-    avatar: '/avatars/pm2.jpg',
-    department: 'Projects',
-    assignedProjects: ['P003']
-  }
-];
+// Export user roles from config
+export const USER_ROLES = AUTH_CONFIG.USER_ROLES;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -66,128 +22,129 @@ export const AuthProvider = ({ children }) => {
 
   // Check for existing session on mount
   useEffect(() => {
-    const token = localStorage.getItem('formulapm_token');
-    const userData = localStorage.getItem('formulapm_user');
-    
-    if (token && userData) {
-      try {
-        const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-        setLoading(false);
-        return;
-      } catch (error) {
-        console.error('Error parsing stored user data:', error);
-        localStorage.removeItem('formulapm_token');
-        localStorage.removeItem('formulapm_user');
-      }
-    }
-    
-    // Auto-login as admin for development
-    if (process.env.NODE_ENV === 'development') {
-      try {
-        console.log('Auto-logging in as admin for development...');
-        const adminUser = DEMO_USERS[0]; // Admin user
-        const { password: _, ...userSession } = adminUser;
-        
-        // Generate demo JWT token
-        const autoToken = btoa(JSON.stringify({ 
-          userId: userSession.id, 
-          email: userSession.email,
-          role: userSession.role,
-          exp: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-        }));
-
-        // Store in localStorage
-        localStorage.setItem('formulapm_token', autoToken);
-        localStorage.setItem('formulapm_user', JSON.stringify(userSession));
-        
-        setUser(userSession);
-      } catch (error) {
-        console.error('Failed to auto-login in development:', error);
-        setError('Development auto-login failed');
-      }
-    }
-    
-    setLoading(false);
+    checkAuthStatus();
   }, []);
 
-  const login = async (email, password) => {
+  const checkAuthStatus = async () => {
     try {
-      setError(null);
-      setLoading(true);
-
-      // Find user in demo users
-      const foundUser = DEMO_USERS.find(
-        u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-      );
-
-      if (!foundUser) {
-        throw new Error('Invalid email or password');
-      }
-
-      // Create user session (exclude password)
-      const { password: _, ...userSession } = foundUser;
+      // First check if we have stored credentials
+      const storedUser = authService.getCurrentUser();
       
-      // Generate demo JWT token
-      const token = btoa(JSON.stringify({ 
-        userId: userSession.id, 
-        email: userSession.email,
-        role: userSession.role,
-        exp: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-      }));
-
-      // Store in localStorage
-      localStorage.setItem('formulapm_token', token);
-      localStorage.setItem('formulapm_user', JSON.stringify(userSession));
-
-      setUser(userSession);
-      return { success: true, user: userSession };
+      if (storedUser) {
+        // Try to verify token with backend
+        try {
+          const { valid, user: verifiedUser } = await authService.verifyToken();
+          
+          if (valid && verifiedUser) {
+            setUser(verifiedUser);
+          } else {
+            // Token invalid, clear storage
+            await authService.logout();
+            setUser(null);
+          }
+        } catch (apiError) {
+          // If API is not available, handle based on environment
+          if (import.meta.env.MODE === 'development') {
+            // In development, create a demo user if none exists
+            const demoUser = {
+              id: 'demo-user',
+              name: 'Demo User',
+              email: 'demo@formulapm.com',
+              role: 'admin'
+            };
+            console.warn('Auth API not available in development, using demo user');
+            setUser(storedUser || demoUser);
+          } else {
+            console.warn('Auth API not available, using stored user:', apiError.message);
+            setUser(storedUser);
+          }
+        }
+      } else {
+        // No stored user - in development, provide demo user
+        if (import.meta.env.MODE === 'development') {
+          const demoUser = {
+            id: 'demo-user',
+            name: 'Demo User',
+            email: 'demo@formulapm.com',
+            role: 'admin'
+          };
+          console.log('No stored user in development, using demo user');
+          setUser(demoUser);
+        } else {
+          setUser(null);
+        }
+      }
     } catch (error) {
-      setError(error.message);
-      return { success: false, error: error.message };
+      console.error('Error checking auth status:', error);
+      setUser(null); // Ensure user is null on error
+      setError('Failed to verify authentication');
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('formulapm_token');
-    localStorage.removeItem('formulapm_user');
-    setUser(null);
-    setError(null);
-  };
+  const login = useCallback(async (email, password) => {
+    try {
+      setError(null);
+      setLoading(true);
 
-  const hasPermission = (permission) => {
+      const result = await authService.login(email, password);
+
+      if (result.success) {
+        setUser(result.user);
+        return { success: true, user: result.user };
+      } else {
+        setError(result.error);
+        return { success: false, error: result.error };
+      }
+    } catch (error) {
+      const errorMessage = 'An unexpected error occurred';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await authService.logout();
+      setUser(null);
+      setError(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Still clear local state even if API call fails
+      setUser(null);
+      setError(null);
+    }
+  }, []);
+
+  const refreshAuth = useCallback(async () => {
+    try {
+      const result = await authService.refreshToken();
+      
+      if (!result.success) {
+        // Token refresh failed, logout user
+        await logout();
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      await logout();
+      return false;
+    }
+  }, [logout]);
+
+  const hasPermission = useCallback((permission) => {
     if (!user) return false;
+    
+    const permissions = AUTH_CONFIG.ROLE_PERMISSIONS[user.role] || [];
+    return permissions.includes(permission);
+  }, [user]);
 
-    const permissions = {
-      [USER_ROLES.ADMIN]: [
-        'view_all_projects',
-        'edit_all_projects',
-        'delete_all_projects',
-        'manage_users',
-        'view_admin_dashboard',
-        'export_data'
-      ],
-      [USER_ROLES.CO_FOUNDER]: [
-        'view_all_projects',
-        'view_executive_dashboard'
-      ],
-      [USER_ROLES.PROJECT_MANAGER]: [
-        'view_assigned_projects',
-        'edit_assigned_projects',
-        'create_projects',
-        'manage_scope',
-        'manage_drawings',
-        'manage_specifications',
-        'view_pm_dashboard'
-      ]
-    };
-
-    return permissions[user.role]?.includes(permission) || false;
-  };
-
-  const canAccessProject = (projectId) => {
+  const canAccessProject = useCallback((projectId) => {
     if (!user) return false;
 
     // Admin can access all projects
@@ -202,9 +159,9 @@ export const AuthProvider = ({ children }) => {
     }
 
     return false;
-  };
+  }, [user]);
 
-  const canEditProject = (projectId) => {
+  const canEditProject = useCallback((projectId) => {
     if (!user) return false;
 
     // Admin can edit all projects
@@ -219,9 +176,9 @@ export const AuthProvider = ({ children }) => {
     }
 
     return false;
-  };
+  }, [user]);
 
-  const getAccessibleProjects = (allProjects) => {
+  const getAccessibleProjects = useCallback((allProjects) => {
     if (!user || !allProjects) return [];
 
     // Admin and co-founders see all projects
@@ -235,7 +192,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return [];
-  };
+  }, [user]);
 
   const isAuthenticated = !!user;
 
@@ -246,6 +203,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     login,
     logout,
+    refreshAuth,
     hasPermission,
     canAccessProject,
     canEditProject,

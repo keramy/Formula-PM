@@ -1,5 +1,5 @@
 // Debug utilities for development
-export const isDevelopment = process.env.NODE_ENV === 'development';
+export const isDevelopment = import.meta.env.MODE === 'development';
 
 export const debugLog = (message, data = null) => {
   if (isDevelopment) {

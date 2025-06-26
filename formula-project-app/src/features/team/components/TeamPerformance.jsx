@@ -18,12 +18,17 @@ import {
   Schedule
 } from '@mui/icons-material';
 
-const TeamPerformance = ({ teamMembers, tasks, projects }) => {
+const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
   const theme = useTheme();
+
+  // Ensure all props are arrays
+  const safeTeamMembers = Array.isArray(teamMembers) ? teamMembers : [];
+  const safeTasks = Array.isArray(tasks) ? tasks : [];
+  const safeProjects = Array.isArray(projects) ? projects : [];
 
   // Calculate team performance metrics
   const getTeamMemberStats = (memberId) => {
-    const memberTasks = tasks.filter(task => task.assignedTo === memberId);
+    const memberTasks = safeTasks.filter(task => task.assignedTo === memberId);
     const completedTasks = memberTasks.filter(task => task.status === 'completed');
     const activeTasks = memberTasks.filter(task => task.status === 'active' || task.status === 'in-progress');
     const overdueTasks = memberTasks.filter(task => {
@@ -33,7 +38,7 @@ const TeamPerformance = ({ teamMembers, tasks, projects }) => {
       return dueDate < today && task.status !== 'completed';
     });
 
-    const memberProjects = projects.filter(project => 
+    const memberProjects = safeProjects.filter(project => 
       project.teamMembers && project.teamMembers.includes(memberId)
     );
 
@@ -66,12 +71,12 @@ const TeamPerformance = ({ teamMembers, tasks, projects }) => {
 
   // Calculate team summary stats
   const teamStats = {
-    totalMembers: teamMembers.length,
-    totalTasks: tasks.length,
-    completedTasks: tasks.filter(task => task.status === 'completed').length,
-    averageCompletion: teamMembers.length > 0 ? 
-      Math.round(teamMembers.reduce((sum, member) => 
-        sum + getTeamMemberStats(member.id).completionRate, 0) / teamMembers.length) : 0
+    totalMembers: safeTeamMembers.length,
+    totalTasks: safeTasks.length,
+    completedTasks: safeTasks.filter(task => task.status === 'completed').length,
+    averageCompletion: safeTeamMembers.length > 0 ? 
+      Math.round(safeTeamMembers.reduce((sum, member) => 
+        sum + getTeamMemberStats(member.id).completionRate, 0) / safeTeamMembers.length) : 0
   };
 
   return (
@@ -150,7 +155,7 @@ const TeamPerformance = ({ teamMembers, tasks, projects }) => {
         </Typography>
 
         <Grid container spacing={3}>
-          {teamMembers.map((member) => {
+          {safeTeamMembers.map((member) => {
             const stats = getTeamMemberStats(member.id);
             return (
               <Grid item xs={12} md={6} lg={4} key={member.id}>

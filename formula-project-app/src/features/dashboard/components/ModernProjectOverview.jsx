@@ -31,7 +31,7 @@ import {
 import { format, differenceInDays, differenceInMonths } from 'date-fns';
 import { exportProjectsToExcel } from '../../../services/export/excelExport';
 
-const ModernProjectOverview = ({ projects, tasks, teamMembers, clients = [], onViewProject }) => {
+const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], clients = [], onViewProject }) => {
   const [filter, setFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
@@ -91,7 +91,8 @@ const ModernProjectOverview = ({ projects, tasks, teamMembers, clients = [], onV
 
   // Calculate project statistics
   const getProjectStats = (projectId) => {
-    const projectTasks = tasks.filter(task => task.projectId === projectId);
+    const safeTasks = Array.isArray(tasks) ? tasks : [];
+    const projectTasks = safeTasks.filter(task => task.projectId === projectId);
     const completedTasks = projectTasks.filter(task => task.status === 'completed');
     const progress = projectTasks.length > 0 ? Math.round((completedTasks.length / projectTasks.length) * 100) : 0;
     
@@ -129,7 +130,8 @@ const ModernProjectOverview = ({ projects, tasks, teamMembers, clients = [], onV
 
   // Filter and sort projects
   const filteredAndSortedProjects = useMemo(() => {
-    let filtered = projects.filter(project => {
+    const safeProjects = Array.isArray(projects) ? projects : [];
+    let filtered = safeProjects.filter(project => {
       // Basic filter (All/Active/Completed)
       const matchesBasicFilter = 
         filter === 'All' || 

@@ -18,17 +18,18 @@ export { ProjectCard, TaskCard } from './StandardCards';
 
 // Comprehensive loading states
 export {
-  default as LoadingStates,
+  default as UnifiedLoading,
+  LoadingScreen,
+  FormulaLoadingScreen,
+  LoadingFallback,
   PageLoading,
   SectionLoading,
   CardSkeleton,
   ListLoading,
-  TableLoading,
-  FormLoading,
-  DashboardLoading,
+  FormSkeleton,
   InlineLoading,
   LoadingWrapper
-} from './LoadingStates';
+} from './UnifiedLoading';
 
 // Re-export existing components for convenience
 export { default as UnifiedHeader } from './UnifiedHeader';

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Box, Container, Typography, IconButton, Tooltip, useTheme as useMuiTheme } from '@mui/material';
+import { Outlet, useLocation } from 'react-router-dom';
+import { Box, Container, Typography, useTheme as useMuiTheme } from '@mui/material';
 import NotionStyleSidebar from './NotionStyleSidebar';
 import Breadcrumbs from '../navigation/Breadcrumbs';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigation } from '../../context/NavigationContext';
 
-const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [] }) => {
+const ModernDashboardLayout = ({ projects = [] }) => {
   const { user } = useAuth();
+  const location = useLocation();
   const { isInProjectContext, currentProjectId, currentSection, exitProjectContext } = useNavigation();
   const theme = useMuiTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
@@ -30,21 +32,20 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
       return 'Project Details';
     }
     
-    // Otherwise show tab-based titles
-    switch (currentTab) {
-      case 0: return 'Dashboard';
-      case 1: return 'All Projects';
-      case 2: return 'My Work';
-      case 3: return 'Tasks';
-      case 4: return 'Team';
-      case 5: return 'Clients';
-      case 6: return 'Procurement';
-      case 7: return 'Timeline';
-      case 8: return 'Shop Drawings';
-      case 9: return 'Material Specs';
-      case 10: return 'Activity Feed';
-      default: return 'Dashboard';
-    }
+    // Otherwise derive from route
+    const path = location.pathname;
+    if (path === '/' || path === '/dashboard') return 'Dashboard';
+    if (path.startsWith('/projects')) return 'All Projects';
+    if (path.startsWith('/my-work')) return 'My Work';
+    if (path.startsWith('/tasks')) return 'Tasks';
+    if (path.startsWith('/team')) return 'Team';
+    if (path.startsWith('/clients')) return 'Clients';
+    if (path.startsWith('/procurement')) return 'Procurement';
+    if (path.startsWith('/timeline')) return 'Timeline';
+    if (path.startsWith('/shop-drawings')) return 'Shop Drawings';
+    if (path.startsWith('/material-specs')) return 'Material Specs';
+    if (path.startsWith('/activity')) return 'Activity Feed';
+    return 'Dashboard';
   };
 
   const getBreadcrumbItems = () => {
@@ -65,7 +66,8 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
       return items;
     }
     
-    // Otherwise show tab-based breadcrumbs
+    // Otherwise derive from route
+    const currentTab = getCurrentTab();
     switch (currentTab) {
       case 0: 
         return [{ label: 'Dashboard', href: '/dashboard' }];
@@ -97,33 +99,15 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
   };
 
   const handleBreadcrumbNavigate = (href, item) => {
-    console.log('Breadcrumb navigation:', href, item);
+    // Breadcrumb navigation with React Router
     
     // Always exit project context when navigating via breadcrumbs
     if (isInProjectContext()) {
       exitProjectContext();
     }
     
-    // Handle main tab navigation
-    const tabMapping = {
-      '/dashboard': 0,
-      '/projects': 1,
-      '/my-work': 2,
-      '/tasks': 3,
-      '/team': 4,
-      '/clients': 5,
-      '/procurement': 6,
-      '/timeline': 7,
-      '/shop-drawings': 8,
-      '/material-specs': 9,
-      '/activity-feed': 10,
-      '/reports': 'reports'
-    };
-    
-    const targetTab = tabMapping[href];
-    if (targetTab !== undefined) {
-      onTabChange(null, targetTab);
-    }
+    // React Router will handle the navigation automatically through Link components
+    // in the Breadcrumbs component
   };
 
   const getWelcomeMessage = () => {
@@ -146,25 +130,37 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
       return 'Project management and tracking tools';
     }
     
-    // Otherwise show tab-based messages
-    switch (currentTab) {
-      case 0: return `Welcome back, ${userName}. Here's what's happening.`;
-      case 1: return 'Manage and track all your construction projects.';
-      case 2: return 'View your assigned projects and personal tasks.';
-      case 3: return 'View and manage tasks across all projects.';
-      case 4: return 'Manage your team members and assignments.';
-      case 5: return 'Manage client information and contacts.';
-      case 6: return 'Procurement management and supplier tracking.';
-      case 7: return 'Project timelines and Gantt chart overview.';
-      case 8: return 'Shop drawings and technical documentation.';
-      case 9: return 'Material specifications and requirements.';
-      case 10: return 'Track all project updates and team activities in real-time.';
-      default: return `Welcome back, ${userName}. Here's what's happening.`;
-    }
+    // Otherwise derive from route
+    const path = location.pathname;
+    if (path === '/' || path === '/dashboard') return `Welcome back, ${userName}. Here's what's happening.`;
+    if (path.startsWith('/projects')) return 'Manage and track all your construction projects.';
+    if (path.startsWith('/my-work')) return 'View your assigned projects and personal tasks.';
+    if (path.startsWith('/tasks')) return 'View and manage tasks across all projects.';
+    if (path.startsWith('/team')) return 'Manage your team members and assignments.';
+    if (path.startsWith('/clients')) return 'Manage client information and contacts.';
+    if (path.startsWith('/procurement')) return 'Procurement management and supplier tracking.';
+    if (path.startsWith('/timeline')) return 'Project timelines and Gantt chart overview.';
+    if (path.startsWith('/shop-drawings')) return 'Shop drawings and technical documentation.';
+    if (path.startsWith('/material-specs')) return 'Material specifications and requirements.';
+    if (path.startsWith('/activity')) return 'Track all project updates and team activities in real-time.';
+    return `Welcome back, ${userName}. Here's what's happening.`;
   };
 
   const getCurrentTab = () => {
-    return currentTab || 0;
+    // Derive current tab from route
+    const path = location.pathname;
+    if (path === '/' || path === '/dashboard') return 0;
+    if (path.startsWith('/projects')) return 1;
+    if (path.startsWith('/my-work')) return 2;
+    if (path.startsWith('/tasks')) return 3;
+    if (path.startsWith('/team')) return 4;
+    if (path.startsWith('/clients')) return 5;
+    if (path.startsWith('/procurement')) return 6;
+    if (path.startsWith('/timeline')) return 7;
+    if (path.startsWith('/shop-drawings')) return 8;
+    if (path.startsWith('/material-specs')) return 9;
+    if (path.startsWith('/activity')) return 10;
+    return 0;
   };
 
   return (
@@ -176,7 +172,7 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
       {/* Sidebar */}
       <NotionStyleSidebar 
         currentTab={getCurrentTab()} 
-        onTabChange={onTabChange}
+        onTabChange={() => {}} // No longer needed with router navigation
         user={user}
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={handleToggleSidebar}
@@ -211,11 +207,11 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
             currentSection={currentSection}
             showProjectActions={isInProjectContext()}
             onEditProject={() => {
-              console.log('Edit project clicked');
+              // Edit project clicked
               // This will be connected to edit project functionality
             }}
             onProjectSettings={() => {
-              console.log('Project settings clicked');
+              // Project settings clicked
               // This will be connected to project settings functionality
             }}
           />
@@ -231,7 +227,7 @@ const ModernDashboardLayout = ({ children, currentTab, onTabChange, projects = [
             maxWidth: 'none'
           }}
         >
-          {children}
+          <Outlet />
         </Container>
       </Box>
     </Box>

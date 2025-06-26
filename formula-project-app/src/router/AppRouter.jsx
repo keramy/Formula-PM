@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import ModernDashboardLayout from '../components/layout/ModernDashboardLayout';
@@ -47,8 +47,7 @@ const DashboardSkeleton = () => (
  */
 const AppRouter = () => {
   return (
-    <BrowserRouter>
-      <Suspense fallback={<PageLoader />}>
+    <Suspense fallback={<PageLoader />}>
         <Routes>
         {/* Public route */}
         <Route path="/login" element={<Login />} />
@@ -129,8 +128,7 @@ const AppRouter = () => {
           }
         />
         </Routes>
-      </Suspense>
-    </BrowserRouter>
+    </Suspense>
   );
 };
 

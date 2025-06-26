@@ -3,26 +3,31 @@ import { Grid, Paper, Typography, Box, useTheme } from '@mui/material';
 // Iconoir icons - migrated trending icons
 import { ArrowUp as TrendingUp, ArrowDown as TrendingDown } from 'iconoir-react';
 
-const ModernStatsCards = ({ projects, tasks, teamMembers }) => {
+const ModernStatsCards = ({ projects = [], tasks = [], teamMembers = [] }) => {
   const theme = useTheme();
   
+  // Ensure all props are arrays
+  const safeProjects = Array.isArray(projects) ? projects : [];
+  const safeTasks = Array.isArray(tasks) ? tasks : [];
+  const safeTeamMembers = Array.isArray(teamMembers) ? teamMembers : [];
+  
   // Calculate statistics
-  const totalProjects = projects.length;
-  const completedTasks = tasks.filter(task => task.status === 'completed').length;
-  const totalTasks = tasks.length;
-  const activeProjects = projects.filter(project => project.status === 'active').length;
+  const totalProjects = safeProjects.length;
+  const completedTasks = safeTasks.filter(task => task.status === 'completed').length;
+  const totalTasks = safeTasks.length;
+  const activeProjects = safeProjects.filter(project => project.status === 'active').length;
   
   // Calculate budget statistics
-  const totalBudget = projects.reduce((sum, project) => sum + (project.budget || 0), 0);
-  const activeBudget = projects
+  const totalBudget = safeProjects.reduce((sum, project) => sum + (project.budget || 0), 0);
+  const activeBudget = safeProjects
     .filter(project => project.status === 'active')
     .reduce((sum, project) => sum + (project.budget || 0), 0);
-  const completedBudget = projects
+  const completedBudget = safeProjects
     .filter(project => project.status === 'completed')
     .reduce((sum, project) => sum + (project.budget || 0), 0);
   
   // Calculate average project progress for active projects
-  const activeProjectsProgress = projects
+  const activeProjectsProgress = safeProjects
     .filter(project => project.status === 'active')
     .reduce((sum, project) => sum + (project.progress || 0), 0);
   const avgProgress = activeProjects > 0 ? Math.round(activeProjectsProgress / activeProjects) : 0;

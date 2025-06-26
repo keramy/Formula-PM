@@ -61,7 +61,7 @@ const EnhancedHeader = ({
   const { mode, toggleTheme, isDarkMode } = useFormulaTheme();
 
   // Debug logging
-  console.log('EnhancedHeader props:', { createButtonText, onAdd, title });
+  // EnhancedHeader props received
   const darkMode = isDarkMode;
   
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
@@ -442,7 +442,7 @@ const EnhancedHeader = ({
           </Tooltip>
           
           {/* Debug: Check button rendering logic */}
-          {console.log('Button render check:', { hasCreateButtonText: !!createButtonText, createButtonText, hasOnAdd: !!onAdd })}
+          {/* Button render check */}
           {onAdd && (
             (createButtonText || title === 'All Projects') ? (
               <Button

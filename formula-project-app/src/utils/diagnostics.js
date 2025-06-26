@@ -6,7 +6,7 @@ export class DiagnosticTools {
       environment: {
         userAgent: navigator.userAgent,
         url: window.location.href,
-        nodeEnv: process.env.NODE_ENV,
+        nodeEnv: import.meta.env.MODE,
         reactVersion: React.version,
       },
       performance: await this.getPerformanceMetrics(),

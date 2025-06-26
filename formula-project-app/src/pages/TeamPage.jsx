@@ -46,20 +46,23 @@ const TeamPage = ({
 
   // Calculate team statistics
   const teamStats = useMemo(() => {
-    const totalMembers = teamMembers.length;
-    const activeMembers = teamMembers.filter(m => m.status === 'active').length;
-    const totalTasks = tasks.length;
-    const completedTasks = tasks.filter(t => t.status === 'completed').length;
-    const averageCompletion = teamMembers.length > 0 
-      ? Math.round(teamMembers.reduce((sum, member) => {
-          const memberTasks = tasks.filter(task => task.assignedTo === member.id);
+    const safeTeamMembers = Array.isArray(teamMembers) ? teamMembers : [];
+    const safeTasks = Array.isArray(tasks) ? tasks : [];
+    
+    const totalMembers = safeTeamMembers.length;
+    const activeMembers = safeTeamMembers.filter(m => m.status === 'active').length;
+    const totalTasks = safeTasks.length;
+    const completedTasks = safeTasks.filter(t => t.status === 'completed').length;
+    const averageCompletion = safeTeamMembers.length > 0 
+      ? Math.round(safeTeamMembers.reduce((sum, member) => {
+          const memberTasks = safeTasks.filter(task => task.assignedTo === member.id);
           const memberCompleted = memberTasks.filter(task => task.status === 'completed').length;
           return sum + (memberTasks.length > 0 ? (memberCompleted / memberTasks.length) * 100 : 0);
-        }, 0) / teamMembers.length)
+        }, 0) / safeTeamMembers.length)
       : 0;
 
-    const highPerformers = teamMembers.filter(member => {
-      const memberTasks = tasks.filter(task => task.assignedTo === member.id);
+    const highPerformers = safeTeamMembers.filter(member => {
+      const memberTasks = safeTasks.filter(task => task.assignedTo === member.id);
       const memberCompleted = memberTasks.filter(task => task.status === 'completed').length;
       const memberCompletionRate = memberTasks.length > 0 ? (memberCompleted / memberTasks.length) * 100 : 0;
       return memberCompletionRate >= 80;

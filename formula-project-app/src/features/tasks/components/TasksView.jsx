@@ -72,7 +72,7 @@ const statusConfig = {
   completed: { label: 'Completed', color: '#27ae60', bgColor: '#eafaf1', icon: <CheckCircle /> }
 };
 
-const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTask, onAddTask, onViewTask, onEditTask }) {
+const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTask, onAddTask, onViewTask, onEditTask }) {
   const [searchValue, setSearchValue] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   // Removed internal tab system for consistency with other tabs
@@ -681,4 +681,4 @@ const EnhancedTasksView = React.memo(function EnhancedTasksView({ tasks, project
   );
 });
 
-export default EnhancedTasksView;
+export default TasksView;

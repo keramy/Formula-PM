@@ -4,7 +4,7 @@ import {
   Typography,
   Alert
 } from '@mui/material';
-import { LoadingFallback } from '../../../components/common/LoadingFallback';
+import { UnifiedLoading } from '../../../components/ui/UnifiedLoading';
 
 // Lazy load the MaterialSpecificationsList component
 const MaterialSpecificationsList = React.lazy(() => import('../../specifications/components/MaterialSpecificationsList'));
@@ -19,7 +19,7 @@ const ProjectSpecifications = ({ project, projectId }) => {
         Manage material specifications and cost tracking for {project.name}
       </Typography>
 
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<UnifiedLoading variant="section" message="Loading specifications..." />}>
         <MaterialSpecificationsList 
           projectFilter={projectId}
           projects={[project]}

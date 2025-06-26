@@ -4,9 +4,9 @@ import AppProviders from '../components/providers/AppProviders';
 import GlobalComponents from '../components/global/GlobalComponents';
 import { useAppInitialization } from '../hooks/useAppInitialization';
 import { useAuthenticatedData } from '../hooks/useAuthenticatedData';
-import FormulaLoadingScreen from '../components/ui/FormulaLoadingScreen';
+import { FormulaLoadingScreen } from '../components/ui/UnifiedLoading';
 import ErrorBoundary from '../components/common/ErrorBoundary';
-import { AppContent } from './AppContent';
+import AppRouter from '../router/AppRouter';
 import './App.css';
 import '../styles/globals.css';
 import '../styles/modern-dashboard.css';
@@ -82,32 +82,8 @@ function AppWithProviders() {
         height: '1.2em'
       }}
     >
-      {/* Main application content with all business logic */}
-      <AppContent
-        // Data props
-        projects={projects}
-        tasks={tasks}
-        teamMembers={teamMembers}
-        clients={clients}
-        // State props
-        loading={loading}
-        error={error}
-        // CRUD operations
-        addProject={addProject}
-        updateProject={updateProject}
-        deleteProject={deleteProject}
-        addTask={addTask}
-        updateTask={updateTask}
-        deleteTask={deleteTask}
-        addTeamMember={addTeamMember}
-        updateTeamMember={updateTeamMember}
-        deleteTeamMember={deleteTeamMember}
-        addClient={addClient}
-        updateClient={updateClient}
-        deleteClient={deleteClient}
-        setTasks={setTasks}
-        setError={setError}
-      />
+      {/* React Router based navigation */}
+      <AppRouter />
       
       {/* Global components (notifications, performance monitor, etc.) */}
       <GlobalComponents />

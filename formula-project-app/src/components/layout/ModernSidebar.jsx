@@ -99,8 +99,18 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
     }
   };
 
+  const handleKeyDown = (event, id) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleItemClick(id);
+    }
+  };
+
   return (
     <Box
+      component="nav"
+      role="navigation"
+      aria-label="Main navigation"
       sx={{
         width: isCollapsed ? 70 : 280,
         height: '100vh',
@@ -203,6 +213,11 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                   <Tooltip title={isCollapsed ? item.label : ''} placement="right" arrow>
                     <ListItemButton
                       onClick={() => handleItemClick(item.id)}
+                      role="button"
+                      aria-label={`Navigate to ${item.label} - ${item.description}`}
+                      aria-current={currentTab === item.id ? 'page' : false}
+                      onKeyDown={(event) => handleKeyDown(event, item.id)}
+                      tabIndex={0}
                       sx={{
                         borderRadius: 2,
                         mx: 1,

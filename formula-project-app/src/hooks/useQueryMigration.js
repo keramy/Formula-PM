@@ -86,34 +86,34 @@ export const useQueryMigration = () => {
 
   // Legacy setter functions (these won't be needed with React Query, but included for compatibility)
   const setProjects = useCallback(() => {
-    console.warn('setProjects is deprecated. Use React Query mutations instead.');
+    // setProjects is deprecated. Use React Query mutations instead.
     refetchProjects();
   }, [refetchProjects]);
 
   const setTasks = useCallback(() => {
-    console.warn('setTasks is deprecated. Use React Query mutations instead.');
+    // setTasks is deprecated. Use React Query mutations instead.
     refetchTasks();
   }, [refetchTasks]);
 
   const setTeamMembers = useCallback(() => {
-    console.warn('setTeamMembers is deprecated. Use React Query mutations instead.');
+    // setTeamMembers is deprecated. Use React Query mutations instead.
     refetchTeamMembers();
   }, [refetchTeamMembers]);
 
   const setClients = useCallback(() => {
-    console.warn('setClients is deprecated. Use React Query mutations instead.');
+    // setClients is deprecated. Use React Query mutations instead.
     refetchClients();
   }, [refetchClients]);
 
   const setError = useCallback((newError) => {
-    console.warn('setError is deprecated. Errors are handled automatically by React Query.');
+    // setError is deprecated. Errors are handled automatically by React Query.
     if (newError) {
       console.error('Manual error set:', newError);
     }
   }, []);
 
   const loadAllData = useCallback(() => {
-    console.log('Refreshing all data...');
+    // Refreshing all data...
     refetchProjects();
     refetchTasks();
     refetchTeamMembers();

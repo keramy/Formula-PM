@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Box,
   Typography,
@@ -23,7 +23,53 @@ import {
 
 // Using centralized configurations
 
-function ProjectsList({ projects, tasks, clients = [], teamMembers = [], onDeleteProject, onManageScope, onViewProject }) {
+function ProjectsList({ projects = [], tasks = [], clients = [], teamMembers = [], onDeleteProject, onManageScope, onViewProject }) {
+  // Memoize expensive calculations to prevent recalculation on every render
+  const projectsWithStats = useMemo(() => {
+    const safeProjects = Array.isArray(projects) ? projects : [];
+    const safeTasks = Array.isArray(tasks) ? tasks : [];
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return safeProjects.map(project => {
+      const projectTasks = safeTasks.filter(task => task.projectId === project.id);
+      const completedTasks = projectTasks.filter(task => task.status === 'completed');
+      const overdueTasks = projectTasks.filter(task => 
+        task.status !== 'completed' && new Date(task.dueDate) < today
+      );
+
+      const progress = projectTasks.length === 0 ? 0 : 
+        Math.round((completedTasks.length / projectTasks.length) * 100);
+
+      const stats = {
+        total: projectTasks.length,
+        completed: completedTasks.length,
+        pending: projectTasks.length - completedTasks.length,
+        overdue: overdueTasks.length
+      };
+
+      return {
+        ...project,
+        progress,
+        stats
+      };
+    });
+  }, [projects, tasks]);
+
+  // Memoize client lookup map for better performance
+  const clientsMap = useMemo(() => {
+    const safeClients = Array.isArray(clients) ? clients : [];
+    return safeClients.reduce((acc, client) => {
+      acc[client.id] = client.companyName;
+      return acc;
+    }, {});
+  }, [clients]);
+
+  const getClientName = (clientId) => {
+    return clientsMap[clientId] || 'No Client Assigned';
+  };
+
   if (projects.length === 0) {
     return (
       <Box sx={{ textAlign: 'center', py: 4 }}>
@@ -33,36 +79,6 @@ function ProjectsList({ projects, tasks, clients = [], teamMembers = [], onDelet
       </Box>
     );
   }
-
-  const calculateProjectProgress = (projectId) => {
-    const projectTasks = tasks.filter(task => task.projectId === projectId);
-    if (projectTasks.length === 0) return 0;
-    
-    const completedTasks = projectTasks.filter(task => task.status === 'completed').length;
-    return Math.round((completedTasks / projectTasks.length) * 100);
-  };
-
-  const getClientName = (clientId) => {
-    const client = clients.find(c => c.id === clientId);
-    return client ? client.companyName : 'No Client Assigned';
-  };
-
-  const getProjectStats = (projectId) => {
-    const projectTasks = tasks.filter(task => task.projectId === projectId);
-    const completedTasks = projectTasks.filter(task => task.status === 'completed').length;
-    const overdueTasks = projectTasks.filter(task => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return task.status !== 'completed' && new Date(task.dueDate) < today;
-    }).length;
-
-    return {
-      total: projectTasks.length,
-      completed: completedTasks,
-      pending: projectTasks.length - completedTasks,
-      overdue: overdueTasks
-    };
-  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -86,11 +102,9 @@ function ProjectsList({ projects, tasks, clients = [], teamMembers = [], onDelet
 
   return (
     <Grid container spacing={3}>
-      {projects.map((project) => {
+      {projectsWithStats.map((project) => {
         const typeConfig = getProjectTypeConfig(project.type);
-        const progress = calculateProjectProgress(project.id);
-        const stats = getProjectStats(project.id);
-        const projectStatus = getProjectStatus(project, stats);
+        const projectStatus = getProjectStatus(project, project.stats);
         const statusConfig = getProjectStatusConfig(projectStatus);
         
         return (
@@ -169,13 +183,13 @@ function ProjectsList({ projects, tasks, clients = [], teamMembers = [], onDelet
                       Progress
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      {progress}%
+                      {project.progress}%
                     </Typography>
                   </Box>
                   <div className="construction-progress">
                     <div 
                       className="construction-progress-fill" 
-                      style={{ width: `${progress}%` }}
+                      style={{ width: `${project.progress}%` }}
                     ></div>
                   </div>
                 </Box>
@@ -184,14 +198,14 @@ function ProjectsList({ projects, tasks, clients = [], teamMembers = [], onDelet
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                   <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                     <span className="status-badge status-badge-todo" style={{ fontSize: '11px', padding: '2px 6px' }}>
-                      {stats.total} total
+                      {project.stats.total} total
                     </span>
                     <span className="status-badge status-badge-completed" style={{ fontSize: '11px', padding: '2px 6px' }}>
-                      {stats.completed} done
+                      {project.stats.completed} done
                     </span>
-                    {stats.overdue > 0 && (
+                    {project.stats.overdue > 0 && (
                       <span className="status-badge status-badge-cancelled" style={{ fontSize: '11px', padding: '2px 6px' }}>
-                        {stats.overdue} overdue
+                        {project.stats.overdue} overdue
                       </span>
                     )}
                   </Box>
@@ -235,4 +249,4 @@ function ProjectsList({ projects, tasks, clients = [], teamMembers = [], onDelet
   );
 }
 
-export default ProjectsList;
+export default React.memo(ProjectsList);

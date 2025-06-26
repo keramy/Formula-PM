@@ -1,10 +1,11 @@
 import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import LoginPage from './LoginPage';
 import { Box, CircularProgress, Typography } from '@mui/material';
 
 const ProtectedRoute = ({ children, requiredPermission = null, projectId = null }) => {
   const { isAuthenticated, loading, hasPermission, canAccessProject } = useAuth();
+  const location = useLocation();
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -27,10 +28,10 @@ const ProtectedRoute = ({ children, requiredPermission = null, projectId = null 
     );
   }
 
-  // Temporarily bypass authentication for debugging
-  // if (!isAuthenticated) {
-  //   return <LoginPage />;
-  // }
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
 
   // Check specific permission if required
   if (requiredPermission && !hasPermission(requiredPermission)) {

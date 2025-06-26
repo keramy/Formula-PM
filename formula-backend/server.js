@@ -784,11 +784,13 @@ app.delete('/api/scope-items/:id', (req, res) => {
 });
 
 // Import and use new route modules
+const authRouter = require('./routes/auth');
 const shopDrawingsRouter = require('./routes/shopDrawings');
 const specificationsRouter = require('./routes/specifications');
 const complianceRouter = require('./routes/compliance');
 
 // Mount the new routes
+app.use('/api/auth', authRouter);
 app.use('/api/shop-drawings', shopDrawingsRouter);
 app.use('/api/specifications', specificationsRouter);
 app.use('/api/compliance', complianceRouter);

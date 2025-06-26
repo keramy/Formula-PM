@@ -180,14 +180,14 @@ export const errorHandling = {
     // Show user-friendly error message based on error type
     if (error.code === 'NETWORK_ERROR') {
       // Handle network errors
-      console.log('Network error detected, will retry automatically');
+      // Network error detected, will retry automatically
     } else if (error.status === 401) {
       // Handle authentication errors
-      console.log('Authentication error, redirecting to login');
+      // Authentication error, redirecting to login
       // window.location.href = '/login';
     } else if (error.status >= 500) {
       // Handle server errors
-      console.log('Server error detected');
+      // Server error detected
     }
   },
   
@@ -198,7 +198,7 @@ export const errorHandling = {
     // Handle specific mutation errors
     if (mutation.meta?.errorMessage) {
       // Show custom error message
-      console.log(mutation.meta.errorMessage);
+      // Show mutation error message
     }
   },
 };
@@ -207,11 +207,8 @@ export const errorHandling = {
 export const performanceMonitoring = {
   // Track query performance
   onSuccess: (data, query) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Query ${query.queryKey.join('.')} completed successfully`, {
-        dataSize: JSON.stringify(data).length,
-        cacheHit: query.state.dataUpdatedAt > 0,
-      });
+    if (import.meta.env.MODE === 'development') {
+      // Query completed successfully
     }
   },
   
@@ -219,7 +216,7 @@ export const performanceMonitoring = {
   onSettled: (data, error, query) => {
     const duration = Date.now() - query.state.fetchFailureReason?.timestamp;
     if (duration > 5000) { // Queries taking more than 5 seconds
-      console.warn(`Slow query detected: ${query.queryKey.join('.')} took ${duration}ms`);
+      // Slow query detected
     }
   },
 };

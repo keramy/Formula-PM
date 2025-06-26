@@ -27,7 +27,7 @@ const queryClient = new QueryClient({
 const AppProviders = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename={process.env.NODE_ENV === 'production' ? '/formula-pm' : '/'}>
+      <BrowserRouter basename={import.meta.env.MODE === 'production' ? '/formula-pm' : '/'}>
         <ThemeProvider>
           <CssBaseline />
           <AuthProvider>
@@ -39,7 +39,7 @@ const AppProviders = ({ children }) => {
           </AuthProvider>
         </ThemeProvider>
       </BrowserRouter>
-      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
+      {import.meta.env.MODE === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );
 };

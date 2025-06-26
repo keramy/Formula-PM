@@ -34,7 +34,7 @@ import {
 
 // Using centralized configuration - removed duplicate config
 
-function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTask, onAddTask, onViewTask, onEditTask }) {
+function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, onDeleteTask, onAddTask, onViewTask, onEditTask }) {
   const [searchValue, setSearchValue] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState('card');
@@ -195,7 +195,8 @@ function TasksList({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTa
 
   // Filter and sort tasks
   const filteredAndSortedTasks = useMemo(() => {
-    let filtered = tasks.filter(task => {
+    const safeTasks = Array.isArray(tasks) ? tasks : [];
+    let filtered = safeTasks.filter(task => {
       // Search filter
       const searchLower = searchValue.toLowerCase();
       const matchesSearch = !searchValue || 

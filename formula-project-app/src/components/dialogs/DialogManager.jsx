@@ -12,7 +12,7 @@ import {
   TaskForm,
   TeamMemberForm,
   ClientForm,
-  EnhancedProjectScope,
+  ProjectScope,
   FormSkeleton,
   LoadingFallback
 } from '../lazy';
@@ -135,7 +135,7 @@ const DialogManager = ({
         <DialogContent sx={{ p: 0 }}>
           {dialogState.selectedProjectForScope && (
             <Suspense fallback={<LoadingFallback message="Loading project scope..." />}>
-              <EnhancedProjectScope 
+              <ProjectScope 
                 project={dialogState.selectedProjectForScope} 
                 onClose={onCloseProjectScope}
               />

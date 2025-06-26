@@ -226,7 +226,7 @@ const UnifiedComponentsExample = () => {
     {
       key: 'share',
       label: 'Share View',
-      onClick: () => console.log('Share')
+      onClick: () => {/* Share action */}
     },
     {
       key: 'print',
@@ -239,13 +239,13 @@ const UnifiedComponentsExample = () => {
     {
       key: 'settings',
       label: 'View Settings',
-      onClick: () => console.log('Settings')
+      onClick: () => {/* Settings action */}
     }
   ];
 
   // Handlers
   const handleSearch = (term, options) => {
-    console.log('Search:', term, options);
+    // Handle search
   };
 
   const handleFilterChange = (key, value) => {
@@ -253,11 +253,11 @@ const UnifiedComponentsExample = () => {
   };
 
   const handleExport = (format) => {
-    console.log('Export as:', format);
+    // Handle export
   };
 
   const handleAdd = (type) => {
-    console.log('Add new:', type);
+    // Handle add new
   };
 
   const handleApplyQuickFilter = (quickFilter) => {
@@ -306,7 +306,7 @@ const UnifiedComponentsExample = () => {
             tabActions={[
               {
                 label: 'Reset Tab Order',
-                onClick: () => console.log('Reset tabs')
+                onClick: () => {/* Reset tabs */}
               }
             ]}
           />
@@ -343,7 +343,7 @@ const UnifiedComponentsExample = () => {
             <UnifiedSearch
               placeholder="Search projects, tasks, documents..."
               searchFunction={mockSearchFunction}
-              onResultSelect={(result) => console.log('Selected:', result)}
+              onResultSelect={(result) => {/* Handle result selection */}}
               showHistory
               liveSearch
             />

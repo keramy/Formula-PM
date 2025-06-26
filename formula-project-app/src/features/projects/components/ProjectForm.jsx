@@ -146,7 +146,13 @@ function ProjectForm({ onSubmit, onCancel, clients = [], initialProject = null }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box 
+        component="form" 
+        onSubmit={handleSubmit} 
+        role="form"
+        aria-label="Project creation form"
+        sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+      >
         {success && (
           <Alert severity="success">
             Project created successfully!
@@ -157,10 +163,12 @@ function ProjectForm({ onSubmit, onCancel, clients = [], initialProject = null }
           label="Project Name"
           value={formData.name}
           onChange={handleChange('name')}
+          required
+          aria-describedby={errors.name ? 'name-error' : undefined}
+          id="project-name"
           error={!!errors.name}
           helperText={errors.name}
           fullWidth
-          required
           className="clean-input"
         />
 

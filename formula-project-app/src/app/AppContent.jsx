@@ -30,7 +30,7 @@ import { exportProjectsToExcel } from '../services/export/excelExport';
 import {
   ModernProjectOverview,
   ProjectsList,
-  EnhancedTasksView,
+  TasksView,
   GanttChart,
   TeamMembersList,
   ClientsList,
@@ -40,7 +40,7 @@ import {
   ProjectsTableView,
   ProjectsFilters,
   MyProjectsList,
-  EnhancedProjectScope,
+  ProjectScope,
   TeamMemberDetail,
   BoardView,
   ShopDrawingsList,
@@ -257,12 +257,7 @@ export const AppContent = ({
         if (assignee && project) {
           notificationService.notifyTaskAssignment(createdTask, project, assignee, currentUser);
           
-          console.log('📧 Task assigned notification sent:', {
-            taskName: createdTask.name,
-            assigneeName: assignee.fullName,
-            assigneeEmail: assignee.email,
-            projectName: project.name
-          });
+          // Task assigned notification sent
         }
       }
     } catch (error) {
@@ -307,12 +302,7 @@ export const AppContent = ({
         if (assignee && project) {
           notificationService.notifyTaskCompleted(updatedTask, project, assignee);
           
-          console.log('📧 Task completion notification sent:', {
-            taskName: updatedTask.name,
-            assigneeName: assignee.fullName,
-            projectName: project.name,
-            completedAt: new Date().toISOString()
-          });
+          // Task completion notification sent
         }
       }
       
@@ -838,7 +828,7 @@ export const AppContent = ({
         return (
           <ErrorBoundary fallbackMessage="Failed to load tasks">
             <Suspense fallback={<ListSkeleton SkeletonComponent={TaskRowSkeleton} count={5} />}>
-              <EnhancedTasksView 
+              <TasksView 
                 tasks={tasks}
                 projects={projects}
                 teamMembers={teamMembers}
@@ -1088,7 +1078,7 @@ export const AppContent = ({
         <DialogContent sx={{ p: 0 }}>
           {dialogState.selectedProjectForScope && (
             <Suspense fallback={<LoadingFallback message="Loading project scope..." />}>
-              <EnhancedProjectScope 
+              <ProjectScope 
                 project={dialogState.selectedProjectForScope} 
                 onClose={handleCloseScopeDialog}
               />

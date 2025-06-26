@@ -20,22 +20,25 @@ const priorityColors = {
   urgent: '#e74c3c'
 };
 
-function GanttChart({ tasks, projects, scopeItems = [], teamMembers = [] }) {
+function GanttChart({ tasks = [], projects = [], scopeItems = [], teamMembers = [] }) {
   const [useEnhancedGantt, setUseEnhancedGantt] = useState(true);
   const { shopDrawings = [], materialSpecs = [] } = useAuthenticatedData();
 
   // Determine if we should show the enhanced Gantt
   const shouldShowEnhanced = useMemo(() => {
-    return useEnhancedGantt && (tasks.length > 0 || projects.length > 0 || scopeItems.length > 0);
-  }, [useEnhancedGantt, tasks.length, projects.length, scopeItems.length]);
+    const safeTasks = Array.isArray(tasks) ? tasks : [];
+    const safeProjects = Array.isArray(projects) ? projects : [];
+    const safeScopeItems = Array.isArray(scopeItems) ? scopeItems : [];
+    return useEnhancedGantt && (safeTasks.length > 0 || safeProjects.length > 0 || safeScopeItems.length > 0);
+  }, [useEnhancedGantt, tasks, projects, scopeItems]);
 
   const handleTaskUpdate = (task, updates) => {
-    console.log('Task updated:', task, updates);
+    // Task updated
     // This would integrate with your task update logic
   };
 
   const handleItemClick = (item) => {
-    console.log('Gantt item clicked:', item);
+    // Gantt item clicked
     // This would handle navigation or detail views
   };
 
@@ -97,7 +100,8 @@ function GanttChart({ tasks, projects, scopeItems = [], teamMembers = [] }) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
       
-      const dayTasks = tasks.filter(task => {
+      const safeTasks = Array.isArray(tasks) ? tasks : [];
+      const dayTasks = safeTasks.filter(task => {
         const taskDate = new Date(task.dueDate);
         return taskDate.toDateString() === date.toDateString();
       });

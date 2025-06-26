@@ -40,7 +40,7 @@ const GlobalComponents = () => {
       </Box>
 
       {/* Performance monitor in development */}
-      {process.env.NODE_ENV === 'development' && (
+      {import.meta.env.MODE === 'development' && (
         <Portal>
           <PerformanceMonitor />
         </Portal>

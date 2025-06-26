@@ -31,8 +31,8 @@ export const MyProjectsList = lazy(() =>
   import('../../features/projects/components/MyProjectsList')
 );
 
-export const EnhancedProjectScope = lazy(() => 
-  import('../../features/projects/components/EnhancedProjectScope')
+export const ProjectScope = lazy(() => 
+  import('../../features/projects/components/ProjectScope')
 );
 
 export const ProjectFormPage = lazy(() => 
@@ -52,8 +52,8 @@ export const TaskFormPage = lazy(() =>
   import('../../features/tasks/components/TaskFormPage')
 );
 
-export const EnhancedTasksView = lazy(() => 
-  import('../../features/tasks/components/EnhancedTasksView')
+export const TasksView = lazy(() => 
+  import('../../features/tasks/components/TasksView')
 );
 
 // Team components
@@ -120,66 +120,13 @@ export const DialogContainer = lazy(() =>
   import('../dialogs/DialogContainer')
 );
 
-// Loading fallback components
-export const LoadingFallback = ({ message = "Loading..." }) => (
-  <div style={{ 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    height: '200px',
-    flexDirection: 'column'
-  }}>
-    <div style={{
-      width: '40px',
-      height: '40px',
-      border: '3px solid #f3f3f3',
-      borderTop: '3px solid #2C3E50',
-      borderRadius: '50%',
-      animation: 'spin 1s linear infinite',
-      marginBottom: '16px'
-    }} />
-    <div style={{ color: '#666', fontSize: '14px' }}>{message}</div>
-    <style>
-      {`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}
-    </style>
-  </div>
-);
+// Import unified loading components
+import { LoadingFallback, FormSkeleton } from '../ui/UnifiedLoading';
 
-export const FormSkeleton = () => (
-  <div style={{ padding: '20px' }}>
-    <div style={{ 
-      height: '20px', 
-      backgroundColor: '#f0f0f0', 
-      borderRadius: '4px', 
-      marginBottom: '16px',
-      width: '70%'
-    }} />
-    <div style={{ 
-      height: '40px', 
-      backgroundColor: '#f5f5f5', 
-      borderRadius: '4px', 
-      marginBottom: '16px'
-    }} />
-    <div style={{ 
-      height: '20px', 
-      backgroundColor: '#f0f0f0', 
-      borderRadius: '4px', 
-      marginBottom: '16px',
-      width: '50%'
-    }} />
-    <div style={{ 
-      height: '40px', 
-      backgroundColor: '#f5f5f5', 
-      borderRadius: '4px', 
-      marginBottom: '16px'
-    }} />
-  </div>
-);
+// Re-export for compatibility
+export { LoadingFallback, FormSkeleton };
+
+// FormSkeleton now imported from UnifiedLoading
 
 export const ListSkeleton = ({ count = 3, SkeletonComponent = null }) => {
   const DefaultSkeleton = () => (
@@ -321,12 +268,12 @@ export default {
   ProjectsTableView,
   ProjectsFilters,
   MyProjectsList,
-  EnhancedProjectScope,
+  ProjectScope,
   ProjectFormPage,
   ProjectPage,
   TaskForm,
   TaskFormPage,
-  EnhancedTasksView,
+  TasksView,
   TeamMemberForm,
   TeamMembersList,
   TeamMemberFormPage,

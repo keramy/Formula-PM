@@ -101,7 +101,7 @@ class NotificationService {
     // Start periodic checks for due dates and overdue items
     this.startPeriodicChecks();
     
-    console.log('📢 Notification service initialized');
+    // Notification service initialized
   }
 
   destroy() {
@@ -109,7 +109,7 @@ class NotificationService {
       clearInterval(this.checkInterval);
     }
     this.listeners.clear();
-    console.log('📢 Notification service destroyed');
+    // Notification service destroyed
   }
 
   subscribe(listener) {

@@ -1,28 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useEnhancedSearch } from './useEnhancedSearch';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 
-export const useGlobalSearch = (searchTerm, options = {}) => {
-  const [searchResults, setSearchResults] = useState({
-    projects: [],
-    tasks: [],
-    teamMembers: [],
-    shopDrawings: [],
-    specifications: [],
-    clients: [],
-    complianceDocuments: []
-  });
-  
-  const [loading, setLoading] = useState(false);
-  const [totalResults, setTotalResults] = useState(0);
-
-  const {
-    debounceDelay = 300,
-    includeModules = ['all'],
-    maxResults = 50
-  } = options;
-
-  // Mock data for new modules - this will be replaced with actual API calls
-  const mockShopDrawings = [
+// Mock data for new modules - this will be replaced with actual API calls
+const mockShopDrawings = [
     {
       id: 'SD001',
       fileName: 'Kitchen_Cabinets_Rev_C.pdf',
@@ -53,9 +32,9 @@ export const useGlobalSearch = (searchTerm, options = {}) => {
       version: 'Rev B',
       uploadDate: '2025-06-13'
     }
-  ];
+];
 
-  const mockSpecifications = [
+const mockSpecifications = [
     {
       id: 'SPEC001',
       itemId: 'SPEC001',
@@ -89,9 +68,9 @@ export const useGlobalSearch = (searchTerm, options = {}) => {
       totalCost: '$2,800.00',
       status: 'pending'
     }
-  ];
+];
 
-  const mockComplianceDocuments = [
+const mockComplianceDocuments = [
     {
       id: 'COMP001',
       name: 'Building Permit',
@@ -121,17 +100,54 @@ export const useGlobalSearch = (searchTerm, options = {}) => {
       inspector: 'John Mitchell',
       completedDate: '2025-05-20'
     }
-  ];
+];
 
-  // Use the existing enhanced search for basic modules
-  const { 
-    searchResults: basicResults, 
-    isSearching: basicLoading 
-  } = useEnhancedSearch(searchTerm, debounceDelay);
+export const useGlobalSearch = (searchTerm, options = {}) => {
+  const [searchResults, setSearchResults] = useState({
+    projects: [],
+    tasks: [],
+    teamMembers: [],
+    shopDrawings: [],
+    specifications: [],
+    clients: [],
+    complianceDocuments: []
+  });
+  
+  const [loading, setLoading] = useState(false);
+  const [totalResults, setTotalResults] = useState(0);
+  
+  // Use refs to prevent stale closures
+  const searchTermRef = useRef(searchTerm);
+  const isSearchingRef = useRef(false);
+  
+  // Stabilize options to prevent infinite loops
+  const stableOptions = useMemo(() => ({
+    debounceDelay: options.debounceDelay || 300,
+    includeModules: options.includeModules || ['all'],
+    maxResults: options.maxResults || 50
+  }), [options.debounceDelay, options.includeModules, options.maxResults]);
+  
+  const { debounceDelay, includeModules, maxResults } = stableOptions;
 
-  // Debounced search function
+  // Note: Basic modules (projects, tasks, team members, clients) will be populated 
+  // when connected to real data sources (context, APIs, etc.)
+
+  // Update refs when searchTerm changes
   useEffect(() => {
-    if (!searchTerm || searchTerm.length < 2) {
+    searchTermRef.current = searchTerm;
+  }, [searchTerm]);
+
+  // Main search effect - simplified and stable
+  useEffect(() => {
+    // Prevent multiple simultaneous searches
+    if (isSearchingRef.current) {
+      return;
+    }
+
+    const currentTerm = searchTermRef.current;
+    
+    // Clear results for empty or short search terms
+    if (!currentTerm || currentTerm.length < 2) {
       setSearchResults({
         projects: [],
         tasks: [],
@@ -147,9 +163,10 @@ export const useGlobalSearch = (searchTerm, options = {}) => {
     }
 
     setLoading(true);
+    isSearchingRef.current = true;
 
     const searchTimeout = setTimeout(() => {
-      const term = searchTerm.toLowerCase();
+      const term = currentTerm.toLowerCase();
       
       // Search shop drawings
       const filteredDrawings = mockShopDrawings.filter(drawing =>
@@ -177,19 +194,20 @@ export const useGlobalSearch = (searchTerm, options = {}) => {
         doc.permitNumber?.toLowerCase().includes(term)
       );
 
-      // Combine with basic search results
+      // For now, we'll use empty arrays for basic modules since we don't have real data
       const results = {
-        projects: basicResults.projects || [],
-        tasks: basicResults.tasks || [],
-        teamMembers: basicResults.teamMembers || [],
-        clients: basicResults.clients || [],
+        projects: [], // Will be populated when connected to real data
+        tasks: [], // Will be populated when connected to real data
+        teamMembers: [], // Will be populated when connected to real data
+        clients: [], // Will be populated when connected to real data
         shopDrawings: filteredDrawings.slice(0, maxResults),
         specifications: filteredSpecs.slice(0, maxResults),
         complianceDocuments: filteredCompliance.slice(0, maxResults)
       };
 
-      // Filter by included modules
-      if (includeModules[0] !== 'all') {
+      // Filter by included modules (only if not 'all')
+      const includeAll = includeModules.includes('all') || includeModules[0] === 'all';
+      if (!includeAll) {
         Object.keys(results).forEach(key => {
           if (!includeModules.includes(key)) {
             results[key] = [];
@@ -197,16 +215,19 @@ export const useGlobalSearch = (searchTerm, options = {}) => {
         });
       }
 
+      // Update state
       setSearchResults(results);
-      
-      // Calculate total results
       const total = Object.values(results).reduce((sum, items) => sum + items.length, 0);
       setTotalResults(total);
       setLoading(false);
+      isSearchingRef.current = false;
     }, debounceDelay);
 
-    return () => clearTimeout(searchTimeout);
-  }, [searchTerm, debounceDelay, includeModules, maxResults, basicResults]);
+    return () => {
+      clearTimeout(searchTimeout);
+      isSearchingRef.current = false;
+    };
+  }, [searchTerm, debounceDelay, maxResults]); // Removed includeModules from deps
 
   // Group results by category with metadata
   const groupedResults = useMemo(() => {
@@ -333,8 +354,8 @@ export const useGlobalSearch = (searchTerm, options = {}) => {
       compliance: searchResults.complianceDocuments.length
     },
     hasResults: totalResults > 0,
-    isSearching: loading || basicLoading
-  }), [searchResults, totalResults, loading, basicLoading]);
+    isSearching: loading
+  }), [searchResults, totalResults, loading]);
 
   // Navigation helpers
   const navigateToResult = (result) => {
@@ -375,7 +396,7 @@ export const useGlobalSearch = (searchTerm, options = {}) => {
     searchResults,
     groupedResults,
     searchStats,
-    loading: loading || basicLoading,
+    loading: loading,
     navigateToResult,
     getResultIcon,
     

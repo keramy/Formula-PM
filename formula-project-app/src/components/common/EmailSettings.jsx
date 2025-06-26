@@ -167,7 +167,7 @@ function EmailSettings({ teamMembers, onSaveSettings }) {
         `
       };
 
-      console.log('Test email would be sent:', emailContent);
+      // Test email would be sent
       setSuccess(`Test email sent successfully to ${testEmail}!`);
       
     } catch (err) {

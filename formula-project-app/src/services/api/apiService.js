@@ -8,7 +8,7 @@ class ApiService {
     const startTime = performance.now();
     const method = options.method || 'GET';
     
-    console.log('🔗 API Request:', url, 'Base URL:', API_BASE_URL);
+    // API Request to base URL
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ class ApiService {
       const response = await fetch(url, config);
       const duration = performance.now() - startTime;
       
-      console.log('📡 Response received:', response.status, response.statusText, 'for', url);
+      // Response received
       
       // Check if request was aborted
       if (config.signal?.aborted) {
@@ -39,7 +39,7 @@ class ApiService {
       // Track successful API requests
       PerformanceMonitor.trackApiRequest(endpoint, duration, true, method);
       
-      console.log('✅ Data received:', data?.length ? `${data.length} items` : 'data', 'for', endpoint);
+      // Data received from endpoint
       return data;
     } catch (error) {
       const duration = performance.now() - startTime;

@@ -15,23 +15,26 @@ import {
   Assessment
 } from '@mui/icons-material';
 
-const FinancialAnalytics = ({ projects }) => {
+const FinancialAnalytics = ({ projects = [] }) => {
   const theme = useTheme();
 
+  // Ensure projects is an array
+  const safeProjects = Array.isArray(projects) ? projects : [];
+
   // Calculate financial metrics
-  const totalBudget = projects.reduce((sum, project) => sum + (project.budget || 0), 0);
-  const activeBudget = projects
+  const totalBudget = safeProjects.reduce((sum, project) => sum + (project.budget || 0), 0);
+  const activeBudget = safeProjects
     .filter(project => project.status === 'active')
     .reduce((sum, project) => sum + (project.budget || 0), 0);
-  const completedBudget = projects
+  const completedBudget = safeProjects
     .filter(project => project.status === 'completed')
     .reduce((sum, project) => sum + (project.budget || 0), 0);
-  const onTenderBudget = projects
+  const onTenderBudget = safeProjects
     .filter(project => project.status === 'on-tender')
     .reduce((sum, project) => sum + (project.budget || 0), 0);
 
   // Calculate budget utilization (estimated based on progress)
-  const estimatedSpent = projects.reduce((sum, project) => {
+  const estimatedSpent = safeProjects.reduce((sum, project) => {
     const progress = project.progress || 0;
     const budget = project.budget || 0;
     return sum + (budget * (progress / 100));

@@ -71,7 +71,7 @@ class PerformanceMonitor {
       this.measurements.delete(name);
       
       // Send to analytics in production
-      if (process.env.NODE_ENV === 'production') {
+      if (import.meta.env.MODE === 'production') {
         this.sendAnalytics(name, duration);
       }
       
@@ -231,7 +231,7 @@ class PerformanceMonitor {
     console[logLevel](`🌐 API ${method} ${endpoint}: ${duration.toFixed(2)}ms ${status} ${duration > threshold ? '⚠️ SLOW' : ''}`);
     
     // Store for analytics
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.MODE === 'production') {
       this.sendAnalytics(metricName, duration, {
         endpoint,
         method,
@@ -253,7 +253,7 @@ class PerformanceMonitor {
     
     console[logLevel](`🏗️ Formula PM ${operation}: ${duration.toFixed(2)}ms ${duration > threshold ? '⚠️ SLOW' : '✅'}`, metadata);
     
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.MODE === 'production') {
       this.sendAnalytics(`formula_pm_${operation}`, duration, metadata);
     }
   }
@@ -271,7 +271,7 @@ class PerformanceMonitor {
       console.log(`👤 User ${action} on ${element}: ${duration.toFixed(2)}ms`);
     }
     
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.MODE === 'production') {
       this.sendAnalytics(metricName, duration, {
         action,
         element,

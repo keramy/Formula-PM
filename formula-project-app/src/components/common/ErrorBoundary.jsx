@@ -35,7 +35,7 @@ class ErrorBoundary extends React.Component {
     });
 
     // Enhanced error logging for development
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.MODE === 'development') {
       console.group('🚨 Error Boundary Caught Error');
       console.error('Error:', error);
       console.error('Error Info:', errorInfo);
@@ -60,7 +60,7 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      const isDevelopment = process.env.NODE_ENV === 'development';
+      const isDevelopment = import.meta.env.MODE === 'development';
       
       return (
         <Box sx={{ p: 3, maxWidth: 800, mx: 'auto', mt: 4 }}>

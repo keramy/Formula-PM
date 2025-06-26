@@ -206,7 +206,7 @@ export const getAvailableIcons = () => {
  * Migration helper - log missing icons during development
  */
 export const logMissingIcons = () => {
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.MODE === 'development') {
     console.log('📊 Iconoir Migration Status:', {
       totalMapped: Object.keys(iconMap).length,
       availableIcons: getAvailableIcons()

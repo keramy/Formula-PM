@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   List,
@@ -43,6 +44,8 @@ import FormulaLogo from '../branding/FormulaLogo';
 
 const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onToggleCollapse }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [openSections, setOpenSections] = useState({
     projects: true,
     workManagement: true,
@@ -99,18 +102,36 @@ const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onTogg
     { id: 10, label: 'Activity Feed', icon: <Timeline />, path: '/activity' }
   ];
 
-  const NavItem = ({ item, isActive, level = 0, isCollapsed = false }) => (
-    <Tooltip title={isCollapsed ? item.label : ''} placement="right" arrow>
-      <ListItemButton
-        onClick={() => onTabChange && onTabChange(null, item.id)}
+  // Function to check if current route matches the nav item
+  const isActiveRoute = (path) => {
+    if (path === '/dashboard') {
+      return location.pathname === '/' || location.pathname === '/dashboard';
+    }
+    return location.pathname.startsWith(path);
+  };
+
+  const NavItem = ({ item, isActive, level = 0, isCollapsed = false }) => {
+    // Use route-based active state if path is available, otherwise fall back to currentTab
+    const itemIsActive = item.path ? isActiveRoute(item.path) : isActive;
+    
+    return (
+      <Tooltip title={isCollapsed ? item.label : ''} placement="right" arrow>
+        <ListItemButton
+          onClick={() => {
+            if (item.path) {
+              navigate(item.path);
+            } else {
+              onTabChange && onTabChange(null, item.id);
+            }
+          }}
         sx={{
           py: 0.5,
           px: isCollapsed ? 1 : (level === 0 ? 1.5 : 2.5),
           borderRadius: 1.5,
           mx: 1,
           minHeight: 28,
-          backgroundColor: isActive ? colors.activeBackground : 'transparent',
-          color: isActive ? colors.textPrimary : colors.textSecondary,
+          backgroundColor: itemIsActive ? colors.activeBackground : 'transparent',
+          color: itemIsActive ? colors.textPrimary : colors.textSecondary,
           fontSize: '14px',
           justifyContent: isCollapsed ? 'center' : 'flex-start',
           '&:hover': {
@@ -136,7 +157,7 @@ const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onTogg
             primary={item.label}
             primaryTypographyProps={{
               fontSize: '14px',
-              fontWeight: isActive ? 500 : 400,
+              fontWeight: itemIsActive ? 500 : 400,
               lineHeight: 1.4
             }}
           />
@@ -146,7 +167,8 @@ const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onTogg
         )}
       </ListItemButton>
     </Tooltip>
-  );
+    );
+  };
 
   const SectionHeader = ({ title, isOpen, onToggle, showAdd = false }) => (
     <Box sx={{ 

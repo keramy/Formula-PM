@@ -9,7 +9,9 @@ let socketInstance = null;
 // Create socket connection
 const createSocket = () => {
   if (!socketInstance) {
-    const serverUrl = process.env.REACT_APP_API_URL || 'http://localhost:5014';
+    const serverUrl = import.meta.env.MODE === 'development'
+      ? 'http://localhost:5014'  // Direct connection to backend in development
+      : (import.meta.env.VITE_API_URL || import.meta.env.REACT_APP_API_URL || 'http://localhost:5014');
     
     socketInstance = io(serverUrl, {
       autoConnect: false,
@@ -23,11 +25,11 @@ const createSocket = () => {
     
     // Global connection event handlers
     socketInstance.on('connect', () => {
-      console.log('🔗 Connected to real-time server');
+      // Real-time connection established
     });
     
     socketInstance.on('disconnect', (reason) => {
-      console.log('🔌 Disconnected from real-time server:', reason);
+      // Real-time connection lost
     });
     
     socketInstance.on('connect_error', (error) => {
@@ -1035,7 +1037,7 @@ export const useTaskStatusUpdates = () => {
       setStatusChanges(prev => [change, ...prev.slice(0, 9)]); // Keep last 10 changes
       
       // Show a notification (you could integrate with a toast library)
-      console.log(`📋 Task "${change.taskName}" changed from ${change.oldStatus} to ${change.newStatus}`);
+      // Task status changed
     };
     
     socket.on('taskStatusChanged', handleTaskStatusChange);

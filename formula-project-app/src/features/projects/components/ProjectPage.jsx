@@ -22,7 +22,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { useNavigation } from '../../../context/NavigationContext';
 import CleanPageLayout, { CleanTab } from '../../../components/layout/CleanPageLayout';
 import ProjectOverview from './ProjectOverview';
-import EnhancedProjectScope from './EnhancedProjectScope';
+import ProjectScope from './ProjectScope';
 import ProjectShopDrawings from './ProjectShopDrawings';
 import ProjectSpecifications from './ProjectSpecifications';
 import EnhancedGanttChart from '../../../components/charts/EnhancedGanttChart';
@@ -562,7 +562,7 @@ const ProjectPage = ({
         );
       case 1: // Scope Management
         return (
-          <EnhancedProjectScope
+          <ProjectScope
             project={project}
             tasks={projectTasks}
             teamMembers={teamMembers}
