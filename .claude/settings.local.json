@@ -106,7 +106,9 @@
       "Bash(git branch:*)",
       "Bash(npm uninstall:*)",
       "WebFetch(domain:react-icons.github.io)",
-      "WebFetch(domain:iconoir.com)"
+      "WebFetch(domain:iconoir.com)",
+      "Bash(npm outdated)",
+      "Bash(tree:*)"
     ],
     "deny": []
   }
