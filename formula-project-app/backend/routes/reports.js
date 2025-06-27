@@ -6,14 +6,14 @@
 const express = require('express');
 const router = express.Router();
 const ReportGenerator = require('../services/ReportGenerator');
-const auth = require('../middleware/auth');
-const { validateRequest } = require('../middleware/validation');
+const { verifyToken } = require('../middleware/auth');
+const { handleValidationErrors } = require('../middleware/validation');
 const { query, body, param } = require('express-validator');
 const path = require('path');
 const fs = require('fs').promises;
 
 // All report routes require authentication
-router.use(auth);
+router.use(verifyToken);
 
 /**
  * GET /api/reports/types
@@ -47,7 +47,7 @@ router.post('/project-summary/:projectId', [
   body('includeWorkflow').optional().isBoolean().withMessage('Include workflow must be boolean'),
   body('includeFinancials').optional().isBoolean().withMessage('Include financials must be boolean'),
   body('format').optional().isIn(['pdf', 'html']).withMessage('Format must be pdf or html')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { projectId } = req.params;
     const options = req.body;
@@ -86,7 +86,7 @@ router.post('/project-summary/:projectId', [
 router.post('/workflow-analysis/:projectId', [
   param('projectId').isUUID().withMessage('Project ID must be a valid UUID'),
   body('includeRecommendations').optional().isBoolean().withMessage('Include recommendations must be boolean')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { projectId } = req.params;
     const options = req.body;
@@ -130,7 +130,7 @@ router.post('/executive-dashboard', [
   ]).withMessage('Invalid date range'),
   body('includeProjectList').optional().isBoolean().withMessage('Include project list must be boolean'),
   body('includeMetrics').optional().isBoolean().withMessage('Include metrics must be boolean')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     // Check user has executive permissions
     if (req.user.role !== 'admin' && req.user.role !== 'project_manager') {
@@ -177,7 +177,7 @@ router.post('/executive-dashboard', [
  */
 router.get('/download/:fileName', [
   param('fileName').notEmpty().withMessage('File name is required')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { fileName } = req.params;
 
@@ -239,7 +239,7 @@ router.get('/download/:fileName', [
  */
 router.get('/status/:fileName', [
   param('fileName').notEmpty().withMessage('File name is required')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { fileName } = req.params;
 
@@ -266,7 +266,7 @@ router.get('/status/:fileName', [
 router.get('/list', [
   query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
   query('type').optional().isString().withMessage('Type must be a string')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { limit = 20, type } = req.query;
 
@@ -327,7 +327,7 @@ router.get('/list', [
  */
 router.delete('/:fileName', [
   param('fileName').notEmpty().withMessage('File name is required')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { fileName } = req.params;
 
@@ -382,7 +382,7 @@ router.delete('/:fileName', [
  */
 router.post('/cleanup', [
   body('daysOld').optional().isInt({ min: 1, max: 365 }).withMessage('Days old must be between 1 and 365')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     // Check admin permissions
     if (req.user.role !== 'admin') {

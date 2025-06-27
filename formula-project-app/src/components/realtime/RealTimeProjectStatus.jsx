@@ -20,32 +20,24 @@ import {
   Paper,
   Grid
 } from '@mui/material';
+// Timeline components replaced with simple layout - @mui/lab not available
 import {
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-  TimelineOppositeContent
-} from '@mui/lab';
-import {
-  ExpandMore,
-  ExpandLess,
+  NavArrowDown as ExpandMore,
+  NavArrowUp as ExpandLess,
   TrendingUp,
   TrendingDown,
-  Assignment,
+  ClipboardCheck as Assignment,
   CheckCircle,
-  Schedule,
-  Warning,
-  Error,
-  People,
-  AttachMoney,
-  CalendarToday,
-  Notifications,
-  NotificationsActive,
+  Clock as Schedule,
+  WarningTriangle as Warning,
+  Cancel as Error,
+  Group as People,
+  MoneySquare as AttachMoney,
+  Calendar as CalendarToday,
+  Bell as Notifications,
+  BellNotification as NotificationsActive,
   Refresh
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { 
   useProjectUpdates, 
@@ -234,43 +226,49 @@ export const RealTimeTaskStatusFeed = ({ limit = 10 }) => {
         }
       />
       <CardContent sx={{ pt: 0 }}>
-        <Timeline>
+        <List>
           {visibleChanges.map((change, index) => (
-            <TimelineItem key={change.taskId + change.timestamp}>
-              <TimelineOppositeContent sx={{ flex: 0.3 }}>
-                <Typography variant="caption" color="textSecondary">
-                  {formatDistanceToNow(new Date(), { addSuffix: true })}
-                </Typography>
-              </TimelineOppositeContent>
-              <TimelineSeparator>
-                <TimelineDot color={getStatusColor(change.newStatus)}>
+            <ListItem key={change.taskId + change.timestamp} sx={{ flexDirection: 'column', alignItems: 'flex-start', py: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+                <Box sx={{ 
+                  minWidth: 32, 
+                  height: 32, 
+                  borderRadius: '50%', 
+                  backgroundColor: `${getStatusColor(change.newStatus)}.main`,
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  color: 'white'
+                }}>
                   {getStatusIcon(change.newStatus)}
-                </TimelineDot>
-                {index < visibleChanges.length - 1 && <TimelineConnector />}
-              </TimelineSeparator>
-              <TimelineContent>
-                <Typography variant="body2" fontWeight="bold">
-                  {change.taskName}
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
-                  <Chip
-                    label={change.oldStatus}
-                    size="small"
-                    variant="outlined"
-                    sx={{ fontSize: '0.7rem' }}
-                  />
-                  <Typography variant="caption" color="textSecondary">→</Typography>
-                  <Chip
-                    label={change.newStatus}
-                    size="small"
-                    color={getStatusColor(change.newStatus)}
-                    sx={{ fontSize: '0.7rem' }}
-                  />
                 </Box>
-              </TimelineContent>
-            </TimelineItem>
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="body2" fontWeight="bold">
+                    {change.taskName}
+                  </Typography>
+                  <Typography variant="caption" color="textSecondary">
+                    {formatDistanceToNow(new Date(), { addSuffix: true })}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5, ml: 5 }}>
+                <Chip
+                  label={change.oldStatus}
+                  size="small"
+                  variant="outlined"
+                  sx={{ fontSize: '0.7rem' }}
+                />
+                <Typography variant="caption" color="textSecondary">→</Typography>
+                <Chip
+                  label={change.newStatus}
+                  size="small"
+                  color={getStatusColor(change.newStatus)}
+                  sx={{ fontSize: '0.7rem' }}
+                />
+              </Box>
+            </ListItem>
           ))}
-        </Timeline>
+        </List>
       </CardContent>
     </Card>
   );

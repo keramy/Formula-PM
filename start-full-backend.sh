@@ -198,12 +198,13 @@ echo -e "${GREEN}✅ Backend API started (PID: $BACKEND_PID)${NC}"
 # Wait for backend to be ready
 echo -e "${YELLOW}⏳ Waiting for backend to be ready...${NC}"
 for i in {1..30}; do
-    if curl -s http://localhost:5014/api/v1/health > /dev/null 2>&1; then
+    if curl -s http://localhost:5014/health > /dev/null 2>&1; then
         echo -e "${GREEN}✅ Backend is ready!${NC}"
         break
     fi
     if [ $i -eq 30 ]; then
         echo -e "${RED}❌ Backend failed to start. Check backend.log for errors.${NC}"
+        echo -e "${YELLOW}📋 Check backend logs:${NC} cat formula-project-app/backend/backend.log"
         exit 1
     fi
     sleep 2

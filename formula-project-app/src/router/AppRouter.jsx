@@ -14,6 +14,17 @@ const ClientsPage = lazy(() => import('../pages/ClientsPage'));
 const Login = lazy(() => import('../pages/Login'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 
+// Lazy load placeholder pages for missing routes
+const UpdatesPage = lazy(() => import('../pages/UpdatesPage'));
+const InboxPage = lazy(() => import('../pages/InboxPage'));
+const MyWorkPage = lazy(() => import('../pages/MyWorkPage'));
+const TimelinePage = lazy(() => import('../pages/TimelinePage'));
+const ShopDrawingsPage = lazy(() => import('../pages/ShopDrawingsPage'));
+const MaterialSpecsPage = lazy(() => import('../pages/MaterialSpecsPage'));
+const ReportsPage = lazy(() => import('../pages/ReportsPage'));
+const ProcurementPage = lazy(() => import('../pages/ProcurementPage'));
+const ActivityPage = lazy(() => import('../pages/ActivityPage'));
+
 // Loading component for Suspense fallback
 const PageLoader = () => (
   <Box
@@ -113,6 +124,87 @@ const AppRouter = () => {
             element={
               <Suspense fallback={<DashboardSkeleton />}>
                 <ClientsPage />
+              </Suspense>
+            }
+          />
+          
+          <Route
+            path="updates"
+            element={
+              <Suspense fallback={<DashboardSkeleton />}>
+                <UpdatesPage />
+              </Suspense>
+            }
+          />
+          
+          <Route
+            path="inbox"
+            element={
+              <Suspense fallback={<DashboardSkeleton />}>
+                <InboxPage />
+              </Suspense>
+            }
+          />
+          
+          <Route
+            path="my-work"
+            element={
+              <Suspense fallback={<DashboardSkeleton />}>
+                <MyWorkPage />
+              </Suspense>
+            }
+          />
+          
+          <Route
+            path="timeline"
+            element={
+              <Suspense fallback={<DashboardSkeleton />}>
+                <TimelinePage />
+              </Suspense>
+            }
+          />
+          
+          <Route
+            path="shop-drawings"
+            element={
+              <Suspense fallback={<DashboardSkeleton />}>
+                <ShopDrawingsPage />
+              </Suspense>
+            }
+          />
+          
+          <Route
+            path="material-specs"
+            element={
+              <Suspense fallback={<DashboardSkeleton />}>
+                <MaterialSpecsPage />
+              </Suspense>
+            }
+          />
+          
+          <Route
+            path="reports"
+            element={
+              <Suspense fallback={<DashboardSkeleton />}>
+                <ReportsPage />
+              </Suspense>
+            }
+          />
+          
+          <Route
+            path="procurement"
+            element={
+              <Suspense fallback={<DashboardSkeleton />}>
+                <ProcurementPage />
+              </Suspense>
+            }
+          />
+          
+          <Route
+            path="activity"
+            element={
+              <Suspense fallback={<DashboardSkeleton />}>
+                <ActivityPage />
               </Suspense>
             }
           />

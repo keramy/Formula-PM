@@ -6,12 +6,12 @@
 const express = require('express');
 const router = express.Router();
 const SearchService = require('../services/SearchService');
-const auth = require('../middleware/auth');
-const { validateRequest } = require('../middleware/validation');
+const { verifyToken } = require('../middleware/auth');
+const { handleValidationErrors } = require('../middleware/validation');
 const { query, body } = require('express-validator');
 
 // All search routes require authentication
-router.use(auth);
+router.use(verifyToken);
 
 /**
  * GET /api/search/global
@@ -23,7 +23,7 @@ router.get('/global', [
   query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
   query('sortBy').optional().isIn(['relevance', 'date', 'name']).withMessage('Invalid sort option'),
   query('projectContext').optional().isUUID().withMessage('Project context must be a valid UUID')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { 
       q: query, 
@@ -76,7 +76,7 @@ router.get('/projects', [
   query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
   query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be non-negative'),
   query('sortBy').optional().isIn(['relevance', 'name', 'created', 'updated', 'budget']).withMessage('Invalid sort option')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const {
       q: query = '',
@@ -147,7 +147,7 @@ router.get('/smart', [
   query('limit').optional().isInt({ min: 1, max: 50 }).withMessage('Limit must be between 1 and 50'),
   query('projectContext').optional().isUUID().withMessage('Project context must be a valid UUID'),
   query('includeHistory').optional().isBoolean().withMessage('Include history must be boolean')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const {
       q: query = '',
@@ -183,7 +183,7 @@ router.get('/smart', [
  */
 router.get('/history', [
   query('limit').optional().isInt({ min: 1, max: 50 }).withMessage('Limit must be between 1 and 50')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { limit = 10 } = req.query;
     const userId = req.user.id;
@@ -212,7 +212,7 @@ router.get('/history', [
 router.get('/analytics', [
   query('startDate').optional().isISO8601().withMessage('Start date must be valid ISO date'),
   query('endDate').optional().isISO8601().withMessage('End date must be valid ISO date')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     const userId = req.user.role === 'admin' ? null : req.user.id;
@@ -245,7 +245,7 @@ router.post('/entities/:type', [
   query('q').notEmpty().isLength({ min: 1 }).withMessage('Query is required'),
   query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
   body('filters').optional().isObject().withMessage('Filters must be an object')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { type } = req.params;
     const { q: query, limit = 20 } = req.query;

@@ -4,80 +4,80 @@
  */
 
 const jwt = require('jsonwebtoken');
-const { PrismaClient } = require('@prisma/client');
-
-const prisma = new PrismaClient();
 
 /**
- * Socket.IO authentication middleware
- * Validates JWT tokens and attaches user data to socket
+ * Create Socket.IO authentication middleware with Prisma instance
+ * @param {PrismaClient} prisma - Shared Prisma instance
+ * @returns {Function} Socket middleware function
  */
-const socketAuth = async (socket, next) => {
-  try {
-    // Extract token from auth header or query parameter
-    const token = socket.handshake.auth?.token || 
-                  socket.handshake.headers?.authorization?.replace('Bearer ', '') ||
-                  socket.handshake.query?.token;
+const createSocketAuth = (prisma) => {
+  return async (socket, next) => {
+    try {
+      // Extract token from auth header or query parameter
+      const token = socket.handshake.auth?.token || 
+                    socket.handshake.headers?.authorization?.replace('Bearer ', '') ||
+                    socket.handshake.query?.token;
 
-    if (!token) {
-      console.log('🔐 Socket connection denied: No token provided');
-      return next(new Error('Authentication token required'));
-    }
-
-    // Verify JWT token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    if (!decoded.userId) {
-      console.log('🔐 Socket connection denied: Invalid token payload');
-      return next(new Error('Invalid token payload'));
-    }
-
-    // Fetch user from database
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        role: true,
-        department: true,
-        status: true,
-        avatar: true
+      if (!token) {
+        console.log('🔐 Socket connection denied: No token provided');
+        return next(new Error('Authentication token required'));
       }
-    });
 
-    if (!user) {
-      console.log('🔐 Socket connection denied: User not found');
-      return next(new Error('User not found'));
+      // Verify JWT token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      
+      if (!decoded.userId) {
+        console.log('🔐 Socket connection denied: Invalid token payload');
+        return next(new Error('Invalid token payload'));
+      }
+
+      // Fetch user from database
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.userId },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          role: true,
+          department: true,
+          status: true,
+          avatar: true
+        }
+      });
+
+      if (!user) {
+        console.log('🔐 Socket connection denied: User not found');
+        return next(new Error('User not found'));
+      }
+
+      if (user.status !== 'active') {
+        console.log('🔐 Socket connection denied: User inactive');
+        return next(new Error('User account is inactive'));
+      }
+
+      // Attach user data to socket
+      socket.userId = user.id;
+      socket.user = user;
+      socket.userRole = user.role;
+      socket.department = user.department;
+
+      // Log successful authentication
+      console.log(`✅ Socket authenticated: ${user.firstName} ${user.lastName} (${user.email})`);
+      
+      next();
+    } catch (error) {
+      console.error('❌ Socket authentication error:', error);
+      
+      if (error.name === 'JsonWebTokenError') {
+        return next(new Error('Invalid authentication token'));
+      } else if (error.name === 'TokenExpiredError') {
+        return next(new Error('Authentication token expired'));
+      } else {
+        return next(new Error('Authentication failed'));
+      }
     }
-
-    if (user.status !== 'active') {
-      console.log('🔐 Socket connection denied: User inactive');
-      return next(new Error('User account is inactive'));
-    }
-
-    // Attach user data to socket
-    socket.userId = user.id;
-    socket.user = user;
-    socket.userRole = user.role;
-    socket.department = user.department;
-
-    // Log successful authentication
-    console.log(`✅ Socket authenticated: ${user.firstName} ${user.lastName} (${user.email})`);
-    
-    next();
-  } catch (error) {
-    console.error('❌ Socket authentication error:', error);
-    
-    if (error.name === 'JsonWebTokenError') {
-      return next(new Error('Invalid authentication token'));
-    } else if (error.name === 'TokenExpiredError') {
-      return next(new Error('Authentication token expired'));
-    } else {
-      return next(new Error('Authentication failed'));
-    }
-  }
+  };
 };
 
 /**
@@ -160,18 +160,19 @@ const socketRateLimit = (maxEvents = 100, windowMs = 60000) => {
 };
 
 /**
- * Project access validation middleware
- * Ensures user has access to specific projects
+ * Create project access validation middleware
+ * @param {PrismaClient} prisma - Shared Prisma instance
  */
-const validateProjectAccess = async (socket, projectId) => {
-  try {
-    // Check if user has access to project
-    const projectAccess = await prisma.projectMember.findFirst({
-      where: {
-        projectId: projectId,
-        userId: socket.userId
-      }
-    });
+const createValidateProjectAccess = (prisma) => {
+  return async (socket, projectId) => {
+    try {
+      // Check if user has access to project
+      const projectAccess = await prisma.projectMember.findFirst({
+        where: {
+          projectId: projectId,
+          userId: socket.userId
+        }
+      });
 
     // Allow access if user is project member, project manager, or admin
     if (projectAccess || 
@@ -191,19 +192,22 @@ const validateProjectAccess = async (socket, projectId) => {
     }
 
     return false;
-  } catch (error) {
-    console.error('❌ Project access validation error:', error);
-    return false;
-  }
+    } catch (error) {
+      console.error('❌ Project access validation error:', error);
+      return false;
+    }
+  };
 };
 
 /**
- * Task access validation middleware
- * Ensures user has access to specific tasks
+ * Create task access validation middleware
+ * @param {PrismaClient} prisma - Shared Prisma instance
+ * @param {Function} validateProjectAccess - Project access function
  */
-const validateTaskAccess = async (socket, taskId) => {
-  try {
-    const task = await prisma.task.findUnique({
+const createValidateTaskAccess = (prisma, validateProjectAccess) => {
+  return async (socket, taskId) => {
+    try {
+      const task = await prisma.task.findUnique({
       where: { id: taskId },
       include: {
         project: {
@@ -231,16 +235,21 @@ const validateTaskAccess = async (socket, taskId) => {
     }
 
     return false;
-  } catch (error) {
-    console.error('❌ Task access validation error:', error);
-    return false;
-  }
+    } catch (error) {
+      console.error('❌ Task access validation error:', error);
+      return false;
+    }
+  };
 };
 
 module.exports = {
-  socketAuth,
+  createSocketAuth,
   socketAuthorize,
   socketRateLimit,
-  validateProjectAccess,
-  validateTaskAccess
+  createValidateProjectAccess,
+  createValidateTaskAccess,
+  // Backward compatibility - deprecated
+  socketAuth: createSocketAuth,
+  validateProjectAccess: createValidateProjectAccess,
+  validateTaskAccess: createValidateTaskAccess
 };

@@ -7,12 +7,12 @@ const express = require('express');
 const router = express.Router();
 const ServiceRegistry = require('../services/ServiceRegistry');
 const EmailService = require('../services/EmailService');
-const auth = require('../middleware/auth');
-const { validateRequest } = require('../middleware/validation');
+const { verifyToken } = require('../middleware/auth');
+const { handleValidationErrors } = require('../middleware/validation');
 const { body } = require('express-validator');
 
 // All system routes require authentication
-router.use(auth);
+router.use(verifyToken);
 
 /**
  * GET /api/system/health
@@ -227,7 +227,7 @@ router.get('/info', async (req, res) => {
  */
 router.post('/backup', [
   body('type').optional().isIn(['full', 'incremental']).withMessage('Invalid backup type')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     // Check admin permissions
     if (req.user.role !== 'admin') {
@@ -314,7 +314,7 @@ router.post('/maintenance', [
   body('enabled').isBoolean().withMessage('Enabled must be boolean'),
   body('message').optional().isString().withMessage('Message must be string'),
   body('estimatedDuration').optional().isString().withMessage('Duration must be string')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     // Check admin permissions
     if (req.user.role !== 'admin') {
@@ -385,7 +385,7 @@ router.get('/version', async (req, res) => {
  */
 router.post('/cache/clear', [
   body('cacheType').optional().isIn(['all', 'analytics', 'search', 'project', 'notification']).withMessage('Invalid cache type')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     // Check admin permissions
     if (req.user.role !== 'admin') {

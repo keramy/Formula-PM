@@ -5,9 +5,6 @@
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { PrismaClient } = require('@prisma/client');
-
-const prisma = new PrismaClient();
 
 /**
  * Role hierarchy for permission checking
@@ -124,6 +121,7 @@ const verifyToken = async (req, res, next) => {
     });
 
     // Check if user still exists and is active
+    const { prisma } = req.app.locals;
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
       select: {
@@ -273,6 +271,7 @@ const requireProjectAccess = async (req, res, next) => {
     }
 
     // Check if user is the project manager
+    const { prisma } = req.app.locals;
     const project = await prisma.project.findUnique({
       where: { id: projectId },
       include: {
@@ -348,6 +347,7 @@ const optionalAuth = async (req, res, next) => {
     const token = authHeader.substring(7);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
+    const { prisma } = req.app.locals;
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
       select: {

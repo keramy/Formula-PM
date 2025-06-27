@@ -3,8 +3,22 @@
  * Handles file uploads, storage, and management with AWS S3 integration
  */
 
-const { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, ListObjectsV2Command, HeadObjectCommand } = require('@aws-sdk/client-s3');
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+// Optional AWS S3 dependencies
+let S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, ListObjectsV2Command, HeadObjectCommand, getSignedUrl;
+try {
+  const s3 = require('@aws-sdk/client-s3');
+  const presigner = require('@aws-sdk/s3-request-presigner');
+  S3Client = s3.S3Client;
+  PutObjectCommand = s3.PutObjectCommand;
+  GetObjectCommand = s3.GetObjectCommand;
+  DeleteObjectCommand = s3.DeleteObjectCommand;
+  ListObjectsV2Command = s3.ListObjectsV2Command;
+  HeadObjectCommand = s3.HeadObjectCommand;
+  getSignedUrl = presigner.getSignedUrl;
+} catch (error) {
+  console.log('⚠️  AWS S3 SDK not available - cloud storage features disabled');
+}
+
 const sharp = require('sharp');
 const fs = require('fs').promises;
 const path = require('path');
@@ -60,8 +74,8 @@ class CloudStorageService {
 
       console.log('🚀 Initializing Cloud Storage Service...');
 
-      // Initialize S3 client if credentials are available
-      if (this.config.accessKeyId && this.config.secretAccessKey) {
+      // Initialize S3 client if AWS SDK is available and credentials are provided
+      if (S3Client && this.config.accessKeyId && this.config.secretAccessKey) {
         this.s3Client = new S3Client({
           region: this.config.region,
           credentials: {
@@ -74,7 +88,11 @@ class CloudStorageService {
         await this.testS3Connection();
         console.log('✅ AWS S3 client initialized successfully');
       } else {
-        console.warn('⚠️ AWS credentials not found, using local storage fallback');
+        if (!S3Client) {
+          console.log('ℹ️  AWS S3 SDK not available, using local storage');
+        } else {
+          console.warn('⚠️ AWS credentials not found, using local storage fallback');
+        }
         await this.initializeLocalStorage();
       }
 

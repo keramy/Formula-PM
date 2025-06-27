@@ -32,7 +32,6 @@ const {
 } = require('../middleware/errorHandler');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // Apply authentication to all project routes
 router.use(verifyToken);
@@ -103,6 +102,7 @@ router.get('/', validatePagination, asyncHandler(async (req, res) => {
   }
 
   // Get projects and total count
+  const { prisma } = req.app.locals;
   const [projects, total] = await Promise.all([
     dbOperation(async () => {
       return await prisma.project.findMany({
@@ -175,6 +175,7 @@ router.get('/', validatePagination, asyncHandler(async (req, res) => {
 router.get('/:id', validateUUIDParam('id'), requireProjectAccess, asyncHandler(async (req, res) => {
   const { id } = req.params;
   const currentUser = req.user;
+  const { prisma } = req.app.locals;
 
   const project = await dbOperation(async () => {
     return await prisma.project.findUnique({
@@ -355,6 +356,7 @@ router.post('/', requirePermission('manage_projects'), validateCreateProject, as
   } = req.body;
 
   const currentUser = req.user;
+  const { prisma } = req.app.locals;
 
   // Validate client exists
   const client = await dbOperation(async () => {
@@ -497,6 +499,7 @@ router.post('/', requirePermission('manage_projects'), validateCreateProject, as
 router.put('/:id', validateUUIDParam('id'), requireProjectAccess, validateUpdateProject, asyncHandler(async (req, res) => {
   const { id } = req.params;
   const currentUser = req.user;
+  const { prisma } = req.app.locals;
 
   // Check if user can edit this project
   if (currentUser.role !== 'admin') {
@@ -627,6 +630,7 @@ router.put('/:id', validateUUIDParam('id'), requireProjectAccess, validateUpdate
 router.delete('/:id', requireRole('admin'), validateUUIDParam('id'), asyncHandler(async (req, res) => {
   const { id } = req.params;
   const currentUser = req.user;
+  const { prisma } = req.app.locals;
 
   const project = await dbOperation(async () => {
     return await prisma.project.findUnique({
@@ -710,6 +714,7 @@ router.delete('/:id', requireRole('admin'), validateUUIDParam('id'), asyncHandle
  */
 router.get('/:id/team', validateUUIDParam('id'), requireProjectAccess, asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const { prisma } = req.app.locals;
 
   const teamMembers = await dbOperation(async () => {
     return await prisma.projectTeamMember.findMany({
@@ -752,6 +757,7 @@ router.post('/:id/team', validateUUIDParam('id'), requireProjectAccess, asyncHan
   const { id } = req.params;
   const { userId, role = 'team_member' } = req.body;
   const currentUser = req.user;
+  const { prisma } = req.app.locals;
 
   if (!userId) {
     throw new ValidationError('User ID is required');
@@ -863,6 +869,7 @@ router.post('/:id/team', validateUUIDParam('id'), requireProjectAccess, asyncHan
 router.delete('/:id/team/:userId', validateUUIDParam('id'), validateUUIDParam('userId'), requireProjectAccess, asyncHandler(async (req, res) => {
   const { id, userId } = req.params;
   const currentUser = req.user;
+  const { prisma } = req.app.locals;
 
   // Check permissions
   if (currentUser.role !== 'admin') {

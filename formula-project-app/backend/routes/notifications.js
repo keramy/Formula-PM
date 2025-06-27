@@ -6,12 +6,12 @@
 const express = require('express');
 const router = express.Router();
 const NotificationService = require('../services/NotificationService');
-const auth = require('../middleware/auth');
-const { validateRequest } = require('../middleware/validation');
+const { verifyToken } = require('../middleware/auth');
+const { handleValidationErrors } = require('../middleware/validation');
 const { query, body, param } = require('express-validator');
 
 // All notification routes require authentication
-router.use(auth);
+router.use(verifyToken);
 
 /**
  * GET /api/notifications
@@ -23,7 +23,7 @@ router.get('/', [
   query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
   query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be non-negative'),
   query('includeExpired').optional().isBoolean().withMessage('Include expired must be boolean')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const {
       unreadOnly = false,
@@ -72,7 +72,7 @@ router.post('/', [
   body('data').optional().isObject().withMessage('Data must be an object'),
   body('expiresAt').optional().isISO8601().withMessage('Expires at must be valid ISO date'),
   body('sendEmail').optional().isBoolean().withMessage('Send email must be boolean')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     // Check permissions - only admins and project managers can create notifications for other users
     if (req.body.userId !== req.user.id && !['admin', 'project_manager'].includes(req.user.role)) {
@@ -113,7 +113,7 @@ router.post('/bulk', [
   ]).withMessage('Each notification must have a valid type'),
   body('notifications.*.title').notEmpty().withMessage('Each notification must have a title'),
   body('notifications.*.message').notEmpty().withMessage('Each notification must have a message')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     // Check permissions
     if (!['admin', 'project_manager'].includes(req.user.role)) {
@@ -148,7 +148,7 @@ router.post('/bulk', [
  */
 router.put('/:id/read', [
   param('id').isUUID().withMessage('Notification ID must be a valid UUID')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
@@ -201,7 +201,7 @@ router.put('/read-all', async (req, res) => {
  */
 router.delete('/:id', [
   param('id').isUUID().withMessage('Notification ID must be a valid UUID')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
@@ -229,7 +229,7 @@ router.delete('/:id', [
 router.post('/task-assignment', [
   body('taskId').isUUID().withMessage('Task ID must be a valid UUID'),
   body('assigneeId').isUUID().withMessage('Assignee ID must be a valid UUID')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { taskId, assigneeId } = req.body;
     const assignedBy = req.user.id;
@@ -258,7 +258,7 @@ router.post('/project-update', [
   body('projectId').isUUID().withMessage('Project ID must be a valid UUID'),
   body('updateData').isObject().withMessage('Update data must be an object'),
   body('teamMemberIds').optional().isArray().withMessage('Team member IDs must be an array')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { projectId, updateData, teamMemberIds = [] } = req.body;
     const updatedBy = req.user.id;
@@ -317,7 +317,7 @@ router.post('/deadline-reminders', async (req, res) => {
 router.post('/material-delivery', [
   body('materialId').isUUID().withMessage('Material ID must be a valid UUID'),
   body('deliveredTo').isUUID().withMessage('Delivered to must be a valid UUID')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { materialId, deliveredTo } = req.body;
 
@@ -344,7 +344,7 @@ router.post('/material-delivery', [
 router.post('/drawing-approval', [
   body('drawingId').isUUID().withMessage('Drawing ID must be a valid UUID'),
   body('notifyUserIds').optional().isArray().withMessage('Notify user IDs must be an array')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { drawingId, notifyUserIds = [] } = req.body;
     const approvedBy = req.user.id;
@@ -372,7 +372,7 @@ router.post('/drawing-approval', [
 router.post('/digest/:userId', [
   param('userId').isUUID().withMessage('User ID must be a valid UUID'),
   body('period').optional().isIn(['daily', 'weekly']).withMessage('Period must be daily or weekly')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     // Check permissions
     if (req.params.userId !== req.user.id && req.user.role !== 'admin') {
@@ -409,7 +409,7 @@ router.post('/digest/:userId', [
 router.get('/stats', [
   query('startDate').optional().isISO8601().withMessage('Start date must be valid ISO date'),
   query('endDate').optional().isISO8601().withMessage('End date must be valid ISO date')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     const userId = req.user.role === 'admin' ? null : req.user.id;

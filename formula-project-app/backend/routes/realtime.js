@@ -6,7 +6,7 @@
 const express = require('express');
 const multer = require('multer');
 const { body, param, query, validationResult } = require('express-validator');
-const { authenticateToken, requireRole } = require('../middleware/auth');
+const { verifyToken, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -36,7 +36,7 @@ const upload = multer({
 /**
  * Get real-time service status and metrics
  */
-router.get('/status', authenticateToken, async (req, res) => {
+router.get('/status', verifyToken, async (req, res) => {
   try {
     const ServiceRegistry = req.app.locals.ServiceRegistry || require('../services/ServiceRegistry');
     
@@ -90,7 +90,7 @@ router.get('/status', authenticateToken, async (req, res) => {
 /**
  * Get performance metrics
  */
-router.get('/performance/metrics', authenticateToken, requireRole('admin'), async (req, res) => {
+router.get('/performance/metrics', verifyToken, requireRole('admin'), async (req, res) => {
   try {
     const ServiceRegistry = req.app.locals.ServiceRegistry || require('../services/ServiceRegistry');
     const performanceService = ServiceRegistry.getService('PerformanceMonitoringService');
@@ -109,7 +109,7 @@ router.get('/performance/metrics', authenticateToken, requireRole('admin'), asyn
 /**
  * Get performance trends
  */
-router.get('/performance/trends', authenticateToken, requireRole('admin'), async (req, res) => {
+router.get('/performance/trends', verifyToken, requireRole('admin'), async (req, res) => {
   try {
     const ServiceRegistry = req.app.locals.ServiceRegistry || require('../services/ServiceRegistry');
     const performanceService = ServiceRegistry.getService('PerformanceMonitoringService');
@@ -128,7 +128,7 @@ router.get('/performance/trends', authenticateToken, requireRole('admin'), async
 /**
  * Get online users
  */
-router.get('/users/online', authenticateToken, async (req, res) => {
+router.get('/users/online', verifyToken, async (req, res) => {
   try {
     const ServiceRegistry = req.app.locals.ServiceRegistry || require('../services/ServiceRegistry');
     const realtimeService = ServiceRegistry.getService('RealtimeService');
@@ -151,7 +151,7 @@ router.get('/users/online', authenticateToken, async (req, res) => {
 /**
  * Get active collaborations
  */
-router.get('/collaborations/active', authenticateToken, async (req, res) => {
+router.get('/collaborations/active', verifyToken, async (req, res) => {
   try {
     const ServiceRegistry = req.app.locals.ServiceRegistry || require('../services/ServiceRegistry');
     const realtimeService = ServiceRegistry.getService('RealtimeService');
@@ -180,7 +180,7 @@ router.get('/collaborations/active', authenticateToken, async (req, res) => {
  * Send system notification
  */
 router.post('/notifications/system', 
-  authenticateToken, 
+  verifyToken, 
   requireRole('admin'),
   [
     body('title').notEmpty().withMessage('Title is required'),
@@ -228,7 +228,7 @@ router.post('/notifications/system',
  * Upload file
  */
 router.post('/files/upload',
-  authenticateToken,
+  verifyToken,
   upload.single('file'),
   [
     body('prefix').optional().isString().withMessage('Prefix must be a string'),
@@ -298,7 +298,7 @@ router.post('/files/upload',
  * Get file signed URL
  */
 router.get('/files/:fileKey/url',
-  authenticateToken,
+  verifyToken,
   [
     param('fileKey').notEmpty().withMessage('File key is required'),
     query('expiresIn').optional().isInt({ min: 300, max: 86400 }).withMessage('Expires in must be between 300 and 86400 seconds')
@@ -337,7 +337,7 @@ router.get('/files/:fileKey/url',
  * Get file metadata
  */
 router.get('/files/:fileKey/metadata',
-  authenticateToken,
+  verifyToken,
   [
     param('fileKey').notEmpty().withMessage('File key is required')
   ],
@@ -370,7 +370,7 @@ router.get('/files/:fileKey/metadata',
  * Delete file
  */
 router.delete('/files/:fileKey',
-  authenticateToken,
+  verifyToken,
   requireRole('admin'), // Only admins can delete files
   [
     param('fileKey').notEmpty().withMessage('File key is required')
@@ -415,7 +415,7 @@ router.delete('/files/:fileKey',
  * Add background job
  */
 router.post('/jobs',
-  authenticateToken,
+  verifyToken,
   requireRole('admin'),
   [
     body('queueName').notEmpty().withMessage('Queue name is required'),
@@ -455,7 +455,7 @@ router.post('/jobs',
 /**
  * Get job queue statistics
  */
-router.get('/jobs/stats', authenticateToken, requireRole('admin'), async (req, res) => {
+router.get('/jobs/stats', verifyToken, requireRole('admin'), async (req, res) => {
   try {
     const ServiceRegistry = req.app.locals.ServiceRegistry || require('../services/ServiceRegistry');
     const backgroundJobService = ServiceRegistry.getService('BackgroundJobService');
@@ -475,7 +475,7 @@ router.get('/jobs/stats', authenticateToken, requireRole('admin'), async (req, r
  * Run performance benchmark
  */
 router.post('/benchmark/run',
-  authenticateToken,
+  verifyToken,
   requireRole('admin'),
   [
     body('concurrentUsers').optional().isInt({ min: 1, max: 50 }).withMessage('Concurrent users must be between 1 and 50'),
@@ -526,7 +526,7 @@ router.post('/benchmark/run',
 /**
  * Get system health summary
  */
-router.get('/health/summary', authenticateToken, async (req, res) => {
+router.get('/health/summary', verifyToken, async (req, res) => {
   try {
     const ServiceRegistry = req.app.locals.ServiceRegistry || require('../services/ServiceRegistry');
     

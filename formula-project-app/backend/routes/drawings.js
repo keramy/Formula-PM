@@ -31,7 +31,6 @@ const {
 } = require('../middleware/errorHandler');
 
 const router = express.Router({ mergeParams: true }); // mergeParams to access projectId from parent route
-const prisma = new PrismaClient();
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -105,6 +104,7 @@ router.get('/', requireProjectAccess, validatePagination, asyncHandler(async (re
     scopeItemId,
     search
   } = req.query;
+  const { prisma } = req.app.locals;
 
   const skip = (parseInt(page) - 1) * parseInt(limit);
   const take = parseInt(limit);

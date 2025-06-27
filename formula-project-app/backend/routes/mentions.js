@@ -6,12 +6,12 @@
 const express = require('express');
 const router = express.Router();
 const MentionService = require('../services/MentionService');
-const auth = require('../middleware/auth');
-const { validateRequest } = require('../middleware/validation');
+const { verifyToken } = require('../middleware/auth');
+const { handleValidationErrors } = require('../middleware/validation');
 const { body, query, param } = require('express-validator');
 
 // All mention routes require authentication
-router.use(auth);
+router.use(verifyToken);
 
 /**
  * GET /api/mentions/search
@@ -22,7 +22,7 @@ router.get('/search', [
   query('types').optional().isArray().withMessage('Types must be an array'),
   query('limit').optional().isInt({ min: 1, max: 50 }).withMessage('Limit must be between 1 and 50'),
   query('projectId').optional().isUUID().withMessage('Project ID must be a valid UUID')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { q: query, types, limit = 10, projectId } = req.query;
 
@@ -55,7 +55,7 @@ router.get('/search', [
 router.post('/parse', [
   body('content').notEmpty().withMessage('Content is required'),
   body('projectId').optional().isUUID().withMessage('Project ID must be a valid UUID')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { content, projectId } = req.body;
 
@@ -92,7 +92,7 @@ router.post('/process', [
   body('entityId').isUUID().withMessage('Entity ID must be a valid UUID'),
   body('projectId').optional().isUUID().withMessage('Project ID must be a valid UUID'),
   body('sendNotifications').optional().isBoolean().withMessage('Send notifications must be boolean')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { content, entityType, entityId, projectId, sendNotifications = true } = req.body;
     const userId = req.user.id;
@@ -124,7 +124,7 @@ router.post('/process', [
  */
 router.get('/suggestions', [
   query('projectId').optional().isUUID().withMessage('Project ID must be a valid UUID')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { projectId } = req.query;
     const userId = req.user.id;
@@ -153,7 +153,7 @@ router.get('/analytics/:projectId', [
   param('projectId').isUUID().withMessage('Project ID must be a valid UUID'),
   query('startDate').optional().isISO8601().withMessage('Start date must be valid ISO date'),
   query('endDate').optional().isISO8601().withMessage('End date must be valid ISO date')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { projectId } = req.params;
     const { startDate, endDate } = req.query;
@@ -185,7 +185,7 @@ router.post('/format', [
   body('content').notEmpty().withMessage('Content is required'),
   body('mentions').isObject().withMessage('Mentions object is required'),
   body('projectId').optional().isUUID().withMessage('Project ID must be a valid UUID')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { content, mentions } = req.body;
 

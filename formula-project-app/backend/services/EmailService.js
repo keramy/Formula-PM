@@ -62,7 +62,7 @@ class EmailService {
    */
   async createTransporter() {
     try {
-      this.transporter = nodemailer.createTransporter(this.config.smtp);
+      this.transporter = nodemailer.createTransport(this.config.smtp);
       
       // Verify connection
       await this.transporter.verify();

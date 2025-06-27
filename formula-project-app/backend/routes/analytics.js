@@ -6,12 +6,12 @@
 const express = require('express');
 const router = express.Router();
 const AnalyticsService = require('../services/AnalyticsService');
-const auth = require('../middleware/auth');
-const { validateRequest } = require('../middleware/validation');
+const { verifyToken } = require('../middleware/auth');
+const { handleValidationErrors } = require('../middleware/validation');
 const { query, body, param } = require('express-validator');
 
 // All analytics routes require authentication
-router.use(auth);
+router.use(verifyToken);
 
 /**
  * GET /api/analytics/dashboard
@@ -24,7 +24,7 @@ router.get('/dashboard', [
   ]).withMessage('Invalid date range'),
   query('projectIds').optional().isArray().withMessage('Project IDs must be an array'),
   query('includeForecasts').optional().isBoolean().withMessage('Include forecasts must be boolean')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const {
       dateRange = 'last_30_days',
@@ -71,7 +71,7 @@ router.get('/kpis', [
   query('startDate').optional().isISO8601().withMessage('Start date must be valid ISO date'),
   query('endDate').optional().isISO8601().withMessage('End date must be valid ISO date'),
   query('projectIds').optional().isArray().withMessage('Project IDs must be an array')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { startDate, endDate, projectIds } = req.query;
 
@@ -103,7 +103,7 @@ router.get('/kpis', [
 router.get('/trends', [
   query('period').optional().isIn(['daily', 'weekly', 'monthly', 'quarterly']).withMessage('Invalid period'),
   query('projectIds').optional().isArray().withMessage('Project IDs must be an array')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { period = 'daily', projectIds } = req.query;
 
@@ -132,7 +132,7 @@ router.get('/performance', [
   query('startDate').optional().isISO8601().withMessage('Start date must be valid ISO date'),
   query('endDate').optional().isISO8601().withMessage('End date must be valid ISO date'),
   query('projectIds').optional().isArray().withMessage('Project IDs must be an array')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { startDate, endDate, projectIds } = req.query;
 
@@ -164,7 +164,7 @@ router.get('/projects', [
   query('startDate').optional().isISO8601().withMessage('Start date must be valid ISO date'),
   query('endDate').optional().isISO8601().withMessage('End date must be valid ISO date'),
   query('projectIds').optional().isArray().withMessage('Project IDs must be an array')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { startDate, endDate, projectIds } = req.query;
 
@@ -195,7 +195,7 @@ router.get('/projects', [
 router.get('/team', [
   query('startDate').optional().isISO8601().withMessage('Start date must be valid ISO date'),
   query('endDate').optional().isISO8601().withMessage('End date must be valid ISO date')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
@@ -227,7 +227,7 @@ router.get('/financial', [
   query('startDate').optional().isISO8601().withMessage('Start date must be valid ISO date'),
   query('endDate').optional().isISO8601().withMessage('End date must be valid ISO date'),
   query('projectIds').optional().isArray().withMessage('Project IDs must be an array')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     // Check permissions for financial data
     if (req.user.role !== 'admin' && req.user.role !== 'project_manager') {
@@ -268,7 +268,7 @@ router.get('/clients', [
     'last_30_days', 'last_90_days', 'last_year', 'this_year'
   ]).withMessage('Invalid date range'),
   query('clientId').optional().isUUID().withMessage('Client ID must be a valid UUID')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const { dateRange = 'last_year', clientId } = req.query;
 
@@ -297,7 +297,7 @@ router.get('/clients', [
  */
 router.get('/forecasts', [
   query('projectIds').optional().isArray().withMessage('Project IDs must be an array')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     // Check permissions for forecasts
     if (req.user.role !== 'admin' && req.user.role !== 'project_manager') {
@@ -335,7 +335,7 @@ router.post('/custom', [
   body('groupBy').optional().isString().withMessage('Group by must be a string'),
   body('dateRange').optional().isString().withMessage('Date range must be a string'),
   body('includeCharts').optional().isBoolean().withMessage('Include charts must be boolean')
-], validateRequest, async (req, res) => {
+], handleValidationErrors, async (req, res) => {
   try {
     const config = req.body;
 

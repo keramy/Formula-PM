@@ -33,7 +33,6 @@ const {
 } = require('../middleware/errorHandler');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // Rate limiting for auth endpoints
 const authLimiter = rateLimit({
@@ -64,6 +63,7 @@ const registerLimiter = rateLimit({
  */
 router.post('/login', authLimiter, validateLogin, asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  const { prisma } = req.app.locals;
   
   // Find user by email
   const user = await dbOperation(async () => {
@@ -173,7 +173,8 @@ router.post('/register', registerLimiter, validateRegister, asyncHandler(async (
     certifications = []
   } = req.body;
   
-  // Check if user already exists
+  // Check if user already exists  
+  const { prisma } = req.app.locals;
   const existingUser = await dbOperation(async () => {
     return await prisma.user.findUnique({
       where: { email: email.toLowerCase() }
@@ -271,6 +272,7 @@ router.post('/register', registerLimiter, validateRegister, asyncHandler(async (
  */
 router.post('/refresh', validateRefreshToken, asyncHandler(async (req, res) => {
   const { refreshToken } = req.body;
+  const { prisma } = req.app.locals;
   
   try {
     // Verify refresh token

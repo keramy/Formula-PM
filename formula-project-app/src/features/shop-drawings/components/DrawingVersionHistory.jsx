@@ -3,12 +3,6 @@ import {
   Box,
   Paper,
   Typography,
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
   Card,
   CardContent,
   Chip,
@@ -24,18 +18,19 @@ import {
   Select,
   MenuItem,
   Avatar,
-  Tooltip
+  Tooltip,
+  Stack
 } from '@mui/material';
 import {
   CheckCircle as ApprovedIcon,
-  Pending as PendingIcon,
+  Clock as PendingIcon,
   Cancel as RejectedIcon,
-  Edit as RevisionIcon,
-  Visibility as ViewIcon,
-  GetApp as DownloadIcon,
-  Add as AddIcon,
+  EditPencil as RevisionIcon,
+  Eye as ViewIcon,
+  Download as DownloadIcon,
+  Plus as AddIcon,
   Upload as UploadIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 
 const DrawingVersionHistory = ({ 
   drawing,
@@ -150,16 +145,40 @@ const DrawingVersionHistory = ({
         </Button>
       </Box>
 
-      <Timeline>
+      <Stack spacing={2}>
         {sortedRevisions.map((revision, index) => (
-          <TimelineItem key={revision.version}>
-            <TimelineSeparator>
-              <TimelineDot sx={{ backgroundColor: getStatusColor(revision.status), padding: 1 }}>
+          <Box key={revision.version} sx={{ display: 'flex', gap: 2 }}>
+            {/* Status Icon */}
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center',
+              minWidth: '40px'
+            }}>
+              <Box sx={{ 
+                backgroundColor: getStatusColor(revision.status), 
+                borderRadius: '50%',
+                width: 40,
+                height: 40,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white'
+              }}>
                 {getStatusIcon(revision.status)}
-              </TimelineDot>
-              {index < sortedRevisions.length - 1 && <TimelineConnector />}
-            </TimelineSeparator>
-            <TimelineContent>
+              </Box>
+              {index < sortedRevisions.length - 1 && (
+                <Box sx={{ 
+                  width: '2px', 
+                  height: '30px', 
+                  backgroundColor: '#E0E0E0', 
+                  mt: 1 
+                }} />
+              )}
+            </Box>
+            
+            {/* Content */}
+            <Box sx={{ flex: 1 }}>
               <Card elevation={1} sx={{ mb: 2 }}>
                 <CardContent>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
@@ -244,10 +263,10 @@ const DrawingVersionHistory = ({
                   )}
                 </CardContent>
               </Card>
-            </TimelineContent>
-          </TimelineItem>
+            </Box>
+          </Box>
         ))}
-      </Timeline>
+      </Stack>
 
       {/* Add Revision Dialog */}
       <Dialog open={addRevisionOpen} onClose={() => setAddRevisionOpen(false)} maxWidth="sm" fullWidth>

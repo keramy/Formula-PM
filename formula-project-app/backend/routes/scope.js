@@ -30,7 +30,6 @@ const {
 } = require('../middleware/errorHandler');
 
 const router = express.Router({ mergeParams: true }); // mergeParams to access projectId from parent route
-const prisma = new PrismaClient();
 
 // Apply authentication to all scope routes
 router.use(verifyToken);
@@ -42,6 +41,7 @@ router.use(verifyToken);
 router.get('/', requireProjectAccess, asyncHandler(async (req, res) => {
   const { projectId } = req.params;
   const { includeItems = 'true' } = req.query;
+  const { prisma } = req.app.locals;
 
   const scopeGroups = await dbOperation(async () => {
     const selectOptions = {
@@ -122,6 +122,7 @@ router.get('/groups', requireProjectAccess, validatePagination, asyncHandler(asy
     sortBy = 'orderIndex',
     sortOrder = 'asc'
   } = req.query;
+  const { prisma } = req.app.locals;
 
   const skip = (parseInt(page) - 1) * parseInt(limit);
   const take = parseInt(limit);

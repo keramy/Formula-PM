@@ -4,7 +4,16 @@
  */
 
 const { Server } = require('socket.io');
-const { createAdapter } = require('@socket.io/redis-adapter');
+
+// Optional Redis adapter for production clustering
+let createAdapter;
+try {
+  const redisAdapter = require('@socket.io/redis-adapter');
+  createAdapter = redisAdapter.createAdapter;
+} catch (error) {
+  console.log('⚠️  Redis adapter not available - using memory adapter for Socket.IO');
+  createAdapter = null;
+}
 const { 
   socketAuth, 
   socketAuthorize, 
@@ -63,7 +72,7 @@ class RealtimeService {
       });
 
       // Setup Redis adapter for scaling (if Redis is available)
-      if (cacheService.isConnected) {
+      if (cacheService.isConnected && createAdapter) {
         try {
           const redisClient = cacheService.client;
           const adapter = createAdapter(redisClient, redisClient.duplicate());
@@ -72,6 +81,8 @@ class RealtimeService {
         } catch (error) {
           console.warn('⚠️ Redis adapter setup failed, using memory adapter:', error.message);
         }
+      } else {
+        console.log('ℹ️  Using Socket.IO memory adapter (single instance mode)');
       }
 
       // Apply authentication middleware

@@ -36,7 +36,7 @@ import {
   User as PersonIcon,
   Calendar as CalendarToday,
   ArrowUp as TrendingUp,
-  Warning,
+  WarningTriangle as Warning,
   Trash as MoreVert
 } from 'iconoir-react';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';

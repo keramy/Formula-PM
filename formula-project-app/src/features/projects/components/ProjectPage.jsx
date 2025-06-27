@@ -25,7 +25,7 @@ import ProjectOverview from './ProjectOverview';
 import ProjectScope from './ProjectScope';
 import ProjectShopDrawings from './ProjectShopDrawings';
 import ProjectSpecifications from './ProjectSpecifications';
-import EnhancedGanttChart from '../../../components/charts/EnhancedGanttChart';
+// import EnhancedGanttChart from '../../../components/charts/EnhancedGanttChart'; // Disabled for now
 import ProjectActivityFeed from './ProjectActivityFeed';
 import ReportsList from '../../reports/components/ReportsList';
 import SimpleReportEditor from '../../reports/components/SimpleReportEditor';
@@ -573,23 +573,17 @@ const ProjectPage = ({
         );
       case 2: // Timeline & Gantt
         return (
-          <EnhancedGanttChart
-            projects={[project]}
-            tasks={projectTasks}
-            teamMembers={teamMembers}
-            scopeItems={mockScopeItems} // Now includes comprehensive millwork scope items
-            shopDrawings={mockShopDrawings}
-            materialSpecs={mockMaterialSpecs}
-            selectedProjectId={projectId}
-            onTaskUpdate={onUpdateTask}
-            onItemClick={(item) => {
-              console.log('Timeline item clicked:', item);
-              // Handle navigation based on item type
-            }}
-            height={600}
-            showToolbar={true}
-            dataType="scope-groups"
-          />
+          <Box sx={{ p: 3, textAlign: 'center' }}>
+            <Alert severity="info" sx={{ mb: 2 }}>
+              <strong>Timeline & Gantt Chart:</strong> Advanced timeline visualization will be available in a future update.
+            </Alert>
+            <Typography variant="h6" color="text.secondary">
+              📊 Gantt Chart Coming Soon
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              This tab will include interactive Gantt charts, timeline views, and project scheduling tools.
+            </Typography>
+          </Box>
         );
       case 3: // Shop Drawings
         return (

@@ -7,12 +7,21 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs').promises;
 const path = require('path');
 const moment = require('moment');
-const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 const { PrismaClient } = require('@prisma/client');
 const cacheService = require('./cacheService');
 const auditService = require('./auditService');
 const ProjectService = require('./ProjectService');
 const WorkflowEngine = require('./WorkflowEngine');
+
+// Optional chart functionality - graceful fallback if not available
+let ChartJSNodeCanvas;
+try {
+  const chartjs = require('chartjs-node-canvas');
+  ChartJSNodeCanvas = chartjs.ChartJSNodeCanvas;
+} catch (error) {
+  console.log('⚠️  Chart generation not available - install chartjs-node-canvas for full functionality');
+  ChartJSNodeCanvas = null;
+}
 
 const prisma = new PrismaClient();
 
@@ -76,7 +85,8 @@ class ReportGenerator {
       }
     };
 
-    this.chartRenderer = new ChartJSNodeCanvas(this.config.chartConfig);
+    // Initialize chart renderer only if available
+    this.chartRenderer = ChartJSNodeCanvas ? new ChartJSNodeCanvas(this.config.chartConfig) : null;
     this.ensureDirectories();
   }
 

@@ -12,6 +12,8 @@ const userRoutes = require('./users');
 const projectRoutes = require('./projects');
 const scopeRoutes = require('./scope');
 const drawingsRoutes = require('./drawings');
+const tasksRoutes = require('./tasks');
+const clientsRoutes = require('./clients');
 
 // Import new advanced service routes
 const mentionsRoutes = require('./mentions');
@@ -41,6 +43,12 @@ router.use('/projects/:projectId/scope', scopeRoutes);
 // Shop drawings routes (nested under projects)
 router.use('/projects/:projectId/drawings', drawingsRoutes);
 
+// Task management routes
+router.use('/tasks', tasksRoutes);
+
+// Client management routes
+router.use('/clients', clientsRoutes);
+
 // Advanced service routes - Phase 6 Implementation
 router.use('/mentions', mentionsRoutes);
 router.use('/search', searchRoutes);
@@ -53,16 +61,6 @@ router.use('/system', systemRoutes);
 router.use('/realtime', realtimeRoutes);
 
 // Placeholder routes for remaining implementations
-
-// Tasks routes (will be implemented)
-router.use('/tasks', (req, res) => {
-  res.status(501).json({
-    error: 'Tasks API not yet implemented',
-    message: 'This endpoint is under development',
-    expectedCompletion: 'Coming soon',
-    timestamp: new Date().toISOString()
-  });
-});
 
 // Material specifications routes (will be implemented)
 router.use('/projects/:projectId/materials', (req, res) => {
@@ -144,8 +142,16 @@ router.get('/docs', (req, res) => {
         deleteItem: 'DELETE /projects/:projectId/scope/items/:itemId'
       },
       
+      tasks: {
+        list: 'GET /tasks',
+        get: 'GET /tasks/:id',
+        create: 'POST /tasks',
+        update: 'PUT /tasks/:id',
+        delete: 'DELETE /tasks/:id',
+        myTasks: 'GET /tasks/my-tasks'
+      },
+      
       upcoming: {
-        tasks: 'GET /tasks - Under development',
         drawings: 'GET /projects/:id/drawings - Under development',
         materials: 'GET /projects/:id/materials - Under development',
         workflow: 'GET /projects/:id/workflow - Under development',
@@ -253,6 +259,7 @@ router.get('/docs', (req, res) => {
         'User management',
         'Project management',
         'Project scope management',
+        'Task management',
         'Mention system with @references',
         'Global search and filtering',
         'Business intelligence analytics',
@@ -263,7 +270,6 @@ router.get('/docs', (req, res) => {
       ],
       
       inProgress: [
-        'Task management',
         'Shop drawings',
         'Material specifications',
         'Workflow connections'
@@ -319,7 +325,7 @@ router.get('/status', (req, res) => {
       backgroundJobs: 'operational',
       performanceMonitoring: 'operational',
       cloudStorage: 'operational',
-      taskManagement: 'under_development',
+      taskManagement: 'operational',
       shopDrawings: 'under_development',
       materialSpecs: 'under_development',
       workflowConnections: 'under_development'
