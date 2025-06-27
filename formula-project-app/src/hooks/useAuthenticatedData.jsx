@@ -22,37 +22,85 @@ export const useAuthenticatedData = () => {
       setLoading(true);
       setError(null);
       
-      // Load all data in parallel with cancellation support
-      const [teamMembersData, allProjectsData, tasksData, clientsData] = await Promise.all([
-        apiService.getTeamMembers(signal),
-        apiService.getProjects(signal),
-        apiService.getTasks(signal),
-        apiService.getClients(signal)
-      ]);
+      // Enhanced error handling with retry logic
+      const loadDataWithRetry = async (loadFunction, dataType, retries = 2) => {
+        for (let attempt = 0; attempt <= retries; attempt++) {
+          try {
+            return await loadFunction(signal);
+          } catch (error) {
+            if (error.name === 'AbortError' || signal?.aborted) {
+              throw error;
+            }
+            
+            if (attempt === retries) {
+              console.warn(`Failed to load ${dataType} after ${retries + 1} attempts:`, error.message);
+              throw error;
+            }
+            
+            // Wait before retry (exponential backoff)
+            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+          }
+        }
+      };
+
+      // Load all data in parallel with enhanced error handling
+      const dataLoaders = [
+        { fn: () => loadDataWithRetry(() => apiService.getTeamMembers(signal), 'team members'), key: 'teamMembers' },
+        { fn: () => loadDataWithRetry(() => apiService.getProjects(signal), 'projects'), key: 'projects' },
+        { fn: () => loadDataWithRetry(() => apiService.getTasks(signal), 'tasks'), key: 'tasks' },
+        { fn: () => loadDataWithRetry(() => apiService.getClients(signal), 'clients'), key: 'clients' }
+      ];
+
+      const results = await Promise.allSettled(dataLoaders.map(loader => loader.fn()));
       
       // Check if operation was cancelled
       if (signal?.aborted) return;
+
+      // Process results and handle partial failures
+      const dataMap = {};
+      const errors = [];
       
-      // Filter projects based on user permissions
-      const accessibleProjects = getAccessibleProjects(allProjectsData);
+      results.forEach((result, index) => {
+        const key = dataLoaders[index].key;
+        if (result.status === 'fulfilled') {
+          dataMap[key] = result.value;
+        } else {
+          console.error(`Failed to load ${key}:`, result.reason);
+          errors.push(`${key}: ${result.reason.message}`);
+          // Provide empty array as fallback
+          dataMap[key] = [];
+        }
+      });
+
+      // If all critical data failed to load, throw error
+      if (errors.length === dataLoaders.length) {
+        throw new Error(`All data loading failed: ${errors.join(', ')}`);
+      }
+
+      // Filter projects based on user permissions (with safety check)
+      const accessibleProjects = dataMap.projects?.length > 0 ? getAccessibleProjects(dataMap.projects) : [];
       const accessibleProjectIds = accessibleProjects.map(p => p.id);
       
-      // Filter tasks to only include those from accessible projects
-      const accessibleTasks = tasksData.filter(task => 
-        accessibleProjectIds.includes(task.projectId)
-      );
+      // Filter tasks to only include those from accessible projects (with safety check)
+      const accessibleTasks = dataMap.tasks?.length > 0 ? 
+        dataMap.tasks.filter(task => accessibleProjectIds.includes(task.projectId)) : [];
       
       // Only update state if not cancelled
       if (!signal?.aborted) {
-        setTeamMembers(teamMembersData);
+        setTeamMembers(dataMap.teamMembers || []);
         setProjects(accessibleProjects);
         setTasks(accessibleTasks);
-        setClients(clientsData);
+        setClients(dataMap.clients || []);
+
+        // Set warning if some data failed to load
+        if (errors.length > 0) {
+          setError(`Some data failed to load: ${errors.join(', ')}`);
+        }
       }
     } catch (error) {
-      if (error.name !== 'AbortError') {
-        console.error('Error loading data:', error);
-        setError(error.message || 'Failed to load data');
+      if (error.name !== 'AbortError' && !signal?.aborted) {
+        console.error('Critical error loading data:', error);
+        setError(error.message || 'Failed to load application data');
       }
     } finally {
       if (!signal?.aborted) {

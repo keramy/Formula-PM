@@ -25,6 +25,7 @@ import ActivityFeed, { CompactActivityFeed, DetailedActivityFeed } from '../../.
 import { useTheme } from '../../../context/ThemeContext';
 import { useNavigation } from '../../../context/NavigationContext';
 import { useProjectActivityFeed } from '../../../hooks/useRealTime';
+import logger from '../../../utils/logger';
 
 const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] }) => {
   const { isDarkMode } = useTheme();
@@ -48,7 +49,7 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
 
   // Handle activity clicks for navigation
   const handleActivityClick = useCallback((activity) => {
-    console.log('Activity clicked:', activity);
+    logger.debug('Activity clicked:', activity);
     
     switch (activity.type) {
       case 'project':
@@ -57,7 +58,7 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
         break;
       case 'task':
         // Could navigate to a specific task view or show task details
-        console.log('Navigate to task:', activity.metadata?.taskId);
+        logger.debug('Navigate to task:', activity.metadata?.taskId);
         break;
       case 'scope':
         // Navigate to scope management
@@ -76,24 +77,24 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
         navigateToProjectSection('timeline');
         break;
       default:
-        console.log('Unknown activity type:', activity.type);
+        logger.warn('Unknown activity type:', activity.type);
     }
   }, [navigateToProjectSection]);
 
   // Enhanced click handlers for specific elements within activities
   const handleProjectClick = useCallback((projectId, projectName) => {
-    console.log('Project element clicked:', projectName);
+    logger.debug('Project element clicked:', projectName);
     navigateToProjectSection('overview');
   }, [navigateToProjectSection]);
 
   const handleTaskClick = useCallback((projectId, taskId, taskName) => {
-    console.log('Task element clicked:', taskName);
+    logger.debug('Task element clicked:', taskName);
     navigateToProjectSection('overview');
     // TODO: Could add task highlighting or detail view
   }, [navigateToProjectSection]);
 
   const handleScopeClick = useCallback((projectId, scopeItemId, scopeItemName) => {
-    console.log('Scope element clicked:', scopeItemName);
+    logger.debug('Scope element clicked:', scopeItemName);
     navigateToProjectSection('scope');
     // TODO: Could add scope item highlighting
   }, [navigateToProjectSection]);

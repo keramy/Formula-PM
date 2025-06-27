@@ -6,6 +6,7 @@ import { useAppInitialization } from '../hooks/useAppInitialization';
 import { useAuthenticatedData } from '../hooks/useAuthenticatedData';
 import { FormulaLoadingScreen } from '../components/ui/UnifiedLoading';
 import ErrorBoundary from '../components/common/ErrorBoundary';
+import DataErrorBoundary from '../components/common/DataErrorBoundary';
 import AppRouter from '../router/AppRouter';
 import './App.css';
 import '../styles/globals.css';
@@ -66,9 +67,9 @@ function AppWithProviders() {
   // Show error state if data loading failed
   if (error) {
     return (
-      <ErrorBoundary error={error}>
-        <div>Failed to load application data</div>
-      </ErrorBoundary>
+      <DataErrorBoundary fallbackMessage="Failed to load application data from server. This might be due to network issues or server unavailability.">
+        <div>Critical data loading error</div>
+      </DataErrorBoundary>
     );
   }
 
@@ -82,8 +83,10 @@ function AppWithProviders() {
         height: '1.2em'
       }}
     >
-      {/* React Router based navigation */}
-      <AppRouter />
+      {/* React Router based navigation with data error handling */}
+      <DataErrorBoundary fallbackMessage="Navigation system encountered an error. This might be due to data loading issues.">
+        <AppRouter />
+      </DataErrorBoundary>
       
       {/* Global components (notifications, performance monitor, etc.) */}
       <GlobalComponents />

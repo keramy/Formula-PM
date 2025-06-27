@@ -37,6 +37,8 @@ import {
 import FormulaLogo from '../branding/FormulaLogo';
 import { FormulaLogoCompact } from '../branding/LogoVariations';
 import { useTheme as useFormulaTheme } from '../../context/ThemeContext';
+import NotificationCenter from '../notifications/NotificationCenter';
+import PresenceIndicators from '../realtime/PresenceIndicators';
 
 const EnhancedHeader = ({ 
   title, 
@@ -140,6 +142,9 @@ const EnhancedHeader = ({
 
         {/* User Controls */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {/* Notifications */}
+          <NotificationCenter />
+
           {/* Theme Toggle */}
           <Tooltip title={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
             <IconButton 
@@ -311,9 +316,18 @@ const EnhancedHeader = ({
             </Typography>
           )}
 
-          {/* Team Avatars */}
+          {/* Team Avatars with Presence */}
           {showTeamAvatars && teamMembers.length > 0 && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 3 }}>
+              <PresenceIndicators 
+                projectId={window.location.pathname.includes('/projects/') ? 
+                  window.location.pathname.split('/projects/')[1]?.split('/')[0] : 
+                  null
+                }
+                maxVisible={maxAvatars}
+                showDetails={false}
+              />
+              
               <AvatarGroup 
                 max={maxAvatars}
                 sx={{

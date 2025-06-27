@@ -23,6 +23,7 @@ import {
 import ActivityFeed, { CompactActivityFeed, DetailedActivityFeed } from '../../../components/realtime/ActivityFeed';
 import { useTheme } from '../../../context/ThemeContext';
 import { useActivityFeed } from '../../../hooks/useRealTime';
+import logger from '../../../utils/logger';
 
 const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
   const { isDarkMode } = useTheme();
@@ -35,9 +36,9 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
   const { activities, isLoading } = useActivityFeed(100);
   
   // Debug logging
-  console.log('FeedTab current filter:', filter);
-  console.log('FeedTab activities:', activities?.length || 0);
-  console.log('FeedTab sample activity:', activities?.[0]);
+  logger.debug('FeedTab current filter:', filter);
+  logger.debug('FeedTab activities count:', activities?.length || 0);
+  logger.debug('FeedTab sample activity:', activities?.[0]);
 
   const handleViewChange = (event, newView) => {
     if (newView !== null) {
@@ -59,7 +60,7 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
 
   // Handle activity clicks for navigation
   const handleActivityClick = useCallback((activity) => {
-    console.log('Global activity clicked:', activity);
+    logger.debug('Global activity clicked:', activity);
     
     if (activity.metadata?.projectId && onNavigateToProject) {
       // Navigate to the specific section based on activity type
@@ -90,20 +91,20 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
       }
     } else {
       // Handle global activities (team members, etc.)
-      console.log('Global activity without project context:', activity.type);
+      logger.debug('Global activity without project context:', activity.type);
     }
   }, [onNavigateToProject]);
 
   // Enhanced click handlers for specific elements within activities
   const handleProjectClick = useCallback((projectId, projectName) => {
-    console.log('🔗 Project clicked:', projectName, projectId);
-    console.log('📋 Available projects:', projects.map(p => ({ id: p.id, name: p.name })));
+    logger.debug('Project clicked:', projectName, projectId);
+    logger.debug('Available projects:', projects.map(p => ({ id: p.id, name: p.name })));
     
     // First try to find by exact ID match
     let targetProject = projects.find(p => p.id === projectId || p.id === parseInt(projectId));
     
     if (!targetProject) {
-      console.log('🔍 Project ID not found, trying to find by name:', projectName);
+      logger.debug('Project ID not found, trying to find by name:', projectName);
       
       // Try to find by exact name match
       targetProject = projects.find(p => p.name.toLowerCase() === projectName.toLowerCase());
@@ -118,13 +119,13 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
     }
     
     if (targetProject) {
-      console.log('✅ Project found, navigating to:', targetProject);
+      logger.debug('Project found, navigating to:', targetProject);
       if (onNavigateToProject) {
         onNavigateToProject(targetProject.id, 'overview');
       }
     } else {
-      console.warn(`❌ Could not find project "${projectName}" (ID: ${projectId})`);
-      console.log('Available project names:', projects.map(p => p.name));
+      logger.warn(`Could not find project "${projectName}" (ID: ${projectId})`);
+      logger.debug('Available project names:', projects.map(p => p.name));
       
       // Only use fallback if absolutely necessary and show warning
       if (projects.length > 0) {
@@ -137,13 +138,13 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
   }, [onNavigateToProject, projects]);
 
   const handleTaskClick = useCallback((projectId, taskId, taskName) => {
-    console.log('📋 Task clicked:', taskName, taskId, 'in project', projectId);
+    logger.debug('Task clicked:', taskName, taskId, 'in project', projectId);
     
     // Try to find the project this task belongs to
     const project = projects.find(p => p.id === projectId || p.id === parseInt(projectId));
     
     if (project) {
-      console.log('✅ Task project found, navigating to:', project);
+      logger.debug('Task project found, navigating to:', project);
       if (onNavigateToProject) {
         onNavigateToProject(project.id, 'overview');
         // TODO: Could add task highlighting or task detail view

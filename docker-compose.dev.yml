@@ -1,0 +1,131 @@
+# Formula PM - Development Docker Compose Configuration
+# For local development with hot reloading and debugging capabilities
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: formula-pm-postgres-dev
+    environment:
+      POSTGRES_DB: formula_pm_dev
+      POSTGRES_USER: formula_dev
+      POSTGRES_PASSWORD: dev_password_123
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./formula-project-app/backend/database/schema:/docker-entrypoint-initdb.d
+    networks:
+      - formula-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U formula_dev -d formula_pm_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: formula-pm-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - formula-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+  # Backend API Development
+  backend:
+    build:
+      context: ./formula-project-app/backend
+      dockerfile: Dockerfile
+      target: dependencies
+    container_name: formula-pm-backend-dev
+    environment:
+      NODE_ENV: development
+      PORT: 5014
+      SOCKET_PORT: 5015
+      DATABASE_URL: postgresql://formula_dev:dev_password_123@postgres:5432/formula_pm_dev
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev_jwt_secret_key_formula_pm_2024
+      JWT_REFRESH_SECRET: dev_refresh_secret_key_formula_pm_2024
+      CORS_ORIGIN: http://localhost:3003
+      LOG_LEVEL: debug
+    ports:
+      - "5014:5014"
+      - "5015:5015"
+    volumes:
+      - ./formula-project-app/backend:/app
+      - /app/node_modules
+      - backend_logs:/app/logs
+      - backend_uploads:/app/uploads
+    networks:
+      - formula-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: npm run dev
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5014/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Frontend Development
+  frontend:
+    build:
+      context: ./formula-project-app
+      dockerfile: Dockerfile
+      target: builder
+    container_name: formula-pm-frontend-dev
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://localhost:5014
+      VITE_WS_URL: http://localhost:5015
+      VITE_APP_NAME: Formula PM Dev
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./formula-project-app/src:/app/src
+      - ./formula-project-app/public:/app/public
+      - ./formula-project-app/index.html:/app/index.html
+      - ./formula-project-app/vite.config.js:/app/vite.config.js
+      - /app/node_modules
+    networks:
+      - formula-network
+    depends_on:
+      - backend
+    command: npm run dev -- --host 0.0.0.0 --port 3003
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3003"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  formula-network:
+    driver: bridge
+    name: formula-pm-network
+
+volumes:
+  postgres_dev_data:
+    name: formula-pm-postgres-dev
+  redis_dev_data:
+    name: formula-pm-redis-dev
+  backend_logs:
+    name: formula-pm-backend-logs-dev
+  backend_uploads:
+    name: formula-pm-backend-uploads-dev

@@ -1,17 +1,75 @@
 import { PerformanceMonitor } from '../../utils/performance';
+import { demoProjects, demoTasks, demoTeamMembers, demoClients, demoShopDrawings, demoMaterialSpecs } from '../demoDataService';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5014/api';
+// Configure API base URL for different environments
+const API_BASE_URL = (() => {
+  // Force demo mode if environment variable is set
+  if (import.meta.env.VITE_FORCE_DEMO_MODE === 'true') {
+    return null; // This will force all requests to use demo data
+  }
+  
+  // In development mode, use empty string to leverage Vite proxy
+  if (import.meta.env.DEV) {
+    return import.meta.env.VITE_API_URL || 'http://localhost:5014/api/v1';
+  }
+  
+  // In production, use full URL
+  return import.meta.env.VITE_API_URL || 'http://localhost:5014/api/v1';
+})();
+
+// Check if we should force demo mode (from env variable or localStorage)
+const FORCE_DEMO_MODE = (() => {
+  const envDemoMode = import.meta.env.VITE_FORCE_DEMO_MODE === 'true';
+  const localStorageDemoMode = localStorage.getItem('vite_force_demo_mode') === 'true';
+  const noApiUrl = API_BASE_URL === null;
+  
+  return envDemoMode || localStorageDemoMode || noApiUrl;
+})();
 
 class ApiService {
+  constructor() {
+    this.authToken = null;
+    this.refreshPromise = null;
+  }
+
+  // Get auth token from localStorage
+  getAuthToken() {
+    if (!this.authToken) {
+      this.authToken = localStorage.getItem('auth_token');
+    }
+    return this.authToken;
+  }
+
+  // Set auth token and store in localStorage
+  setAuthToken(token) {
+    this.authToken = token;
+    if (token) {
+      localStorage.setItem('auth_token', token);
+    } else {
+      localStorage.removeItem('auth_token');
+    }
+  }
+
+  // Clear auth token
+  clearAuthToken() {
+    this.authToken = null;
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_data');
+  }
+
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     const startTime = performance.now();
     const method = options.method || 'GET';
     
+    // Get auth token
+    const token = this.getAuthToken();
+    
     // API Request to base URL
     const config = {
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       },
       ...options,
@@ -29,9 +87,28 @@ class ApiService {
       }
       
       if (!response.ok) {
+        // Handle 401 Unauthorized - token expired or invalid
+        if (response.status === 401 && token) {
+          // Clear invalid token
+          this.clearAuthToken();
+          // Try to refresh token if this isn't already a refresh request
+          if (!endpoint.includes('/auth/refresh') && !endpoint.includes('/auth/login')) {
+            const refreshResult = await this.refreshAuthToken();
+            if (refreshResult.success) {
+              // Retry original request with new token
+              return this.request(endpoint, options);
+            }
+          }
+        }
+        
         // Track failed API requests
         PerformanceMonitor.trackApiRequest(endpoint, duration, false, method);
-        throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        const error = new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        error.status = response.status;
+        error.data = errorData;
+        throw error;
       }
       
       const data = await response.json();
@@ -56,147 +133,149 @@ class ApiService {
     }
   }
 
-  // Team Members API
-  async getTeamMembers(signal) {
+  // Refresh authentication token
+  async refreshAuthToken() {
+    // Prevent multiple simultaneous refresh attempts
+    if (this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    this.refreshPromise = this._doRefreshToken();
+    const result = await this.refreshPromise;
+    this.refreshPromise = null;
+    return result;
+  }
+
+  async _doRefreshToken() {
     try {
-      return await this.request('/team-members', { signal });
-    } catch (error) {
-      console.warn('Backend unavailable, using demo data');
-      // Demo data for GitHub Pages
-      return [
-        {
-          id: 1001,
-          firstName: "Kubilay",
-          lastName: "Ilgın", 
-          fullName: "Kubilay Ilgın",
-          initials: "KI",
-          email: "kubilay.ilgin@formulaint.com",
-          phone: "+90 212 555 0101",
-          department: "Management",
-          position: "Managing Partner",
-          role: "admin"
-        },
-        {
-          id: 1002,
-          firstName: "Demo",
-          lastName: "User",
-          fullName: "Demo User", 
-          initials: "DU",
-          email: "demo@formulaint.com",
-          phone: "+90 212 555 0102",
-          department: "Engineering",
-          position: "Project Manager",
-          role: "manager"
+      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.getAuthToken()}`
         }
-      ];
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        this.setAuthToken(data.token);
+        return { success: true, token: data.token };
+      } else {
+        this.clearAuthToken();
+        return { success: false, error: 'Token refresh failed' };
+      }
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      this.clearAuthToken();
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Team Members API (now using /users endpoint)
+  async getTeamMembers(signal) {
+    // Force demo mode if configured
+    if (FORCE_DEMO_MODE) {
+      console.info('🎭 Demo mode enabled - using demo team members');
+      return demoTeamMembers;
+    }
+    
+    try {
+      const response = await this.request('/users', { signal });
+      return response.data || response;
+    } catch (error) {
+      // Handle both network errors and HTTP errors (like 500) as backend unavailable
+      if (error.name === 'AbortError') {
+        throw error; // Re-throw abort errors
+      }
+      console.warn('Backend unavailable (network or server error), using demo data:', error.message);
+      return demoTeamMembers;
     }
   }
 
   async createTeamMember(memberData) {
-    return this.request('/team-members', {
+    const response = await this.request('/users', {
       method: 'POST',
       body: JSON.stringify(memberData),
     });
+    return response.data || response;
   }
 
   async updateTeamMember(id, memberData) {
-    return this.request(`/team-members/${id}`, {
+    const response = await this.request(`/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(memberData),
     });
+    return response.data || response;
   }
 
   async deleteTeamMember(id) {
-    return this.request(`/team-members/${id}`, {
+    await this.request(`/users/${id}`, {
       method: 'DELETE',
     });
+    return true;
   }
 
   // Projects API
   async getProjects(signal) {
+    // Force demo mode if configured
+    if (FORCE_DEMO_MODE) {
+      console.info('🎭 Demo mode enabled - using demo projects');
+      return demoProjects;
+    }
+    
     try {
-      return await this.request('/projects', { signal });
+      const response = await this.request('/projects', { signal });
+      return response.data || response;
     } catch (error) {
-      console.warn('Backend unavailable, using demo data');
-      // Demo data for GitHub Pages
-      return [
-        {
-          id: 2001,
-          name: "Akbank Head Office Renovation",
-          description: "Complete renovation of Akbank headquarters building",
-          status: "active",
-          type: "general-contractor",
-          clientId: 3001,
-          startDate: "2024-01-15",
-          endDate: "2024-12-31",
-          budget: 5000000,
-          projectManager: 1001
-        },
-        {
-          id: 2002,
-          name: "Garanti BBVA Branch Fit-out",
-          description: "Interior fit-out for new Garanti BBVA branch",
-          status: "on-tender", 
-          type: "fit-out",
-          clientId: 3002,
-          startDate: "2024-03-01",
-          endDate: "2024-08-15", 
-          budget: 1200000,
-          projectManager: 1002
-        }
-      ];
+      // Handle both network errors and HTTP errors (like 500) as backend unavailable
+      if (error.name === 'AbortError') {
+        throw error; // Re-throw abort errors
+      }
+      console.warn('Backend unavailable (network or server error), using demo data:', error.message);
+      return demoProjects;
     }
   }
 
   async createProject(projectData) {
-    return this.request('/projects', {
+    const response = await this.request('/projects', {
       method: 'POST',
       body: JSON.stringify(projectData),
     });
+    return response.data || response;
   }
 
   async updateProject(id, projectData) {
-    return this.request(`/projects/${id}`, {
+    const response = await this.request(`/projects/${id}`, {
       method: 'PUT',
       body: JSON.stringify(projectData),
     });
+    return response.data || response;
   }
 
   async deleteProject(id) {
-    return this.request(`/projects/${id}`, {
+    await this.request(`/projects/${id}`, {
       method: 'DELETE',
     });
+    return true;
   }
 
   // Clients API
   async getClients(signal) {
+    // Force demo mode if configured
+    if (FORCE_DEMO_MODE) {
+      console.info('🎭 Demo mode enabled - using demo clients');
+      return demoClients;
+    }
+    
     try {
       return await this.request('/clients', { signal });
     } catch (error) {
-      console.warn('Backend unavailable, using demo data');
-      // Demo data for GitHub Pages
-      return [
-        {
-          id: 3001,
-          name: "Akbank",
-          industry: "Banking",
-          contactPerson: "Mehmet Öztürk",
-          email: "mehmet.ozturk@akbank.com",
-          phone: "+90 212 555 1000",
-          address: "Levent, Istanbul",
-          status: "active"
-        },
-        {
-          id: 3002,
-          name: "Garanti BBVA",
-          industry: "Banking",
-          contactPerson: "Ayşe Demir", 
-          email: "ayse.demir@garantibbva.com",
-          phone: "+90 212 555 2000",
-          address: "Beşiktaş, Istanbul",
-          status: "active"
-        }
-      ];
+      // Handle both network errors and HTTP errors (like 500) as backend unavailable
+      if (error.name === 'AbortError') {
+        throw error; // Re-throw abort errors
+      }
+      console.warn('Backend unavailable (network or server error), using demo data:', error.message);
+      return demoClients;
     }
   }
 
@@ -222,46 +301,21 @@ class ApiService {
 
   // Tasks API
   async getTasks(signal) {
+    // Force demo mode if configured
+    if (FORCE_DEMO_MODE) {
+      console.info('🎭 Demo mode enabled - using demo tasks');
+      return demoTasks;
+    }
+    
     try {
       return await this.request('/tasks', { signal });
     } catch (error) {
-      console.warn('Backend unavailable, using demo data');
-      // Demo data for GitHub Pages
-      return [
-        {
-          id: 4001,
-          title: "Review architectural plans",
-          description: "Complete review of updated architectural drawings",
-          status: "in-progress",
-          priority: "high",
-          projectId: 2001,
-          assignedTo: 1001,
-          dueDate: "2024-12-20",
-          createdAt: "2024-12-01"
-        },
-        {
-          id: 4002,
-          title: "Coordinate with MEP contractors",
-          description: "Schedule meeting with MEP team for system integration",
-          status: "pending",
-          priority: "medium", 
-          projectId: 2001,
-          assignedTo: 1002,
-          dueDate: "2024-12-25",
-          createdAt: "2024-12-05"
-        },
-        {
-          id: 4003,
-          title: "Finalize material specifications",
-          description: "Complete material selection for fit-out project",
-          status: "completed",
-          priority: "low",
-          projectId: 2002,
-          assignedTo: 1001,
-          dueDate: "2024-12-10",
-          createdAt: "2024-11-20"
-        }
-      ];
+      // Handle both network errors and HTTP errors (like 500) as backend unavailable
+      if (error.name === 'AbortError') {
+        throw error; // Re-throw abort errors
+      }
+      console.warn('Backend unavailable (network or server error), using demo data:', error.message);
+      return demoTasks;
     }
   }
 
@@ -296,8 +350,8 @@ class ApiService {
   // Scope Items API methods
   async getScopeItems(projectId) {
     try {
-      const response = await this.request(`/scope-items/${projectId}`);
-      return response;
+      const response = await this.request(`/projects/${projectId}/scope/items`);
+      return response.data || response;
     } catch (error) {
       console.error('Error fetching scope items:', error);
       // Fallback to localStorage
@@ -308,18 +362,20 @@ class ApiService {
 
   async createScopeItem(scopeItem) {
     try {
-      const response = await this.request('/scope-items', {
+      const response = await this.request(`/projects/${scopeItem.projectId}/scope/items`, {
         method: 'POST',
         body: JSON.stringify(scopeItem)
       });
       
+      const newItem = response.data || response;
+      
       // Also save to localStorage as backup
       const projectId = scopeItem.projectId;
       const existing = await this.getScopeItems(projectId);
-      const updated = [...existing, response];
+      const updated = [...existing, newItem];
       localStorage.setItem(`scope_items_${projectId}`, JSON.stringify(updated));
       
-      return response;
+      return newItem;
     } catch (error) {
       console.error('Error creating scope item:', error);
       
@@ -336,11 +392,11 @@ class ApiService {
 
   async updateScopeItem(scopeItemId, updates) {
     try {
-      const response = await this.request(`/scope-items/${scopeItemId}`, {
+      const response = await this.request(`/projects/${updates.projectId}/scope/items/${scopeItemId}`, {
         method: 'PUT',
         body: JSON.stringify(updates)
       });
-      return response;
+      return response.data || response;
     } catch (error) {
       console.error('Error updating scope item:', error);
       
@@ -359,25 +415,21 @@ class ApiService {
     }
   }
 
-  async deleteScopeItem(scopeItemId) {
+  async deleteScopeItem(scopeItemId, projectId) {
     try {
-      await this.request(`/scope-items/${scopeItemId}`, {
+      await this.request(`/projects/${projectId}/scope/items/${scopeItemId}`, {
         method: 'DELETE'
       });
       return true;
     } catch (error) {
       console.error('Error deleting scope item:', error);
       
-      // Fallback to localStorage - we need to find which project this belongs to
-      // This is a limitation of the localStorage fallback approach
-      const projects = await this.getProjects();
-      for (const project of projects) {
-        const items = await this.getScopeItems(project.id);
+      // Fallback to localStorage
+      if (projectId) {
+        const items = await this.getScopeItems(projectId);
         const filtered = items.filter(item => item.id !== scopeItemId);
-        if (filtered.length !== items.length) {
-          localStorage.setItem(`scope_items_${project.id}`, JSON.stringify(filtered));
-          return true;
-        }
+        localStorage.setItem(`scope_items_${projectId}`, JSON.stringify(filtered));
+        return true;
       }
       
       throw error;
@@ -386,6 +438,12 @@ class ApiService {
 
   // Material Specifications API
   async getMaterialSpecifications(params = {}) {
+    // Force demo mode if configured
+    if (FORCE_DEMO_MODE) {
+      console.info('🎭 Demo mode enabled - using demo material specifications');
+      return demoMaterialSpecs;
+    }
+    
     try {
       const queryParams = new URLSearchParams(params).toString();
       const endpoint = `/specifications${queryParams ? `?${queryParams}` : ''}`;
@@ -407,35 +465,12 @@ class ApiService {
         linkedDrawings: spec.shopDrawingIds || spec.linkedDrawings || []
       }));
     } catch (error) {
-      console.warn('Backend unavailable, using demo data for specifications');
-      // Return demo data for GitHub Pages
-      return [
-        {
-          id: 'SPEC001',
-          itemId: 'SPEC001',
-          description: 'Upper Cabinet - 30" Wide',
-          category: 'Kitchen Cabinets',
-          material: 'Maple Hardwood',
-          finish: 'Natural Stain',
-          hardware: 'Soft-close hinges, adjustable shelves',
-          dimensions: '30" x 12" x 36"',
-          quantity: '4',
-          unit: 'EA',
-          unitCost: '$450.00',
-          totalCost: '$1,800.00',
-          supplier: 'Cabinet Works Inc',
-          partNumber: 'UC-30-NAT',
-          leadTime: '14 days',
-          notes: 'Pre-finished, ready to install',
-          drawingReference: 'Kitchen_Cabinets_Rev_C.pdf',
-          roomLocation: 'Kitchen',
-          installationPhase: 'Phase 2',
-          projectId: 2001,
-          projectName: 'Downtown Office Renovation',
-          linkedDrawings: ['SD001'],
-          status: 'approved'
-        }
-      ];
+      // Handle both network errors and HTTP errors (like 500) as backend unavailable
+      if (error.name === 'AbortError') {
+        throw error; // Re-throw abort errors
+      }
+      console.warn('Backend unavailable (network or server error), using demo data for specifications:', error.message);
+      return demoMaterialSpecs;
     }
   }
 
@@ -562,25 +597,181 @@ class ApiService {
 
   // Shop Drawings API (for linking)
   async getShopDrawings(projectId) {
+    // Force demo mode if configured
+    if (FORCE_DEMO_MODE) {
+      console.info('🎭 Demo mode enabled - using demo shop drawings');
+      return demoShopDrawings.filter(drawing => drawing.projectId === projectId);
+    }
+    
     try {
-      const response = await this.request(`/shop-drawings/project/${projectId}`);
+      const response = await this.request(`/projects/${projectId}/drawings`);
       return response.data || response;
     } catch (error) {
-      console.warn('Backend unavailable, using demo data for shop drawings');
-      return [
-        {
-          id: 'SD001',
-          name: 'Kitchen Cabinet Details',
-          projectId: projectId,
-          status: 'approved'
-        },
-        {
-          id: 'SD002',
-          name: 'Reception Desk Assembly',
-          projectId: projectId,
-          status: 'pending'
-        }
-      ];
+      // Handle both network errors and HTTP errors (like 500) as backend unavailable
+      if (error.name === 'AbortError') {
+        throw error; // Re-throw abort errors
+      }
+      console.warn('Backend unavailable (network or server error), using demo data for shop drawings:', error.message);
+      return demoShopDrawings.filter(drawing => drawing.projectId === projectId);
+    }
+  }
+
+  // Authentication API
+  async login(credentials) {
+    try {
+      const response = await this.request('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(credentials)
+      });
+      
+      const data = response.data || response;
+      if (data.token) {
+        this.setAuthToken(data.token);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
+  }
+
+  async logout() {
+    try {
+      await this.request('/auth/logout', {
+        method: 'POST'
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      this.clearAuthToken();
+    }
+  }
+
+  async getCurrentUser() {
+    try {
+      const response = await this.request('/auth/me');
+      return response.data || response;
+    } catch (error) {
+      console.error('Get current user error:', error);
+      throw error;
+    }
+  }
+
+  // Search API
+  async globalSearch(query, filters = {}) {
+    try {
+      const params = new URLSearchParams({ 
+        q: query,
+        ...filters 
+      });
+      const response = await this.request(`/search/global?${params}`);
+      return response.data || response;
+    } catch (error) {
+      console.error('Global search error:', error);
+      throw error;
+    }
+  }
+
+  // Mention API
+  async searchMentions(query, type = 'all') {
+    try {
+      const params = new URLSearchParams({ q: query, type });
+      const response = await this.request(`/mentions/search?${params}`);
+      return response.data || response;
+    } catch (error) {
+      console.error('Mention search error:', error);
+      return [];
+    }
+  }
+
+  // Analytics API
+  async getDashboardAnalytics() {
+    try {
+      const response = await this.request('/analytics/dashboard');
+      return response.data || response;
+    } catch (error) {
+      console.error('Dashboard analytics error:', error);
+      throw error;
+    }
+  }
+
+  async getProjectAnalytics(projectId) {
+    try {
+      const response = await this.request(`/analytics/projects/${projectId}`);
+      return response.data || response;
+    } catch (error) {
+      console.error('Project analytics error:', error);
+      throw error;
+    }
+  }
+
+  // Notifications API
+  async getNotifications(limit = 20, offset = 0) {
+    try {
+      const params = new URLSearchParams({ limit, offset });
+      const response = await this.request(`/notifications?${params}`);
+      return response.data || response;
+    } catch (error) {
+      console.error('Get notifications error:', error);
+      throw error;
+    }
+  }
+
+  async markNotificationRead(notificationId) {
+    try {
+      const response = await this.request(`/notifications/${notificationId}/read`, {
+        method: 'POST'
+      });
+      return response.data || response;
+    } catch (error) {
+      console.error('Mark notification read error:', error);
+      throw error;
+    }
+  }
+
+  // Reports API
+  async generateReport(reportConfig) {
+    try {
+      const response = await this.request('/reports/generate', {
+        method: 'POST',
+        body: JSON.stringify(reportConfig)
+      });
+      return response.data || response;
+    } catch (error) {
+      console.error('Generate report error:', error);
+      throw error;
+    }
+  }
+
+  async getReportTypes() {
+    try {
+      const response = await this.request('/reports/types');
+      return response.data || response;
+    } catch (error) {
+      console.error('Get report types error:', error);
+      throw error;
+    }
+  }
+
+  async downloadReport(reportId) {
+    try {
+      const response = await this.request(`/reports/${reportId}/download`);
+      return response;
+    } catch (error) {
+      console.error('Download report error:', error);
+      throw error;
+    }
+  }
+
+  // System health API
+  async getSystemHealth() {
+    try {
+      const response = await this.request('/system/health');
+      return response.data || response;
+    } catch (error) {
+      console.error('System health error:', error);
+      throw error;
     }
   }
 }

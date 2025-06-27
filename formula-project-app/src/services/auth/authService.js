@@ -1,12 +1,13 @@
 import { AUTH_CONFIG } from '../../config/auth.config';
+import apiService from '../api/apiService';
 
 class AuthService {
   constructor() {
     // In development, use empty baseUrl since Vite proxy handles /api routing
     // In production, use the full API URL
     this.baseUrl = import.meta.env.MODE === 'development' 
-      ? '' 
-      : (import.meta.env.VITE_API_URL || import.meta.env.REACT_APP_API_URL || 'http://localhost:5014');
+      ? 'http://localhost:5014/api/v1' 
+      : (import.meta.env.VITE_API_URL || import.meta.env.REACT_APP_API_URL || 'http://localhost:5014/api/v1');
   }
 
   /**
@@ -17,20 +18,16 @@ class AuthService {
    */
   async login(email, password) {
     try {
-      const response = await fetch(`${this.baseUrl}${AUTH_CONFIG.AUTH_ENDPOINTS.LOGIN}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      // Use apiService for consistent authentication
+      const data = await apiService.login({ email, password });
 
-      const data = await response.json();
-
-      if (response.ok && data.success) {
+      if (data.success && data.token) {
         // Store token and user data securely
         localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, data.token);
         localStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(data.user));
+        
+        // Set token in apiService
+        apiService.setAuthToken(data.token);
         
         return {
           success: true,
@@ -41,13 +38,13 @@ class AuthService {
 
       return {
         success: false,
-        error: data.message || 'Login failed'
+        error: data.error || data.message || 'Login failed'
       };
     } catch (error) {
       console.error('Login error:', error);
       return {
         success: false,
-        error: 'Network error. Please try again.'
+        error: error.message || 'Network error. Please try again.'
       };
     }
   }
@@ -57,21 +54,17 @@ class AuthService {
    */
   async logout() {
     try {
-      const token = localStorage.getItem(AUTH_CONFIG.TOKEN_KEY);
-      
-      // Call logout endpoint to invalidate token on server
-      await fetch(`${this.baseUrl}${AUTH_CONFIG.AUTH_ENDPOINTS.LOGOUT}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      // Use apiService to logout
+      await apiService.logout();
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
       // Always clear local storage
       localStorage.removeItem(AUTH_CONFIG.TOKEN_KEY);
       localStorage.removeItem(AUTH_CONFIG.USER_KEY);
+      
+      // Clear token from apiService
+      apiService.clearAuthToken();
     }
   }
 
@@ -87,24 +80,22 @@ class AuthService {
         return { valid: false };
       }
 
-      const response = await fetch(`${this.baseUrl}${AUTH_CONFIG.AUTH_ENDPOINTS.VERIFY}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        return {
-          valid: true,
-          user: data.user
-        };
+      // Set token in apiService if not already set
+      if (!apiService.getAuthToken()) {
+        apiService.setAuthToken(token);
       }
 
-      return { valid: false };
+      // Use apiService to get current user (this verifies token)
+      const user = await apiService.getCurrentUser();
+      
+      return {
+        valid: true,
+        user: user
+      };
     } catch (error) {
       console.error('Token verification error:', error);
+      // Clear invalid token
+      this.logout();
       return { valid: false };
     }
   }
@@ -121,19 +112,14 @@ class AuthService {
         return { success: false };
       }
 
-      const response = await fetch(`${this.baseUrl}${AUTH_CONFIG.AUTH_ENDPOINTS.REFRESH}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, data.token);
+      // Use apiService refresh token functionality
+      const result = await apiService.refreshAuthToken();
+      
+      if (result.success) {
+        localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, result.token);
         return {
           success: true,
-          token: data.token
+          token: result.token
         };
       }
 

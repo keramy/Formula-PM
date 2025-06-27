@@ -1,0 +1,79 @@
+# Formula PM - Prometheus Configuration
+# Monitoring and metrics collection for production environment
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'formula-pm-monitor'
+
+rule_files:
+  - "rules/*.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+
+  # Formula PM Backend API
+  - job_name: 'formula-pm-backend'
+    static_configs:
+      - targets: ['backend:5014']
+    metrics_path: '/api/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Formula PM Frontend (Nginx metrics)
+  - job_name: 'formula-pm-frontend'
+    static_configs:
+      - targets: ['frontend:3003']
+    metrics_path: '/metrics'
+    scrape_interval: 60s
+
+  # PostgreSQL Database
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:5432']
+    metrics_path: '/metrics'
+    params:
+      format: ['prometheus']
+
+  # Redis Cache
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    metrics_path: '/metrics'
+
+  # Node Exporter (system metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 30s
+
+  # Docker Container Metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 30s
+
+  # Application-specific metrics
+  - job_name: 'formula-pm-custom-metrics'
+    static_configs:
+      - targets: ['backend:5014']
+    metrics_path: '/api/system/metrics'
+    scrape_interval: 30s
+    bearer_token_file: /etc/prometheus/api_token.txt
+
+# Remote write configuration (for external monitoring services)
+# remote_write:
+#   - url: "https://your-remote-monitoring-service.com/api/v1/write"
+#     basic_auth:
+#       username: "your_username"
+#       password: "your_password"

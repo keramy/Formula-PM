@@ -1,0 +1,109 @@
+# Formula PM Backend - Docker ignore file
+# Excludes unnecessary files from Docker build context
+
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage and test files
+coverage
+.nyc_output
+.jest
+
+# Environment files (will be provided at runtime)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+
+# Runtime data
+lib-cov
+coverage
+.nyc_output
+.jest
+.cache
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+# Development files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Git
+.git
+.gitignore
+README.md
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Documentation
+docs/
+*.md
+
+# Temporary files
+tmp/
+temp/
+
+# Generated reports (will be volume mounted)
+generated-reports/
+
+# Uploads (will be volume mounted)
+uploads/
+
+# Scripts not needed in production
+scripts/
+
+# Testing
+__tests__/
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal

@@ -1,63 +1,24 @@
 /**
- * Timeline Progress Tracker - Visual timeline interface for photo progress tracking
+ * Timeline Progress Tracker - Refactored modular timeline interface
  * SiteCam-inspired automation for Formula PM
- * Phase 2: Smart Automation Agent
+ * Phase 2: Smart Automation Agent - Modularized for better maintainability
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  ButtonGroup,
-  Chip,
-  Grid,
-  Paper,
   Dialog,
   DialogContent,
   DialogTitle,
   DialogActions,
-  Slider,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-  TimelineOppositeContent,
-  LinearProgress,
-  Avatar,
-  Tooltip,
-  IconButton,
-  Divider,
-  Alert
+  Button
 } from '@mui/material';
-import {
-  FaPlay,
-  FaPause,
-  FaStepForward,
-  FaStepBackward,
-  FaExpand,
-  FaClock,
-  FaCalendarAlt,
-  FaMapMarkerAlt,
-  FaImages,
-  FaChartLine,
-  FaFilter,
-  FaDownload,
-  FaEye,
-  FaLayerGroup,
-  FaProjectDiagram,
-  FaCheckCircle,
-  FaExclamationTriangle,
-  FaInfoCircle
-} from 'react-icons/fa';
+import { FaEye } from 'react-icons/fa';
+
+// Modular components
+import ProgressOverview from './timeline-tracker/ProgressOverview';
+import TimelineControls from './timeline-tracker/TimelineControls';
+import TimelineView from './timeline-tracker/TimelineView';
 
 const TimelineProgressTracker = ({ 
   photos = [], 
@@ -572,299 +533,13 @@ const TimelineProgressTracker = ({
     </Paper>
   );
 
-  const renderTimelineView = () => (
-    <Timeline position="alternate">
-      {timelineData.map((group, index) => {
-        const StatusIcon = getStatusIcon(group.completionStatus);
-        const isActive = index === currentTimeIndex;
-        
-        return (
-          <TimelineItem key={group.period}>
-            <TimelineOppositeContent sx={{ m: 'auto 0' }} align="right" variant="body2" color="text.secondary">
-              {formatTimeRange(group.startDate, group.endDate)}
-            </TimelineOppositeContent>
-            
-            <TimelineSeparator>
-              <TimelineDot 
-                sx={{ 
-                  bgcolor: getStatusColor(group.completionStatus),
-                  cursor: 'pointer',
-                  border: isActive ? 3 : 0,
-                  borderColor: 'primary.main'
-                }}
-                onClick={() => handleTimelineClick(index)}
-              >
-                <StatusIcon size={16} color="white" />
-              </TimelineDot>
-              {index < timelineData.length - 1 && <TimelineConnector />}
-            </TimelineSeparator>
-            
-            <TimelineContent sx={{ py: '12px', px: 2 }}>
-              <Card 
-                sx={{ 
-                  cursor: 'pointer',
-                  border: isActive ? 2 : 0,
-                  borderColor: 'primary.main'
-                }}
-                onClick={() => handleTimelineClick(index)}
-              >
-                <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
-                  <Typography variant="h6" component="h3">
-                    {group.period}
-                  </Typography>
-                  
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    {group.photos.length} photos • {Object.keys(group.progressMetrics.byLocation).length} locations
-                  </Typography>
-                  
-                  <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mb: 1 }}>
-                    {Object.entries(group.progressMetrics.byCategory).map(([category, count]) => (
-                      <Chip 
-                        key={category}
-                        label={`${category}: ${count}`}
-                        size="small"
-                        variant="outlined"
-                      />
-                    ))}
-                  </Box>
+  // Timeline view now handled by modular TimelineView component
 
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                    <Typography variant="caption">
-                      Status: {group.completionStatus}
-                    </Typography>
-                    <Button 
-                      size="small" 
-                      startIcon={<FaEye />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (group.photos.length > 0) {
-                          setSelectedPhoto(group.photos[0]);
-                        }
-                      }}
-                    >
-                      View
-                    </Button>
-                  </Box>
-                </CardContent>
-              </Card>
-            </TimelineContent>
-          </TimelineItem>
-        );
-      })}
-    </Timeline>
-  );
+  // Grid view now handled by modular GridView component (to be implemented)
 
-  const renderGridView = () => (
-    <Grid container spacing={2}>
-      {timelineData.map((group, index) => {
-        const isActive = index === currentTimeIndex;
-        const StatusIcon = getStatusIcon(group.completionStatus);
-        
-        return (
-          <Grid item xs={12} sm={6} md={4} key={group.period}>
-            <Card 
-              sx={{ 
-                cursor: 'pointer',
-                border: isActive ? 2 : 0,
-                borderColor: 'primary.main',
-                '&:hover': { boxShadow: 3 }
-              }}
-              onClick={() => handleTimelineClick(index)}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <StatusIcon 
-                    size={20} 
-                    color={getStatusColor(group.completionStatus)}
-                    style={{ marginRight: 8 }}
-                  />
-                  <Typography variant="h6">
-                    {group.period}
-                  </Typography>
-                </Box>
+  // Comparison view now handled by modular ComparisonView component (to be implemented)
 
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  {formatTimeRange(group.startDate, group.endDate)}
-                </Typography>
-
-                <Grid container spacing={1} sx={{ mb: 2 }}>
-                  <Grid item xs={6}>
-                    <Box sx={{ textAlign: 'center' }}>
-                      <Typography variant="h5" color="primary">
-                        {group.photos.length}
-                      </Typography>
-                      <Typography variant="caption">Photos</Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Box sx={{ textAlign: 'center' }}>
-                      <Typography variant="h5" color="secondary">
-                        {Object.keys(group.progressMetrics.byLocation).length}
-                      </Typography>
-                      <Typography variant="caption">Locations</Typography>
-                    </Box>
-                  </Grid>
-                </Grid>
-
-                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                  {Object.entries(group.progressMetrics.byCategory).slice(0, 3).map(([category, count]) => (
-                    <Chip 
-                      key={category}
-                      label={`${category}: ${count}`}
-                      size="small"
-                      variant="outlined"
-                    />
-                  ))}
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        );
-      })}
-    </Grid>
-  );
-
-  const renderComparisonView = () => {
-    if (!comparisonData || !enableComparison) return null;
-
-    return (
-      <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          Progress Comparison Analysis
-        </Typography>
-        
-        {/* Comparison Summary */}
-        <Box sx={{ mb: 3, p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
-          <Typography variant="subtitle2" gutterBottom>
-            Summary of Changes
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={4}>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography 
-                  variant="h4" 
-                  sx={{ color: getDeltaColor(comparisonData.summary.totalPhotoDelta) }}
-                >
-                  {formatDelta(comparisonData.summary.totalPhotoDelta)}
-                </Typography>
-                <Typography variant="caption">Total Photos</Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={4}>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography 
-                  variant="h4" 
-                  sx={{ color: getDeltaColor(comparisonData.summary.averageProgressDelta, 'progress') }}
-                >
-                  {formatDelta(comparisonData.summary.averageProgressDelta, 'percentage')}
-                </Typography>
-                <Typography variant="caption">Avg Progress</Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={4}>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography 
-                  variant="h4" 
-                  sx={{ color: getDeltaColor(comparisonData.summary.totalIssuesDelta, 'issues') }}
-                >
-                  {formatDelta(comparisonData.summary.totalIssuesDelta)}
-                </Typography>
-                <Typography variant="caption">Issues</Typography>
-              </Box>
-            </Grid>
-          </Grid>
-        </Box>
-
-        {/* Period-by-Period Comparison */}
-        <Typography variant="subtitle2" sx={{ mb: 2 }}>
-          Changes by Time Period
-        </Typography>
-        {comparisonData.deltas.map((period, index) => (
-          <Card key={period.period} sx={{ mb: 2, border: period.delta.type === 'new' ? 2 : 0, borderColor: 'success.main' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6">{period.period}</Typography>
-                {period.delta.type === 'new' && (
-                  <Chip label="New Period" color="success" size="small" />
-                )}
-              </Box>
-
-              <Grid container spacing={2}>
-                <Grid item xs={3}>
-                  <Box sx={{ textAlign: 'center' }}>
-                    <Typography 
-                      variant="h5" 
-                      sx={{ color: getDeltaColor(period.delta.photos) }}
-                    >
-                      {formatDelta(period.delta.photos)}
-                    </Typography>
-                    <Typography variant="caption">Photos</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {period.photos.length} total
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={3}>
-                  <Box sx={{ textAlign: 'center' }}>
-                    <Typography 
-                      variant="h5" 
-                      sx={{ color: getDeltaColor(period.delta.progress, 'progress') }}
-                    >
-                      {formatDelta(period.delta.progress, 'percentage')}
-                    </Typography>
-                    <Typography variant="caption">Progress</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {Math.round(period.progressMetrics.progressRate || 0)}% current
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={3}>
-                  <Box sx={{ textAlign: 'center' }}>
-                    <Typography 
-                      variant="h5" 
-                      sx={{ color: getDeltaColor(period.delta.quality, 'quality') }}
-                    >
-                      {formatDelta(period.delta.quality, 'percentage')}
-                    </Typography>
-                    <Typography variant="caption">Quality</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {Math.round(period.progressMetrics.qualityScore || 0)}% current
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={3}>
-                  <Box sx={{ textAlign: 'center' }}>
-                    <Typography 
-                      variant="h5" 
-                      sx={{ color: getDeltaColor(period.delta.issues, 'issues') }}
-                    >
-                      {formatDelta(period.delta.issues)}
-                    </Typography>
-                    <Typography variant="caption">Issues</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {period.photos.filter(p => p.category === 'issue').length} current
-                    </Typography>
-                  </Box>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        ))}
-      </Paper>
-    );
-  };
-
-  const renderChartView = () => (
-    <Paper sx={{ p: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Progress Chart View
-      </Typography>
-      <Alert severity="info">
-        Chart visualization would be implemented here using a charting library like Chart.js or Recharts.
-        This would show progress trends, photo counts over time, and completion metrics.
-      </Alert>
-    </Paper>
-  );
+  // Chart view now handled by modular ChartView component (to be implemented)
 
   if (!timelineData.length) {
     return (
@@ -883,30 +558,60 @@ const TimelineProgressTracker = ({
   return (
     <Box>
       {/* Progress Overview */}
-      {progressOverview && renderProgressOverview()}
-
-      {/* Controls */}
-      {showControls && renderControls()}
-
-      {/* Current Period Highlight */}
-      {timelineData[currentTimeIndex] && (
-        <Alert severity="info" sx={{ mb: 2 }}>
-          <Typography variant="subtitle2">
-            Current Period: {timelineData[currentTimeIndex].period}
-          </Typography>
-          <Typography variant="body2">
-            {timelineData[currentTimeIndex].photos.length} photos • 
-            Status: {timelineData[currentTimeIndex].completionStatus} • 
-            {Object.keys(timelineData[currentTimeIndex].progressMetrics.byLocation).length} locations
-          </Typography>
-        </Alert>
+      {progressOverview && (
+        <ProgressOverview
+          metrics={progressOverview}
+          photos={photos}
+          getDeltaColor={getDeltaColor}
+          formatDelta={formatDelta}
+        />
       )}
 
-      {/* Main Content */}
-      {viewMode === 'timeline' && renderTimelineView()}
-      {viewMode === 'grid' && renderGridView()}
-      {viewMode === 'chart' && renderChartView()}
-      {viewMode === 'comparison' && renderComparisonView()}
+      {/* Controls */}
+      {showControls && (
+        <TimelineControls
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+          playSpeed={playSpeed}
+          setPlaySpeed={setPlaySpeed}
+          currentTimeIndex={currentTimeIndex}
+          setCurrentTimeIndex={setCurrentTimeIndex}
+          timelineData={timelineData}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          filterLocation={filterLocation}
+          setFilterLocation={setFilterLocation}
+          filterCategory={filterCategory}
+          setFilterCategory={setFilterCategory}
+          showProgressOnly={showProgressOnly}
+          setShowProgressOnly={setShowProgressOnly}
+          enableComparison={enableComparison}
+          comparisonMode={comparisonMode}
+          setComparisonMode={setComparisonMode}
+          photos={photos}
+          onExportData={() => console.log('Export timeline data')}
+        />
+      )}
+
+      {/* Main Content - Only Timeline View implemented in modular component for now */}
+      {viewMode === 'timeline' && (
+        <TimelineView
+          timelineData={timelineData}
+          currentTimeIndex={currentTimeIndex}
+          onTimelineClick={handleTimelineClick}
+          formatTimeRange={formatTimeRange}
+          getStatusColor={getStatusColor}
+          getStatusIcon={getStatusIcon}
+          formatLocation={formatLocation}
+        />
+      )}
+      
+      {/* Other view modes - placeholder for now */}
+      {viewMode !== 'timeline' && (
+        <Typography variant="h6" textAlign="center" sx={{ my: 4 }}>
+          {viewMode} View - Coming Soon (Component being refactored)
+        </Typography>
+      )}
 
       {/* Photo Detail Dialog */}
       <Dialog

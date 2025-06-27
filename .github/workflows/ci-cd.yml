@@ -1,0 +1,423 @@
+# Formula PM - CI/CD Pipeline
+# Automated testing, building, and deployment workflow
+
+name: Formula PM CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '18'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: formula-pm
+
+jobs:
+  # Security and Code Quality Analysis
+  security-analysis:
+    name: Security Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # Frontend Tests and Build
+  frontend-tests:
+    name: Frontend Tests & Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: formula-project-app/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: ./formula-project-app
+        run: npm ci
+
+      - name: Run frontend linting
+        working-directory: ./formula-project-app
+        run: npm run lint
+
+      - name: Run frontend tests
+        working-directory: ./formula-project-app
+        run: npm run test -- --coverage --watchAll=false
+
+      - name: Upload frontend coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./formula-project-app/coverage
+          flags: frontend
+
+      - name: Build frontend application
+        working-directory: ./formula-project-app
+        run: npm run build
+
+      - name: Upload frontend build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: formula-project-app/dist/
+          retention-days: 1
+
+  # Backend Tests and Build
+  backend-tests:
+    name: Backend Tests & Build
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: formula_pm_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: formula-project-app/backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: ./formula-project-app/backend
+        run: npm ci
+
+      - name: Run backend linting
+        working-directory: ./formula-project-app/backend
+        run: npm run lint
+
+      - name: Generate Prisma client
+        working-directory: ./formula-project-app/backend
+        run: npx prisma generate
+
+      - name: Run database migrations
+        working-directory: ./formula-project-app/backend
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/formula_pm_test
+        run: npx prisma migrate deploy
+
+      - name: Run backend tests
+        working-directory: ./formula-project-app/backend
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/formula_pm_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test_jwt_secret
+          JWT_REFRESH_SECRET: test_refresh_secret
+        run: npm test -- --coverage
+
+      - name: Upload backend coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./formula-project-app/backend/coverage
+          flags: backend
+
+  # Integration Tests
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [frontend-tests, backend-tests]
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: formula_pm_integration
+          POSTGRES_USER: integration_user
+          POSTGRES_PASSWORD: integration_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Start services with Docker Compose
+        run: |
+          cp .env.example .env.test
+          docker-compose -f docker-compose.dev.yml up -d --build
+          sleep 30
+
+      - name: Run integration tests
+        working-directory: ./formula-project-app/src/__tests__/integration
+        run: npm test
+
+      - name: Collect service logs
+        if: failure()
+        run: |
+          docker-compose -f docker-compose.dev.yml logs > integration-logs.txt
+
+      - name: Upload service logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-logs
+          path: integration-logs.txt
+
+      - name: Stop services
+        if: always()
+        run: docker-compose -f docker-compose.dev.yml down
+
+  # Build and Push Docker Images
+  build-and-push:
+    name: Build & Push Docker Images
+    runs-on: ubuntu-latest
+    needs: [security-analysis, frontend-tests, backend-tests, integration-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        component: [frontend, backend]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.component }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image - Frontend
+        if: matrix.component == 'frontend'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./formula-project-app
+          file: ./formula-project-app/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Docker image - Backend
+        if: matrix.component == 'backend'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./formula-project-app/backend
+          file: ./formula-project-app/backend/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Performance Tests
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: [build-and-push]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+
+      - name: Start application for performance testing
+        run: |
+          docker-compose -f docker-compose.prod.yml up -d
+          sleep 60
+
+      - name: Run performance tests
+        run: |
+          k6 run scripts/performance-test.js
+
+      - name: Stop application
+        if: always()
+        run: docker-compose -f docker-compose.prod.yml down
+
+  # Deploy to Staging
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build-and-push, performance-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to staging
+        env:
+          STAGING_HOST: ${{ secrets.STAGING_HOST }}
+          STAGING_USER: ${{ secrets.STAGING_USER }}
+          STAGING_KEY: ${{ secrets.STAGING_PRIVATE_KEY }}
+        run: |
+          echo "$STAGING_KEY" > staging_key
+          chmod 600 staging_key
+          
+          # Copy docker-compose file to staging
+          scp -i staging_key -o StrictHostKeyChecking=no docker-compose.prod.yml $STAGING_USER@$STAGING_HOST:~/
+          
+          # Deploy to staging
+          ssh -i staging_key -o StrictHostKeyChecking=no $STAGING_USER@$STAGING_HOST '
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml up -d
+            docker system prune -f
+          '
+          
+          rm staging_key
+
+      - name: Verify staging deployment
+        run: |
+          sleep 30
+          curl -f http://${{ secrets.STAGING_HOST }}:3003/health || exit 1
+
+  # Deploy to Production
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [deploy-staging]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to production
+        env:
+          PRODUCTION_HOST: ${{ secrets.PRODUCTION_HOST }}
+          PRODUCTION_USER: ${{ secrets.PRODUCTION_USER }}
+          PRODUCTION_KEY: ${{ secrets.PRODUCTION_PRIVATE_KEY }}
+        run: |
+          echo "$PRODUCTION_KEY" > production_key
+          chmod 600 production_key
+          
+          # Copy docker-compose file to production
+          scp -i production_key -o StrictHostKeyChecking=no docker-compose.prod.yml $PRODUCTION_USER@$PRODUCTION_HOST:~/
+          
+          # Deploy to production with zero-downtime
+          ssh -i production_key -o StrictHostKeyChecking=no $PRODUCTION_USER@$PRODUCTION_HOST '
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml up -d --no-deps frontend backend
+            sleep 10
+            docker-compose -f docker-compose.prod.yml up -d
+            docker system prune -f
+          '
+          
+          rm production_key
+
+      - name: Verify production deployment
+        run: |
+          sleep 30
+          curl -f https://${{ secrets.PRODUCTION_DOMAIN }}/health || exit 1
+
+      - name: Notify deployment success
+        if: success()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          channel: '#deployments'
+          text: 'Formula PM production deployment successful! 🚀'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Notify deployment failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          channel: '#deployments'
+          text: 'Formula PM production deployment failed! ❌'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

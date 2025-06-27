@@ -1,178 +1,28 @@
 /**
- * Smart Template Selector - Template customization and preview
+ * Smart Template Selector - Refactored modular template selection interface
  * SiteCam-inspired automation for Formula PM
- * Phase 2: Smart Automation Agent
+ * Phase 2: Smart Automation Agent - Modularized for better maintainability
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Box,
+  Typography,
+  Grid,
   Card,
   CardContent,
-  CardActions,
-  Typography,
-  Button,
-  Grid,
-  Chip,
   Paper,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Switch,
-  FormControlLabel,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  IconButton,
-  Tooltip,
   Alert,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Badge
+  Chip
 } from '@mui/material';
-import {
-  FaEye,
-  FaCog,
-  FaClone,
-  FaEdit,
-  FaTrash,
-  FaPlus,
-  FaMagic,
-  FaChartLine,
-  FaClipboardCheck,
-  FaExclamationTriangle,
-  FaShieldAlt,
-  FaTags,
-  FaImage,
-  FaFileAlt,
-  FaDownload,
-  FaSave,
-  FaUndo
-} from 'react-icons/fa';
-import { MdExpandMore } from 'react-icons/md';
+import { FaPlus } from 'react-icons/fa';
 
 import smartTemplateService from '../services/smartTemplateService';
+import TemplateCard from './template-selector/TemplateCard';
+import TemplatePreviewDialog from './template-selector/TemplatePreviewDialog';
+import TemplateEditorDialog from './template-selector/TemplateEditorDialog';
 
-// Template Preview Component
-const TemplatePreview = ({ template, photos, confidence }) => {
-  const getSampleSections = () => {
-    if (!template) return [];
-    
-    // Generate sample sections based on template type
-    const sampleSections = template.sections.map((section, index) => ({
-      ...section,
-      sampleContent: generateSampleContent(section, photos)
-    }));
-    
-    return sampleSections;
-  };
-
-  const generateSampleContent = (section, photos) => {
-    const photoCount = photos?.length || 0;
-    
-    switch (section.type) {
-      case 'summary':
-        return `This ${template.name} covers ${photoCount} documented items across multiple locations. Key highlights include progress tracking, quality assessments, and action items.`;
-      
-      case 'location-based':
-        return `Analysis of ${Math.min(3, photoCount)} key locations showing work progress and current status. Each location includes detailed photo documentation and observations.`;
-      
-      case 'timeline':
-        return `Timeline analysis showing project progression over the documented period. ${photoCount > 10 ? 'Significant progress' : 'Initial progress'} has been recorded.`;
-      
-      case 'quality':
-        return `Quality control assessment based on ${photoCount} inspection photos. Areas reviewed include workmanship, compliance, and material specifications.`;
-      
-      case 'issues':
-        return `${Math.floor(photoCount * 0.2)} potential issues identified requiring attention. Each issue includes photo documentation and recommended actions.`;
-      
-      default:
-        return `Section containing relevant ${section.title.toLowerCase()} information based on ${photoCount} photos.`;
-    }
-  };
-
-  return (
-    <Box sx={{ p: 2 }}>
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h6">{template.name} Preview</Typography>
-        {confidence && (
-          <Chip 
-            label={`${Math.round(confidence * 100)}% confidence`}
-            color={confidence > 0.8 ? 'success' : confidence > 0.6 ? 'warning' : 'default'}
-            size="small"
-          />
-        )}
-      </Box>
-      
-      <Paper variant="outlined" sx={{ p: 2, mb: 2, bgcolor: 'grey.50' }}>
-        <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-          Template Description
-        </Typography>
-        <Typography variant="body2">
-          {template.description}
-        </Typography>
-      </Paper>
-
-      <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-        Report Structure Preview:
-      </Typography>
-      
-      <List dense>
-        {getSampleSections().map((section, index) => (
-          <Box key={section.id} sx={{ mb: 2 }}>
-            <ListItem sx={{ pl: 0 }}>
-              <ListItemIcon sx={{ minWidth: 36 }}>
-                <Chip label={index + 1} size="small" color="primary" />
-              </ListItemIcon>
-              <ListItemText
-                primary={
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    {section.title}
-                  </Typography>
-                }
-                secondary={
-                  <Box>
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                      {section.sampleContent}
-                    </Typography>
-                    {section.requiredPhotos && (
-                      <Chip 
-                        label={`Requires ${section.requiredPhotos} photos`}
-                        size="small"
-                        sx={{ mt: 1 }}
-                      />
-                    )}
-                  </Box>
-                }
-              />
-            </ListItem>
-            {index < getSampleSections().length - 1 && <Divider />}
-          </Box>
-        ))}
-      </List>
-
-      <Box sx={{ mt: 3, p: 2, bgcolor: 'info.light', borderRadius: 1 }}>
-        <Typography variant="body2" color="info.dark">
-          <strong>Auto-Generation Features:</strong>
-          <br />• Intelligent photo grouping by {template.groupingStrategy}
-          <br />• Automatic {template.contentGeneration} generation
-          <br />• Smart {template.analysisType} analysis
-          {template.includeCharts && <br />}
-          {template.includeCharts && '• Visual charts and progress indicators'}
-        </Typography>
-      </Box>
-    </Box>
-  );
-};
+// Modular components have been extracted to separate files for better maintainability
 
 const SmartTemplateSelector = ({ 
   onTemplateSelect,
@@ -426,423 +276,11 @@ const SmartTemplateSelector = ({
     return Math.min(score, 100);
   };
 
-  const renderTemplateCard = (template) => {
-    const IconComponent = template.icon;
-    const suitabilityScore = getSuitabilityScore(template);
-    const recommendation = recommendations.find(r => r.templateId === template.id);
-    const isRecommended = !!recommendation;
-    const isSelected = selectedTemplate?.id === template.id;
+  // Template card rendering now handled by modular TemplateCard component
 
-    return (
-      <Card 
-        key={template.id}
-        sx={{ 
-          height: '100%',
-          cursor: 'pointer',
-          border: isSelected ? 2 : 1,
-          borderColor: isSelected ? 'primary.main' : 'divider',
-          '&:hover': { 
-            boxShadow: 3,
-            borderColor: 'primary.light'
-          },
-          position: 'relative'
-        }}
-        onClick={() => handleTemplateSelect(template)}
-      >
-        {/* Recommendation Badge */}
-        {isRecommended && (
-          <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1 }}>
-            <Chip
-              icon={<FaMagic />}
-              label={`${Math.round(recommendation.confidence * 100)}% Match`}
-              size="small"
-              sx={{
-                bgcolor: recommendation.confidence > 0.8 ? 'success.main' : 'warning.main',
-                color: 'white',
-                fontWeight: 600,
-                '& .MuiChip-icon': {
-                  color: 'white'
-                }
-              }}
-            />
-            <Typography 
-              variant="caption" 
-              sx={{ 
-                display: 'block', 
-                textAlign: 'right', 
-                mt: 0.5,
-                px: 1,
-                color: 'text.secondary',
-                fontSize: '0.7rem'
-              }}
-            >
-              {recommendation.reason}
-            </Typography>
-          </Box>
-        )}
+  // Template preview now handled by modular TemplatePreviewDialog component
 
-        <CardContent>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <IconComponent 
-              size={24} 
-              color={template.color}
-              style={{ marginRight: 12 }}
-            />
-            <Typography variant="h6" component="h3">
-              {template.name}
-            </Typography>
-          </Box>
-
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            {template.description}
-          </Typography>
-
-          {/* Suitability Score */}
-          {analysisResult && (
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="caption" gutterBottom>
-                Suitability Score: {suitabilityScore}%
-              </Typography>
-              <Box sx={{ 
-                width: '100%', 
-                height: 4, 
-                bgcolor: 'grey.300', 
-                borderRadius: 1,
-                overflow: 'hidden'
-              }}>
-                <Box sx={{ 
-                  width: `${suitabilityScore}%`, 
-                  height: '100%', 
-                  bgcolor: suitabilityScore > 70 ? 'success.main' : suitabilityScore > 40 ? 'warning.main' : 'error.main',
-                  transition: 'width 0.3s ease'
-                }} />
-              </Box>
-            </Box>
-          )}
-
-          {/* Features */}
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="caption" gutterBottom>
-              Features:
-            </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-              {template.features?.slice(0, 3).map(feature => (
-                <Chip 
-                  key={feature} 
-                  label={feature} 
-                  size="small" 
-                  variant="outlined"
-                />
-              ))}
-              {template.features?.length > 3 && (
-                <Chip 
-                  label={`+${template.features.length - 3} more`} 
-                  size="small" 
-                  variant="outlined"
-                />
-              )}
-            </Box>
-          </Box>
-
-          {/* Sections Count */}
-          <Typography variant="caption" color="text.secondary">
-            {template.sections?.length || 0} sections • Est. {template.estimatedTime || '2-3 minutes'}
-          </Typography>
-        </CardContent>
-
-        <CardActions>
-          <Button 
-            size="small" 
-            startIcon={<FaEye />}
-            onClick={(e) => {
-              e.stopPropagation();
-              handlePreviewTemplate(template);
-            }}
-          >
-            Preview
-          </Button>
-          
-          {showCustomization && (
-            <Button 
-              size="small" 
-              startIcon={template.isBuiltIn ? <FaClone /> : <FaEdit />}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleEditTemplate(template);
-              }}
-            >
-              {template.isBuiltIn ? 'Customize' : 'Edit'}
-            </Button>
-          )}
-
-          {!template.isBuiltIn && (
-            <IconButton 
-              size="small"
-              color="error"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDeleteCustomTemplate(template.id);
-              }}
-            >
-              <FaTrash />
-            </IconButton>
-          )}
-        </CardActions>
-      </Card>
-    );
-  };
-
-  const renderTemplatePreview = () => {
-    if (!selectedTemplate) return null;
-
-    // Find if this template has a recommendation
-    const recommendation = recommendations.find(r => r.templateId === selectedTemplate.id);
-    const confidence = recommendation ? recommendation.confidence : getSuitabilityScore(selectedTemplate) / 100;
-
-    return (
-      <Dialog
-        open={previewMode}
-        onClose={() => setPreviewMode(false)}
-        maxWidth="lg"
-        fullWidth
-      >
-        <DialogTitle>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <selectedTemplate.icon 
-              size={24} 
-              color={selectedTemplate.color}
-            />
-            Template Preview: {selectedTemplate.name}
-          </Box>
-        </DialogTitle>
-
-        <DialogContent>
-          <TemplatePreview 
-            template={selectedTemplate}
-            photos={photos}
-            confidence={confidence}
-          />
-          
-          {recommendation && (
-            <Alert severity="success" sx={{ mt: 2 }}>
-              <Typography variant="subtitle2">
-                Recommended: {recommendation.reason}
-              </Typography>
-            </Alert>
-          )}
-        </DialogContent>
-
-        <DialogActions>
-          <Button 
-            startIcon={<FaEdit />}
-            onClick={() => {
-              setPreviewMode(false);
-              handleEditTemplate(selectedTemplate);
-            }}
-          >
-            Customize
-          </Button>
-          <Button onClick={() => setPreviewMode(false)}>
-            Close
-          </Button>
-          <Button 
-            variant="contained"
-            startIcon={<FaMagic />}
-            onClick={() => {
-              handleTemplateSelect(selectedTemplate);
-              setPreviewMode(false);
-            }}
-          >
-            Use This Template
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  };
-
-  const renderTemplateEditor = () => {
-    if (!editingTemplate) return null;
-
-    return (
-      <Dialog
-        open={editMode}
-        onClose={() => setEditMode(false)}
-        maxWidth="lg"
-        fullWidth
-      >
-        <DialogTitle>
-          {editingTemplate.isBuiltIn ? 'Customize Template' : 'Edit Template'}
-        </DialogTitle>
-
-        <DialogContent>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Template Name"
-                value={editingTemplate.name || ''}
-                onChange={(e) => setEditingTemplate(prev => ({ 
-                  ...prev, 
-                  name: e.target.value 
-                }))}
-                margin="normal"
-              />
-
-              <TextField
-                fullWidth
-                label="Description"
-                multiline
-                rows={3}
-                value={editingTemplate.description || ''}
-                onChange={(e) => setEditingTemplate(prev => ({ 
-                  ...prev, 
-                  description: e.target.value 
-                }))}
-                margin="normal"
-              />
-
-              <FormControl fullWidth margin="normal">
-                <InputLabel>Template Type</InputLabel>
-                <Select
-                  value={editingTemplate.type || 'progress'}
-                  onChange={(e) => setEditingTemplate(prev => ({ 
-                    ...prev, 
-                    type: e.target.value 
-                  }))}
-                >
-                  <MenuItem value="progress">Progress Report</MenuItem>
-                  <MenuItem value="quality">Quality Control</MenuItem>
-                  <MenuItem value="issue">Issue Report</MenuItem>
-                  <MenuItem value="safety">Safety Report</MenuItem>
-                  <MenuItem value="custom">Custom Report</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <Typography variant="h6" gutterBottom>
-                Template Sections
-              </Typography>
-
-              {editingTemplate.sections?.map((section, index) => (
-                <Paper key={index} sx={{ p: 2, mb: 2 }}>
-                  <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Section Title"
-                        value={section.title}
-                        onChange={(e) => {
-                          const updated = [...editingTemplate.sections];
-                          updated[index].title = e.target.value;
-                          setEditingTemplate(prev => ({ 
-                            ...prev, 
-                            sections: updated 
-                          }));
-                        }}
-                        size="small"
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <FormControl fullWidth size="small">
-                        <InputLabel>Type</InputLabel>
-                        <Select
-                          value={section.type}
-                          onChange={(e) => {
-                            const updated = [...editingTemplate.sections];
-                            updated[index].type = e.target.value;
-                            setEditingTemplate(prev => ({ 
-                              ...prev, 
-                              sections: updated 
-                            }));
-                          }}
-                        >
-                          <MenuItem value="summary">Summary</MenuItem>
-                          <MenuItem value="progress">Progress</MenuItem>
-                          <MenuItem value="quality">Quality</MenuItem>
-                          <MenuItem value="issues">Issues</MenuItem>
-                          <MenuItem value="safety">Safety</MenuItem>
-                          <MenuItem value="locations">Locations</MenuItem>
-                          <MenuItem value="timeline">Timeline</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={2}>
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={section.required || false}
-                            onChange={(e) => {
-                              const updated = [...editingTemplate.sections];
-                              updated[index].required = e.target.checked;
-                              setEditingTemplate(prev => ({ 
-                                ...prev, 
-                                sections: updated 
-                              }));
-                            }}
-                            size="small"
-                          />
-                        }
-                        label="Required"
-                      />
-                    </Grid>
-                  </Grid>
-                </Paper>
-              ))}
-
-              <Button
-                startIcon={<FaPlus />}
-                onClick={() => {
-                  const updated = [...(editingTemplate.sections || [])];
-                  updated.push({
-                    title: 'New Section',
-                    type: 'general',
-                    required: false
-                  });
-                  setEditingTemplate(prev => ({ 
-                    ...prev, 
-                    sections: updated 
-                  }));
-                }}
-                variant="outlined"
-                size="small"
-              >
-                Add Section
-              </Button>
-            </Grid>
-          </Grid>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setEditMode(false)}>
-            Cancel
-          </Button>
-          <Button 
-            variant="outlined"
-            startIcon={<FaUndo />}
-            onClick={() => {
-              // Reset to original
-              const original = editingTemplate.isBuiltIn 
-                ? templates.find(t => t.id === editingTemplate.id)
-                : customTemplates.find(t => t.id === editingTemplate.id);
-              if (original) {
-                setEditingTemplate({ ...original });
-              }
-            }}
-          >
-            Reset
-          </Button>
-          <Button 
-            variant="contained"
-            startIcon={<FaSave />}
-            onClick={handleSaveCustomTemplate}
-          >
-            Save Template
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  };
+  // Template editor now handled by modular TemplateEditorDialog component
 
   const allTemplates = [...templates, ...customTemplates];
 
@@ -884,11 +322,28 @@ const SmartTemplateSelector = ({
 
       {/* Template Grid */}
       <Grid container spacing={3}>
-        {allTemplates.map(template => (
-          <Grid item xs={12} sm={6} md={4} key={template.id}>
-            {renderTemplateCard(template)}
-          </Grid>
-        ))}
+        {allTemplates.map(template => {
+          const suitabilityScore = getSuitabilityScore(template);
+          const recommendation = recommendations.find(r => r.templateId === template.id);
+          const isSelected = selectedTemplate?.id === template.id;
+          
+          return (
+            <Grid item xs={12} sm={6} md={4} key={template.id}>
+              <TemplateCard
+                template={template}
+                isSelected={isSelected}
+                recommendation={recommendation}
+                suitabilityScore={suitabilityScore}
+                analysisResult={analysisResult}
+                showCustomization={showCustomization}
+                onTemplateSelect={handleTemplateSelect}
+                onPreviewTemplate={handlePreviewTemplate}
+                onEditTemplate={handleEditTemplate}
+                onDeleteTemplate={handleDeleteCustomTemplate}
+              />
+            </Grid>
+          );
+        })}
 
         {/* Add Custom Template Card */}
         {showCustomization && (
@@ -954,10 +409,35 @@ const SmartTemplateSelector = ({
       )}
 
       {/* Preview Dialog */}
-      {renderTemplatePreview()}
+      <TemplatePreviewDialog
+        open={previewMode}
+        onClose={() => setPreviewMode(false)}
+        selectedTemplate={selectedTemplate}
+        photos={photos}
+        recommendations={recommendations}
+        getSuitabilityScore={getSuitabilityScore}
+        onEditTemplate={handleEditTemplate}
+        onTemplateSelect={handleTemplateSelect}
+      />
 
       {/* Template Editor Dialog */}
-      {renderTemplateEditor()}
+      <TemplateEditorDialog
+        open={editMode}
+        onClose={() => setEditMode(false)}
+        editingTemplate={editingTemplate}
+        onTemplateChange={setEditingTemplate}
+        onSaveTemplate={handleSaveCustomTemplate}
+        onResetTemplate={() => {
+          const original = editingTemplate?.isBuiltIn 
+            ? templates.find(t => t.id === editingTemplate.id)
+            : customTemplates.find(t => t.id === editingTemplate.id);
+          if (original) {
+            setEditingTemplate({ ...original });
+          }
+        }}
+        templates={templates}
+        customTemplates={customTemplates}
+      />
     </Box>
   );
 };

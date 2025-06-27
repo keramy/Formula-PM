@@ -108,7 +108,10 @@
       "WebFetch(domain:react-icons.github.io)",
       "WebFetch(domain:iconoir.com)",
       "Bash(npm outdated)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(npx prisma:*)",
+      "Bash(VITE_FORCE_DEMO_MODE=false npm run dev)",
+      "Bash(./stop-full-backend.sh:*)"
     ],
     "deny": []
   }
