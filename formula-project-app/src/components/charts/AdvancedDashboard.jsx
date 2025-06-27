@@ -31,14 +31,14 @@ import {
 } from 'recharts';
 import {
   TrendingUp,
-  Assignment,
-  People,
-  Schedule,
-  Warning,
+  ClipboardCheck as Assignment,
+  Group as People,
+  Clock as Schedule,
+  WarningTriangle as Warning,
   CheckCircle,
   Star,
-  DateRange
-} from '@mui/icons-material';
+  Calendar as DateRange
+} from 'iconoir-react';
 
 // Color palettes for charts
 const COLORS = {

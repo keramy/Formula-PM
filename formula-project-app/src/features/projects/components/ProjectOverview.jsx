@@ -17,7 +17,7 @@ import {
 import {
   ClipboardCheck as TaskIcon,
   User as PersonIcon,
-  DollarCircle as MoneyIcon,
+  MoneySquare as MoneyIcon,
   Calendar as TimelineIcon,
   CheckCircle as CheckIcon,
   Clock as PendingIcon,

@@ -236,7 +236,7 @@ export const NavigationProvider = ({ children }) => {
       { id: 'drawings', label: 'Shop Drawings', icon: 'EditPencil', path: 'drawings' },
       { id: 'specifications', label: 'Material Specs', icon: 'Building', path: 'specifications' },
       { id: 'activity', label: 'Activity Feed', icon: 'Bell', path: 'activity' },
-      { id: 'reports', label: 'Reports', icon: 'StatsReport', path: 'reports' }
+      { id: 'reports', label: 'Reports', icon: 'Reports', path: 'reports' }
     ];
   }, []);
 

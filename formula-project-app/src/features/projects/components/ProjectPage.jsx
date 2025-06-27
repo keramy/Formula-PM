@@ -12,7 +12,7 @@ import {
   EditPencil as DesignPencil,
   Building as Page,
   Bell,
-  StatsReport as Reports,
+  Reports as Reports,
   EditPencil as Edit,
   Settings,
   ArrowLeft,

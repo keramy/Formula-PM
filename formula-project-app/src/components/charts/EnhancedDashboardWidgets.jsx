@@ -17,18 +17,18 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  Architecture as DrawingIcon,
-  Inventory as SpecIcon,
-  Assignment as TaskIcon,
+  Building as DrawingIcon,
+  Package as SpecIcon,
+  ClipboardCheck as TaskIcon,
   TrendingUp as TrendingUpIcon,
   TrendingDown as TrendingDownIcon,
   CheckCircle as CheckIcon,
-  Schedule as PendingIcon,
-  Warning as WarningIcon,
-  AttachMoney as MoneyIcon,
+  Clock as PendingIcon,
+  WarningTriangle as WarningIcon,
+  MoneySquare as MoneyIcon,
   Timeline as TimelineIcon,
-  Visibility as ViewIcon
-} from '@mui/icons-material';
+  Eye as ViewIcon
+} from 'iconoir-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 const EnhancedDashboardWidgets = ({ 
