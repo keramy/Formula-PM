@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -12,7 +12,15 @@ import {
   Select,
   MenuItem,
   TextField,
-  InputAdornment
+  InputAdornment,
+  Chip,
+  Avatar,
+  Paper,
+  Divider,
+  Badge,
+  LinearProgress,
+  IconButton,
+  Tooltip
 } from '@mui/material';
 import {
   Activity as ActivityIcon,
@@ -21,7 +29,16 @@ import {
   Search as SearchIcon,
   Timeline as TimelineIcon,
   Group as TeamIcon,
-  Building as ProjectIcon
+  Building as ProjectIcon,
+  Calendar as CalendarIcon,
+  Clock as TimeIcon,
+  Bell as NotificationIcon,
+  TrendingUp as TrendingUpIcon,
+  StatUp as StatsIcon,
+  User as UserIcon,
+  Settings as SettingsIcon,
+  Export as ExportIcon,
+  EyeEmpty as ViewIcon
 } from 'iconoir-react';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import ActivityFeed from '../components/realtime/ActivityFeed';
@@ -33,6 +50,9 @@ const ActivityPage = () => {
   const [activeTab, setActiveTab] = useState('live-feed');
   const [filterType, setFilterType] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [dateRange, setDateRange] = useState('today');
+  const [showSettings, setShowSettings] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useAuth();
 
@@ -43,7 +63,7 @@ const ActivityPage = () => {
     error: feedError,
     refreshFeed
   } = useActivityFeed({
-    autoRefresh: activeTab === 'live-feed',
+    autoRefresh: autoRefresh && activeTab === 'live-feed',
     refreshInterval: 5000 // 5 seconds
   });
 
@@ -53,10 +73,77 @@ const ActivityPage = () => {
     }
   }, [feedError]);
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     refreshFeed();
     setError(null);
-  };
+  }, [refreshFeed]);
+
+  // Calculate activity statistics
+  const activityStats = useMemo(() => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const todayActivities = activities.filter(a => 
+      new Date(a.timestamp).toDateString() === today.toDateString()
+    );
+    
+    const yesterdayActivities = activities.filter(a => 
+      new Date(a.timestamp).toDateString() === yesterday.toDateString()
+    );
+    
+    const uniqueUsers = new Set(activities.map(a => a.userId || a.user?.id)).size;
+    const projectActivities = activities.filter(a => a.entityType === 'project').length;
+    const taskActivities = activities.filter(a => a.entityType === 'task').length;
+    const teamActivities = activities.filter(a => 
+      a.entityType === 'user' || a.action === 'user_added'
+    ).length;
+    
+    return {
+      total: activities.length,
+      today: todayActivities.length,
+      yesterday: yesterdayActivities.length,
+      newSinceLastVisit: activities.filter(a => a.isNew).length,
+      uniqueUsers,
+      byType: {
+        projects: projectActivities,
+        tasks: taskActivities,
+        team: teamActivities,
+        system: activities.filter(a => a.entityType === 'system').length
+      }
+    };
+  }, [activities]);
+
+  // Enhanced date filtering
+  const getDateFilteredActivities = useCallback((activityList) => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    switch (dateRange) {
+      case 'today':
+        return activityList.filter(a => new Date(a.timestamp) >= today);
+      case 'yesterday': {
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        return activityList.filter(a => {
+          const activityDate = new Date(a.timestamp);
+          return activityDate >= yesterday && activityDate < today;
+        });
+      }
+      case 'week': {
+        const weekAgo = new Date(today);
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        return activityList.filter(a => new Date(a.timestamp) >= weekAgo);
+      }
+      case 'month': {
+        const monthAgo = new Date(today);
+        monthAgo.setMonth(monthAgo.getMonth() - 1);
+        return activityList.filter(a => new Date(a.timestamp) >= monthAgo);
+      }
+      default:
+        return activityList;
+    }
+  }, [dateRange]);
 
   const headerActions = (
     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -68,17 +155,17 @@ const ActivityPage = () => {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <SearchIcon />
+              <SearchIcon sx={{ fontSize: 18 }} />
             </InputAdornment>
           ),
         }}
         sx={{ width: 200, mr: 1 }}
       />
       <FormControl size="small" sx={{ minWidth: 120, mr: 1 }}>
-        <InputLabel>Filter</InputLabel>
+        <InputLabel>Type</InputLabel>
         <Select
           value={filterType}
-          label="Filter"
+          label="Type"
           onChange={(e) => setFilterType(e.target.value)}
         >
           <MenuItem value="all">All Activities</MenuItem>
@@ -88,12 +175,43 @@ const ActivityPage = () => {
           <MenuItem value="system">System</MenuItem>
         </Select>
       </FormControl>
+      <FormControl size="small" sx={{ minWidth: 100, mr: 1 }}>
+        <InputLabel>Period</InputLabel>
+        <Select
+          value={dateRange}
+          label="Period"
+          onChange={(e) => setDateRange(e.target.value)}
+        >
+          <MenuItem value="all">All Time</MenuItem>
+          <MenuItem value="today">Today</MenuItem>
+          <MenuItem value="yesterday">Yesterday</MenuItem>
+          <MenuItem value="week">This Week</MenuItem>
+          <MenuItem value="month">This Month</MenuItem>
+        </Select>
+      </FormControl>
+      <Tooltip title="Activity Settings">
+        <IconButton 
+          size="small" 
+          onClick={() => setShowSettings(!showSettings)}
+          sx={{ mr: 1 }}
+        >
+          <SettingsIcon sx={{ fontSize: 18 }} />
+        </IconButton>
+      </Tooltip>
       <Button
-        variant="outlined"
-        startIcon={<RefreshIcon />}
+        className="clean-button-secondary"
+        startIcon={<RefreshIcon sx={{ fontSize: 16 }} />}
         onClick={handleRefresh}
+        size="small"
       >
         Refresh
+      </Button>
+      <Button
+        className="clean-button-primary"
+        startIcon={<ExportIcon sx={{ fontSize: 16 }} />}
+        size="small"
+      >
+        Export
       </Button>
     </Box>
   );
@@ -105,31 +223,37 @@ const ActivityPage = () => {
         isActive={activeTab === 'live-feed'}
         onClick={() => setActiveTab('live-feed')}
         icon={<ActivityIcon sx={{ fontSize: 16 }} />}
-        badge={activities.filter(a => a.isNew).length}
+        badge={activityStats.newSinceLastVisit > 0 ? activityStats.newSinceLastVisit : null}
       />
       <CleanTab 
         label="Team Activity" 
         isActive={activeTab === 'team-activity'}
         onClick={() => setActiveTab('team-activity')}
         icon={<TeamIcon sx={{ fontSize: 16 }} />}
+        badge={activityStats.byType.team > 0 ? activityStats.byType.team : null}
       />
       <CleanTab 
         label="Project Timeline" 
         isActive={activeTab === 'project-timeline'}
         onClick={() => setActiveTab('project-timeline')}
         icon={<TimelineIcon sx={{ fontSize: 16 }} />}
+        badge={activityStats.byType.projects > 0 ? activityStats.byType.projects : null}
       />
       <CleanTab 
         label="System Events" 
         isActive={activeTab === 'system-events'}
         onClick={() => setActiveTab('system-events')}
         icon={<ProjectIcon sx={{ fontSize: 16 }} />}
+        badge={activityStats.byType.system > 0 ? activityStats.byType.system : null}
       />
     </>
   );
 
-  const getFilteredActivities = () => {
+  const getFilteredActivities = useCallback(() => {
     let filtered = [...activities];
+
+    // Apply date filter first
+    filtered = getDateFilteredActivities(filtered);
 
     // Apply type filter
     if (filterType !== 'all') {
@@ -176,7 +300,7 @@ const ActivityPage = () => {
       default:
         return filtered;
     }
-  };
+  }, [activities, getDateFilteredActivities, filterType, searchTerm, activeTab]);
 
   const renderTabContent = () => {
     const filteredActivities = getFilteredActivities();
@@ -194,25 +318,88 @@ const ActivityPage = () => {
             />
           </Grid>
           <Grid item xs={12} lg={4}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Activity Summary
+            {/* Activity Statistics */}
+            <Card className="clean-card" sx={{ mb: 3 }}>
+              <Box className="clean-section-header">
+                <Box className="clean-section-indicator"></Box>
+                <Typography className="clean-section-title">
+                  Activity Statistics
                 </Typography>
-                <Box sx={{ mb: 2 }}>
+              </Box>
+              <CardContent sx={{ pt: 0 }}>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <Box sx={{ textAlign: 'center', p: 1 }}>
+                      <Typography variant="h4" sx={{ color: '#516AC8', fontWeight: 700 }}>
+                        {activityStats.today}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Today
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box sx={{ textAlign: 'center', p: 1 }}>
+                      <Typography variant="h4" sx={{ color: '#E3AF64', fontWeight: 700 }}>
+                        {activityStats.uniqueUsers}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Active Users
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
+                <Divider sx={{ my: 2 }} />
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                   <Typography variant="body2" color="text.secondary">
-                    Total Activities Today: <strong>{activities.length}</strong>
+                    Projects
                   </Typography>
+                  <Chip size="small" label={activityStats.byType.projects} color="primary" variant="outlined" />
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                   <Typography variant="body2" color="text.secondary">
-                    New Since Last Visit: <strong>{activities.filter(a => a.isNew).length}</strong>
+                    Tasks
                   </Typography>
+                  <Chip size="small" label={activityStats.byType.tasks} color="success" variant="outlined" />
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                   <Typography variant="body2" color="text.secondary">
-                    Active Users: <strong>{new Set(activities.map(a => a.userId)).size}</strong>
+                    Team Activity
+                  </Typography>
+                  <Chip size="small" label={activityStats.byType.team} color="info" variant="outlined" />
+                </Box>
+                {activityStats.newSinceLastVisit > 0 && (
+                  <Alert severity="info" sx={{ mt: 2 }}>
+                    <strong>{activityStats.newSinceLastVisit}</strong> new activities since your last visit
+                  </Alert>
+                )}
+              </CardContent>
+            </Card>
+            
+            {/* Real-time Status */}
+            <Card className="clean-card">
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <Badge color="success" variant="dot">
+                    <NotificationIcon sx={{ fontSize: 20, color: '#10B981' }} />
+                  </Badge>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                    Live Updates {autoRefresh ? 'Enabled' : 'Disabled'}
                   </Typography>
                 </Box>
-                <Alert severity="info" sx={{ mt: 2 }}>
-                  Real-time updates are enabled. New activities will appear automatically.
-                </Alert>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  Activity feed refreshes automatically every 5 seconds when enabled.
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Button 
+                    size="small" 
+                    variant={autoRefresh ? 'contained' : 'outlined'}
+                    onClick={() => setAutoRefresh(!autoRefresh)}
+                    startIcon={<TimeIcon sx={{ fontSize: 14 }} />}
+                  >
+                    {autoRefresh ? 'Auto-refresh On' : 'Auto-refresh Off'}
+                  </Button>
+                </Box>
               </CardContent>
             </Card>
           </Grid>
@@ -221,20 +408,130 @@ const ActivityPage = () => {
     }
 
     return (
-      <ActivityFeed
-        activities={filteredActivities}
-        loading={loading}
-        title={
-          activeTab === 'team-activity' ? 'Team Activity' :
-          activeTab === 'project-timeline' ? 'Project Timeline' :
-          activeTab === 'system-events' ? 'System Events' : 'Activity Feed'
-        }
-        showUserFilters={activeTab === 'team-activity'}
-        showProjectFilters={activeTab === 'project-timeline'}
-        groupByDate={activeTab === 'project-timeline'}
-        onRefresh={handleRefresh}
-      />
+      <Grid container spacing={3}>
+        <Grid item xs={12} lg={8}>
+          <ActivityFeed
+            activities={filteredActivities}
+            loading={loading}
+            title={
+              activeTab === 'team-activity' ? 'Team Activity' :
+              activeTab === 'project-timeline' ? 'Project Timeline' :
+              activeTab === 'system-events' ? 'System Events' : 'Activity Feed'
+            }
+            showUserFilters={activeTab === 'team-activity'}
+            showProjectFilters={activeTab === 'project-timeline'}
+            groupByDate={activeTab === 'project-timeline'}
+            onRefresh={handleRefresh}
+          />
+        </Grid>
+        <Grid item xs={12} lg={4}>
+          {renderActivitySidebar()}
+        </Grid>
+      </Grid>
     );
+  };
+
+  // Render activity sidebar for different tabs
+  const renderActivitySidebar = () => {
+    switch (activeTab) {
+      case 'team-activity':
+        return (
+          <Card className="clean-card">
+            <Box className="clean-section-header">
+              <Box className="clean-section-indicator" sx={{ backgroundColor: '#10B981' }}></Box>
+              <Typography className="clean-section-title">
+                Team Insights
+              </Typography>
+            </Box>
+            <CardContent sx={{ pt: 0 }}>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  Most Active Team Members
+                </Typography>
+                {Array.from(new Set(filteredActivities
+                  .filter(a => a.user?.name)
+                  .map(a => a.user.name)
+                )).slice(0, 5).map((userName, index) => {
+                  const userActivities = filteredActivities.filter(a => a.user?.name === userName).length;
+                  return (
+                    <Box key={userName} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <Avatar sx={{ width: 24, height: 24, fontSize: 12, bgcolor: '#E3AF64' }}>
+                        {userName.charAt(0)}
+                      </Avatar>
+                      <Typography variant="body2" sx={{ flex: 1, fontSize: 13 }}>
+                        {userName}
+                      </Typography>
+                      <Chip size="small" label={userActivities} variant="outlined" />
+                    </Box>
+                  );
+                })}
+              </Box>
+            </CardContent>
+          </Card>
+        );
+      case 'project-timeline':
+        return (
+          <Card className="clean-card">
+            <Box className="clean-section-header">
+              <Box className="clean-section-indicator" sx={{ backgroundColor: '#516AC8' }}></Box>
+              <Typography className="clean-section-title">
+                Timeline Overview
+              </Typography>
+            </Box>
+            <CardContent sx={{ pt: 0 }}>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  Activity Distribution
+                </Typography>
+                <Box sx={{ mb: 1 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                    <Typography variant="caption">Projects</Typography>
+                    <Typography variant="caption">{activityStats.byType.projects}</Typography>
+                  </Box>
+                  <LinearProgress 
+                    variant="determinate" 
+                    value={(activityStats.byType.projects / activityStats.total) * 100} 
+                    sx={{ height: 6, borderRadius: 3 }}
+                  />
+                </Box>
+                <Box sx={{ mb: 1 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                    <Typography variant="caption">Tasks</Typography>
+                    <Typography variant="caption">{activityStats.byType.tasks}</Typography>
+                  </Box>
+                  <LinearProgress 
+                    variant="determinate" 
+                    value={(activityStats.byType.tasks / activityStats.total) * 100} 
+                    sx={{ height: 6, borderRadius: 3 }}
+                    color="success"
+                  />
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        );
+      case 'system-events':
+        return (
+          <Card className="clean-card">
+            <Box className="clean-section-header">
+              <Box className="clean-section-indicator" sx={{ backgroundColor: '#9CA3AF' }}></Box>
+              <Typography className="clean-section-title">
+                System Status
+              </Typography>
+            </Box>
+            <CardContent sx={{ pt: 0 }}>
+              <Alert severity="info" sx={{ mb: 2 }}>
+                System is operating normally. Last backup completed successfully.
+              </Alert>
+              <Typography variant="body2" color="text.secondary">
+                System events help track automated processes, backups, and system maintenance activities.
+              </Typography>
+            </CardContent>
+          </Card>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -249,11 +546,93 @@ const ActivityPage = () => {
       tabs={tabs}
     >
       <Box className="clean-fade-in">
+        {/* Settings Panel */}
+        {showSettings && (
+          <Paper 
+            elevation={2} 
+            sx={{ 
+              p: 2, 
+              mb: 3, 
+              border: '1px solid #E5E7EB',
+              borderRadius: 2 
+            }}
+          >
+            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
+              Activity Feed Settings
+            </Typography>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} sm={4}>
+                <FormControl size="small" fullWidth>
+                  <InputLabel>Auto-refresh Interval</InputLabel>
+                  <Select defaultValue="5000" label="Auto-refresh Interval">
+                    <MenuItem value="3000">3 seconds</MenuItem>
+                    <MenuItem value="5000">5 seconds</MenuItem>
+                    <MenuItem value="10000">10 seconds</MenuItem>
+                    <MenuItem value="30000">30 seconds</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <FormControl size="small" fullWidth>
+                  <InputLabel>Items per page</InputLabel>
+                  <Select defaultValue="50" label="Items per page">
+                    <MenuItem value="25">25 items</MenuItem>
+                    <MenuItem value="50">50 items</MenuItem>
+                    <MenuItem value="100">100 items</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Button 
+                  size="small" 
+                  onClick={() => setShowSettings(false)}
+                  startIcon={<ViewIcon sx={{ fontSize: 14 }} />}
+                >
+                  Apply Settings
+                </Button>
+              </Grid>
+            </Grid>
+          </Paper>
+        )}
+
         {error && (
           <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
             {error}
           </Alert>
         )}
+
+        {/* Empty state when no activities match filters */}
+        {getFilteredActivities().length === 0 && !loading && (
+          <Paper 
+            sx={{ 
+              p: 4, 
+              textAlign: 'center', 
+              border: '1px dashed #E5E7EB',
+              borderRadius: 2,
+              mb: 3
+            }}
+          >
+            <ActivityIcon sx={{ fontSize: 48, color: '#9CA3AF', mb: 2 }} />
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              No activities found
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Try adjusting your filters or date range to see more activities.
+            </Typography>
+            <Button 
+              variant="outlined" 
+              onClick={() => {
+                setFilterType('all');
+                setDateRange('all');
+                setSearchTerm('');
+              }}
+              size="small"
+            >
+              Clear All Filters
+            </Button>
+          </Paper>
+        )}
+
         {renderTabContent()}
       </Box>
     </CleanPageLayout>

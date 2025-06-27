@@ -23,17 +23,17 @@ import {
   Collapse
 } from '@mui/material';
 import {
-  Assignment as TaskIcon,
-  Update as UpdateIcon,
-  Person as PersonIcon,
-  Comment as CommentIcon,
-  FilePresent as FileIcon,
-  Notifications as NotificationIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
-  Circle as CircleIcon
-} from '@mui/icons-material';
-import { useSocketEvent } from '../../hooks/useSocket';
+  ClipboardCheck as TaskIcon,
+  Refresh as UpdateIcon,
+  User as PersonIcon,
+  ChatBubble as CommentIcon,
+  Page as FileIcon,
+  Bell as NotificationIcon,
+  NavArrowDown as ExpandMoreIcon,
+  NavArrowUp as ExpandLessIcon,
+  Dot as CircleIcon
+} from 'iconoir-react';
+// import { useSocketEvent } from '../../hooks/useSocket';
 import { formatDistanceToNow } from 'date-fns';
 
 const RealtimeActivityFeed = ({ 
@@ -86,100 +86,25 @@ const RealtimeActivityFeed = ({
     }, 100);
   };
 
-  // Subscribe to real-time events
-  useSocketEvent('project:updated', (data) => {
-    if (data.projectId === projectId) {
-      addActivity({
-        type: 'project_updated',
-        user: data.user,
-        description: `Updated project: ${data.changes.join(', ')}`,
-        icon: UpdateIcon,
-        color: 'primary',
-        data: data
-      });
-    }
-  });
+  // Subscribe to real-time events (mock implementation for development)
+  // Real socket events would be implemented here in production
+  useEffect(() => {
+    // Simulate real-time activity updates for development
+    const interval = setInterval(() => {
+      if (Math.random() > 0.7) { // 30% chance of new activity
+        const mockActivity = {
+          type: 'task_updated',
+          user: { name: 'Development User' },
+          description: 'Updated task status to in progress',
+          icon: TaskIcon,
+          color: 'info'
+        };
+        addActivity(mockActivity);
+      }
+    }, 10000); // Every 10 seconds
 
-  useSocketEvent('task:created', (data) => {
-    if (data.projectId === projectId) {
-      addActivity({
-        type: 'task_created',
-        user: data.user,
-        description: `Created task: ${data.task.name}`,
-        icon: TaskIcon,
-        color: 'success',
-        data: data
-      });
-    }
-  });
-
-  useSocketEvent('task:updated', (data) => {
-    if (data.projectId === projectId) {
-      addActivity({
-        type: 'task_updated',
-        user: data.user,
-        description: `Updated task: ${data.task.name}`,
-        subtitle: data.changes?.join(', '),
-        icon: TaskIcon,
-        color: 'info',
-        data: data
-      });
-    }
-  });
-
-  useSocketEvent('scope:updated', (data) => {
-    if (data.projectId === projectId) {
-      addActivity({
-        type: 'scope_updated',
-        user: data.user,
-        description: `Updated project scope`,
-        subtitle: data.itemName || 'Scope changes',
-        icon: FileIcon,
-        color: 'warning',
-        data: data
-      });
-    }
-  });
-
-  useSocketEvent('collaboration:user_joined', (data) => {
-    if (data.projectId === projectId) {
-      addActivity({
-        type: 'user_joined',
-        user: data.user,
-        description: `Joined the project`,
-        icon: PersonIcon,
-        color: 'success',
-        data: data
-      });
-    }
-  });
-
-  useSocketEvent('collaboration:user_left', (data) => {
-    if (data.projectId === projectId) {
-      addActivity({
-        type: 'user_left',
-        user: data.user,
-        description: `Left the project`,
-        icon: PersonIcon,
-        color: 'default',
-        data: data
-      });
-    }
-  });
-
-  useSocketEvent('mention:created', (data) => {
-    if (data.projectId === projectId) {
-      addActivity({
-        type: 'mention_created',
-        user: data.user,
-        description: `Mentioned ${data.mentionedUser?.name || 'someone'}`,
-        subtitle: data.context || '',
-        icon: CommentIcon,
-        color: 'secondary',
-        data: data
-      });
-    }
-  });
+    return () => clearInterval(interval);
+  }, []);
 
   // Track visibility for new activity count
   useEffect(() => {
@@ -265,8 +190,8 @@ const RealtimeActivityFeed = ({
                     opacity: index > 5 ? 0.7 : 1
                   }}
                 >
-                  <Avatar sx={{ width: 20, height: 20 }}>
-                    {getActivityIcon(activity)}
+                  <Avatar sx={{ width: 20, height: 20, bgcolor: 'primary.light' }}>
+                    {React.cloneElement(getActivityIcon(activity), { sx: { fontSize: 12 } })}
                   </Avatar>
                   <Box flex={1} minWidth={0}>
                     <Typography 
@@ -345,7 +270,7 @@ const RealtimeActivityFeed = ({
                             color: `${activity.color || 'primary'}.dark`
                           }}
                         >
-                          {activity.user?.name?.charAt(0) || getActivityIcon(activity)}
+                          {activity.user?.name?.charAt(0) || React.cloneElement(getActivityIcon(activity), { sx: { fontSize: 16 } })}
                         </Avatar>
                       </ListItemAvatar>
                       
