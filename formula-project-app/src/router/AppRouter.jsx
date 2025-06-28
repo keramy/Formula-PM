@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import ModernDashboardLayout from '../components/layout/ModernDashboardLayout';
+import RouteErrorBoundary from '../components/common/RouteErrorBoundary';
 
 // Lazy load pages for better performance
 const DashboardPage = lazy(() => import('../pages/DashboardPage'));
@@ -53,6 +54,24 @@ const DashboardSkeleton = () => (
   </Box>
 );
 
+// Helper component to wrap routes with error boundaries
+const ProtectedRouteWithErrorBoundary = ({ children, route }) => (
+  <ProtectedRoute>
+    <RouteErrorBoundary route={route}>
+      <ModernDashboardLayout />
+    </RouteErrorBoundary>
+  </ProtectedRoute>
+);
+
+// Individual page wrapper with error boundary and suspense
+const PageWrapper = ({ children, route, fallback = <DashboardSkeleton /> }) => (
+  <RouteErrorBoundary route={route}>
+    <Suspense fallback={fallback}>
+      {children}
+    </Suspense>
+  </RouteErrorBoundary>
+);
+
 /**
  * AppRouter component that handles all application routing
  */
@@ -63,12 +82,14 @@ const AppRouter = () => {
         {/* Public route */}
         <Route path="/login" element={<Login />} />
 
-        {/* Protected routes wrapped in dashboard layout */}
+        {/* Protected routes wrapped in dashboard layout with error boundaries */}
         <Route
           path="/"
           element={
             <ProtectedRoute>
-              <ModernDashboardLayout />
+              <RouteErrorBoundary route="/">
+                <ModernDashboardLayout />
+              </RouteErrorBoundary>
             </ProtectedRoute>
           }
         >
@@ -77,135 +98,135 @@ const AppRouter = () => {
           <Route
             path="dashboard"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/dashboard">
                 <DashboardPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="projects"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/projects">
                 <ProjectsPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="projects/:projectId"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/projects/:projectId">
                 <ProjectDetail />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="tasks"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/tasks">
                 <TasksPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="team"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/team">
                 <TeamPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="clients"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/clients">
                 <ClientsPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="updates"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/updates">
                 <UpdatesPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="inbox"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/inbox">
                 <InboxPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="my-work"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/my-work">
                 <MyWorkPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="timeline"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/timeline">
                 <TimelinePage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="shop-drawings"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/shop-drawings">
                 <ShopDrawingsPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="material-specs"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/material-specs">
                 <MaterialSpecsPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="reports"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/reports">
                 <ReportsPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="procurement"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/procurement">
                 <ProcurementPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
           
           <Route
             path="activity"
             element={
-              <Suspense fallback={<DashboardSkeleton />}>
+              <PageWrapper route="/activity">
                 <ActivityPage />
-              </Suspense>
+              </PageWrapper>
             }
           />
         </Route>
@@ -214,9 +235,11 @@ const AppRouter = () => {
         <Route
           path="*"
           element={
-            <Suspense fallback={<PageLoader />}>
-              <NotFound />
-            </Suspense>
+            <RouteErrorBoundary route="*">
+              <Suspense fallback={<PageLoader />}>
+                <NotFound />
+              </Suspense>
+            </RouteErrorBoundary>
           }
         />
         </Routes>

@@ -58,7 +58,11 @@
     "budget": 675000,
     "location": "Istanbul Business District",
     "projectManager": 1004,
-    "teamMembers": [1004, 1009, 1011],
+    "teamMembers": [
+      1004,
+      1009,
+      1011
+    ],
     "progress": 0,
     "priority": "medium",
     "clientName": "Test Client Corp.",
@@ -83,7 +87,11 @@
     "startDate": "2025-01-15",
     "endDate": "2025-08-30",
     "projectManager": 1006,
-    "teamMembers": [1006, 1009, 1012],
+    "teamMembers": [
+      1006,
+      1009,
+      1012
+    ],
     "progress": 65,
     "createdAt": "2025-01-15T00:00:00.000Z",
     "clientId": 4,
@@ -104,7 +112,11 @@
     "startDate": "2025-02-01",
     "endDate": "2025-09-15",
     "projectManager": 1010,
-    "teamMembers": [1010, 1013, 1014],
+    "teamMembers": [
+      1010,
+      1013,
+      1014
+    ],
     "progress": 35,
     "createdAt": "2025-02-01T00:00:00.000Z",
     "clientId": 3,
@@ -125,7 +137,11 @@
     "startDate": "2025-07-01",
     "endDate": "2026-03-31",
     "projectManager": 1003,
-    "teamMembers": [1003, 1008, 1011],
+    "teamMembers": [
+      1003,
+      1008,
+      1011
+    ],
     "progress": 5,
     "createdAt": "2025-03-12T00:00:00.000Z",
     "clientId": 5,
@@ -146,10 +162,26 @@
     "startDate": "2025-04-01",
     "endDate": "2025-10-31",
     "projectManager": 1005,
-    "teamMembers": [1005, 1009, 1012, 1013],
+    "teamMembers": [
+      1005,
+      1009,
+      1012,
+      1013
+    ],
     "progress": 25,
     "createdAt": "2025-04-01T00:00:00.000Z",
     "clientId": null,
     "updatedAt": "2025-06-17T16:30:00.000Z"
+  },
+  {
+    "name": "API Test Project",
+    "description": "Test project created by API verification",
+    "type": "commercial",
+    "status": "draft",
+    "clientId": "1",
+    "location": "Test Location",
+    "id": 2008,
+    "createdAt": "2025-06-27T21:28:05.697Z",
+    "updatedAt": "2025-06-27T21:28:05.697Z"
   }
 ]

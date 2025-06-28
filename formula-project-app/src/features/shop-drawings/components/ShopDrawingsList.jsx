@@ -33,19 +33,19 @@ import {
   Tab
 } from '@mui/material';
 import {
-  Add as AddIcon,
+  Plus as AddIcon,
   MoreVert as MoreVertIcon,
-  PictureAsPdf as PdfIcon,
+  Page as PdfIcon,
   Upload as UploadIcon,
-  Visibility as ViewIcon,
+  Eye as ViewIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
-  GetApp as DownloadIcon,
+  Trash as DeleteIcon,
+  Download as DownloadIcon,
   CheckCircle as ApproveIcon,
   Cancel as RejectIcon,
-  History as HistoryIcon,
+  HistoryCircle as HistoryIcon,
   Folder as FolderIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 // Note: EnhancedHeader and EnhancedTabSystem are not used in this component
 // import EnhancedHeader from '../../../components/ui/UnifiedHeader';
 // import EnhancedTabSystem from '../../../components/layout/EnhancedTabSystem';
@@ -72,6 +72,69 @@ const ShopDrawingsList = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedDrawing, setSelectedDrawing] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [versionHistoryOpen, setVersionHistoryOpen] = useState(false);
+  const [selectedDrawingForHistory, setSelectedDrawingForHistory] = useState(null);
+
+  // Handle drawing download
+  const handleDownloadDrawing = useCallback((drawing) => {
+    try {
+      if (!drawing || !drawing.fileName) {
+        console.error('Invalid drawing data for download');
+        return;
+      }
+
+      // Create a temporary download link
+      const link = document.createElement('a');
+      link.href = drawing.fileUrl || `#download-${drawing.fileName}`;
+      link.download = drawing.fileName;
+      link.target = '_blank';
+      
+      // Simulate file download (in real app, this would be actual file URL)
+      if (!drawing.fileUrl) {
+        console.warn('File URL not available for', drawing.fileName);
+        // For demo purposes, show success message anyway
+      }
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      console.log(`Downloading ${drawing.fileName}`);
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
+  }, []);
+
+  // Handle version history view
+  const handleViewVersionHistory = useCallback((drawing) => {
+    setSelectedDrawingForHistory(drawing);
+    setVersionHistoryOpen(true);
+    handleMenuClose();
+  }, []);
+
+  // Mock version history data
+  const getVersionHistory = (drawing) => {
+    return [
+      {
+        version: drawing.version,
+        uploadDate: drawing.uploadDate,
+        uploadedBy: drawing.uploadedBy,
+        status: drawing.status,
+        notes: drawing.notes || 'Current version',
+        fileSize: drawing.fileSize,
+        current: true
+      },
+      {
+        version: 'v1.0',
+        uploadDate: '2024-06-15',
+        uploadedBy: 'John Smith',
+        status: 'revision_required',
+        notes: 'Initial submission - needs minor adjustments',
+        fileSize: '1.8 MB',
+        current: false
+      }
+    ];
+  };
 
   // Use passed props instead of hook, but keep hook as fallback
   const {
@@ -192,7 +255,7 @@ const ShopDrawingsList = ({
             <TableRow key={drawing.id}>
               <TableCell>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <PdfIcon sx={{ color: '#d32f2f', mr: 1 }} />
+                  <PdfIcon color="#d32f2f" size={20} style={{ marginRight: 8 }} />
                   <Box>
                     <Typography variant="body2" fontWeight={600}>
                       {drawing.fileName}
@@ -244,7 +307,7 @@ const ShopDrawingsList = ({
                   size="small" 
                   onClick={(e) => handleMenuOpen(e, drawing)}
                 >
-                  <MoreVertIcon />
+                  <MoreVertIcon size={16} />
                 </IconButton>
               </TableCell>
             </TableRow>
@@ -266,7 +329,7 @@ const ShopDrawingsList = ({
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <PdfIcon sx={{ color: '#d32f2f', mr: 1, fontSize: 32 }} />
+                  <PdfIcon color="#d32f2f" size={32} style={{ marginRight: 8 }} />
                   <Box>
                     <Typography variant="h6" noWrap sx={{ maxWidth: 150 }}>
                       {drawing.drawingType}
@@ -277,7 +340,7 @@ const ShopDrawingsList = ({
                   </Box>
                 </Box>
                 <IconButton size="small" onClick={(e) => handleMenuOpen(e, drawing)}>
-                  <MoreVertIcon />
+                  <MoreVertIcon size={16} />
                 </IconButton>
               </Box>
 
@@ -373,7 +436,7 @@ const ShopDrawingsList = ({
             </Select>
           </FormControl>
           <IconButton size="small" onClick={() => setUploadDialogOpen(true)} title="Upload Drawing">
-            <UploadIcon fontSize="small" />
+            <UploadIcon size={16} />
           </IconButton>
         </Box>
       </Box>
@@ -414,13 +477,22 @@ const ShopDrawingsList = ({
           }
           handleMenuClose();
         }}>
-          <ViewIcon sx={{ mr: 1 }} /> View PDF
+          <ViewIcon size={16} style={{ marginRight: 8 }} /> View PDF
         </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
-          <DownloadIcon sx={{ mr: 1 }} /> Download
+        <MenuItem onClick={() => {
+          if (selectedDrawing) {
+            handleDownloadDrawing(selectedDrawing);
+          }
+          handleMenuClose();
+        }}>
+          <DownloadIcon size={16} style={{ marginRight: 8 }} /> Download
         </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
-          <HistoryIcon sx={{ mr: 1 }} /> Version History
+        <MenuItem onClick={() => {
+          if (selectedDrawing) {
+            handleViewVersionHistory(selectedDrawing);
+          }
+        }}>
+          <HistoryIcon size={16} style={{ marginRight: 8 }} /> Version History
         </MenuItem>
         <MenuItem onClick={() => {
           if (onEditDrawing && selectedDrawing) {
@@ -428,7 +500,7 @@ const ShopDrawingsList = ({
           }
           handleMenuClose();
         }}>
-          <EditIcon sx={{ mr: 1 }} /> Edit Details
+          <EditIcon size={16} style={{ marginRight: 8 }} /> Edit Details
         </MenuItem>
         {selectedDrawing?.status === 'pending' && (
           <>
@@ -438,7 +510,7 @@ const ShopDrawingsList = ({
               }
               handleMenuClose();
             }}>
-              <ApproveIcon sx={{ mr: 1 }} /> Approve
+              <ApproveIcon size={16} style={{ marginRight: 8 }} /> Approve
             </MenuItem>
             <MenuItem onClick={() => {
               if (onRejectDrawing && selectedDrawing) {
@@ -446,7 +518,7 @@ const ShopDrawingsList = ({
               }
               handleMenuClose();
             }}>
-              <RejectIcon sx={{ mr: 1 }} /> Request Revision
+              <RejectIcon size={16} style={{ marginRight: 8 }} /> Request Revision
             </MenuItem>
           </>
         )}
@@ -456,7 +528,7 @@ const ShopDrawingsList = ({
           }
           handleMenuClose();
         }} sx={{ color: 'error.main' }}>
-          <DeleteIcon sx={{ mr: 1 }} /> Delete
+          <DeleteIcon size={16} style={{ marginRight: 8 }} /> Delete
         </MenuItem>
       </Menu>
 
@@ -509,7 +581,7 @@ const ShopDrawingsList = ({
                 variant="outlined"
                 component="label"
                 fullWidth
-                startIcon={<UploadIcon />}
+                startIcon={<UploadIcon size={16} />}
                 sx={{ height: 56 }}
               >
                 {uploadForm.file ? uploadForm.file.name : 'Select PDF File'}
@@ -544,6 +616,112 @@ const ShopDrawingsList = ({
           >
             {uploading ? 'Uploading...' : 'Upload Drawing'}
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Version History Dialog */}
+      <Dialog 
+        open={versionHistoryOpen} 
+        onClose={() => setVersionHistoryOpen(false)} 
+        maxWidth="md" 
+        fullWidth
+      >
+        <DialogTitle>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <HistoryIcon size={20} style={{ marginRight: 8 }} />
+            Version History - {selectedDrawingForHistory?.fileName}
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          {selectedDrawingForHistory && (
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell><strong>Version</strong></TableCell>
+                    <TableCell><strong>Upload Date</strong></TableCell>
+                    <TableCell><strong>Uploaded By</strong></TableCell>
+                    <TableCell><strong>Status</strong></TableCell>
+                    <TableCell><strong>File Size</strong></TableCell>
+                    <TableCell><strong>Notes</strong></TableCell>
+                    <TableCell><strong>Actions</strong></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {getVersionHistory(selectedDrawingForHistory).map((version, index) => (
+                    <TableRow key={index} sx={version.current ? { backgroundColor: '#f0f8ff' } : {}}>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Chip 
+                            label={version.version} 
+                            size="small"
+                            color={version.current ? 'primary' : 'default'}
+                            sx={{ fontWeight: version.current ? 600 : 400 }}
+                          />
+                          {version.current && (
+                            <Chip label="Current" size="small" color="success" />
+                          )}
+                        </Box>
+                      </TableCell>
+                      <TableCell>{version.uploadDate}</TableCell>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Avatar sx={{ width: 24, height: 24, fontSize: 12 }}>
+                            {version.uploadedBy.charAt(0)}
+                          </Avatar>
+                          {version.uploadedBy}
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Chip 
+                          label={getStatusLabel(version.status)}
+                          size="small"
+                          sx={{ 
+                            backgroundColor: getStatusColor(version.status),
+                            color: 'white',
+                            fontWeight: 600
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>{version.fileSize}</TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color="text.secondary">
+                          {version.notes}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                          <Tooltip title="View PDF">
+                            <IconButton 
+                              size="small"
+                              onClick={() => {
+                                if (onViewDrawing) {
+                                  onViewDrawing({...selectedDrawingForHistory, version: version.version});
+                                }
+                              }}
+                            >
+                              <ViewIcon size={16} />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Download">
+                            <IconButton 
+                              size="small"
+                              onClick={() => handleDownloadDrawing({...selectedDrawingForHistory, version: version.version})}
+                            >
+                              <DownloadIcon size={16} />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setVersionHistoryOpen(false)}>Close</Button>
         </DialogActions>
       </Dialog>
     </Box>

@@ -29,23 +29,23 @@ import {
   Tab
 } from '@mui/material';
 import {
-  Assessment as ReportIcon,
+  StatsReport as ReportIcon,
   TrendingUp as TrendingUpIcon,
-  AttachMoney as CostIcon,
-  Speed as PerformanceIcon,
+  DollarCircle as CostIcon,
+  Dashboard as PerformanceIcon,
   Timeline as TimelineIcon,
   PieChart as PieChartIcon,
   BarChart as BarChartIcon,
-  GetApp as DownloadIcon,
-  Email as EmailIcon,
-  Schedule as ScheduleIcon,
+  Download as DownloadIcon,
+  Mail as EmailIcon,
+  Calendar as ScheduleIcon,
   CheckCircle as CompleteIcon,
   Warning as WarningIcon,
-  Eco as SustainabilityIcon,
-  Security as ComplianceIcon,
-  Business as VendorIcon,
-  Category as CategoryIcon
-} from '@mui/icons-material';
+  Leaf as SustainabilityIcon,
+  ShieldCheck as ComplianceIcon,
+  Building as VendorIcon,
+  TagOutline as CategoryIcon
+} from 'iconoir-react';
 
 const MaterialSpecsReports = ({ 
   specifications = [],

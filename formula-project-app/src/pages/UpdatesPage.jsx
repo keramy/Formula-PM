@@ -362,6 +362,103 @@ const UpdatesPage = () => {
     showSuccess('Update archived');
   }, [showSuccess]);
 
+  // Handle attachment download
+  const handleAttachmentDownload = useCallback((attachment, updateTitle) => {
+    try {
+      // Create a temporary download link
+      const link = document.createElement('a');
+      link.href = attachment.url || `#download-${attachment.name}`;
+      link.download = attachment.name;
+      link.target = '_blank';
+      
+      // Simulate file download (in real app, this would be actual file URL)
+      if (!attachment.url) {
+        showError('File URL not available. Please contact support.');
+        return;
+      }
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showSuccess(`Downloading ${attachment.name}`);
+    } catch (error) {
+      console.error('Download failed:', error);
+      showError('Failed to download attachment. Please try again.');
+    }
+  }, [showSuccess, showError]);
+
+  // Handle reaction to update
+  const handleReaction = useCallback((updateId, emoji) => {
+    setUpdates(prev => prev.map(update => {
+      if (update.id === updateId) {
+        const reactions = { ...update.reactions };
+        if (reactions[emoji]) {
+          reactions[emoji] += 1;
+        } else {
+          reactions[emoji] = 1;
+        }
+        return { ...update, reactions };
+      }
+      return update;
+    }));
+    showSuccess('Reaction added');
+  }, [showSuccess]);
+
+  // Share update functionality
+  const shareUpdate = useCallback((updateId) => {
+    const update = updates.find(u => u.id === updateId);
+    if (!update) return;
+    
+    const shareUrl = `${window.location.origin}/updates/${updateId}`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: update.title,
+        text: update.content.substring(0, 100) + '...',
+        url: shareUrl
+      }).then(() => {
+        showSuccess('Update shared successfully');
+      }).catch(() => {
+        // Fallback to clipboard
+        copyToClipboard(shareUrl);
+      });
+    } else {
+      copyToClipboard(shareUrl);
+    }
+  }, [updates, showSuccess]);
+
+  // Copy to clipboard helper
+  const copyToClipboard = useCallback((text) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        showSuccess('Link copied to clipboard');
+      }).catch(() => {
+        showError('Failed to copy link');
+      });
+    } else {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showSuccess('Link copied to clipboard');
+      } catch (err) {
+        showError('Failed to copy link');
+      }
+      document.body.removeChild(textArea);
+    }
+  }, [showSuccess, showError]);
+
+  // Mute notifications for update
+  const muteUpdate = useCallback((updateId) => {
+    // In a real app, this would update user preferences
+    showSuccess('Notifications muted for this update');
+    setAnchorEl(null);
+  }, [showSuccess]);
+
   // Toggle update expansion
   const toggleExpanded = useCallback((updateId) => {
     setExpandedUpdates(prev => 
@@ -695,8 +792,14 @@ const UpdatesPage = () => {
                       icon={<AttachIcon style={{ fontSize: 16 }} />}
                       label={`${attachment.name} (${attachment.size})`}
                       variant="outlined"
-                      onClick={() => {}}
-                      sx={{ cursor: 'pointer' }}
+                      onClick={() => handleAttachmentDownload(attachment, update.title)}
+                      sx={{ 
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: 'primary.light',
+                          color: 'primary.contrastText'
+                        }
+                      }}
                     />
                   ))}
                 </Box>
@@ -732,8 +835,13 @@ const UpdatesPage = () => {
                     label={`${emoji} ${count}`}
                     size="small"
                     variant="outlined"
-                    onClick={() => {}}
-                    sx={{ cursor: 'pointer' }}
+                    onClick={() => handleReaction(update.id, emoji)}
+                    sx={{ 
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: 'action.hover'
+                      }
+                    }}
                   />
                 ))}
               </Box>
@@ -1153,8 +1261,10 @@ const UpdatesPage = () => {
         onClose={() => setAnchorEl(null)}
       >
         <MenuItem onClick={() => {
+          if (selectedUpdate && !selectedUpdate.read) {
+            markAsRead(selectedUpdate.id);
+          }
           setAnchorEl(null);
-          // Mark as read logic
         }}>
           <ListItemIcon>
             <ReadIcon style={{ fontSize: 18 }} />
@@ -1162,8 +1272,10 @@ const UpdatesPage = () => {
           Mark as Read
         </MenuItem>
         <MenuItem onClick={() => {
+          if (selectedUpdate) {
+            archiveUpdate(selectedUpdate.id);
+          }
           setAnchorEl(null);
-          // Archive logic
         }}>
           <ListItemIcon>
             <ArchiveIcon style={{ fontSize: 18 }} />
@@ -1171,8 +1283,10 @@ const UpdatesPage = () => {
           Archive
         </MenuItem>
         <MenuItem onClick={() => {
+          if (selectedUpdate) {
+            shareUpdate(selectedUpdate.id);
+          }
           setAnchorEl(null);
-          // Share logic
         }}>
           <ListItemIcon>
             <SendIcon style={{ fontSize: 18 }} />
@@ -1181,8 +1295,9 @@ const UpdatesPage = () => {
         </MenuItem>
         <Divider />
         <MenuItem onClick={() => {
-          setAnchorEl(null);
-          // Mute logic
+          if (selectedUpdate) {
+            muteUpdate(selectedUpdate.id);
+          }
         }}>
           <ListItemIcon>
             <EyeOffIcon style={{ fontSize: 18 }} />

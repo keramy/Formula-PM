@@ -1,6 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import apiService from '../services/api/apiService';
+import { 
+  safeArray, 
+  safeGet, 
+  safeTransformProjects, 
+  safeTransformTasks, 
+  safeTransformTeamMembers,
+  isNullOrUndefined,
+  debugSafety,
+  validateProjectData,
+  validateTaskData,
+  validateTeamMemberData
+} from '../utils/safety';
 
 export const useAuthenticatedData = () => {
   const { user, getAccessibleProjects } = useAuth();
@@ -56,17 +68,40 @@ export const useAuthenticatedData = () => {
       // Check if operation was cancelled
       if (signal?.aborted) return;
 
-      // Process results and handle partial failures
+      // Process results and handle partial failures with null safety
       const dataMap = {};
       const errors = [];
       
       results.forEach((result, index) => {
         const key = dataLoaders[index].key;
         if (result.status === 'fulfilled') {
-          dataMap[key] = result.value;
+          // Transform and validate data with safety checks
+          const rawData = safeArray(result.value);
+          
+          switch (key) {
+            case 'teamMembers':
+              dataMap[key] = safeTransformTeamMembers(rawData);
+              debugSafety.validateDataStructure(rawData[0], ['id', 'name', 'email'], 'teamMembers');
+              break;
+            case 'projects':
+              dataMap[key] = safeTransformProjects(rawData);
+              debugSafety.validateDataStructure(rawData[0], ['id', 'name', 'clientId'], 'projects');
+              break;
+            case 'tasks':
+              dataMap[key] = safeTransformTasks(rawData);
+              debugSafety.validateDataStructure(rawData[0], ['id', 'title', 'projectId'], 'tasks');
+              break;
+            case 'clients':
+              dataMap[key] = safeArray(rawData); // Clients don't need special transformation yet
+              debugSafety.validateDataStructure(rawData[0], ['id', 'name'], 'clients');
+              break;
+            default:
+              dataMap[key] = safeArray(rawData);
+          }
         } else {
           console.error(`Failed to load ${key}:`, result.reason);
-          errors.push(`${key}: ${result.reason.message}`);
+          const errorMessage = safeGet(result.reason, 'message', 'Unknown error');
+          errors.push(`${key}: ${errorMessage}`);
           // Provide empty array as fallback
           dataMap[key] = [];
         }
@@ -77,20 +112,29 @@ export const useAuthenticatedData = () => {
         throw new Error(`All data loading failed: ${errors.join(', ')}`);
       }
 
-      // Filter projects based on user permissions (with safety check)
-      const accessibleProjects = dataMap.projects?.length > 0 ? getAccessibleProjects(dataMap.projects) : [];
-      const accessibleProjectIds = accessibleProjects.map(p => p.id);
+      // Filter projects based on user permissions with comprehensive safety checks
+      const safeProjects = safeArray(dataMap.projects);
+      const accessibleProjects = safeProjects.length > 0 && typeof getAccessibleProjects === 'function' ? 
+        safeArray(getAccessibleProjects(safeProjects)) : safeProjects;
       
-      // Filter tasks to only include those from accessible projects (with safety check)
-      const accessibleTasks = dataMap.tasks?.length > 0 ? 
-        dataMap.tasks.filter(task => accessibleProjectIds.includes(task.projectId)) : [];
+      // Extract project IDs safely
+      const accessibleProjectIds = accessibleProjects
+        .map(p => safeGet(p, 'id'))
+        .filter(id => !isNullOrUndefined(id));
+      
+      // Filter tasks to only include those from accessible projects with safety checks
+      const safeTasks = safeArray(dataMap.tasks);
+      const accessibleTasks = safeTasks.filter(task => {
+        const taskProjectId = safeGet(task, 'projectId');
+        return !isNullOrUndefined(taskProjectId) && accessibleProjectIds.includes(taskProjectId);
+      });
       
       // Only update state if not cancelled
       if (!signal?.aborted) {
-        setTeamMembers(dataMap.teamMembers || []);
+        setTeamMembers(safeArray(dataMap.teamMembers));
         setProjects(accessibleProjects);
         setTasks(accessibleTasks);
-        setClients(dataMap.clients || []);
+        setClients(safeArray(dataMap.clients));
 
         // Set warning if some data failed to load
         if (errors.length > 0) {
@@ -136,19 +180,37 @@ export const useAuthenticatedData = () => {
     };
   }, [user]); // Simplified dependency - only re-run when user changes
 
-  // Project management functions with permission checks
+  // Project management functions with permission checks and null safety
   const addProject = useCallback(async (projectData) => {
-    if (!user?.role) return;
+    if (isNullOrUndefined(user) || isNullOrUndefined(safeGet(user, 'role'))) {
+      throw new Error('User authentication required');
+    }
     
     try {
-      const newProject = await apiService.createProject(projectData);
-      
-      // Only add to local state if user can access it
-      if (getAccessibleProjects([newProject]).length > 0) {
-        setProjects(prev => [newProject, ...prev]);
+      // Validate project data before sending
+      const validation = validateProjectData(projectData);
+      if (!validation.isValid) {
+        throw new Error(`Invalid project data: ${validation.errors.join(', ')}`);
       }
       
-      return newProject;
+      const newProject = await apiService.createProject(validation.data);
+      const safeNewProject = safeTransformProjects([newProject])[0];
+      
+      if (!safeNewProject) {
+        throw new Error('Failed to process created project data');
+      }
+      
+      // Only add to local state if user can access it
+      if (typeof getAccessibleProjects === 'function') {
+        const accessibleCheck = safeArray(getAccessibleProjects([safeNewProject]));
+        if (accessibleCheck.length > 0) {
+          setProjects(prev => [safeNewProject, ...safeArray(prev)]);
+        }
+      } else {
+        setProjects(prev => [safeNewProject, ...safeArray(prev)]);
+      }
+      
+      return safeNewProject;
     } catch (error) {
       console.error('Error adding project:', error);
       throw error;
@@ -156,18 +218,35 @@ export const useAuthenticatedData = () => {
   }, [user, getAccessibleProjects]);
 
   const updateProject = useCallback(async (projectId, updates) => {
-    if (!user?.role) return;
+    if (isNullOrUndefined(user) || isNullOrUndefined(safeGet(user, 'role'))) {
+      throw new Error('User authentication required');
+    }
+    
+    if (isNullOrUndefined(projectId)) {
+      throw new Error('Project ID is required');
+    }
     
     try {
-      const updatedProject = await apiService.updateProject(projectId, updates);
+      // Validate update data
+      const validation = validateProjectData({ ...updates, id: projectId });
+      if (!validation.isValid) {
+        throw new Error(`Invalid project update data: ${validation.errors.join(', ')}`);
+      }
+      
+      const updatedProject = await apiService.updateProject(projectId, validation.data);
+      const safeUpdatedProject = safeTransformProjects([updatedProject])[0];
+      
+      if (!safeUpdatedProject) {
+        throw new Error('Failed to process updated project data');
+      }
       
       setProjects(prev => 
-        prev.map(project => 
-          project.id === projectId ? updatedProject : project
+        safeArray(prev).map(project => 
+          safeGet(project, 'id') === projectId ? safeUpdatedProject : project
         )
       );
       
-      return updatedProject;
+      return safeUpdatedProject;
     } catch (error) {
       console.error('Error updating project:', error);
       throw error;
@@ -175,12 +254,26 @@ export const useAuthenticatedData = () => {
   }, [user]);
 
   const deleteProject = useCallback(async (projectId) => {
-    if (!user?.role) return;
+    if (isNullOrUndefined(user) || isNullOrUndefined(safeGet(user, 'role'))) {
+      throw new Error('User authentication required');
+    }
+    
+    if (isNullOrUndefined(projectId)) {
+      throw new Error('Project ID is required');
+    }
     
     try {
       await apiService.deleteProject(projectId);
-      setProjects(prev => prev.filter(project => project.id !== projectId));
-      setTasks(prev => prev.filter(task => task.projectId !== projectId));
+      
+      setProjects(prev => safeArray(prev).filter(project => 
+        safeGet(project, 'id') !== projectId
+      ));
+      
+      setTasks(prev => safeArray(prev).filter(task => 
+        safeGet(task, 'projectId') !== projectId
+      ));
+      
+      return true;
     } catch (error) {
       console.error('Error deleting project:', error);
       throw error;
@@ -330,17 +423,17 @@ export const useAuthenticatedData = () => {
     }
   }, [user]);
 
-  // Computed statistics with filtered data
+  // Computed statistics with filtered data and null safety
   const stats = {
-    totalProjects: projects.length,
-    activeProjects: projects.filter(p => p.status === 'active').length,
-    completedProjects: projects.filter(p => p.status === 'completed').length,
-    totalTasks: tasks.length,
-    completedTasks: tasks.filter(t => t.status === 'completed').length,
-    pendingTasks: tasks.filter(t => t.status === 'pending').length,
-    inProgressTasks: tasks.filter(t => t.status === 'in-progress').length,
-    teamMembersCount: teamMembers.length,
-    clientsCount: clients.length
+    totalProjects: safeArray(projects).length,
+    activeProjects: safeArray(projects).filter(p => safeGet(p, 'status') === 'active').length,
+    completedProjects: safeArray(projects).filter(p => safeGet(p, 'status') === 'completed').length,
+    totalTasks: safeArray(tasks).length,
+    completedTasks: safeArray(tasks).filter(t => safeGet(t, 'status') === 'completed').length,
+    pendingTasks: safeArray(tasks).filter(t => safeGet(t, 'status') === 'pending').length,
+    inProgressTasks: safeArray(tasks).filter(t => safeGet(t, 'status') === 'in-progress').length,
+    teamMembersCount: safeArray(teamMembers).length,
+    clientsCount: safeArray(clients).length
   };
 
   return {

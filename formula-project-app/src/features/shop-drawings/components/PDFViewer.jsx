@@ -13,14 +13,14 @@ import {
 import {
   ZoomIn as ZoomInIcon,
   ZoomOut as ZoomOutIcon,
-  ZoomOutMap as FitToScreenIcon,
-  GetApp as DownloadIcon,
-  Print as PrintIcon,
-  Close as CloseIcon,
+  Expand as FitToScreenIcon,
+  Download as DownloadIcon,
+  Printer as PrintIcon,
+  Cancel as CloseIcon,
   RotateLeft as RotateLeftIcon,
   RotateRight as RotateRightIcon,
-  Fullscreen as FullscreenIcon
-} from '@mui/icons-material';
+  Expand as FullscreenIcon
+} from 'iconoir-react';
 
 const PDFViewer = ({ 
   pdfUrl, 

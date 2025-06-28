@@ -31,16 +31,16 @@ import {
   Avatar
 } from '@mui/material';
 import {
-  Add as AddIcon,
+  Plus as AddIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
+  Trash as DeleteIcon,
   MoreVert as MoreVertIcon,
   Phone as PhoneIcon,
-  Email as EmailIcon,
-  Business as BusinessIcon,
+  Mail as EmailIcon,
+  Building as BusinessIcon,
   Star as StarIcon,
-  ContactPage as ContactIcon
-} from '@mui/icons-material';
+  User as ContactIcon
+} from 'iconoir-react';
 
 const VendorManagement = ({ 
   onVendorSelect, 

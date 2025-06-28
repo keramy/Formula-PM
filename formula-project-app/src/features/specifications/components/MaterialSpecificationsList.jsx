@@ -34,20 +34,20 @@ import {
   AccordionDetails
 } from '@mui/material';
 import {
-  Add as AddIcon,
+  Plus as AddIcon,
   Upload as UploadIcon,
-  GetApp as DownloadIcon,
+  Download as DownloadIcon,
   MoreVert as MoreVertIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
+  Trash as DeleteIcon,
   Link as LinkIcon,
-  Assessment as ReportIcon,
-  Category as CategoryIcon,
-  Inventory as InventoryIcon,
-  ExpandMore as ExpandMoreIcon,
+  StatsReport as ReportIcon,
+  TagOutline as CategoryIcon,
+  Archive as InventoryIcon,
+  ArrowDown as ExpandMoreIcon,
   CloudUpload as CloudUploadIcon,
-  TableChart as ExcelIcon
-} from '@mui/icons-material';
+  DataTransferDown as ExcelIcon
+} from 'iconoir-react';
 import EnhancedHeader from '../../../components/ui/UnifiedHeader';
 import EnhancedTabSystem from '../../../components/layout/EnhancedTabSystem';
 import excelSpecificationService from '../services/excelSpecificationService';
@@ -307,7 +307,7 @@ const MaterialSpecificationsList = ({
                 {spec.linkedDrawings && spec.linkedDrawings.length > 0 ? (
                   <Tooltip title={`${spec.linkedDrawings.length} linked drawing(s)`}>
                     <Chip 
-                      icon={<LinkIcon />}
+                      icon={<LinkIcon size={14} />}
                       label={spec.linkedDrawings.length}
                       size="small"
                       color="primary"
@@ -325,7 +325,7 @@ const MaterialSpecificationsList = ({
                   size="small" 
                   onClick={(e) => handleMenuOpen(e, spec)}
                 >
-                  <MoreVertIcon />
+                  <MoreVertIcon size={16} />
                 </IconButton>
               </TableCell>
             </TableRow>
@@ -355,7 +355,7 @@ const MaterialSpecificationsList = ({
 
           return (
             <Accordion key={category} defaultExpanded>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon size={16} />}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mr: 2 }}>
                   <Typography variant="h6">{category}</Typography>
                   <Box sx={{ display: 'flex', gap: 2 }}>
@@ -379,7 +379,7 @@ const MaterialSpecificationsList = ({
                               {spec.itemId}
                             </Typography>
                             <IconButton size="small" onClick={(e) => handleMenuOpen(e, spec)}>
-                              <MoreVertIcon />
+                              <MoreVertIcon size={16} />
                             </IconButton>
                           </Box>
                           <Typography variant="body2" gutterBottom>
@@ -430,7 +430,7 @@ const MaterialSpecificationsList = ({
           }
         }}
         addButtonText="Add Specification"
-        addButtonIcon={<AddIcon />}
+        addButtonIcon={<AddIcon size={16} />}
         teamMembers={teamMembers.slice(0, 5)}
         subtitle={`${filteredSpecs.length} items • Total: $${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
       />
@@ -470,7 +470,7 @@ const MaterialSpecificationsList = ({
 
         <Button
           variant="outlined"
-          startIcon={<UploadIcon />}
+          startIcon={<UploadIcon size={16} />}
           onClick={() => setImportDialogOpen(true)}
         >
           Import Excel
@@ -478,7 +478,7 @@ const MaterialSpecificationsList = ({
 
         <Button
           variant="outlined"
-          startIcon={<DownloadIcon />}
+          startIcon={<DownloadIcon size={16} />}
           onClick={handleExportTemplate}
         >
           Download Template
@@ -486,7 +486,7 @@ const MaterialSpecificationsList = ({
 
         <Button
           variant="outlined"
-          startIcon={<ExcelIcon />}
+          startIcon={<ExcelIcon size={16} />}
           onClick={handleExportSpecs}
         >
           Export Excel
@@ -494,7 +494,7 @@ const MaterialSpecificationsList = ({
 
         <Button
           variant="outlined"
-          startIcon={<ReportIcon />}
+          startIcon={<ReportIcon size={16} />}
           onClick={handleGenerateCostReport}
         >
           Cost Report
@@ -537,7 +537,7 @@ const MaterialSpecificationsList = ({
             </Typography>
             <Button 
               variant="contained" 
-              startIcon={<AddIcon />}
+              startIcon={<AddIcon size={16} />}
               onClick={() => setAddSpecDialogOpen(true)}
             >
               Add Material Specification
@@ -559,20 +559,20 @@ const MaterialSpecificationsList = ({
           handleMenuClose();
           alert('Edit functionality coming soon!');
         }}>
-          <EditIcon sx={{ mr: 1 }} /> Edit Specification
+          <EditIcon size={16} style={{ marginRight: 8 }} /> Edit Specification
         </MenuItem>
         <MenuItem onClick={() => {
           setLinkDrawingDialogOpen(true);
           handleMenuClose();
         }}>
-          <LinkIcon sx={{ mr: 1 }} /> Link to Drawing
+          <LinkIcon size={16} style={{ marginRight: 8 }} /> Link to Drawing
         </MenuItem>
         <MenuItem onClick={() => {
           // TODO: Implement inventory check
           handleMenuClose();
           alert('Inventory check functionality coming soon!');
         }}>
-          <InventoryIcon sx={{ mr: 1 }} /> Check Inventory
+          <InventoryIcon size={16} style={{ marginRight: 8 }} /> Check Inventory
         </MenuItem>
         <MenuItem onClick={async () => {
           if (selectedSpec && window.confirm(`Are you sure you want to delete ${selectedSpec.itemId}?`)) {
@@ -582,7 +582,7 @@ const MaterialSpecificationsList = ({
           }
           handleMenuClose();
         }} sx={{ color: 'error.main' }}>
-          <DeleteIcon sx={{ mr: 1 }} /> Delete
+          <DeleteIcon size={16} style={{ marginRight: 8 }} /> Delete
         </MenuItem>
       </Menu>
 
@@ -748,7 +748,7 @@ const MaterialSpecificationsList = ({
               variant="outlined"
               component="label"
               fullWidth
-              startIcon={<CloudUploadIcon />}
+              startIcon={<CloudUploadIcon size={16} />}
               sx={{ mb: 2, height: 56 }}
             >
               {importFile ? importFile.name : 'Select Excel File (.xlsx)'}

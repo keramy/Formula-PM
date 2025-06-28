@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   TextField,
   Button,
@@ -18,7 +18,7 @@ const priorityLevels = [
   { value: 'urgent', label: 'Urgent', color: '#e74c3c' }
 ];
 
-function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) {
+function TaskForm({ projects, teamMembers = [], onSubmit, onCancel, initialTask = null }) {
   const [formData, setFormData] = useState(
     initialTask ? {
       projectId: initialTask.projectId || '',
@@ -39,6 +39,31 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
   const [taskFiles, setTaskFiles] = useState([]);
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
+
+  // Reset form to initial state
+  const resetForm = useCallback(() => {
+    setFormData({
+      projectId: '',
+      name: '',
+      assignedTo: '',
+      priority: 'medium',
+      dueDate: '',
+      description: ''
+    });
+    setTaskFiles([]);
+    setErrors({});
+    setSuccess(false);
+  }, []);
+
+  // Handle cancel action
+  const handleCancel = useCallback(() => {
+    if (onCancel) {
+      onCancel();
+    } else {
+      // If no onCancel prop, just reset the form
+      resetForm();
+    }
+  }, [onCancel, resetForm]);
 
   const handleChange = (field) => (event) => {
     setFormData({
@@ -92,36 +117,39 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
   const handleSubmit = (event) => {
     event.preventDefault();
     
-    if (validateForm()) {
-      const submitData = {
-        ...formData,
-        projectId: parseInt(formData.projectId),
-        assignedTo: parseInt(formData.assignedTo),
-        dueDate: formData.dueDate instanceof Date ? formData.dueDate.toISOString().split('T')[0] : formData.dueDate,
-        files: taskFiles
-      };
-      
-      if (initialTask) {
-        submitData.id = initialTask.id;
+    try {
+      if (validateForm()) {
+        const submitData = {
+          ...formData,
+          projectId: parseInt(formData.projectId),
+          assignedTo: parseInt(formData.assignedTo),
+          dueDate: formData.dueDate instanceof Date ? formData.dueDate.toISOString().split('T')[0] : formData.dueDate,
+          files: taskFiles
+        };
+        
+        if (initialTask) {
+          submitData.id = initialTask.id;
+        }
+        
+        // Validate data integrity before submission
+        if (isNaN(submitData.projectId) || isNaN(submitData.assignedTo)) {
+          setErrors({ general: 'Invalid project or team member selection' });
+          return;
+        }
+        
+        onSubmit(submitData);
+        
+        // Only clear form if creating new task
+        if (!initialTask) {
+          resetForm();
+        }
+        
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 3000);
       }
-      
-      onSubmit(submitData);
-      
-      // Only clear form if creating new task
-      if (!initialTask) {
-        setFormData({
-          projectId: '',
-          name: '',
-          assignedTo: '',
-          priority: 'medium',
-          dueDate: '',
-          description: ''
-        });
-        setTaskFiles([]);
-      }
-      
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error submitting task:', error);
+      setErrors({ general: 'An unexpected error occurred. Please try again.' });
     }
   };
 
@@ -129,7 +157,13 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {success && (
           <Alert severity="success">
-            Task added successfully!
+            Task {initialTask ? 'updated' : 'added'} successfully!
+          </Alert>
+        )}
+        
+        {errors.general && (
+          <Alert severity="error">
+            {errors.general}
           </Alert>
         )}
         
@@ -245,16 +279,28 @@ function TaskForm({ projects, teamMembers = [], onSubmit, initialTask = null }) 
           maxSize={10}
         />
 
-        <Button
-          type="submit"
-          variant="contained"
-          color="secondary"
-          size="large"
-          sx={{ mt: 2 }}
-          disabled={projects.length === 0}
-        >
-          {initialTask ? 'Save Changes' : 'Add Task'}
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+          <Button
+            type="button"
+            variant="outlined"
+            color="secondary"
+            size="large"
+            onClick={handleCancel}
+            sx={{ flex: 1 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="secondary"
+            size="large"
+            sx={{ flex: 1 }}
+            disabled={projects.length === 0}
+          >
+            {initialTask ? 'Save Changes' : 'Add Task'}
+          </Button>
+        </Box>
       </Box>
   );
 }

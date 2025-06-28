@@ -43,26 +43,26 @@ import {
   AccordionDetails
 } from '@mui/material';
 import {
-  Add as AddIcon,
-  ShoppingCart as ProcurementIcon,
-  RequestQuote as QuoteIcon,
-  Assignment as OrderIcon,
-  LocalShipping as DeliveryIcon,
+  Plus as AddIcon,
+  Cart as ProcurementIcon,
+  Quote as QuoteIcon,
+  Check as OrderIcon,
+  Delivery as DeliveryIcon,
   CheckCircle as CompleteIcon,
   Warning as WarningIcon,
-  Error as ErrorIcon,
-  Schedule as ScheduleIcon,
+  Cancel as ErrorIcon,
+  Calendar as ScheduleIcon,
   Timeline as TimelineIcon,
-  AttachMoney as CostIcon,
-  Inventory as InventoryIcon,
+  DollarCircle as CostIcon,
+  Archive as InventoryIcon,
   MoreVert as MoreVertIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
-  GetApp as DownloadIcon,
-  Email as EmailIcon,
-  ExpandMore as ExpandMoreIcon,
+  Trash as DeleteIcon,
+  Download as DownloadIcon,
+  Mail as EmailIcon,
+  ArrowDown as ExpandMoreIcon,
   TrendingUp as TrendingUpIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 
 const ProcurementWorkflow = ({ 
   specifications = [],

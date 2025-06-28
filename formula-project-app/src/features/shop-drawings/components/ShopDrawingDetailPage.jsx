@@ -16,16 +16,16 @@ import {
   DialogActions
 } from '@mui/material';
 import {
-  ArrowBack as BackIcon,
-  Visibility as ViewIcon,
-  GetApp as DownloadIcon,
+  NavArrowLeft as BackIcon,
+  Eye as ViewIcon,
+  Download as DownloadIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
+  Trash as DeleteIcon,
   CheckCircle as ApproveIcon,
   Cancel as RejectIcon,
-  History as HistoryIcon,
+  HistoryCircle as HistoryIcon,
   Share as ShareIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import PDFViewer from './PDFViewer';
 import DrawingVersionHistory from './DrawingVersionHistory';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';

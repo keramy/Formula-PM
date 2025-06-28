@@ -9,15 +9,15 @@ import {
 } from '@mui/material';
 import {
   CheckCircle,
-  Delete,
-  Person,
-  CalendarToday,
-  Assignment,
+  Trash as Delete,
+  User as Person,
+  Calendar as CalendarToday,
+  Check as Assignment,
   Warning,
   Undo,
   Edit as EditIcon,
-  Visibility as ViewIcon
-} from '@mui/icons-material';
+  Eye as ViewIcon
+} from 'iconoir-react';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';

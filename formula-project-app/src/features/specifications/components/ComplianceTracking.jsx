@@ -43,17 +43,17 @@ import {
 import {
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
-  Error as ErrorIcon,
-  Schedule as ScheduleIcon,
-  Assignment as AssignmentIcon,
+  Cancel as ErrorIcon,
+  Calendar as ScheduleIcon,
+  Check as AssignmentIcon,
   CloudUpload as UploadIcon,
-  FilePresent as FileIcon,
+  Page as FileIcon,
   MoreVert as MoreVertIcon,
-  ExpandMore as ExpandMoreIcon,
-  Gavel as ComplianceIcon,
-  Security as CertificationIcon,
-  Eco as SustainabilityIcon
-} from '@mui/icons-material';
+  ArrowDown as ExpandMoreIcon,
+  ShieldCheck as ComplianceIcon,
+  ShieldCheck as CertificationIcon,
+  Leaf as SustainabilityIcon
+} from 'iconoir-react';
 
 const ComplianceTracking = ({ 
   specifications = [],

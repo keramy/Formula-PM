@@ -30,6 +30,39 @@ class ApiService {
   constructor() {
     this.authToken = null;
     this.refreshPromise = null;
+    this.pendingRequests = new Map(); // For request deduplication
+    this.requestRetryConfig = {
+      maxRetries: 3,
+      baseDelay: 1000,
+      maxDelay: 10000,
+      retryableStatuses: [408, 429, 500, 502, 503, 504]
+    };
+    
+    // Circuit breaker configuration
+    this.circuitBreaker = {
+      failures: 0,
+      successThreshold: 3,
+      failureThreshold: 5,
+      timeout: 60000, // 1 minute
+      state: 'CLOSED', // CLOSED, OPEN, HALF_OPEN
+      nextAttempt: null,
+      lastFailureTime: null
+    };
+    
+    // Request queue for offline support
+    this.offlineQueue = [];
+    this.isOnline = navigator.onLine;
+    
+    // Performance metrics
+    this.metrics = {
+      totalRequests: 0,
+      successfulRequests: 0,
+      failedRequests: 0,
+      averageResponseTime: 0,
+      slowRequestThreshold: 5000
+    };
+    
+    this.setupEventListeners();
   }
 
   // Get auth token from localStorage
@@ -57,7 +90,287 @@ class ApiService {
     localStorage.removeItem('user_data');
   }
 
+  // Setup event listeners for online/offline detection
+  setupEventListeners() {
+    window.addEventListener('online', () => {
+      this.isOnline = true;
+      this.processOfflineQueue();
+    });
+    
+    window.addEventListener('offline', () => {
+      this.isOnline = false;
+    });
+  }
+
+  // Circuit breaker pattern implementation
+  shouldAllowRequest() {
+    const now = Date.now();
+    
+    switch (this.circuitBreaker.state) {
+      case 'CLOSED':
+        return true;
+        
+      case 'OPEN':
+        if (now >= this.circuitBreaker.nextAttempt) {
+          this.circuitBreaker.state = 'HALF_OPEN';
+          return true;
+        }
+        return false;
+        
+      case 'HALF_OPEN':
+        return true;
+        
+      default:
+        return true;
+    }
+  }
+
+  recordSuccess() {
+    if (this.circuitBreaker.state === 'HALF_OPEN') {
+      this.circuitBreaker.failures = 0;
+      this.circuitBreaker.state = 'CLOSED';
+    } else if (this.circuitBreaker.state === 'CLOSED') {
+      this.circuitBreaker.failures = Math.max(0, this.circuitBreaker.failures - 1);
+    }
+  }
+
+  recordFailure() {
+    this.circuitBreaker.failures++;
+    this.circuitBreaker.lastFailureTime = Date.now();
+    
+    if (this.circuitBreaker.failures >= this.circuitBreaker.failureThreshold) {
+      this.circuitBreaker.state = 'OPEN';
+      this.circuitBreaker.nextAttempt = Date.now() + this.circuitBreaker.timeout;
+    }
+  }
+
+  // Offline queue processing
+  queueRequest(endpoint, options) {
+    const request = {
+      endpoint,
+      options,
+      timestamp: Date.now(),
+      id: Math.random().toString(36).substr(2, 9)
+    };
+    
+    this.offlineQueue.push(request);
+    
+    // Limit queue size
+    if (this.offlineQueue.length > 50) {
+      this.offlineQueue.shift();
+    }
+    
+    return Promise.reject(new Error('Request queued for when connection is restored'));
+  }
+
+  async processOfflineQueue() {
+    if (!this.isOnline || this.offlineQueue.length === 0) return;
+    
+    const queue = [...this.offlineQueue];
+    this.offlineQueue = [];
+    
+    console.log(`Processing ${queue.length} queued requests...`);
+    
+    for (const request of queue) {
+      try {
+        await this.request(request.endpoint, request.options);
+      } catch (error) {
+        console.warn('Failed to process queued request:', error);
+        // Re-queue if still failing
+        if (this.offlineQueue.length < 50) {
+          this.offlineQueue.push(request);
+        }
+      }
+    }
+  }
+
+  // Performance metrics tracking
+  updateMetrics(success, responseTime) {
+    this.metrics.totalRequests++;
+    
+    if (success) {
+      this.metrics.successfulRequests++;
+    } else {
+      this.metrics.failedRequests++;
+    }
+    
+    // Update average response time
+    const totalResponseTime = this.metrics.averageResponseTime * (this.metrics.totalRequests - 1) + responseTime;
+    this.metrics.averageResponseTime = totalResponseTime / this.metrics.totalRequests;
+  }
+
+  getHealthMetrics() {
+    const successRate = this.metrics.totalRequests > 0 
+      ? (this.metrics.successfulRequests / this.metrics.totalRequests) * 100 
+      : 100;
+    
+    return {
+      ...this.metrics,
+      successRate: Math.round(successRate * 100) / 100,
+      circuitBreakerState: this.circuitBreaker.state,
+      isOnline: this.isOnline,
+      queuedRequests: this.offlineQueue.length
+    };
+  }
+
+  // Generate request key for deduplication
+  generateRequestKey(endpoint, options = {}) {
+    const method = options.method || 'GET';
+    const body = options.body || '';
+    return `${method}:${endpoint}:${body}`;
+  }
+
+  // Sleep function for retry delays
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Calculate exponential backoff delay
+  calculateRetryDelay(attempt, baseDelay = 1000) {
+    const exponentialDelay = Math.min(
+      baseDelay * Math.pow(2, attempt),
+      this.requestRetryConfig.maxDelay
+    );
+    // Add jitter to prevent thundering herd
+    const jitter = Math.random() * 0.1 * exponentialDelay;
+    return exponentialDelay + jitter;
+  }
+
+  // Check if error is retryable
+  isRetryableError(error) {
+    if (!error) return false;
+    
+    // Network errors are retryable
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      return true;
+    }
+    
+    // Check HTTP status codes
+    if (error.status) {
+      return this.requestRetryConfig.retryableStatuses.includes(error.status);
+    }
+    
+    return false;
+  }
+
+  // Enhanced error message formatting
+  formatErrorMessage(error, context = '') {
+    if (!error) return 'Unknown error occurred';
+    
+    // Handle network errors
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      return 'Network connection failed. Please check your internet connection and try again.';
+    }
+    
+    // Handle timeout errors
+    if (error.name === 'AbortError') {
+      return 'Request timed out. Please try again.';
+    }
+    
+    // Handle HTTP errors with user-friendly messages
+    if (error.status) {
+      switch (error.status) {
+        case 400:
+          return 'Invalid request. Please check your input and try again.';
+        case 401:
+          return 'Authentication required. Please log in again.';
+        case 403:
+          return 'You do not have permission to perform this action.';
+        case 404:
+          return 'The requested resource was not found.';
+        case 408:
+          return 'Request timed out. Please try again.';
+        case 429:
+          return 'Too many requests. Please wait a moment and try again.';
+        case 500:
+          return 'Server error occurred. Please try again later.';
+        case 502:
+        case 503:
+        case 504:
+          return 'Service temporarily unavailable. Please try again in a few moments.';
+        default:
+          return `Service error (${error.status}). Please try again or contact support.`;
+      }
+    }
+    
+    // Fallback to original error message but make it more user-friendly
+    const message = error.message || error.toString();
+    return message.charAt(0).toUpperCase() + message.slice(1);
+  }
+
   async request(endpoint, options = {}) {
+    const requestKey = this.generateRequestKey(endpoint, options);
+    
+    // Check for pending identical request (deduplication)
+    if (this.pendingRequests.has(requestKey)) {
+      console.log(`🔄 Deduplicating request: ${requestKey}`);
+      return this.pendingRequests.get(requestKey);
+    }
+
+    // Check circuit breaker state
+    if (!this.shouldAllowRequest()) {
+      const error = new Error('Service temporarily unavailable (Circuit breaker is OPEN)');
+      error.status = 503;
+      error.circuitBreakerOpen = true;
+      throw error;
+    }
+
+    // Handle offline requests
+    if (!this.isOnline && !options.allowOffline) {
+      return this.queueRequest(endpoint, options);
+    }
+
+    // Create the request promise with retry logic
+    const requestPromise = this._executeRequestWithRetry(endpoint, options);
+    
+    // Store pending request for deduplication
+    this.pendingRequests.set(requestKey, requestPromise);
+    
+    try {
+      const result = await requestPromise;
+      this.recordSuccess();
+      return result;
+    } catch (error) {
+      this.recordFailure();
+      throw error;
+    } finally {
+      // Clean up pending request
+      this.pendingRequests.delete(requestKey);
+    }
+  }
+
+  async _executeRequestWithRetry(endpoint, options = {}) {
+    const { skipRetry = false, ...requestOptions } = options;
+    let lastError = null;
+    
+    for (let attempt = 0; attempt <= this.requestRetryConfig.maxRetries; attempt++) {
+      try {
+        return await this._executeSingleRequest(endpoint, requestOptions, attempt);
+      } catch (error) {
+        lastError = error;
+        
+        // Don't retry if explicitly disabled or if not a retryable error
+        if (skipRetry || !this.isRetryableError(error)) {
+          throw error;
+        }
+        
+        // Don't retry on the last attempt
+        if (attempt === this.requestRetryConfig.maxRetries) {
+          throw error;
+        }
+        
+        // Calculate and apply retry delay
+        const delay = this.calculateRetryDelay(attempt, this.requestRetryConfig.baseDelay);
+        console.warn(`🔁 Request failed (attempt ${attempt + 1}), retrying in ${Math.round(delay)}ms:`, error.message);
+        
+        await this.sleep(delay);
+      }
+    }
+    
+    throw lastError;
+  }
+
+  async _executeSingleRequest(endpoint, options = {}, attempt = 0) {
     const url = `${API_BASE_URL}${endpoint}`;
     const startTime = performance.now();
     const method = options.method || 'GET';
@@ -65,38 +378,50 @@ class ApiService {
     // Get auth token
     const token = this.getAuthToken();
     
-    // API Request to base URL
+    // Set up request timeout (increase with retries)
+    const timeoutMs = Math.min(30000, 10000 + (attempt * 5000));
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    
+    // Merge abort signals
+    const signal = options.signal ? 
+      this._mergeAbortSignals([options.signal, controller.signal]) : 
+      controller.signal;
+    
+    // API Request configuration
     const config = {
       headers: {
         'Content-Type': 'application/json',
         ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       },
+      signal,
       ...options,
     };
 
     try {
       const response = await fetch(url, config);
+      clearTimeout(timeoutId);
       const duration = performance.now() - startTime;
       
-      // Response received
-      
       // Check if request was aborted
-      if (config.signal?.aborted) {
-        throw new Error('Request was aborted');
+      if (signal?.aborted) {
+        const error = new Error('Request was aborted');
+        error.name = 'AbortError';
+        throw error;
       }
       
       if (!response.ok) {
         // Handle 401 Unauthorized - token expired or invalid
         if (response.status === 401 && token) {
-          // Clear invalid token
           this.clearAuthToken();
-          // Try to refresh token if this isn't already a refresh request
+          
+          // Try to refresh token if this isn't already an auth request
           if (!endpoint.includes('/auth/refresh') && !endpoint.includes('/auth/login')) {
             const refreshResult = await this.refreshAuthToken();
             if (refreshResult.success) {
-              // Retry original request with new token
-              return this.request(endpoint, options);
+              // Retry original request with new token (no retry limit for auth refresh)
+              return this._executeSingleRequest(endpoint, options, attempt);
             }
           }
         }
@@ -104,10 +429,18 @@ class ApiService {
         // Track failed API requests
         PerformanceMonitor.trackApiRequest(endpoint, duration, false, method);
         
-        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        const error = new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({ 
+          error: 'Server error occurred' 
+        }));
+        
+        const error = new Error(this.formatErrorMessage({
+          status: response.status,
+          message: errorData.error || `HTTP ${response.status}`
+        }, endpoint));
+        
         error.status = response.status;
         error.data = errorData;
+        error.originalMessage = errorData.error;
         throw error;
       }
       
@@ -115,22 +448,54 @@ class ApiService {
       
       // Track successful API requests
       PerformanceMonitor.trackApiRequest(endpoint, duration, true, method);
+      this.updateMetrics(true, duration);
       
-      // Data received from endpoint
       return data;
     } catch (error) {
+      clearTimeout(timeoutId);
       const duration = performance.now() - startTime;
       
-      // Don't log aborted requests as errors
-      if (error.name !== 'AbortError' && !config.signal?.aborted) {
-        // Track failed API requests
+      // Don't log aborted requests as errors (unless it was our timeout)
+      if (error.name !== 'AbortError' || controller.signal.aborted) {
         PerformanceMonitor.trackApiRequest(endpoint, duration, false, method);
-        console.error(`🚨 API request failed: ${endpoint}`, error);
-        console.error('🚨 Full URL was:', url);
-        console.error('🚨 Error details:', error.message, error.status);
+        this.updateMetrics(false, duration);
+        
+        // Enhanced error logging
+        if (import.meta.env.MODE === 'development') {
+          console.group(`🚨 API Request Failed: ${method} ${endpoint}`);
+          console.error('URL:', url);
+          console.error('Attempt:', attempt + 1);
+          console.error('Duration:', Math.round(duration) + 'ms');
+          console.error('Circuit Breaker State:', this.circuitBreaker.state);
+          console.error('Error:', error);
+          console.groupEnd();
+        }
       }
+      
+      // Wrap unknown errors with user-friendly messages
+      if (!error.status && error.name !== 'AbortError') {
+        const wrappedError = new Error(this.formatErrorMessage(error, endpoint));
+        wrappedError.originalError = error;
+        throw wrappedError;
+      }
+      
       throw error;
     }
+  }
+
+  // Helper to merge abort signals
+  _mergeAbortSignals(signals) {
+    const controller = new AbortController();
+    
+    signals.forEach(signal => {
+      if (signal.aborted) {
+        controller.abort();
+      } else {
+        signal.addEventListener('abort', () => controller.abort());
+      }
+    });
+    
+    return controller.signal;
   }
 
   // Refresh authentication token

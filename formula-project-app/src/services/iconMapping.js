@@ -50,16 +50,66 @@ import {
   Share,
   Download,
   Upload,
+  CloudUpload,
   
   // UI Controls
   MoreHoriz,
+  MoreVert,
   
   // Additional icons
   Eye,
   EyeOff,
   Bell,
   Inbox,
-  Check
+  Check,
+  Cancel,
+  
+  // PDF and documents
+  Page,
+  
+  // Charts and reports
+  StatsReport,
+  
+  // Linking and connections
+  Link,
+  
+  // Inventory and categorization
+  Archive,
+  TagOutline,
+  
+  // History and version control
+  HistoryCircle,
+  
+  // Expansion and collapse
+  ArrowDown,
+  ArrowUp,
+  
+  // Data and sheets
+  DataTransferDown,
+  DataTransferUp,
+  
+  // Additional icons for comprehensive mapping
+  ZoomIn,
+  ZoomOut,
+  Expand,
+  Printer,
+  RotateLeft,
+  RotateRight,
+  Cart,
+  Quote,
+  Delivery,
+  DollarCircle,
+  TrendingUp,
+  Color,
+  Copy,
+  Design2D,
+  Unlink,
+  Minus,
+  ShieldCheck,
+  Leaf,
+  Phone,
+  Mail,
+  Undo
 } from 'iconoir-react';
 
 /**
@@ -96,6 +146,7 @@ export const iconMap = {
   'CheckCircle': CheckCircle,
   'Warning': Warning,
   'Error': Cancel,
+  'Cancel': Cancel,
   'Info': InfoCircle,
   
   // Business
@@ -107,16 +158,21 @@ export const iconMap = {
   
   // UI Controls
   'ExpandLess': NavArrowUp,
-  'ExpandMore': NavArrowDown,
+  'ExpandMore': ArrowDown,
   'ChevronRight': NavArrowRight,
   'ChevronLeft': NavArrowLeft,
   'MoreHoriz': MoreHoriz,
+  'MoreVert': MoreVert,
   'Settings': Settings,
   
   // File operations
   'Share': Share,
   'GetApp': Download,
   'Upload': Upload,
+  'CloudUpload': CloudUpload,
+  
+  // PDF and documents
+  'PictureAsPdf': Page,
   
   // Visibility
   'Visibility': Eye,
@@ -125,6 +181,52 @@ export const iconMap = {
   // Notifications
   'Notifications': Bell,
   'Inbox': Inbox,
+  
+  // History and version control
+  'History': HistoryCircle,
+  
+  // Reports and analytics  
+  'Assessment': StatsReport,
+  'TableChart': DataTransferDown,
+  
+  // Linking and connections
+  'Link': Link,
+  
+  // Inventory and categories
+  'Category': TagOutline,
+  'Inventory': Archive,
+  
+  // Additional comprehensive mappings
+  'ZoomIn': ZoomIn,
+  'ZoomOut': ZoomOut,
+  'ZoomOutMap': Expand,
+  'Fullscreen': Expand,
+  'Print': Printer,
+  'RotateLeft': RotateLeft,
+  'RotateRight': RotateRight,
+  'Close': Cancel,
+  'ShoppingCart': Cart,
+  'RequestQuote': Quote,
+  'LocalShipping': Delivery,
+  'AttachMoney': DollarCircle,
+  'TrendingUp': TrendingUp,
+  'Palette': Color,
+  'FileCopy': Copy,
+  'Architecture': Design2D,
+  'LinkOff': Unlink,
+  'Remove': Minus,
+  'Security': ShieldCheck,
+  'Gavel': ShieldCheck,
+  'Eco': Leaf,
+  'Phone': Phone,
+  'Email': Mail,
+  'Undo': Undo,
+  'CalendarToday': Calendar,
+  'Person': User,
+  'Assignment': Check,
+  'ArrowBack': NavArrowLeft,
+  'Visibility': Eye,
+  'VisibilityOff': EyeOff,
   
   // ===== REACT ICONS MAPPING =====
   
@@ -179,7 +281,7 @@ export const getIconoirIcon = (iconName) => {
   
   if (!IconComponent) {
     console.warn(`⚠️ Icon "${iconName}" not found in Iconoir mapping. Using default.`);
-    return Cancel; // Default fallback icon
+    return XmarkCircle; // Default fallback icon
   }
   
   return IconComponent;

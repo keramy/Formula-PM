@@ -31,15 +31,15 @@ import {
 } from '@mui/material';
 import {
   Link as LinkIcon,
-  LinkOff as UnlinkIcon,
-  Architecture as DrawingIcon,
-  Assignment as TaskIcon,
-  Inventory as SpecIcon,
-  ExpandMore as ExpandMoreIcon,
-  PictureAsPdf as PdfIcon,
-  Add as AddIcon,
-  Remove as RemoveIcon
-} from '@mui/icons-material';
+  Unlink as UnlinkIcon,
+  Design2D as DrawingIcon,
+  Check as TaskIcon,
+  Archive as SpecIcon,
+  ArrowDown as ExpandMoreIcon,
+  Page as PdfIcon,
+  Plus as AddIcon,
+  Minus as RemoveIcon
+} from 'iconoir-react';
 
 const SpecificationLinkingPanel = ({
   specification,
