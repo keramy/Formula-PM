@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Grid,
@@ -42,18 +42,28 @@ const MyWorkPage = () => {
   const [workData, setWorkData] = useState(null);
   const [timeTracking, setTimeTracking] = useState({ isTracking: false, currentTask: null, startTime: null });
   const { user } = useAuth();
+  const timeoutRef = useRef(null);
 
   // Load user's work data on component mount
   useEffect(() => {
     loadMyWorkData();
+    
+    // Cleanup timeout on unmount
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, []);
 
   const loadMyWorkData = async () => {
     try {
       setLoading(true);
       
-      // Simulate loading delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Simulate loading delay with proper cleanup
+      await new Promise(resolve => {
+        timeoutRef.current = setTimeout(resolve, 1000);
+      });
       
       // Mock work data for the current user
       const mockWorkData = {

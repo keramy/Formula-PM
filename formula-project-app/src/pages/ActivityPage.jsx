@@ -46,7 +46,7 @@ import RealtimeActivityFeed from '../components/realtime/RealtimeActivityFeed';
 import { useAuth } from '../context/AuthContext';
 import { useActivityFeed } from '../hooks/useRealTime';
 
-const ActivityPage = () => {
+const ActivityPage = React.memo(() => {
   const [activeTab, setActiveTab] = useState('live-feed');
   const [filterType, setFilterType] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -78,72 +78,82 @@ const ActivityPage = () => {
     setError(null);
   }, [refreshFeed]);
 
-  // Calculate activity statistics
-  const activityStats = useMemo(() => {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    const todayActivities = activities.filter(a => 
-      new Date(a.timestamp).toDateString() === today.toDateString()
-    );
-    
-    const yesterdayActivities = activities.filter(a => 
-      new Date(a.timestamp).toDateString() === yesterday.toDateString()
-    );
-    
-    const uniqueUsers = new Set(activities.map(a => a.userId || a.user?.id)).size;
-    const projectActivities = activities.filter(a => a.entityType === 'project').length;
-    const taskActivities = activities.filter(a => a.entityType === 'task').length;
-    const teamActivities = activities.filter(a => 
-      a.entityType === 'user' || a.action === 'user_added'
-    ).length;
+  // Calculate basic activity counts (optimized)
+  const activityCounts = useMemo(() => {
+    if (!activities.length) return { total: 0, newSinceLastVisit: 0 };
     
     return {
       total: activities.length,
-      today: todayActivities.length,
-      yesterday: yesterdayActivities.length,
-      newSinceLastVisit: activities.filter(a => a.isNew).length,
-      uniqueUsers,
-      byType: {
-        projects: projectActivities,
-        tasks: taskActivities,
-        team: teamActivities,
-        system: activities.filter(a => a.entityType === 'system').length
+      newSinceLastVisit: activities.filter(a => a.isNew).length
+    };
+  }, [activities.length, activities]);
+
+  // Calculate date-based statistics (optimized)
+  const dateStats = useMemo(() => {
+    if (!activities.length) return { today: 0, yesterday: 0 };
+    
+    const today = new Date().toDateString();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayString = yesterday.toDateString();
+    
+    let todayCount = 0;
+    let yesterdayCount = 0;
+    
+    for (const activity of activities) {
+      const activityDate = new Date(activity.timestamp).toDateString();
+      if (activityDate === today) todayCount++;
+      else if (activityDate === yesterdayString) yesterdayCount++;
+    }
+    
+    return { today: todayCount, yesterday: yesterdayCount };
+  }, [activities]);
+
+  // Calculate type-based statistics (optimized)
+  const typeStats = useMemo(() => {
+    if (!activities.length) return { projects: 0, tasks: 0, team: 0, system: 0, uniqueUsers: 0 };
+    
+    const userIds = new Set();
+    let projects = 0, tasks = 0, team = 0, system = 0;
+    
+    for (const activity of activities) {
+      if (activity.userId) userIds.add(activity.userId);
+      if (activity.user?.id) userIds.add(activity.user.id);
+      
+      switch (activity.entityType) {
+        case 'project': projects++; break;
+        case 'task': tasks++; break;
+        case 'system': system++; break;
+        default: break;
       }
+      
+      if (activity.entityType === 'user' || activity.action === 'user_added') {
+        team++;
+      }
+    }
+    
+    return {
+      projects,
+      tasks,
+      team,
+      system,
+      uniqueUsers: userIds.size
     };
   }, [activities]);
 
-  // Enhanced date filtering
-  const getDateFilteredActivities = useCallback((activityList) => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
-    switch (dateRange) {
-      case 'today':
-        return activityList.filter(a => new Date(a.timestamp) >= today);
-      case 'yesterday': {
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        return activityList.filter(a => {
-          const activityDate = new Date(a.timestamp);
-          return activityDate >= yesterday && activityDate < today;
-        });
-      }
-      case 'week': {
-        const weekAgo = new Date(today);
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        return activityList.filter(a => new Date(a.timestamp) >= weekAgo);
-      }
-      case 'month': {
-        const monthAgo = new Date(today);
-        monthAgo.setMonth(monthAgo.getMonth() - 1);
-        return activityList.filter(a => new Date(a.timestamp) >= monthAgo);
-      }
-      default:
-        return activityList;
+  // Combine all statistics
+  const activityStats = useMemo(() => ({
+    ...activityCounts,
+    ...dateStats,
+    uniqueUsers: typeStats.uniqueUsers,
+    byType: {
+      projects: typeStats.projects,
+      tasks: typeStats.tasks,
+      team: typeStats.team,
+      system: typeStats.system
     }
-  }, [dateRange]);
+  }), [activityCounts, dateStats, typeStats]);
+
 
   const headerActions = (
     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -249,15 +259,54 @@ const ActivityPage = () => {
     </>
   );
 
+  // Memoized search term processing
+  const searchTermLower = useMemo(() => 
+    searchTerm.toLowerCase().trim(), 
+    [searchTerm]
+  );
+
   const getFilteredActivities = useCallback(() => {
-    let filtered = [...activities];
+    if (!activities.length) return [];
 
-    // Apply date filter first
-    filtered = getDateFilteredActivities(filtered);
+    // Apply all filters in a single pass for better performance
+    const filtered = activities.filter(activity => {
+      // Date filter
+      const passesDateFilter = (() => {
+        if (dateRange === 'all') return true;
+        
+        const activityTime = new Date(activity.timestamp);
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        switch (dateRange) {
+          case 'today':
+            return activityTime >= today;
+          case 'yesterday': {
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            return activityTime >= yesterday && activityTime < today;
+          }
+          case 'week': {
+            const weekAgo = new Date(today);
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            return activityTime >= weekAgo;
+          }
+          case 'month': {
+            const monthAgo = new Date(today);
+            monthAgo.setMonth(monthAgo.getMonth() - 1);
+            return activityTime >= monthAgo;
+          }
+          default:
+            return true;
+        }
+      })();
 
-    // Apply type filter
-    if (filterType !== 'all') {
-      filtered = filtered.filter(activity => {
+      if (!passesDateFilter) return false;
+
+      // Type filter
+      const passesTypeFilter = (() => {
+        if (filterType === 'all') return true;
+        
         switch (filterType) {
           case 'projects':
             return activity.entityType === 'project';
@@ -270,37 +319,45 @@ const ActivityPage = () => {
           default:
             return true;
         }
-      });
-    }
+      })();
 
-    // Apply search filter
-    if (searchTerm) {
-      filtered = filtered.filter(activity => 
-        activity.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        activity.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        activity.entityName?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+      if (!passesTypeFilter) return false;
 
-    // Apply tab-specific filters
-    switch (activeTab) {
-      case 'team-activity':
-        return filtered.filter(a => 
-          a.entityType === 'user' || 
-          a.action === 'user_added' || 
-          a.action === 'comment_added'
+      // Search filter
+      const passesSearchFilter = (() => {
+        if (!searchTermLower) return true;
+        
+        return (
+          activity.description?.toLowerCase().includes(searchTermLower) ||
+          activity.user?.name?.toLowerCase().includes(searchTermLower) ||
+          activity.entityName?.toLowerCase().includes(searchTermLower)
         );
-      case 'project-timeline':
-        return filtered.filter(a => 
-          a.entityType === 'project' || 
-          a.entityType === 'task'
-        ).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      case 'system-events':
-        return filtered.filter(a => a.entityType === 'system');
-      default:
-        return filtered;
+      })();
+
+      if (!passesSearchFilter) return false;
+
+      // Tab-specific filters
+      switch (activeTab) {
+        case 'team-activity':
+          return activity.entityType === 'user' || 
+                 activity.action === 'user_added' || 
+                 activity.action === 'comment_added';
+        case 'project-timeline':
+          return activity.entityType === 'project' || activity.entityType === 'task';
+        case 'system-events':
+          return activity.entityType === 'system';
+        default:
+          return true;
+      }
+    });
+
+    // Sort if needed (only for project timeline)
+    if (activeTab === 'project-timeline') {
+      return filtered.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     }
-  }, [activities, getDateFilteredActivities, filterType, searchTerm, activeTab]);
+
+    return filtered;
+  }, [activities, dateRange, filterType, searchTermLower, activeTab]);
 
   const renderTabContent = () => {
     const filteredActivities = getFilteredActivities();
@@ -637,6 +694,8 @@ const ActivityPage = () => {
       </Box>
     </CleanPageLayout>
   );
-};
+});
+
+ActivityPage.displayName = 'ActivityPage';
 
 export default ActivityPage;

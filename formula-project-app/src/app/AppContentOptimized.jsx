@@ -13,6 +13,7 @@ import { useDialogManager } from '../hooks/useDialogManager';
 import { useNotification } from '../context/NotificationContext';
 import { useProjectHandlers } from './hooks/useProjectHandlers';
 import { useTaskHandlers } from './hooks/useTaskHandlers';
+import logger from '../utils/logger';
 
 // Tab Components
 import DashboardTab from './components/tabs/DashboardTab';
@@ -236,7 +237,7 @@ export const AppContentOptimized = ({
 
   // Render tab content based on current tab
   const renderTabContent = useMemo(() => {
-    console.log('📊 Rendering tab content for tab:', currentTab);
+    logger.debug('📊 Rendering tab content for tab:', currentTab);
     
     switch (currentTab) {
       case 0: // Dashboard

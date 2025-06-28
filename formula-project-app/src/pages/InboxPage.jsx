@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -66,6 +66,7 @@ import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout'
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../context/NotificationContext';
 import apiService from '../services/api/apiService';
+import logger from '../utils/logger';
 
 // Mock data for development
 const mockMessages = [
@@ -188,6 +189,42 @@ const InboxPage = () => {
   const [filterType, setFilterType] = useState('all');
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
   const [loading, setLoading] = useState(false);
+  const timeoutRef = useRef(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Handle attachment download/view
+  const handleAttachmentClick = useCallback((attachment, messageSubject) => {
+    try {
+      // Create a temporary download link
+      const link = document.createElement('a');
+      link.href = attachment.url || `#download-${attachment.name}`;
+      link.download = attachment.name;
+      link.target = '_blank';
+      
+      // Simulate file download (in real app, this would be actual file URL)
+      if (!attachment.url) {
+        showError('File URL not available. Please contact support.');
+        return;
+      }
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showSuccess(`Opening ${attachment.name}`);
+    } catch (error) {
+      logger.error('Failed to open attachment:', error);
+      showError('Failed to open attachment. Please try again.');
+    }
+  }, [showSuccess, showError]);
   const [typingUsers, setTypingUsers] = useState([]);
   
   const { user } = useAuth();
@@ -355,7 +392,19 @@ const InboxPage = () => {
           />
         </>
       )}
-      <IconButton size="small" onClick={() => window.location.reload()}>
+      <IconButton size="small" onClick={() => {
+        setLoading(true);
+        // Clear any existing timeout
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        // Simulate refresh delay with proper cleanup
+        timeoutRef.current = setTimeout(() => {
+          setLoading(false);
+          showSuccess('Inbox refreshed successfully');
+          timeoutRef.current = null;
+        }, 500);
+      }}>
         <RefreshIcon style={{ fontSize: 18 }} />
       </IconButton>
       <Button
@@ -559,7 +608,14 @@ const InboxPage = () => {
                         icon={<AttachIcon style={{ fontSize: 16 }} />}
                         label={`${attachment.name} (${attachment.size})`}
                         variant="outlined"
-                        onClick={() => {}}
+                        onClick={() => handleAttachmentClick(attachment, selectedMessage.subject)}
+                        sx={{
+                          cursor: 'pointer',
+                          '&:hover': {
+                            backgroundColor: 'primary.light',
+                            color: 'primary.contrastText'
+                          }
+                        }}
                       />
                     ))}
                   </Box>

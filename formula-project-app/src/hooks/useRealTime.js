@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import logger from '../utils/logger';
 
 // Socket instance - singleton pattern (simplified for now)
 let socketInstance = null;
@@ -9,8 +10,8 @@ const createSocket = () => {
   if (!socketInstance) {
     socketInstance = {
       connected: false,
-      connect: () => { console.log('Mock socket connect'); },
-      disconnect: () => { console.log('Mock socket disconnect'); },
+      connect: () => { logger.debug('Mock socket connect'); },
+      disconnect: () => { logger.debug('Mock socket disconnect'); },
       on: () => {},
       off: () => {},
       emit: () => {}
@@ -38,24 +39,28 @@ export const useRealTime = (options = {}) => {
     setIsConnected(false); // Mock as disconnected for now
     
     return () => {
-      // Cleanup
+      // Cleanup socket connection
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
     };
-  }, [autoConnect, userInfo]);
+  }, [autoConnect, userInfo.userId, userInfo.userName, userInfo.email]);
   
   const connect = useCallback(() => {
-    console.log('Mock connect');
+    logger.debug('Mock connect');
   }, []);
   
   const disconnect = useCallback(() => {
-    console.log('Mock disconnect');
+    logger.debug('Mock disconnect');
   }, []);
   
   const joinRoom = useCallback((roomType, roomId) => {
-    console.log('Mock join room:', roomType, roomId);
+    logger.debug('Mock join room:', roomType, roomId);
   }, []);
   
   const leaveRoom = useCallback((roomType, roomId) => {
-    console.log('Mock leave room:', roomType, roomId);
+    logger.debug('Mock leave room:', roomType, roomId);
   }, []);
   
   return {
@@ -202,7 +207,11 @@ export const useProjectActivityFeed = (projectId, limit = 20) => {
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
+    let isMounted = true;
+    
     const generateProjectActivities = () => {
+      if (!isMounted) return;
+      
       const projectSpecificActivities = [
         {
           id: `${projectId}_1`,
@@ -224,12 +233,18 @@ export const useProjectActivityFeed = (projectId, limit = 20) => {
         }
       ];
       
-      setActivities(projectSpecificActivities.slice(0, limit));
-      setIsLoading(false);
+      if (isMounted) {
+        setActivities(projectSpecificActivities.slice(0, limit));
+        setIsLoading(false);
+      }
     };
 
     const timer = setTimeout(generateProjectActivities, 500);
-    return () => clearTimeout(timer);
+    
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, [projectId, limit]);
   
   return {
@@ -244,7 +259,7 @@ export const usePresence = () => {
   const [typingUsers, setTypingUsers] = useState([]);
   
   const sendTyping = useCallback((roomType, roomId, isTyping) => {
-    console.log('Mock typing:', roomType, roomId, isTyping);
+    logger.debug('Mock typing:', roomType, roomId, isTyping);
   }, []);
   
   return {
@@ -278,7 +293,7 @@ export const useCollaborativeComments = (entityType, entityId) => {
   const [comments, setComments] = useState([]);
   
   const addComment = useCallback((message) => {
-    console.log('Mock add comment:', message);
+    logger.debug('Mock add comment:', message);
   }, []);
   
   return {
