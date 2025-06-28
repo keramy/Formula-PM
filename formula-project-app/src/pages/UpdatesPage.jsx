@@ -56,7 +56,7 @@ import {
   Refresh as RefreshIcon,
   Edit as EditIcon,
   Star as StarIcon,
-  StarOutline as StarOutlineIcon,
+  StarDashed as StarOutlineIcon,
   Settings as SettingsIcon,
   Check as CheckIcon,
   Circle as CircleIcon,
@@ -422,7 +422,7 @@ const UpdatesPage = () => {
           {Object.entries(PRIORITY_LEVELS).map(([key, value]) => (
             <MenuItem key={key} value={key}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <value.icon style={{ fontSize: 16 }} />
+                {React.createElement(value.icon, { style: { fontSize: 16 } })}
                 {value.label}
               </Box>
             </MenuItem>
@@ -557,7 +557,7 @@ const UpdatesPage = () => {
                 label={PRIORITY_LEVELS[update.priority].label}
                 size="small"
                 color={PRIORITY_LEVELS[update.priority].color}
-                icon={<PRIORITY_LEVELS[update.priority].icon style={{ fontSize: 14 }} />}
+                icon={React.createElement(PRIORITY_LEVELS[update.priority].icon, { style: { fontSize: 14 } })}
               />
               <Chip
                 label={UPDATE_CATEGORIES[update.category].label}
@@ -968,7 +968,7 @@ const UpdatesPage = () => {
                     {Object.entries(PRIORITY_LEVELS).map(([key, value]) => (
                       <MenuItem key={key} value={key}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <value.icon style={{ fontSize: 16 }} />
+                          {React.createElement(value.icon, { style: { fontSize: 16 } })}
                           {value.label}
                         </Box>
                       </MenuItem>
@@ -1052,7 +1052,7 @@ const UpdatesPage = () => {
               {Object.entries(PRIORITY_LEVELS).map(([priority, config]) => (
                 <Box key={priority} sx={{ mb: 3 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                    <config.icon style={{ fontSize: 18 }} />
+                    {React.createElement(config.icon, { style: { fontSize: 18 } })}
                     <Typography variant="subtitle2">{config.label} Updates</Typography>
                   </Box>
                   <FormGroup row>

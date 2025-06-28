@@ -16,29 +16,62 @@ import {
   Upload as UploadIcon,
   Category as CategoryIcon,
   Reports as ReportIcon,
-  Table as ExcelIcon
+  Table as ExcelIcon,
+  UserBag as VendorIcon,
+  Shield as ComplianceIcon,
+  Template as TemplateIcon,
+  ShoppingCart as ProcurementIcon
 } from 'iconoir-react';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import MaterialSpecificationsList from '../features/specifications/components/MaterialSpecificationsList';
+import VendorManagement from '../features/specifications/components/VendorManagement';
+import ComplianceTracking from '../features/specifications/components/ComplianceTracking';
+import SpecificationTemplates from '../features/specifications/components/SpecificationTemplates';
+import ProcurementWorkflow from '../features/specifications/components/ProcurementWorkflow';
+import MaterialSpecsReports from '../features/specifications/components/MaterialSpecsReports';
+import apiService from '../services/api/apiService';
 import { useAuth } from '../context/AuthContext';
 
 const MaterialSpecsPage = () => {
   const [activeTab, setActiveTab] = useState('all-specs');
   const [specs, setSpecs] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { user } = useAuth();
 
   // Load specifications on component mount
   useEffect(() => {
-    loadSpecifications();
+    loadInitialData();
   }, []);
+
+  const loadInitialData = async () => {
+    try {
+      setLoading(true);
+      const [specsData, projectsData, teamData] = await Promise.all([
+        apiService.getMaterialSpecifications(),
+        apiService.getProjects(),
+        apiService.getTeamMembers()
+      ]);
+      
+      setSpecs(specsData);
+      setProjects(projectsData);
+      setTeamMembers(teamData);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load data: ' + err.message);
+      console.error('Error loading initial data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadSpecifications = async () => {
     try {
       setLoading(true);
-      // In a real app, this would load from the material specs service
-      setSpecs([]);
+      const specsData = await apiService.getMaterialSpecifications();
+      setSpecs(specsData);
       setError(null);
     } catch (err) {
       setError('Failed to load specifications: ' + err.message);
@@ -91,6 +124,30 @@ const MaterialSpecsPage = () => {
         icon={<CategoryIcon sx={{ fontSize: 16 }} />}
       />
       <CleanTab 
+        label="Vendor Management" 
+        isActive={activeTab === 'vendors'}
+        onClick={() => setActiveTab('vendors')}
+        icon={<VendorIcon sx={{ fontSize: 16 }} />}
+      />
+      <CleanTab 
+        label="Compliance Tracking" 
+        isActive={activeTab === 'compliance'}
+        onClick={() => setActiveTab('compliance')}
+        icon={<ComplianceIcon sx={{ fontSize: 16 }} />}
+      />
+      <CleanTab 
+        label="Templates & Standards" 
+        isActive={activeTab === 'templates'}
+        onClick={() => setActiveTab('templates')}
+        icon={<TemplateIcon sx={{ fontSize: 16 }} />}
+      />
+      <CleanTab 
+        label="Procurement" 
+        isActive={activeTab === 'procurement'}
+        onClick={() => setActiveTab('procurement')}
+        icon={<ProcurementIcon sx={{ fontSize: 16 }} />}
+      />
+      <CleanTab 
         label="Pending Approval" 
         isActive={activeTab === 'pending'}
         onClick={() => setActiveTab('pending')}
@@ -120,57 +177,120 @@ const MaterialSpecsPage = () => {
   };
 
   const renderTabContent = () => {
-    if (activeTab === 'reports') {
-      return (
-        <Box sx={{ p: 4, textAlign: 'center' }}>
-          <Card sx={{ maxWidth: 600, mx: 'auto', p: 4 }}>
-            <CardContent>
-              <ReportIcon sx={{ fontSize: 80, color: 'primary.main', mb: 2 }} />
-              <Typography variant="h5" gutterBottom>
-                Material Specifications Reports
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-                Advanced reporting for material specifications including cost analysis, 
-                supplier performance metrics, and sustainability tracking.
-              </Typography>
-              <Alert severity="info">
-                <strong>Coming in Phase 12:</strong> Comprehensive material reporting with 
-                cost tracking, supplier analysis, and sustainability certifications.
-              </Alert>
-            </CardContent>
-          </Card>
-        </Box>
-      );
+    switch (activeTab) {
+      case 'vendors':
+        return (
+          <VendorManagement
+            onVendorSelect={(vendor) => {
+              console.log('Selected vendor:', vendor);
+            }}
+            specifications={specs}
+          />
+        );
+      
+      case 'compliance':
+        return (
+          <ComplianceTracking
+            specifications={specs}
+            onUpdateCompliance={(specId, complianceData) => {
+              console.log('Update compliance:', specId, complianceData);
+            }}
+            onGenerateReport={(reportType) => {
+              console.log('Generate compliance report:', reportType);
+            }}
+          />
+        );
+      
+      case 'templates':
+        return (
+          <SpecificationTemplates
+            onCreateFromTemplate={(template) => {
+              console.log('Create specification from template:', template);
+              // TODO: Implement creating spec from template
+            }}
+            onUpdateStandards={(standards) => {
+              console.log('Update standards:', standards);
+            }}
+            categories={[...new Set(specs.map(spec => spec.category))]}
+          />
+        );
+      
+      case 'procurement':
+        return (
+          <ProcurementWorkflow
+            specifications={specs}
+            onCreatePurchaseOrder={(orderData) => {
+              console.log('Create purchase order:', orderData);
+            }}
+            onUpdateOrderStatus={(orderId, status) => {
+              console.log('Update order status:', orderId, status);
+            }}
+          />
+        );
+      
+      case 'reports':
+        return (
+          <MaterialSpecsReports
+            specifications={specs}
+            vendors={[]} // TODO: Load vendor data
+            purchaseOrders={[]} // TODO: Load purchase order data
+            onGenerateReport={(reportType) => {
+              console.log('Generate report:', reportType);
+            }}
+            onScheduleReport={(reportType) => {
+              console.log('Schedule report:', reportType);
+            }}
+            onExportData={(format) => {
+              console.log('Export data:', format);
+            }}
+          />
+        );
+      
+      default:
+        return (
+          <MaterialSpecificationsList
+            projects={projects}
+            teamMembers={teamMembers}
+            shopDrawings={[]} // TODO: Load shop drawings data
+            specifications={getFilteredSpecs()}
+            loading={loading}
+            viewMode={activeTab === 'by-category' ? 'category' : 'list'}
+            onCreateSpec={() => {
+              console.log('Create spec from list');
+            }}
+            onEditSpec={(spec) => {
+              console.log('Edit spec:', spec);
+            }}
+            onDeleteSpec={async (specId) => {
+              try {
+                await apiService.deleteMaterialSpecification(specId);
+                setSpecs(prev => prev.filter(s => s.id !== specId));
+              } catch (error) {
+                console.error('Error deleting specification:', error);
+                setError('Failed to delete specification');
+              }
+            }}
+            onImportSpecs={(file) => {
+              console.log('Import specs from file:', file);
+            }}
+            onExportSpecs={() => {
+              console.log('Export specifications');
+            }}
+            onApproveSpec={async (specId) => {
+              try {
+                await apiService.updateMaterialSpecificationStatus(specId, 'approved');
+                setSpecs(prev => prev.map(s => 
+                  s.id === specId ? { ...s, status: 'approved' } : s
+                ));
+              } catch (error) {
+                console.error('Error approving specification:', error);
+                setError('Failed to approve specification');
+              }
+            }}
+            onRefresh={loadSpecifications}
+          />
+        );
     }
-
-    return (
-      <MaterialSpecificationsList
-        specifications={getFilteredSpecs()}
-        loading={loading}
-        viewMode={activeTab === 'by-category' ? 'category' : 'list'}
-        onCreateSpec={() => {
-          console.log('Create spec from list');
-        }}
-        onEditSpec={(spec) => {
-          console.log('Edit spec:', spec);
-        }}
-        onDeleteSpec={(specId) => {
-          setSpecs(prev => prev.filter(s => s.id !== specId));
-        }}
-        onImportSpecs={(file) => {
-          console.log('Import specs from file:', file);
-        }}
-        onExportSpecs={() => {
-          console.log('Export specifications');
-        }}
-        onApproveSpec={(specId) => {
-          setSpecs(prev => prev.map(s => 
-            s.id === specId ? { ...s, status: 'approved' } : s
-          ));
-        }}
-        onRefresh={loadSpecifications}
-      />
-    );
   };
 
   return (

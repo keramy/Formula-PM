@@ -38,7 +38,7 @@ import {
   User as UserIcon,
   Settings as SettingsIcon,
   Export as ExportIcon,
-  EyeEmpty as ViewIcon
+  Eye as ViewIcon
 } from 'iconoir-react';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import ActivityFeed from '../components/realtime/ActivityFeed';

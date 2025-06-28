@@ -56,11 +56,20 @@ import apiService from '../../../services/api/apiService';
 const MaterialSpecificationsList = ({ 
   projects = [],
   teamMembers = [],
-  shopDrawings = []
+  shopDrawings = [],
+  specifications: passedSpecs = [],
+  loading: passedLoading = false,
+  viewMode: passedViewMode = 'list',
+  onCreateSpec,
+  onEditSpec,
+  onDeleteSpec,
+  onImportSpecs,
+  onExportSpecs,
+  onApproveSpec,
+  onRefresh
 }) => {
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [viewMode, setViewMode] = useState('list');
+  const [viewMode, setViewMode] = useState(passedViewMode);
   const [selectedProject, setSelectedProject] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -77,39 +86,14 @@ const MaterialSpecificationsList = ({
   const [importing, setImporting] = useState(false);
   const [importResults, setImportResults] = useState(null);
 
-  const [specifications, setSpecifications] = useState([]);
+  // Use passed specifications or empty array
+  const specifications = passedSpecs;
+  const loading = passedLoading;
 
-  // Load specifications on component mount
+  // Update view mode when prop changes
   useEffect(() => {
-    loadSpecifications();
-  }, [selectedProject]);
-
-  const loadSpecifications = async () => {
-    try {
-      setLoading(true);
-      const params = selectedProject !== 'all' ? { projectId: selectedProject } : {};
-      const data = await apiService.getMaterialSpecifications(params);
-      
-      // Format the data to match component expectations
-      const formattedSpecs = data.map(spec => ({
-        ...spec,
-        unitCost: typeof spec.unitCost === 'number' ? `$${spec.unitCost.toFixed(2)}` : spec.unitCost,
-        totalCost: typeof spec.totalCost === 'number' ? `$${spec.totalCost.toFixed(2)}` : spec.totalCost,
-        quantity: spec.quantity?.toString() || '1',
-        leadTime: spec.leadTime?.toString() || '',
-        projectName: spec.projectName || projects.find(p => p.id === spec.projectId)?.name || ''
-      }));
-      
-      setSpecifications(formattedSpecs);
-      setError(null);
-    } catch (err) {
-      console.error('Error loading specifications:', err);
-      setError('Failed to load specifications');
-      setSpecifications([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setViewMode(passedViewMode);
+  }, [passedViewMode]);
 
   const [newSpec, setNewSpec] = useState({
     itemId: '',
@@ -173,17 +157,6 @@ const MaterialSpecificationsList = ({
 
       const createdSpec = await apiService.createMaterialSpecification(specData);
       
-      // Format the response to match component expectations
-      const formattedSpec = {
-        ...createdSpec,
-        unitCost: `$${createdSpec.unitCost.toFixed(2)}`,
-        totalCost: `$${createdSpec.totalCost.toFixed(2)}`,
-        quantity: createdSpec.quantity.toString(),
-        leadTime: createdSpec.leadTime?.toString() || '',
-        projectName: createdSpec.projectName || projects.find(p => p.id === createdSpec.projectId)?.name || ''
-      };
-
-      setSpecifications([formattedSpec, ...specifications]);
       setAddSpecDialogOpen(false);
       setNewSpec({
         itemId: '', description: '', category: '', material: '', finish: '',
@@ -191,6 +164,11 @@ const MaterialSpecificationsList = ({
         supplier: '', partNumber: '', leadTime: '', notes: '', roomLocation: '',
         installationPhase: '', projectId: ''
       });
+      
+      // Refresh the data from parent
+      if (onRefresh) {
+        onRefresh();
+      }
     } catch (error) {
       console.error('Error creating specification:', error);
       alert('Failed to create specification. Please try again.');
@@ -444,7 +422,13 @@ const MaterialSpecificationsList = ({
         ]}
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
-        onAdd={() => setAddSpecDialogOpen(true)}
+        onAdd={() => {
+          if (onCreateSpec) {
+            onCreateSpec();
+          } else {
+            setAddSpecDialogOpen(true);
+          }
+        }}
         addButtonText="Add Specification"
         addButtonIcon={<AddIcon />}
         teamMembers={teamMembers.slice(0, 5)}
@@ -537,7 +521,7 @@ const MaterialSpecificationsList = ({
         ) : error ? (
           <Alert severity="error" sx={{ mb: 2 }}>
             {error}
-            <Button size="small" onClick={loadSpecifications} sx={{ ml: 2 }}>
+            <Button size="small" onClick={onRefresh} sx={{ ml: 2 }}>
               Retry
             </Button>
           </Alert>
@@ -592,12 +576,8 @@ const MaterialSpecificationsList = ({
         </MenuItem>
         <MenuItem onClick={async () => {
           if (selectedSpec && window.confirm(`Are you sure you want to delete ${selectedSpec.itemId}?`)) {
-            try {
-              await apiService.deleteMaterialSpecification(selectedSpec.id);
-              setSpecifications(specifications.filter(spec => spec.id !== selectedSpec.id));
-            } catch (error) {
-              console.error('Error deleting specification:', error);
-              alert('Failed to delete specification');
+            if (onDeleteSpec) {
+              onDeleteSpec(selectedSpec.id);
             }
           }
           handleMenuClose();

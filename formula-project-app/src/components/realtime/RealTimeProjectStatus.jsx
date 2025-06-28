@@ -22,16 +22,16 @@ import {
 } from '@mui/material';
 // Timeline components replaced with simple layout - @mui/lab not available
 import {
-  NavArrowDown as ExpandMore,
-  NavArrowUp as ExpandLess,
+  NavArrowDown as NavArrowDown,
+  NavArrowUp as NavArrowUp,
   TrendingUp,
   TrendingDown,
-  ClipboardCheck as Assignment,
+  ClipboardCheck as Task,
   CheckCircle,
   Clock as Schedule,
   WarningTriangle as Warning,
-  Cancel as Error,
-  Group as People,
+  XmarkCircle as Error,
+  Group as Group,
   MoneySquare as AttachMoney,
   Calendar as CalendarToday,
   Bell as Notifications,

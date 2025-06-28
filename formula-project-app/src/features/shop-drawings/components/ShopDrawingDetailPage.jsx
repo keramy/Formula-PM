@@ -92,7 +92,9 @@ const ShopDrawingDetailPage = ({
       onDelete(drawing.id);
     }
     setDeleteDialogOpen(false);
-    onBack();
+    if (onBack) {
+      onBack();
+    }
   };
 
   return (
@@ -165,11 +167,33 @@ const ShopDrawingDetailPage = ({
                 drawing={drawing}
                 onAddRevision={(revision) => {
                   // Handle adding new revision
-                  console.log('Adding revision:', revision);
+                  const updatedDrawing = {
+                    ...drawing,
+                    version: revision.version,
+                    revisions: [...(drawing.revisions || []), revision]
+                  };
+                  if (onUpdate) {
+                    onUpdate(drawing.id, updatedDrawing);
+                  }
                 }}
                 onUpdateStatus={(version, status) => {
                   // Handle status update for specific version
-                  console.log('Updating version status:', version, status);
+                  const updatedRevisions = drawing.revisions?.map(rev => 
+                    rev.version === version 
+                      ? { ...rev, status, approvalDate: new Date().toISOString().split('T')[0] }
+                      : rev
+                  ) || [];
+                  
+                  const updatedDrawing = {
+                    ...drawing,
+                    revisions: updatedRevisions,
+                    // Update main drawing status if it's the current version
+                    ...(drawing.version === version ? { status } : {})
+                  };
+                  
+                  if (onUpdate) {
+                    onUpdate(drawing.id, updatedDrawing);
+                  }
                 }}
                 teamMembers={teamMembers}
               />
@@ -378,10 +402,34 @@ const ShopDrawingDetailPage = ({
           <DrawingVersionHistory 
             drawing={drawing}
             onAddRevision={(revision) => {
-              console.log('Adding revision:', revision);
+              // Handle adding new revision
+              const updatedDrawing = {
+                ...drawing,
+                version: revision.version,
+                revisions: [...(drawing.revisions || []), revision]
+              };
+              if (onUpdate) {
+                onUpdate(drawing.id, updatedDrawing);
+              }
             }}
             onUpdateStatus={(version, status) => {
-              console.log('Updating version status:', version, status);
+              // Handle status update for specific version
+              const updatedRevisions = drawing.revisions?.map(rev => 
+                rev.version === version 
+                  ? { ...rev, status, approvalDate: new Date().toISOString().split('T')[0] }
+                  : rev
+              ) || [];
+              
+              const updatedDrawing = {
+                ...drawing,
+                revisions: updatedRevisions,
+                // Update main drawing status if it's the current version
+                ...(drawing.version === version ? { status } : {})
+              };
+              
+              if (onUpdate) {
+                onUpdate(drawing.id, updatedDrawing);
+              }
             }}
             teamMembers={teamMembers}
           />

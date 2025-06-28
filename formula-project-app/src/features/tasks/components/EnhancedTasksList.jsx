@@ -13,9 +13,9 @@ import {
 import {
   CheckCircle,
   Trash as Delete,
-  User as Person,
+  User as User,
   Calendar as CalendarToday,
-  ClipboardCheck as Assignment,
+  ClipboardCheck as Task,
   Warning,
   Undo,
   Edit as EditIcon,

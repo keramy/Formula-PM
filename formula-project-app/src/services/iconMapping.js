@@ -30,7 +30,7 @@ import {
   // Status
   CheckCircle,
   Warning,
-  Cancel,
+  XmarkCircle,
   InfoCircle,
   Star,
   

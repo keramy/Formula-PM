@@ -1,0 +1,102 @@
+{
+  "totalFiles": 197,
+  "filesWithIcons": 4,
+  "totalIconImports": 10,
+  "availableIcons": 10,
+  "missingIcons": 0,
+  "fileResults": [
+    {
+      "file": "src/__tests__/MinimalIconTest.jsx",
+      "icons": [
+        {
+          "original": "Home",
+          "alias": "Home",
+          "line": 4,
+          "available": true
+        },
+        {
+          "original": "Search",
+          "alias": "Search",
+          "line": 4,
+          "available": true
+        },
+        {
+          "original": "Menu",
+          "alias": "Menu",
+          "line": 4,
+          "available": true
+        },
+        {
+          "original": "Settings",
+          "alias": "Settings",
+          "line": 4,
+          "available": true
+        },
+        {
+          "original": "User",
+          "alias": "User",
+          "line": 4,
+          "available": true
+        },
+        {
+          "original": "Plus",
+          "alias": "Plus",
+          "line": 4,
+          "available": true
+        }
+      ]
+    },
+    {
+      "file": "src/app/App.jsx",
+      "icons": [
+        {
+          "original": "IconoirProvider",
+          "alias": "IconoirProvider",
+          "line": 2,
+          "available": true
+        }
+      ]
+    },
+    {
+      "file": "src/app/components/tabs/ProjectsTab.jsx",
+      "icons": [
+        {
+          "original": "Plus",
+          "alias": "Add",
+          "line": 3,
+          "available": true
+        }
+      ]
+    },
+    {
+      "file": "src/components/charts/ModernStatsCards.jsx",
+      "icons": [
+        {
+          "original": "ArrowUp",
+          "alias": "TrendingUp",
+          "line": 4,
+          "available": true
+        },
+        {
+          "original": "ArrowDown",
+          "alias": "TrendingDown",
+          "line": 4,
+          "available": true
+        }
+      ]
+    }
+  ],
+  "missingIconsList": [],
+  "duplicateIcons": {},
+  "iconUsageCount": {
+    "Home": 1,
+    "Search": 1,
+    "Menu": 1,
+    "Settings": 1,
+    "User": 1,
+    "Plus": 2,
+    "IconoirProvider": 1,
+    "ArrowUp": 1,
+    "ArrowDown": 1
+  }
+}

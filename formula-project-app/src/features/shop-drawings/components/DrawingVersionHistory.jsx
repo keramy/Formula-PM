@@ -24,7 +24,7 @@ import {
 import {
   CheckCircle as ApprovedIcon,
   Clock as PendingIcon,
-  Cancel as RejectedIcon,
+  XmarkCircle as RejectedIcon,
   EditPencil as RevisionIcon,
   Eye as ViewIcon,
   Download as DownloadIcon,

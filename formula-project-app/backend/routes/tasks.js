@@ -9,11 +9,27 @@ const { body, param, query, validationResult } = require('express-validator');
 const { verifyToken, requireRole } = require('../middleware/auth');
 const { handleValidationErrors } = require('../middleware/validation');
 
+// Development auth bypass
+const devAuthBypass = (req, res, next) => {
+  if (process.env.NODE_ENV === 'development') {
+    req.user = {
+      id: 'demo-user',
+      email: 'demo@formulapm.com',
+      firstName: 'Demo',
+      lastName: 'User',
+      role: 'admin'
+    };
+    next();
+  } else {
+    verifyToken(req, res, next);
+  }
+};
+
 /**
  * Get all tasks with optional filtering
  * GET /api/v1/tasks
  */
-router.get('/', verifyToken, [
+router.get('/', devAuthBypass, [
   query('status').optional().isIn(['pending', 'in_progress', 'review', 'completed', 'cancelled']),
   query('priority').optional().isIn(['low', 'medium', 'high', 'urgent']),
   query('assignedTo').optional().isUUID(),

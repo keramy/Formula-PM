@@ -3,10 +3,10 @@ import { Chip, Tooltip } from '@mui/material';
 // Iconoir icons - safe construction and status icons
 import {
   Clock as Schedule,
-  Play as PlayArrow,
+  Play as Play,
   Check as CheckCircle,
   Pause,
-  Xmark as Cancel,
+  Xmark as XmarkCircle,
   Clock as HourglassEmpty,
   Building as Gavel,
   Building as Construction,
@@ -23,8 +23,8 @@ import {
   Building as Foundation,
   Settings as HomeRepairService,
   Palette as FormatPaint,
-  Key as VpnKey,
-  Shield as Security
+  Key as Key,
+  Shield as Shield
 } from 'iconoir-react';
 import { 
   getTaskStatusConfig, 

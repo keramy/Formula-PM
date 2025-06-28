@@ -19,7 +19,7 @@ import {
   User as PersonIcon,
   Group as TeamIcon,
   ArrowUp as TrendingUp,
-  ClipboardCheck as Assignment,
+  ClipboardCheck as Task,
   CheckCircle,
   Clock as Schedule
 } from 'iconoir-react';

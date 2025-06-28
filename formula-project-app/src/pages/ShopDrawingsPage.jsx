@@ -31,16 +31,16 @@ const ShopDrawingsPage = () => {
   const {
     drawings,
     loading,
+    loadDrawings,
     uploadDrawing,
     updateDrawing,
-    deleteDrawing,
-    refreshDrawings
+    deleteDrawing
   } = useShopDrawings();
 
   // Load drawings on component mount
   useEffect(() => {
-    refreshDrawings();
-  }, [refreshDrawings]);
+    loadDrawings();
+  }, [loadDrawings]);
 
   const handleViewDrawing = (drawing) => {
     setSelectedDrawing(drawing);
@@ -56,6 +56,21 @@ const ShopDrawingsPage = () => {
     // This would trigger the create new drawing flow
     console.log('Create drawing triggered');
   };
+
+  // Mock projects data for ShopDrawingsList
+  const mockProjects = [
+    { id: 2001, name: 'Akbank Head Office Renovation' },
+    { id: 2002, name: 'Garanti BBVA Branch Fit-out' },
+    { id: 2003, name: 'Yapı Kredi Head Office' }
+  ];
+
+  // Mock team members data for ShopDrawingsList
+  const mockTeamMembers = [
+    { id: 1, name: 'John Smith' },
+    { id: 2, name: 'Sarah Wilson' },
+    { id: 3, name: 'Tom Anderson' },
+    { id: 4, name: 'Lisa Chen' }
+  ];
 
   const headerActions = (
     <Box sx={{ display: 'flex', gap: 1 }}>
@@ -145,6 +160,8 @@ const ShopDrawingsPage = () => {
       <ShopDrawingsList
         drawings={getFilteredDrawings()}
         loading={loading}
+        projects={mockProjects}
+        teamMembers={mockTeamMembers}
         onViewDrawing={handleViewDrawing}
         onEditDrawing={(drawing) => {
           // Handle edit logic
@@ -153,19 +170,19 @@ const ShopDrawingsPage = () => {
         onDeleteDrawing={(drawingId) => {
           deleteDrawing(drawingId);
         }}
-        onUploadDrawing={(files) => {
-          uploadDrawing(files);
+        onUploadDrawing={(formData) => {
+          uploadDrawing(formData);
         }}
         onApproveDrawing={(drawingId) => {
           updateDrawing(drawingId, { status: 'approved' });
         }}
         onRejectDrawing={(drawingId, comments) => {
           updateDrawing(drawingId, { 
-            status: 'rejected', 
+            status: 'revision_required', 
             rejectionComments: comments 
           });
         }}
-        onRefresh={refreshDrawings}
+        onRefresh={loadDrawings}
       />
     );
   };
@@ -212,10 +229,15 @@ const ShopDrawingsPage = () => {
           {selectedDrawing && (
             <ShopDrawingDetailPage
               drawing={selectedDrawing}
-              onClose={() => setShowDetailDialog(false)}
-              onUpdate={(updatedDrawing) => {
-                updateDrawing(selectedDrawing.id, updatedDrawing);
-                setSelectedDrawing(updatedDrawing);
+              teamMembers={mockTeamMembers}
+              onBack={() => setShowDetailDialog(false)}
+              onUpdate={(drawingId, updatedDrawing) => {
+                updateDrawing(drawingId, updatedDrawing);
+                setSelectedDrawing({...selectedDrawing, ...updatedDrawing});
+              }}
+              onDelete={(drawingId) => {
+                deleteDrawing(drawingId);
+                setShowDetailDialog(false);
               }}
             />
           )}

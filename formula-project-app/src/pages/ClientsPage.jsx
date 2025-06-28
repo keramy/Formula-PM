@@ -18,7 +18,7 @@ import {
   ViewGrid as ViewModule,
   Building as BusinessIcon,
   ArrowUp as TrendingUp,
-  ClipboardCheck as Assignment,
+  ClipboardCheck as Task,
   CheckCircle,
   User as PersonIcon
 } from 'iconoir-react';

@@ -31,8 +31,8 @@ import {
 } from 'recharts';
 import {
   TrendingUp,
-  ClipboardCheck as Assignment,
-  Group as People,
+  ClipboardCheck as Task,
+  Group as Group,
   Clock as Schedule,
   WarningTriangle as Warning,
   CheckCircle,

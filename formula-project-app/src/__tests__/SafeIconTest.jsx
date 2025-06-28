@@ -25,7 +25,7 @@ import {
   Filter,
   ShareAndroid as Share,
   Download,
-  Xmark as Cancel,
+  Xmark as XmarkCircle,
   ArrowLeft,
   ArrowRight
 } from 'iconoir-react';

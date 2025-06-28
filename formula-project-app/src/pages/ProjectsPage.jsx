@@ -25,7 +25,7 @@ import {
   ViewGrid as ViewModule,
   Calendar as Timeline,
   ArrowUp as TrendingUp,
-  ClipboardCheck as Assignment,
+  ClipboardCheck as Task,
   User as Group,
   Calendar as CalendarToday,
   Clock as Schedule,

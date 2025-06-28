@@ -29,7 +29,7 @@ import {
   List as ViewList,
   ViewGrid as ViewModule,
   Calendar as DateRange,
-  ClipboardCheck as Assignment,
+  ClipboardCheck as Task,
   CheckCircle,
   Clock as PendingIcon,
   Play as InProgressIcon,

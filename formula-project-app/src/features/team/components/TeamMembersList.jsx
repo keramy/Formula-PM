@@ -25,11 +25,11 @@ import {
   Mail as Email,
   Phone,
   Building as Work,
-  User as Person,
+  User as User,
   Star,
   Group as AccountTree,
   Clock as AccessTime,
-  Eye as Visibility,
+  Eye as Eye,
   Edit as EditIcon
 } from 'iconoir-react';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';

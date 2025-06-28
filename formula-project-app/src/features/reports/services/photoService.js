@@ -3,7 +3,10 @@
  * SiteCam-inspired photo documentation system for Formula PM
  */
 
-import { generateUniqueId } from '../../../utils/generators/idGenerator';
+// Simple ID generator for mock implementation
+const generateUniqueId = (prefix = 'ID') => {
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+};
 
 class PhotoService {
   constructor() {
@@ -13,8 +16,168 @@ class PhotoService {
   }
 
   init() {
-    // Initialize with some demo photos if needed
+    // Initialize with some demo photos for development
+    this.loadMockPhotos();
     this.initialized = true;
+  }
+
+  loadMockPhotos() {
+    const mockPhotos = [
+      {
+        id: 'IMG_001',
+        filename: 'kitchen_progress_001.jpg',
+        originalName: 'kitchen_progress.jpg',
+        capturedAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+        uploadedAt: new Date().toISOString(),
+        fileSize: 2500000,
+        mimeType: 'image/jpeg',
+        url: '/mock-images/kitchen-progress.jpg',
+        thumbnail: '/mock-images/kitchen-progress-thumb.jpg',
+        location: {
+          gps: null,
+          floor: '1st Floor',
+          room: 'Kitchen',
+          area: 'Cabinet Area',
+          building: 'Main Building'
+        },
+        project: {
+          id: '2001',
+          name: 'Akbank Head Office Renovation',
+          phase: 'Construction',
+          workCategory: 'Millwork'
+        },
+        quality: {
+          resolution: { width: 3840, height: 2160 },
+          fileSize: '2.4',
+          format: 'JPEG'
+        },
+        tags: ['progress', 'cabinets', 'millwork'],
+        caption: 'Kitchen cabinet installation progress',
+        description: 'Upper and lower cabinets being installed in executive kitchen area',
+        category: 'progress',
+        priority: 'normal',
+        device: {
+          camera: 'iPhone 14 Pro',
+          lens: 'Main Camera',
+          settings: {}
+        },
+        construction: {
+          trade: 'Millwork',
+          workType: 'Cabinet Installation',
+          inspectionType: '',
+          defectType: '',
+          status: 'active'
+        },
+        createdBy: 'project-manager',
+        assignedTo: '',
+        reviewStatus: 'approved',
+        approvalStatus: 'approved'
+      },
+      {
+        id: 'IMG_002',
+        filename: 'quality_check_002.jpg',
+        originalName: 'quality_check.jpg',
+        capturedAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
+        uploadedAt: new Date().toISOString(),
+        fileSize: 1800000,
+        mimeType: 'image/jpeg',
+        url: '/mock-images/quality-check.jpg',
+        thumbnail: '/mock-images/quality-check-thumb.jpg',
+        location: {
+          gps: null,
+          floor: '1st Floor',
+          room: 'Conference Room',
+          area: 'Cabinet Area',
+          building: 'Main Building'
+        },
+        project: {
+          id: '2001',
+          name: 'Akbank Head Office Renovation',
+          phase: 'Quality Control',
+          workCategory: 'Millwork'
+        },
+        quality: {
+          resolution: { width: 3840, height: 2160 },
+          fileSize: '1.8',
+          format: 'JPEG'
+        },
+        tags: ['quality', 'inspection', 'cabinet-doors'],
+        caption: 'Quality inspection of cabinet doors',
+        description: 'Final quality control inspection of cabinet door alignment and finish',
+        category: 'quality',
+        priority: 'high',
+        device: {
+          camera: 'iPhone 14 Pro',
+          lens: 'Main Camera',
+          settings: {}
+        },
+        construction: {
+          trade: 'Millwork',
+          workType: 'Quality Control',
+          inspectionType: 'Final Inspection',
+          defectType: '',
+          status: 'active'
+        },
+        createdBy: 'quality-inspector',
+        assignedTo: '',
+        reviewStatus: 'approved',
+        approvalStatus: 'approved'
+      },
+      {
+        id: 'IMG_003',
+        filename: 'milestone_003.jpg',
+        originalName: 'milestone.jpg',
+        capturedAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
+        uploadedAt: new Date().toISOString(),
+        fileSize: 3200000,
+        mimeType: 'image/jpeg',
+        url: '/mock-images/milestone.jpg',
+        thumbnail: '/mock-images/milestone-thumb.jpg',
+        location: {
+          gps: null,
+          floor: '1st Floor',
+          room: 'Reception',
+          area: 'Reception Desk',
+          building: 'Main Building'
+        },
+        project: {
+          id: '2001',
+          name: 'Akbank Head Office Renovation',
+          phase: 'Completion',
+          workCategory: 'Millwork'
+        },
+        quality: {
+          resolution: { width: 4032, height: 3024 },
+          fileSize: '3.2',
+          format: 'JPEG'
+        },
+        tags: ['milestone', 'completion', 'reception-desk'],
+        caption: 'Reception desk installation completed',
+        description: 'Custom reception desk installation milestone achieved',
+        category: 'milestone',
+        priority: 'high',
+        device: {
+          camera: 'iPhone 14 Pro',
+          lens: 'Main Camera',
+          settings: {}
+        },
+        construction: {
+          trade: 'Millwork',
+          workType: 'Installation',
+          inspectionType: '',
+          defectType: '',
+          status: 'completed'
+        },
+        createdBy: 'project-manager',
+        assignedTo: '',
+        reviewStatus: 'approved',
+        approvalStatus: 'approved'
+      }
+    ];
+
+    mockPhotos.forEach(photo => {
+      this.photos.set(photo.id, photo);
+    });
   }
 
   /**

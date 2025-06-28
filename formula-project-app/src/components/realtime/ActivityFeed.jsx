@@ -16,8 +16,8 @@ import {
   Badge
 } from '@mui/material';
 import {
-  ClipboardCheck as Assignment,
-  Group as People,
+  ClipboardCheck as Task,
+  Group as Group,
   Building as Business,
   ChatBubble as Comment,
   Refresh as Update,
@@ -25,7 +25,7 @@ import {
   Edit,
   Trash as Delete,
   Check,
-  Play as PlayArrow,
+  Play as Play,
   Pause,
   Xmark as Block,
   Page as Description,

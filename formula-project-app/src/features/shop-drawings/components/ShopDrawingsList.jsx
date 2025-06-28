@@ -46,11 +46,21 @@ import {
   History as HistoryIcon,
   Folder as FolderIcon
 } from '@mui/icons-material';
-import EnhancedHeader from '../../../components/ui/UnifiedHeader';
-import EnhancedTabSystem from '../../../components/layout/EnhancedTabSystem';
+// Note: EnhancedHeader and EnhancedTabSystem are not used in this component
+// import EnhancedHeader from '../../../components/ui/UnifiedHeader';
+// import EnhancedTabSystem from '../../../components/layout/EnhancedTabSystem';
 import { useShopDrawings } from '../hooks/useShopDrawings';
 
 const ShopDrawingsList = ({ 
+  drawings = [],
+  loading = false,
+  onViewDrawing,
+  onEditDrawing,
+  onDeleteDrawing,
+  onUploadDrawing,
+  onApproveDrawing,
+  onRejectDrawing,
+  onRefresh,
   projects = [],
   teamMembers = [],
   compactMode = false,
@@ -63,15 +73,19 @@ const ShopDrawingsList = ({
   const [selectedDrawing, setSelectedDrawing] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Use the shop drawings hook
+  // Use passed props instead of hook, but keep hook as fallback
   const {
-    drawings: shopDrawings,
-    loading,
+    drawings: hookDrawings,
+    loading: hookLoading,
     error,
-    uploadDrawing,
+    uploadDrawing: hookUploadDrawing,
     updateDrawing,
     deleteDrawing: removeDrawing
   } = useShopDrawings();
+
+  // Use passed props if available, otherwise fallback to hook
+  const activeDrawings = drawings.length > 0 ? drawings : hookDrawings;
+  const activeLoading = loading !== undefined ? loading : hookLoading;
 
 
   const [uploadForm, setUploadForm] = useState({
@@ -112,8 +126,14 @@ const ShopDrawingsList = ({
     setSelectedDrawing(null);
   };
 
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+
   const handleUploadSubmit = async () => {
     try {
+      setUploading(true);
+      setUploadError(null);
+      
       // Create FormData for file upload
       const formData = new FormData();
       formData.append('file', uploadForm.file);
@@ -122,21 +142,32 @@ const ShopDrawingsList = ({
       formData.append('room', uploadForm.room);
       formData.append('notes', uploadForm.notes || 'Initial submission');
       
-      // Use the hook to upload the drawing
-      await uploadDrawing(formData);
+      // Use callback prop if available, otherwise use hook
+      if (onUploadDrawing) {
+        await onUploadDrawing(formData);
+      } else {
+        await hookUploadDrawing(formData);
+      }
       
       setUploadDialogOpen(false);
       setUploadForm({ projectId: '', drawingType: '', room: '', file: null, notes: '' });
+      
+      // Refresh the list if callback provided
+      if (onRefresh) {
+        onRefresh();
+      }
     } catch (error) {
       console.error('Failed to upload drawing:', error);
-      // Handle error - could show a notification here
+      setUploadError(error.message || 'Failed to upload drawing. Please try again.');
+    } finally {
+      setUploading(false);
     }
   };
 
-  const filteredDrawings = shopDrawings.filter(drawing => {
-    const matchesSearch = drawing.fileName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         drawing.drawingType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         drawing.room.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredDrawings = activeDrawings.filter(drawing => {
+    const matchesSearch = drawing.fileName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         drawing.drawingType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         drawing.room?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesProject = selectedProject === 'all' || drawing.projectId === selectedProject;
     return matchesSearch && matchesProject;
   });
@@ -362,7 +393,7 @@ const ShopDrawingsList = ({
           backgroundColor: 'transparent'
         }
       }}>
-        {loading ? (
+        {activeLoading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
             <CircularProgress />
           </Box>
@@ -377,7 +408,12 @@ const ShopDrawingsList = ({
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem onClick={() => {
+          if (onViewDrawing && selectedDrawing) {
+            onViewDrawing(selectedDrawing);
+          }
+          handleMenuClose();
+        }}>
           <ViewIcon sx={{ mr: 1 }} /> View PDF
         </MenuItem>
         <MenuItem onClick={handleMenuClose}>
@@ -386,20 +422,40 @@ const ShopDrawingsList = ({
         <MenuItem onClick={handleMenuClose}>
           <HistoryIcon sx={{ mr: 1 }} /> Version History
         </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem onClick={() => {
+          if (onEditDrawing && selectedDrawing) {
+            onEditDrawing(selectedDrawing);
+          }
+          handleMenuClose();
+        }}>
           <EditIcon sx={{ mr: 1 }} /> Edit Details
         </MenuItem>
         {selectedDrawing?.status === 'pending' && (
           <>
-            <MenuItem onClick={handleMenuClose}>
+            <MenuItem onClick={() => {
+              if (onApproveDrawing && selectedDrawing) {
+                onApproveDrawing(selectedDrawing.id);
+              }
+              handleMenuClose();
+            }}>
               <ApproveIcon sx={{ mr: 1 }} /> Approve
             </MenuItem>
-            <MenuItem onClick={handleMenuClose}>
+            <MenuItem onClick={() => {
+              if (onRejectDrawing && selectedDrawing) {
+                onRejectDrawing(selectedDrawing.id, 'Requires revision');
+              }
+              handleMenuClose();
+            }}>
               <RejectIcon sx={{ mr: 1 }} /> Request Revision
             </MenuItem>
           </>
         )}
-        <MenuItem onClick={handleMenuClose} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={() => {
+          if (onDeleteDrawing && selectedDrawing) {
+            onDeleteDrawing(selectedDrawing.id);
+          }
+          handleMenuClose();
+        }} sx={{ color: 'error.main' }}>
           <DeleteIcon sx={{ mr: 1 }} /> Delete
         </MenuItem>
       </Menu>
@@ -408,6 +464,11 @@ const ShopDrawingsList = ({
       <Dialog open={uploadDialogOpen} onClose={() => setUploadDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Upload Shop Drawing</DialogTitle>
         <DialogContent>
+          {uploadError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {uploadError}
+            </Alert>
+          )}
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12}>
               <FormControl fullWidth>
@@ -474,13 +535,14 @@ const ShopDrawingsList = ({
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setUploadDialogOpen(false)}>Cancel</Button>
+          <Button onClick={() => setUploadDialogOpen(false)} disabled={uploading}>Cancel</Button>
           <Button 
             onClick={handleUploadSubmit} 
             variant="contained"
-            disabled={!uploadForm.projectId || !uploadForm.drawingType || !uploadForm.file}
+            disabled={!uploadForm.projectId || !uploadForm.drawingType || !uploadForm.file || uploading}
+            startIcon={uploading ? <CircularProgress size={20} /> : null}
           >
-            Upload Drawing
+            {uploading ? 'Uploading...' : 'Upload Drawing'}
           </Button>
         </DialogActions>
       </Dialog>

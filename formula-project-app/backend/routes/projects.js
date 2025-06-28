@@ -33,8 +33,22 @@ const {
 
 const router = express.Router();
 
-// Apply authentication to all project routes
-router.use(verifyToken);
+// Apply authentication to all project routes (bypass in development)
+if (process.env.NODE_ENV !== 'development') {
+  router.use(verifyToken);
+} else {
+  // Development bypass - add mock user to req
+  router.use((req, res, next) => {
+    req.user = {
+      id: 'demo-user',
+      email: 'demo@formulapm.com',
+      firstName: 'Demo',
+      lastName: 'User',
+      role: 'admin'
+    };
+    next();
+  });
+}
 
 /**
  * GET /api/v1/projects

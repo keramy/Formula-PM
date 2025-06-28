@@ -31,8 +31,8 @@ import {
   HalfMoon as Brightness4, // Dark mode icon
   SunLight as Brightness7, // Light mode icon
   Settings,
-  User as Person,
-  LogOut as Logout // Logout icon
+  User as User,
+  LogOut as Logout // LogOut icon
 } from 'iconoir-react';
 import FormulaLogo from '../branding/FormulaLogo';
 import { FormulaLogoCompact } from '../branding/LogoVariations';
