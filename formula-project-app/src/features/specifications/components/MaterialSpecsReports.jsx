@@ -30,7 +30,7 @@ import {
 } from '@mui/material';
 import {
   StatsReport as ReportIcon,
-  TrendingUp as TrendingUpIcon,
+  ArrowUp as ArrowUpIcon,
   DollarCircle as CostIcon,
   Dashboard as PerformanceIcon,
   Timeline as TimelineIcon,
@@ -38,9 +38,9 @@ import {
   BarChart as BarChartIcon,
   Download as DownloadIcon,
   Mail as EmailIcon,
-  Calendar as ScheduleIcon,
+  Calendar as CalendarIcon,
   CheckCircle as CompleteIcon,
-  Warning as WarningIcon,
+  WarningTriangle as WarningIcon,
   Leaf as SustainabilityIcon,
   ShieldCheck as ComplianceIcon,
   Building as VendorIcon,
@@ -52,7 +52,7 @@ const MaterialSpecsReports = ({
   vendors = [],
   purchaseOrders = [],
   onGenerateReport,
-  onScheduleReport,
+  onCalendarReport,
   onExportData
 }) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -134,7 +134,7 @@ const MaterialSpecsReports = ({
     });
   }, [specifications]);
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'approved':
       case 'completed':
@@ -148,7 +148,7 @@ const MaterialSpecsReports = ({
     }
   };
 
-  const getPerformanceColor = (percentage) => {
+  const getPerformancePalette = (percentage) => {
     if (percentage >= 95) return 'success';
     if (percentage >= 85) return 'warning';
     return 'error';
@@ -203,7 +203,7 @@ const MaterialSpecsReports = ({
       <Grid item xs={12} sm={6} md={3}>
         <Card>
           <CardContent sx={{ textAlign: 'center' }}>
-            <TrendingUpIcon color="success" sx={{ fontSize: 40, mb: 1 }} />
+            <ArrowUpIcon color="success" sx={{ fontSize: 40, mb: 1 }} />
             <Typography variant="h4" color="success.main" fontWeight={600}>
               ${Math.round(analyticsData.avgCostPerSpec || 0).toLocaleString()}
             </Typography>
@@ -296,7 +296,7 @@ const MaterialSpecsReports = ({
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-          <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
+          <TableRow sx={{ backgroundPalette: '#f8f9fa' }}>
             <TableCell><strong>Vendor</strong></TableCell>
             <TableCell><strong>Orders</strong></TableCell>
             <TableCell><strong>On-Time Delivery</strong></TableCell>
@@ -316,7 +316,7 @@ const MaterialSpecsReports = ({
                   <Chip
                     label={vendor.onTime >= 95 ? 'Excellent' : vendor.onTime >= 85 ? 'Good' : 'Needs Improvement'}
                     size="small"
-                    color={getPerformanceColor(vendor.onTime)}
+                    color={getPerformancePalette(vendor.onTime)}
                   />
                 </Box>
               </TableCell>
@@ -331,7 +331,7 @@ const MaterialSpecsReports = ({
                 <LinearProgress
                   variant="determinate"
                   value={vendor.onTime}
-                  color={getPerformanceColor(vendor.onTime)}
+                  color={getPerformancePalette(vendor.onTime)}
                   sx={{ width: 100 }}
                 />
               </TableCell>
@@ -465,9 +465,9 @@ const MaterialSpecsReports = ({
           <Button
             variant="outlined"
             startIcon={<EmailIcon />}
-            onClick={() => onScheduleReport && onScheduleReport(reportType)}
+            onClick={() => onCalendarReport && onCalendarReport(reportType)}
           >
-            Schedule Report
+            Calendar Report
           </Button>
           <Button
             variant="contained"

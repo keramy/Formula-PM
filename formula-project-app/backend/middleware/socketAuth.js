@@ -4,6 +4,7 @@
  */
 
 const jwt = require('jsonwebtoken');
+const securityConfig = require('../config/security');
 
 /**
  * Create Socket.IO authentication middleware with Prisma instance
@@ -23,8 +24,8 @@ const createSocketAuth = (prisma) => {
         return next(new Error('Authentication token required'));
       }
 
-      // Verify JWT token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      // Verify JWT token using secure config
+      const decoded = securityConfig.verifyToken(token);
       
       if (!decoded.userId) {
         console.log('🔐 Socket connection denied: Invalid token payload');

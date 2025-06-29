@@ -33,12 +33,14 @@ import {
   User as User,
   Dashboard,
   Folder as FolderOpen,
-  Calendar as Timeline,
+  ArrowUp as Timeline,
   Building as Engineering,
   Menu as MenuOpen,
   Menu,
   Page as Description,
-  Building as Business
+  Building as Business,
+  NavArrowUp as ExpandLess,
+  NavArrowDown as ExpandMore
 } from 'iconoir-react';
 import FormulaLogo from '../branding/FormulaLogo';
 
@@ -78,18 +80,18 @@ const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onTogg
     { id: 0, label: 'Home', icon: <Home />, path: '/dashboard' },
     { id: 'updates', label: 'Updates', icon: <Notifications />, path: '/updates' },
     { id: 'inbox', label: 'Inbox', icon: <Inbox />, path: '/inbox' },
-    { id: 3, label: 'Your tasks', icon: <Assignment />, path: '/tasks' }
+    { id: 3, label: 'Your tasks', icon: <Task />, path: '/tasks' }
   ];
 
   const projectsItems = [
     { id: 0, label: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
     { id: 1, label: 'All Projects', icon: <FolderOpen />, path: '/projects' },
-    { id: 2, label: 'My Work', icon: <Person />, path: '/my-work' },
+    { id: 2, label: 'My Work', icon: <User />, path: '/my-work' },
     { id: 7, label: 'Timeline', icon: <Timeline />, path: '/timeline' }
   ];
 
   const workManagementItems = [
-    { id: 3, label: 'Tasks', icon: <Assignment />, path: '/tasks' },
+    { id: 3, label: 'Tasks', icon: <Task />, path: '/tasks' },
     { id: 8, label: 'Shop Drawings', icon: <Engineering />, path: '/shop-drawings' },
     { id: 9, label: 'Material Specs', icon: <Description />, path: '/material-specs' },
     { id: 'reports', label: 'Reports', icon: <Folder />, path: '/reports' }
@@ -130,12 +132,12 @@ const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onTogg
           borderRadius: 1.5,
           mx: 1,
           minHeight: 28,
-          backgroundColor: itemIsActive ? colors.activeBackground : 'transparent',
+          backgroundPalette: itemIsActive ? colors.activeBackground : 'transparent',
           color: itemIsActive ? colors.textPrimary : colors.textSecondary,
           fontSize: '14px',
           justifyContent: isCollapsed ? 'center' : 'flex-start',
           '&:hover': {
-            backgroundColor: colors.hoverBackground,
+            backgroundPalette: colors.hoverBackground,
             color: colors.textPrimary
           },
           transition: 'all 0.2s ease'
@@ -210,7 +212,7 @@ const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onTogg
       sx={{
         width: isCollapsed ? 70 : 240,
         height: '100vh',
-        backgroundColor: colors.background,
+        backgroundPalette: colors.background,
         borderRight: `1px solid ${colors.border}`,
         display: 'flex',
         flexDirection: 'column',

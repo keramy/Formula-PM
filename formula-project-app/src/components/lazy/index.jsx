@@ -132,7 +132,7 @@ export const ListSkeleton = ({ count = 3, SkeletonComponent = null }) => {
   const DefaultSkeleton = () => (
     <div style={{ 
       height: '80px', 
-      backgroundColor: '#f8f8f8', 
+      backgroundPalette: '#f8f8f8', 
       borderRadius: '8px', 
       marginBottom: '12px',
       border: '1px solid #e0e0e0'
@@ -153,7 +153,7 @@ export const ListSkeleton = ({ count = 3, SkeletonComponent = null }) => {
 export const ProjectCardSkeleton = () => (
   <div style={{ 
     height: '120px', 
-    backgroundColor: '#f8f8f8', 
+    backgroundPalette: '#f8f8f8', 
     borderRadius: '8px', 
     marginBottom: '16px',
     border: '1px solid #e0e0e0',
@@ -161,21 +161,21 @@ export const ProjectCardSkeleton = () => (
   }}>
     <div style={{ 
       height: '16px', 
-      backgroundColor: '#e0e0e0', 
+      backgroundPalette: '#e0e0e0', 
       borderRadius: '4px', 
       marginBottom: '8px',
       width: '60%'
     }} />
     <div style={{ 
       height: '12px', 
-      backgroundColor: '#f0f0f0', 
+      backgroundPalette: '#f0f0f0', 
       borderRadius: '4px', 
       marginBottom: '8px',
       width: '40%'
     }} />
     <div style={{ 
       height: '12px', 
-      backgroundColor: '#f0f0f0', 
+      backgroundPalette: '#f0f0f0', 
       borderRadius: '4px', 
       width: '80%'
     }} />
@@ -185,7 +185,7 @@ export const ProjectCardSkeleton = () => (
 export const TaskRowSkeleton = () => (
   <div style={{ 
     height: '60px', 
-    backgroundColor: '#f8f8f8', 
+    backgroundPalette: '#f8f8f8', 
     borderRadius: '4px', 
     marginBottom: '8px',
     border: '1px solid #e0e0e0',
@@ -197,20 +197,20 @@ export const TaskRowSkeleton = () => (
     <div style={{ 
       width: '24px', 
       height: '24px', 
-      backgroundColor: '#e0e0e0', 
+      backgroundPalette: '#e0e0e0', 
       borderRadius: '50%'
     }} />
     <div style={{ flex: 1 }}>
       <div style={{ 
         height: '14px', 
-        backgroundColor: '#e0e0e0', 
+        backgroundPalette: '#e0e0e0', 
         borderRadius: '4px', 
         marginBottom: '4px',
         width: '70%'
       }} />
       <div style={{ 
         height: '12px', 
-        backgroundColor: '#f0f0f0', 
+        backgroundPalette: '#f0f0f0', 
         borderRadius: '4px', 
         width: '50%'
       }} />
@@ -221,7 +221,7 @@ export const TaskRowSkeleton = () => (
 export const TeamMemberSkeleton = () => (
   <div style={{ 
     height: '100px', 
-    backgroundColor: '#f8f8f8', 
+    backgroundPalette: '#f8f8f8', 
     borderRadius: '8px', 
     marginBottom: '16px',
     border: '1px solid #e0e0e0',
@@ -233,27 +233,27 @@ export const TeamMemberSkeleton = () => (
     <div style={{ 
       width: '48px', 
       height: '48px', 
-      backgroundColor: '#e0e0e0', 
+      backgroundPalette: '#e0e0e0', 
       borderRadius: '50%'
     }} />
     <div style={{ flex: 1 }}>
       <div style={{ 
         height: '16px', 
-        backgroundColor: '#e0e0e0', 
+        backgroundPalette: '#e0e0e0', 
         borderRadius: '4px', 
         marginBottom: '8px',
         width: '60%'
       }} />
       <div style={{ 
         height: '12px', 
-        backgroundColor: '#f0f0f0', 
+        backgroundPalette: '#f0f0f0', 
         borderRadius: '4px', 
         marginBottom: '4px',
         width: '40%'
       }} />
       <div style={{ 
         height: '12px', 
-        backgroundColor: '#f0f0f0', 
+        backgroundPalette: '#f0f0f0', 
         borderRadius: '4px', 
         width: '50%'
       }} />

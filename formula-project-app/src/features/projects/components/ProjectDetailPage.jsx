@@ -23,21 +23,21 @@ import {
   LinearProgress
 } from '@mui/material';
 import {
-  ArrowBack as BackIcon,
+  ArrowLeft as BackIcon,
   Edit as EditIcon,
-  Architecture as DrawingIcon,
-  Inventory as SpecIcon,
-  Assignment as TaskIcon,
-  Description as DocumentIcon,
+  Design2D as DrawingIcon,
+  Archive as SpecIcon,
+  Check as TaskIcon,
+  Page as DocumentIcon,
   Timeline as TimelineIcon,
-  AttachMoney as BudgetIcon,
-  People as TeamIcon,
-  CalendarToday as CalendarIcon,
+  DollarCircle as BudgetIcon,
+  Group as TeamIcon,
+  Calendar as CalendarIcon,
   Link as LinkIcon,
-  Visibility as ViewIcon,
-  Add as AddIcon,
-  TrendingUp as ProgressIcon
-} from '@mui/icons-material';
+  Eye as ViewIcon,
+  Plus as AddIcon,
+  ArrowUp as ProgressIcon
+} from 'iconoir-react';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import ComplianceDocumentation from './ComplianceDocumentation';
 import { useShopDrawings } from '../../shop-drawings/hooks/useShopDrawings';
@@ -98,7 +98,7 @@ const ProjectDetailPage = ({
   const approvedDrawings = projectDrawings.filter(drawing => drawing.status === 'approved').length;
   const drawingProgress = projectDrawings.length > 0 ? (approvedDrawings / projectDrawings.length) * 100 : 0;
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'active': return '#4CAF50';
       case 'planning': return '#FF9800';
@@ -124,7 +124,7 @@ const ProjectDetailPage = ({
               <Chip 
                 label={project.status || 'Active'}
                 sx={{ 
-                  backgroundColor: getStatusColor(project.status),
+                  backgroundPalette: getStatusPalette(project.status),
                   color: 'white',
                   fontWeight: 600,
                   mt: 0.5
@@ -301,7 +301,7 @@ const ProjectDetailPage = ({
                       label={drawing.status}
                       size="small"
                       sx={{ 
-                        backgroundColor: 
+                        backgroundPalette: 
                           drawing.status === 'approved' ? '#4CAF50' :
                           drawing.status === 'pending' ? '#FF9800' : '#F44336',
                         color: 'white',
@@ -381,7 +381,7 @@ const ProjectDetailPage = ({
                         label={spec.status}
                         size="small"
                         sx={{ 
-                          backgroundColor: 
+                          backgroundPalette: 
                             spec.status === 'approved' ? '#4CAF50' : '#FF9800',
                           color: 'white',
                           fontSize: '0.7rem',
@@ -480,7 +480,7 @@ const ProjectDetailPage = ({
                       label={task.status}
                       size="small"
                       sx={{ 
-                        backgroundColor: 
+                        backgroundPalette: 
                           task.status === 'completed' ? '#4CAF50' :
                           task.status === 'in-progress' ? '#FF9800' : '#2196F3',
                         color: 'white',
@@ -526,7 +526,7 @@ const ProjectDetailPage = ({
 
       <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
         {/* Tabs */}
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ borderBottom: 1, borderPalette: 'divider' }}>
           <Tabs 
             value={currentTab} 
             onChange={(e, newValue) => setCurrentTab(newValue)}

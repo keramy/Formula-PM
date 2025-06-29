@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Paper, Typography, Box, useTheme } from '@mui/material';
 // Iconoir icons - migrated trending icons
-import { ArrowUp as TrendingUp, ArrowDown as TrendingDown } from 'iconoir-react';
+import { ArrowUp as ArrowUp, ArrowDown as TrendingDown } from 'iconoir-react';
 
 const ModernStatsCards = ({ projects = [], tasks = [], teamMembers = [] }) => {
   const theme = useTheme();
@@ -110,7 +110,7 @@ const ModernStatsCards = ({ projects = [], tasks = [], teamMembers = [] }) => {
             sx={{
               p: 3,
               background: stat.gradient,
-              backgroundColor: theme.palette.background.paper,
+              backgroundPalette: theme.palette.background.paper,
               border: `1px solid ${theme.palette.divider}`,
               borderRadius: 'var(--border-radius-lg, 12px)',
               height: '140px',
@@ -121,7 +121,7 @@ const ModernStatsCards = ({ projects = [], tasks = [], teamMembers = [] }) => {
               boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1))',
               '&:hover': {
                 boxShadow: 'var(--shadow-hover, 0 4px 20px rgba(0, 0, 0, 0.15))',
-                borderColor: stat.color,
+                borderPalette: stat.color,
                 transform: 'translateY(-2px)'
               }
             }}
@@ -175,7 +175,7 @@ const ModernStatsCards = ({ projects = [], tasks = [], teamMembers = [] }) => {
                 }}
               >
                 {stat.isPositive ? (
-                  <TrendingUp sx={{ fontSize: 16 }} />
+                  <ArrowUp sx={{ fontSize: 16 }} />
                 ) : (
                   <TrendingDown sx={{ fontSize: 16 }} />
                 )}

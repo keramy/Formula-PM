@@ -42,10 +42,10 @@ import {
 } from '@mui/material';
 import {
   CheckCircle as CheckCircleIcon,
-  Warning as WarningIcon,
-  Cancel as ErrorIcon,
-  Calendar as ScheduleIcon,
-  Check as AssignmentIcon,
+  WarningTriangle as WarningIcon,
+  Xmark as ErrorIcon,
+  Calendar as CalendarIcon,
+  Check as CheckIcon,
   CloudUpload as UploadIcon,
   Page as FileIcon,
   MoreVert as MoreVertIcon,
@@ -102,7 +102,7 @@ const ComplianceTracking = ({
     setComplianceData(mockCompliance);
   }, [specifications]);
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'compliant':
       case 'approved':
@@ -126,7 +126,7 @@ const ComplianceTracking = ({
       case 'met':
         return <CheckCircleIcon color="success" />;
       case 'pending':
-        return <ScheduleIcon color="warning" />;
+        return <CalendarIcon color="warning" />;
       case 'non_compliant':
       case 'rejected':
       case 'missing':
@@ -136,7 +136,7 @@ const ComplianceTracking = ({
     }
   };
 
-  const getRiskColor = (risk) => {
+  const getRiskPalette = (risk) => {
     switch (risk) {
       case 'high': return 'error';
       case 'medium': return 'warning';
@@ -261,7 +261,7 @@ const ComplianceTracking = ({
         </FormControl>
         <Button
           variant="outlined"
-          startIcon={<AssignmentIcon />}
+          startIcon={<CheckIcon />}
           onClick={() => onGenerateReport && onGenerateReport('compliance')}
         >
           Generate Report
@@ -272,7 +272,7 @@ const ComplianceTracking = ({
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
+            <TableRow sx={{ backgroundPalette: '#f8f9fa' }}>
               <TableCell><strong>Item ID</strong></TableCell>
               <TableCell><strong>Description</strong></TableCell>
               <TableCell><strong>Status</strong></TableCell>
@@ -302,7 +302,7 @@ const ComplianceTracking = ({
                     <Chip
                       label={item.complianceStatus.replace('_', ' ')}
                       size="small"
-                      color={getStatusColor(item.complianceStatus)}
+                      color={getStatusPalette(item.complianceStatus)}
                       variant="outlined"
                     />
                   </Box>
@@ -311,7 +311,7 @@ const ComplianceTracking = ({
                   <Chip
                     label={item.riskLevel}
                     size="small"
-                    color={getRiskColor(item.riskLevel)}
+                    color={getRiskPalette(item.riskLevel)}
                   />
                 </TableCell>
                 <TableCell>
@@ -321,7 +321,7 @@ const ComplianceTracking = ({
                         key={index}
                         label={cert.type}
                         size="small"
-                        color={getStatusColor(cert.status)}
+                        color={getStatusPalette(cert.status)}
                         variant="outlined"
                       />
                     ))}
@@ -370,7 +370,7 @@ const ComplianceTracking = ({
             </Typography>
             <Chip
               label={selectedSpec?.complianceStatus?.replace('_', ' ')}
-              color={getStatusColor(selectedSpec?.complianceStatus)}
+              color={getStatusPalette(selectedSpec?.complianceStatus)}
               variant="outlined"
             />
           </Box>
@@ -411,7 +411,7 @@ const ComplianceTracking = ({
                         <Chip
                           label={req.status.replace('_', ' ')}
                           size="small"
-                          color={getStatusColor(req.status)}
+                          color={getStatusPalette(req.status)}
                           variant="outlined"
                         />
                       </ListItem>
@@ -441,7 +441,7 @@ const ComplianceTracking = ({
                               <Chip
                                 label={cert.status}
                                 size="small"
-                                color={getStatusColor(cert.status)}
+                                color={getStatusPalette(cert.status)}
                               />
                             </Box>
                             {cert.date && (
@@ -474,7 +474,7 @@ const ComplianceTracking = ({
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <AssignmentIcon />
+                    <CheckIcon />
                     <Typography variant="h6">Approval Workflow</Typography>
                   </Box>
                 </AccordionSummary>

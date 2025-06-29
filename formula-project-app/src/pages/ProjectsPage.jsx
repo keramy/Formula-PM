@@ -23,12 +23,12 @@ import {
   FilterList,
   List as ViewList,
   ViewGrid as ViewModule,
-  Calendar as Timeline,
-  ArrowUp as TrendingUp,
+  ArrowUp as Timeline,
+  ArrowUp as ArrowUpIcon,
   ClipboardCheck as Task,
   User as Group,
   Calendar as CalendarToday,
-  Clock as Schedule,
+  Clock as Calendar,
   Trash as MoreVert
 } from 'iconoir-react';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
@@ -170,7 +170,7 @@ const ProjectsPage = ({
         label="Overview" 
         isActive={activeTab === 'overview'}
         onClick={() => setActiveTab('overview')}
-        icon={<TrendingUp sx={{ fontSize: 16 }} />}
+        icon={<ArrowUp sx={{ fontSize: 16 }} />}
       />
       <CleanTab 
         label="All Projects" 
@@ -238,7 +238,7 @@ const ProjectsPage = ({
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundColor: `${color}20`,
+              backgroundPalette: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -255,7 +255,7 @@ const ProjectsPage = ({
 
   const ProjectCard = ({ project }) => {
     const manager = getProjectManager(project.managerId);
-    const progressColor = project.progress >= 75 ? '#10B981' : project.progress >= 50 ? '#E3AF64' : '#516AC8';
+    const progressPalette = project.progress >= 75 ? '#10B981' : project.progress >= 50 ? '#E3AF64' : '#516AC8';
     
     return (
       <Card className="clean-card" sx={{ height: '100%', cursor: 'pointer' }} onClick={() => onViewProject && onViewProject(project)}>
@@ -314,7 +314,7 @@ const ProjectsPage = ({
               className="clean-progress-bar"
               sx={{
                 '& .MuiLinearProgress-bar': {
-                  backgroundColor: progressColor
+                  backgroundPalette: progressPalette
                 }
               }}
             />
@@ -322,7 +322,7 @@ const ProjectsPage = ({
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Schedule sx={{ fontSize: 14, color: '#9CA3AF' }} />
+              <Calendar sx={{ fontSize: 14, color: '#9CA3AF' }} />
               <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '12px' }}>
                 Due {new Date(project.endDate).toLocaleDateString()}
               </Typography>
@@ -377,7 +377,7 @@ const ProjectsPage = ({
             title="Total Projects"
             value={projectStats.total}
             subtitle={`${projectStats.active} active`}
-            icon={<Assignment />}
+            icon={<Check />}
             color="#516AC8"
           />
         </Grid>
@@ -386,7 +386,7 @@ const ProjectsPage = ({
             title="Completed"
             value={projectStats.completed}
             subtitle={`${Math.round((projectStats.completed / projectStats.total) * 100) || 0}% completion rate`}
-            icon={<TrendingUp />}
+            icon={<ArrowUp />}
             color="#10B981"
           />
         </Grid>
@@ -395,7 +395,7 @@ const ProjectsPage = ({
             title="Total Budget"
             value={formatCurrency(projectStats.totalBudget)}
             subtitle="Across all projects"
-            icon={<Assignment />}
+            icon={<Check />}
             color="#E3AF64"
           />
         </Grid>
@@ -404,7 +404,7 @@ const ProjectsPage = ({
             title="Overdue"
             value={projectStats.overdue}
             subtitle="Requires attention"
-            icon={<Schedule />}
+            icon={<Calendar />}
             color="#EF4444"
           />
         </Grid>
@@ -437,7 +437,7 @@ const ProjectsPage = ({
         <Grid item xs={12} lg={4}>
           <Card className="clean-card">
             <Box className="clean-section-header">
-              <Box className="clean-section-indicator" sx={{ backgroundColor: '#EF4444' }}></Box>
+              <Box className="clean-section-indicator" sx={{ backgroundPalette: '#EF4444' }}></Box>
               <Typography className="clean-section-title">
                 Upcoming Deadlines
               </Typography>
@@ -451,7 +451,7 @@ const ProjectsPage = ({
                       p: 2,
                       borderBottom: index < upcomingDeadlines.length - 1 ? '1px solid #E5E7EB' : 'none',
                       '&:hover': {
-                        backgroundColor: '#F6F3E7'
+                        backgroundPalette: '#F6F3E7'
                       }
                     }}
                   >

@@ -91,7 +91,7 @@ const UnifiedSearch = ({
   };
 
   // Result type colors
-  const typeColors = {
+  const typePalettes = {
     project: '#2196F3',
     task: '#FF9800',
     team: '#4CAF50',
@@ -298,15 +298,15 @@ const UnifiedSearch = ({
           sx={{
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: 'background.paper',
+            backgroundPalette: 'background.paper',
             border: 1,
-            borderColor: isOpen ? 'primary.main' : 'divider',
+            borderPalette: isOpen ? 'primary.main' : 'divider',
             borderRadius: 1,
             boxShadow: isOpen ? 1 : 0,
             transition: 'all 0.2s',
             ...variantStyles[variant],
             '&:hover': {
-              borderColor: 'primary.light'
+              borderPalette: 'primary.light'
             }
           }}
         >
@@ -427,7 +427,7 @@ const UnifiedSearch = ({
                         sx={{
                           py: 1,
                           px: 2,
-                          '&:hover': { backgroundColor: 'action.hover' }
+                          '&:hover': { backgroundPalette: 'action.hover' }
                         }}
                       >
                         <ListItemIcon sx={{ minWidth: 36 }}>
@@ -444,7 +444,7 @@ const UnifiedSearch = ({
                 {results.map((result, index) => {
                   const isSelected = index === selectedIndex;
                   const Icon = categoryIcons[result.type] || categoryIcons.default;
-                  const color = typeColors[result.type] || typeColors.default;
+                  const color = typePalettes[result.type] || typePalettes.default;
                   
                   return (
                     <ListItem
@@ -456,10 +456,10 @@ const UnifiedSearch = ({
                       sx={{
                         py: 1.5,
                         px: 2,
-                        '&:hover': { backgroundColor: 'action.hover' },
+                        '&:hover': { backgroundPalette: 'action.hover' },
                         '&.Mui-selected': {
-                          backgroundColor: 'action.selected',
-                          '&:hover': { backgroundColor: 'action.selected' }
+                          backgroundPalette: 'action.selected',
+                          '&:hover': { backgroundPalette: 'action.selected' }
                         }
                       }}
                       role="option"
@@ -482,7 +482,7 @@ const UnifiedSearch = ({
                               sx={{
                                 height: 20,
                                 fontSize: '0.7rem',
-                                backgroundColor: color,
+                                backgroundPalette: color,
                                 color: 'white'
                               }}
                             />
@@ -512,8 +512,8 @@ const UnifiedSearch = ({
                       sx={{
                         py: 1,
                         px: 2,
-                        backgroundColor: 'grey.50',
-                        '&:hover': { backgroundColor: 'grey.100' }
+                        backgroundPalette: 'grey.50',
+                        '&:hover': { backgroundPalette: 'grey.100' }
                       }}
                     >
                       <ListItemText

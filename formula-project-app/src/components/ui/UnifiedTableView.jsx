@@ -108,7 +108,7 @@ const UnifiedTableView = ({
       if (typeof renderedValue === 'object' && renderedValue !== null && !React.isValidElement(renderedValue)) {
         
         // Handle avatar objects (check for avatar-specific properties)
-        if (renderedValue.hasOwnProperty('fallback') || renderedValue.hasOwnProperty('bgColor') || renderedValue.hasOwnProperty('text')) {
+        if (renderedValue.hasOwnProperty('fallback') || renderedValue.hasOwnProperty('bgPalette') || renderedValue.hasOwnProperty('text')) {
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Avatar 
@@ -116,7 +116,7 @@ const UnifiedTableView = ({
                 sx={{ 
                   width: 32, 
                   height: 32,
-                  backgroundColor: renderedValue.bgColor || 'primary.main'
+                  backgroundPalette: renderedValue.bgPalette || 'primary.main'
                 }}
               >
                 {renderedValue.fallback || '?'}
@@ -150,7 +150,7 @@ const UnifiedTableView = ({
               size="small"
               icon={renderedValue.icon || null}
               sx={{
-                backgroundColor: renderedValue.bgColor || 'grey.100',
+                backgroundPalette: renderedValue.bgPalette || 'grey.100',
                 color: renderedValue.color || 'text.primary',
                 fontWeight: 500,
                 '& .MuiChip-icon': {
@@ -189,7 +189,7 @@ const UnifiedTableView = ({
               sx={{ 
                 width: 32, 
                 height: 32,
-                backgroundColor: value?.bgColor || 'primary.main'
+                backgroundPalette: value?.bgPalette || 'primary.main'
               }}
             >
               {value?.fallback || (typeof value === 'string' ? value.charAt(0) : '')}
@@ -206,7 +206,7 @@ const UnifiedTableView = ({
             size="small"
             icon={value.icon || null}
             sx={{
-              backgroundColor: value.bgColor || 'grey.100',
+              backgroundPalette: value.bgPalette || 'grey.100',
               color: value.color || 'text.primary',
               fontWeight: 500,
               '& .MuiChip-icon': {
@@ -392,7 +392,7 @@ const UnifiedTableView = ({
                       color: 'var(--gray-400)',
                       '&:hover': {
                         color: 'var(--construction-500)',
-                        backgroundColor: 'var(--construction-50)'
+                        backgroundPalette: 'var(--construction-50)'
                       }
                     }}
                   >

@@ -7,7 +7,6 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs').promises;
 const path = require('path');
 const moment = require('moment');
-const { PrismaClient } = require('@prisma/client');
 const cacheService = require('./cacheService');
 const auditService = require('./auditService');
 const ProjectService = require('./ProjectService');
@@ -23,8 +22,8 @@ try {
   ChartJSNodeCanvas = null;
 }
 
-const prisma = new PrismaClient();
-
+// Will be initialized with shared database service
+let prisma = null;
 class ReportGenerator {
   constructor() {
     this.config = {
@@ -88,6 +87,13 @@ class ReportGenerator {
     // Initialize chart renderer only if available
     this.chartRenderer = ChartJSNodeCanvas ? new ChartJSNodeCanvas(this.config.chartConfig) : null;
     this.ensureDirectories();
+  }
+
+  /**
+   * Set the shared Prisma client
+   */
+  setPrismaClient(prismaClient) {
+    prisma = prismaClient;
   }
 
   /**

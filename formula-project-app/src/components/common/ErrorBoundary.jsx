@@ -64,7 +64,7 @@ class ErrorBoundary extends React.Component {
       
       return (
         <Box sx={{ p: 3, maxWidth: 800, mx: 'auto', mt: 4 }}>
-          <Paper elevation={0} sx={{ p: 4, border: '1px solid #ffcdd2', backgroundColor: '#fef7f7' }}>
+          <Paper elevation={0} sx={{ p: 4, border: '1px solid #ffcdd2', backgroundPalette: '#fef7f7' }}>
             <Alert severity="error" sx={{ mb: 3 }}>
               <AlertTitle>Something went wrong</AlertTitle>
               {this.props.fallbackMessage || 'An unexpected error occurred while loading this section.'}
@@ -97,7 +97,7 @@ class ErrorBoundary extends React.Component {
                 <Paper 
                   sx={{ 
                     p: 2, 
-                    backgroundColor: '#f5f5f5', 
+                    backgroundPalette: '#f5f5f5', 
                     fontFamily: 'monospace',
                     fontSize: '0.875rem',
                     overflow: 'auto',

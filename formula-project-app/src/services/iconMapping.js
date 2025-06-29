@@ -18,7 +18,8 @@ import {
   Search,
   Edit,
   Trash,
-  Save,
+  FloppyDisk,
+  ArrowRight,
   Filter,
   
   // Views  
@@ -131,7 +132,8 @@ export const iconMap = {
   'Search': Search,
   'Edit': Edit,
   'Delete': Trash,
-  'Save': Save,
+  'Save': FloppyDisk,
+  'Send': ArrowRight,
   'FilterList': Filter,
   
   // Views

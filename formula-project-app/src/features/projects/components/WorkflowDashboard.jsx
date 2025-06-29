@@ -22,19 +22,19 @@ import {
   Divider
 } from '@mui/material';
 import {
-  Warning as WarningIcon,
-  Error as ErrorIcon,
+  WarningTriangle as WarningIcon,
+  Xmark as ErrorIcon,
   CheckCircle as CheckIcon,
   Timeline as TimelineIcon,
-  ExpandMore as ExpandMoreIcon,
+  ArrowDown as ExpandMoreIcon,
   Refresh as RefreshIcon,
-  Assignment as ScopeIcon,
-  Architecture as DrawingIcon,
-  Inventory as MaterialIcon,
-  Build as ProductionIcon,
-  TrendingUp as ProgressIcon,
-  Schedule as ScheduleIcon
-} from '@mui/icons-material';
+  Check as ScopeIcon,
+  Design2D as DrawingIcon,
+  Archive as MaterialIcon,
+  Building as ProductionIcon,
+  ArrowUp as ProgressIcon,
+  Calendar as CalendarIcon
+} from 'iconoir-react';
 import connectionService from '../../../services/connectionService';
 
 const WorkflowDashboard = ({ 
@@ -77,7 +77,7 @@ const WorkflowDashboard = ({
     }
   };
 
-  const getSeverityColor = (severity) => {
+  const getSeverityPalette = (severity) => {
     switch (severity) {
       case 'error': return '#f44336';
       case 'warning': return '#ff9800';
@@ -202,9 +202,9 @@ const WorkflowDashboard = ({
               sx={{ 
                 height: 8, 
                 borderRadius: 4,
-                backgroundColor: '#f0f0f0',
+                backgroundPalette: '#f0f0f0',
                 '& .MuiLinearProgress-bar': {
-                  backgroundColor: summary.canStartProduction ? '#4caf50' : '#ff9800'
+                  backgroundPalette: summary.canStartProduction ? '#4caf50' : '#ff9800'
                 }
               }}
             />
@@ -272,7 +272,7 @@ const WorkflowDashboard = ({
                         label={deps.canStart ? "Can Start" : "Blocked"}
                         size="small"
                         sx={{
-                          backgroundColor: deps.canStart ? '#4caf50' : '#ff9800',
+                          backgroundPalette: deps.canStart ? '#4caf50' : '#ff9800',
                           color: 'white'
                         }}
                       />
@@ -286,7 +286,7 @@ const WorkflowDashboard = ({
                         height: 6, 
                         borderRadius: 3,
                         '& .MuiLinearProgress-bar': {
-                          backgroundColor: group.color
+                          backgroundPalette: group.color
                         }
                       }}
                     />

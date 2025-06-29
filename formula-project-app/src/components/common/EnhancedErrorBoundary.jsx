@@ -19,12 +19,12 @@ import {
 } from '@mui/material';
 import {
   Refresh as RefreshIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
-  BugReport as BugIcon,
+  ArrowDown as ExpandMoreIcon,
+  ArrowUp as ExpandLessIcon,
+  WarningTriangle as BugIcon,
   Home as HomeIcon,
-  Warning as WarningIcon
-} from '@mui/icons-material';
+  WarningTriangle as WarningIcon
+} from 'iconoir-react';
 
 class EnhancedErrorBoundary extends Component {
   constructor(props) {

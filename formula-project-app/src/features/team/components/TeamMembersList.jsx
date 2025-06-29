@@ -135,7 +135,7 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
       type: 'avatar',
       render: (value, row) => ({
         fallback: row.initials,
-        bgColor: row.roleColor,
+        bgPalette: row.rolePalette,
         text: row.fullName,
         clickable: true,
         onClick: () => onViewMemberDetail && onViewMemberDetail(row)
@@ -149,8 +149,8 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
         const roleConfig = roles.find(r => r.value === value);
         return {
           label: roleConfig ? roleConfig.label : value,
-          color: row.roleColor,
-          bgColor: `${row.roleColor}20`
+          color: row.rolePalette,
+          bgPalette: `${row.rolePalette}20`
         };
       }
     },
@@ -169,7 +169,7 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
       render: (value) => ({
         label: value === 'active' ? 'Active' : 'Inactive',
         color: value === 'active' ? '#27ae60' : '#e74c3c',
-        bgColor: value === 'active' ? '#eafaf1' : '#fdf2f2'
+        bgPalette: value === 'active' ? '#eafaf1' : '#fdf2f2'
       })
     },
     {
@@ -259,7 +259,7 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
       fullName: `${editFormData.firstName.trim()} ${editFormData.lastName.trim()}`,
       initials: `${editFormData.firstName.charAt(0)}${editFormData.lastName.charAt(0)}`.toUpperCase(),
       roleLevel: selectedRole.level,
-      roleColor: selectedRole.color
+      rolePalette: selectedRole.color
     });
     
     setEditDialog(false);
@@ -527,7 +527,7 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
                     display: 'flex',
                     flexDirection: 'column',
                     position: 'relative',
-                    borderTop: `4px solid ${member.roleColor}`,
+                    borderTop: `4px solid ${member.rolePalette}`,
                     '&:hover': {
                       transform: 'translateY(-2px)',
                       boxShadow: 3
@@ -547,7 +547,7 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
                             width: 12,
                             height: 12,
                             borderRadius: '50%',
-                            backgroundColor: member.status === 'active' ? '#27ae60' : '#95a5a6',
+                            backgroundPalette: member.status === 'active' ? '#27ae60' : '#95a5a6',
                             border: '2px solid white'
                           }}
                         />
@@ -555,7 +555,7 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
                     >
                       <Avatar
                         sx={{
-                          bgcolor: member.roleColor,
+                          bgcolor: member.rolePalette,
                           width: 56,
                           height: 56,
                           fontSize: 20,
@@ -587,8 +587,8 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
                         label={roleInfo?.label}
                         size="small"
                         sx={{
-                          backgroundColor: member.roleColor + '20',
-                          color: member.roleColor,
+                          backgroundPalette: member.rolePalette + '20',
+                          color: member.rolePalette,
                           fontWeight: 'bold',
                           mb: 1
                         }}
@@ -649,13 +649,13 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
                       <Chip 
                         label={`${stats.completed} done`} 
                         size="small" 
-                        sx={{ backgroundColor: '#eafaf1', color: '#27ae60' }}
+                        sx={{ backgroundPalette: '#eafaf1', color: '#27ae60' }}
                       />
                       {stats.overdue > 0 && (
                         <Chip 
                           label={`${stats.overdue} overdue`} 
                           size="small" 
-                          sx={{ backgroundColor: '#fdf2f2', color: '#e74c3c' }}
+                          sx={{ backgroundPalette: '#fdf2f2', color: '#e74c3c' }}
                         />
                       )}
                     </Box>
@@ -804,7 +804,7 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                 <Avatar
                   sx={{
-                    bgcolor: selectedMember.roleColor,
+                    bgcolor: selectedMember.rolePalette,
                     width: 64,
                     height: 64,
                     fontSize: 24

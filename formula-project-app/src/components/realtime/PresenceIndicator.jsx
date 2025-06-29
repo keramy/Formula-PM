@@ -21,12 +21,12 @@ import {
   ExpandLess,
   Person,
   PersonOff
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import { usePresence } from '../../hooks/useRealTime';
 import { formatDistanceToNow } from 'date-fns';
 
 // Status indicator colors
-const getStatusColor = (status) => {
+const getStatusPalette = (status) => {
   switch (status) {
     case 'online':
       return '#4caf50'; // Green
@@ -42,7 +42,7 @@ const getStatusColor = (status) => {
 
 // User avatar with presence indicator
 const PresenceAvatar = ({ user, size = 40, showTooltip = true }) => {
-  const statusColor = getStatusColor(user.status);
+  const statusPalette = getStatusPalette(user.status);
   
   const avatar = (
     <Badge
@@ -51,11 +51,11 @@ const PresenceAvatar = ({ user, size = 40, showTooltip = true }) => {
       badgeContent={
         <Circle 
           sx={{ 
-            color: statusColor,
+            color: statusPalette,
             fontSize: size * 0.3,
             border: '2px solid white',
             borderRadius: '50%',
-            backgroundColor: 'white'
+            backgroundPalette: 'white'
           }} 
         />
       }
@@ -277,7 +277,7 @@ export const TypingIndicator = () => {
       gap: 1, 
       py: 1, 
       px: 2,
-      backgroundColor: 'rgba(25, 118, 210, 0.08)',
+      backgroundPalette: 'rgba(25, 118, 210, 0.08)',
       borderRadius: 1,
       animation: 'pulse 1.5s infinite'
     }}>

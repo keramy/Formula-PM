@@ -32,7 +32,7 @@ const TaskViewDialog = ({
   const assignee = teamMembers?.find(tm => tm.id === task.assignedTo);
 
   // Helper function to get priority color
-  const getPriorityColor = (priority) => {
+  const getPriorityPalette = (priority) => {
     switch (priority?.toLowerCase()) {
       case 'high':
         return 'error';
@@ -46,7 +46,7 @@ const TaskViewDialog = ({
   };
 
   // Helper function to get status color
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status?.toLowerCase()) {
       case 'completed':
         return 'success';
@@ -82,12 +82,12 @@ const TaskViewDialog = ({
           <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
             <Chip 
               label={task.priority || 'Medium'} 
-              color={getPriorityColor(task.priority)}
+              color={getPriorityPalette(task.priority)}
               size="small"
             />
             <Chip 
               label={task.status || 'Pending'} 
-              color={getStatusColor(task.status)}
+              color={getStatusPalette(task.status)}
               size="small"
             />
           </Box>

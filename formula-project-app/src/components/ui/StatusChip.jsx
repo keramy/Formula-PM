@@ -2,7 +2,7 @@ import React from 'react';
 import { Chip, Tooltip } from '@mui/material';
 // Iconoir icons - safe construction and status icons
 import {
-  Clock as Schedule,
+  Clock as Calendar,
   Play as Play,
   Check as CheckCircle,
   Pause,
@@ -23,8 +23,8 @@ import {
   Building as Foundation,
   Settings as HomeRepairService,
   Palette as FormatPaint,
-  Key as Key,
-  Shield as Shield
+  Key,
+  Shield
 } from 'iconoir-react';
 import { 
   getTaskStatusConfig, 
@@ -38,7 +38,7 @@ import {
 
 // Icon mapping
 const ICON_MAP = {
-  Schedule: Schedule,
+  Calendar: Calendar,
   PlayArrow: PlayArrow,
   CheckCircle: CheckCircle,
   Pause: Pause,
@@ -124,9 +124,9 @@ const StatusChip = ({
     onClick,
     className: `clean-chip ${actualType === 'task' ? `status-${actualStatus}` : actualType === 'project' ? `status-${actualStatus}` : actualType === 'priority' ? `priority-${actualStatus}` : ''}`,
     sx: {
-      backgroundColor: variant === 'filled' ? config.bgColor : 'transparent',
-      color: config.textColor,
-      border: variant === 'outlined' ? `1px solid ${config.borderColor}` : `1px solid ${config.borderColor}`,
+      backgroundPalette: variant === 'filled' ? config.bgPalette : 'transparent',
+      color: config.textPalette,
+      border: variant === 'outlined' ? `1px solid ${config.borderPalette}` : `1px solid ${config.borderPalette}`,
       fontWeight: 500,
       fontSize: 'var(--text-xs)',
       height: '22px',
@@ -135,10 +135,10 @@ const StatusChip = ({
       transition: 'all 0.2s ease',
       '& .MuiChip-icon': {
         fontSize: '14px',
-        color: config.textColor
+        color: config.textPalette
       },
       '&:hover': onClick ? {
-        backgroundColor: config.color,
+        backgroundPalette: config.color,
         color: 'white',
         cursor: 'pointer',
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'

@@ -14,13 +14,13 @@ import {
   Package as MaterialsIcon,
   Plus as AddIcon,
   Upload as UploadIcon,
-  Category as CategoryIcon,
+  TagOutline as CategoryIcon,
   Reports as ReportIcon,
   Table as ExcelIcon,
   UserBag as VendorIcon,
   Shield as ComplianceIcon,
   Template as TemplateIcon,
-  ShoppingCart as ProcurementIcon
+  Cart as ProcurementIcon
 } from 'iconoir-react';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import MaterialSpecificationsList from '../features/specifications/components/MaterialSpecificationsList';
@@ -237,8 +237,8 @@ const MaterialSpecsPage = () => {
             onGenerateReport={(reportType) => {
               console.log('Generate report:', reportType);
             }}
-            onScheduleReport={(reportType) => {
-              console.log('Schedule report:', reportType);
+            onCalendarReport={(reportType) => {
+              console.log('Calendar report:', reportType);
             }}
             onExportData={(format) => {
               console.log('Export data:', format);

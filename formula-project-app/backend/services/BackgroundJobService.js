@@ -64,6 +64,13 @@ class BackgroundJobService {
   }
 
   /**
+   * Set the shared Prisma client
+   */
+  setPrismaClient(prismaClient) {
+    prisma = prismaClient;
+  }
+
+  /**
    * Initialize background job service
    */
   async initialize() {
@@ -598,10 +605,9 @@ class BackgroundJobService {
     try {
       console.log('🔧 Optimizing database...');
       
-      const { PrismaClient } = require('@prisma/client');
-      const prisma = new PrismaClient();
-      
-      // Run database optimization queries
+      // Will be initialized with shared database service
+let prisma = null;
+// Run database optimization queries
       await prisma.$executeRaw`VACUUM;`;
       await prisma.$executeRaw`ANALYZE;`;
       

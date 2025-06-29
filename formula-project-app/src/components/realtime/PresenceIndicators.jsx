@@ -18,10 +18,10 @@ import {
 } from '@mui/material';
 import {
   Circle as CircleIcon,
-  Visibility as VisibilityIcon,
+  Eye as VisibilityIcon,
   Edit as EditIcon,
   Chat as ChatIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import { usePresence, useSocketEvent } from '../../hooks/useSocket';
 
 const PresenceIndicators = ({ 
@@ -82,7 +82,7 @@ const PresenceIndicators = ({
     }
   });
 
-  const getStatusColor = (user) => {
+  const getStatusPalette = (user) => {
     const activity = userActivities[user.id];
     if (activity?.type === 'typing') return 'warning';
     
@@ -172,7 +172,7 @@ const PresenceIndicators = ({
                       width: 12,
                       height: 12,
                       borderRadius: '50%',
-                      bgcolor: `${getStatusColor(user)}.main`,
+                      bgcolor: `${getStatusPalette(user)}.main`,
                       border: '2px solid white'
                     }}
                   />
@@ -221,7 +221,7 @@ const PresenceIndicators = ({
                     width: 10,
                     height: 10,
                     borderRadius: '50%',
-                    bgcolor: `${getStatusColor(user)}.main`,
+                    bgcolor: `${getStatusPalette(user)}.main`,
                     border: '2px solid white'
                   }}
                 />

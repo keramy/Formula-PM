@@ -60,15 +60,15 @@ const calculateOptimalPosition = (position, dropdownHeight = 300, dropdownWidth 
 const StyledListItem = styled(ListItem)(({ theme, selected }) => ({
   cursor: 'pointer',
   padding: theme.spacing(1, 2),
-  backgroundColor: selected ? theme.palette.action.selected : 'transparent',
+  backgroundPalette: selected ? theme.palette.action.selected : 'transparent',
   '&:hover': {
-    backgroundColor: theme.palette.action.hover
+    backgroundPalette: theme.palette.action.hover
   }
 }));
 
 const CategoryHeader = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1, 2),
-  backgroundColor: theme.palette.grey[50],
+  backgroundPalette: theme.palette.grey[50],
   borderBottom: `1px solid ${theme.palette.divider}`,
   position: 'sticky',
   top: 0,
@@ -140,7 +140,7 @@ const MentionAutocomplete = ({
     
     return parts.map((part, index) => 
       regex.test(part) ? (
-        <strong key={index} style={{ backgroundColor: '#fff3cd', color: '#856404' }}>
+        <strong key={index} style={{ backgroundPalette: '#fff3cd', color: '#856404' }}>
           {part}
         </strong>
       ) : part
@@ -286,7 +286,7 @@ const MentionAutocomplete = ({
         p: 1, 
         bgcolor: 'grey.50', 
         borderTop: 1, 
-        borderColor: 'divider' 
+        borderPalette: 'divider' 
       }}>
         <Typography variant="caption" color="textSecondary">
           ↑↓ Navigate • Enter Select • Esc Close

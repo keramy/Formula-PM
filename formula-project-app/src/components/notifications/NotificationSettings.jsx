@@ -12,8 +12,8 @@ import { notificationService } from '../../services/notifications/notificationSe
 
 const NotificationSettings = () => {
   const [settings, setSettings] = useState({
-    taskAssignments: true,
-    projectAssignments: true,
+    taskChecks: true,
+    projectChecks: true,
     dueDateReminders: true,
     overdueAlerts: true,
     taskCompletions: true,
@@ -63,8 +63,8 @@ const NotificationSettings = () => {
         <FormControlLabel
           control={
             <Switch
-              checked={settings.taskAssignments}
-              onChange={handleSettingChange('taskAssignments')}
+              checked={settings.taskChecks}
+              onChange={handleSettingChange('taskChecks')}
             />
           }
           label="New task assignments"
@@ -111,8 +111,8 @@ const NotificationSettings = () => {
         <FormControlLabel
           control={
             <Switch
-              checked={settings.projectAssignments}
-              onChange={handleSettingChange('projectAssignments')}
+              checked={settings.projectChecks}
+              onChange={handleSettingChange('projectChecks')}
             />
           }
           label="Project assignments"
@@ -200,7 +200,7 @@ const NotificationSettings = () => {
         <Button 
           variant="contained" 
           onClick={handleTestNotification}
-          sx={{ backgroundColor: '#2C3E50' }}
+          sx={{ backgroundPalette: '#2C3E50' }}
         >
           Test Notifications
         </Button>

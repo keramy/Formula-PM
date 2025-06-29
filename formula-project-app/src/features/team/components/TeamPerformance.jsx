@@ -12,11 +12,11 @@ import {
   useTheme
 } from '@mui/material';
 import {
-  TrendingUp,
-  Assignment,
+  ArrowUp,
+  Check,
   CheckCircle,
-  Schedule
-} from '@mui/icons-material';
+  Calendar
+} from 'iconoir-react';
 
 const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
   const theme = useTheme();
@@ -56,7 +56,7 @@ const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
   };
 
   // Get productivity color
-  const getProductivityColor = (productivity) => {
+  const getProductivityPalette = (productivity) => {
     switch (productivity) {
       case 'High':
         return '#27AE60';
@@ -86,7 +86,7 @@ const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
         <Grid item xs={12} sm={6} md={3}>
           <Card elevation={0} sx={{ border: `1px solid ${theme.palette.divider}` }}>
             <CardContent sx={{ textAlign: 'center' }}>
-              <Assignment sx={{ fontSize: 40, color: '#3498DB', mb: 1 }} />
+              <Check sx={{ fontSize: 40, color: '#3498DB', mb: 1 }} />
               <Typography variant="h5" fontWeight={600}>
                 {teamStats.totalTasks}
               </Typography>
@@ -114,7 +114,7 @@ const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
         <Grid item xs={12} sm={6} md={3}>
           <Card elevation={0} sx={{ border: `1px solid ${theme.palette.divider}` }}>
             <CardContent sx={{ textAlign: 'center' }}>
-              <TrendingUp sx={{ fontSize: 40, color: '#E67E22', mb: 1 }} />
+              <ArrowUp sx={{ fontSize: 40, color: '#E67E22', mb: 1 }} />
               <Typography variant="h5" fontWeight={600}>
                 {teamStats.averageCompletion}%
               </Typography>
@@ -128,7 +128,7 @@ const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
         <Grid item xs={12} sm={6} md={3}>
           <Card elevation={0} sx={{ border: `1px solid ${theme.palette.divider}` }}>
             <CardContent sx={{ textAlign: 'center' }}>
-              <Schedule sx={{ fontSize: 40, color: '#9B59B6', mb: 1 }} />
+              <Calendar sx={{ fontSize: 40, color: '#9B59B6', mb: 1 }} />
               <Typography variant="h5" fontWeight={600}>
                 {teamMembers.filter(member => getTeamMemberStats(member.id).productivity === 'High').length}
               </Typography>
@@ -145,7 +145,7 @@ const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
         elevation={0}
         sx={{
           p: 3,
-          backgroundColor: theme.palette.background.paper,
+          backgroundPalette: theme.palette.background.paper,
           border: `1px solid ${theme.palette.divider}`,
           borderRadius: 3
         }}
@@ -180,7 +180,7 @@ const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
                         width: 48, 
                         height: 48, 
                         mr: 2,
-                        backgroundColor: '#E67E22',
+                        backgroundPalette: '#E67E22',
                         fontSize: '1.2rem'
                       }}
                     >
@@ -198,8 +198,8 @@ const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
                       label={stats.productivity}
                       size="small"
                       sx={{
-                        backgroundColor: `${getProductivityColor(stats.productivity)}20`,
-                        color: getProductivityColor(stats.productivity),
+                        backgroundPalette: `${getProductivityPalette(stats.productivity)}20`,
+                        color: getProductivityPalette(stats.productivity),
                         fontWeight: 600
                       }}
                     />
@@ -221,9 +221,9 @@ const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
                       sx={{
                         height: 8,
                         borderRadius: 4,
-                        backgroundColor: '#f0f0f0',
+                        backgroundPalette: '#f0f0f0',
                         '& .MuiLinearProgress-bar': {
-                          backgroundColor: getProductivityColor(stats.productivity),
+                          backgroundPalette: getProductivityPalette(stats.productivity),
                           borderRadius: 4
                         }
                       }}

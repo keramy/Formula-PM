@@ -40,7 +40,7 @@ const StandardCard = ({
     border: '1px solid var(--border-light, #E5E7EB)',
     borderRadius: 'var(--border-radius-lg, 12px)',
     borderLeft: selected ? '4px solid var(--sapphire-dust, #516AC8)' : undefined,
-    backgroundColor: selected ? 'var(--rapture-light, #F6F3E7)' : 'white',
+    backgroundPalette: selected ? 'var(--rapture-light, #F6F3E7)' : 'white',
     background: selected 
       ? 'linear-gradient(135deg, rgba(81, 106, 200, 0.05) 0%, rgba(246, 243, 231, 1) 100%)'
       : 'linear-gradient(135deg, rgba(227, 175, 100, 0.05) 0%, rgba(255, 255, 255, 1) 100%)',
@@ -50,7 +50,7 @@ const StandardCard = ({
     boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1))',
     '&:hover': hoverable ? {
       boxShadow: 'var(--shadow-hover, 0 4px 20px rgba(0, 0, 0, 0.15))',
-      borderColor: 'var(--caramel-essence, #E3AF64)',
+      borderPalette: 'var(--caramel-essence, #E3AF64)',
       transform: 'translateY(-2px)',
     } : {},
     ...sx

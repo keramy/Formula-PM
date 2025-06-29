@@ -52,7 +52,7 @@ const IconoirImportTest = () => {
             padding: '12px', 
             border: '1px solid #ddd', 
             borderRadius: '8px',
-            backgroundColor: '#f9f9f9'
+            backgroundPalette: '#f9f9f9'
           }}>
             <IconComponent style={{ marginRight: '8px', width: '20px', height: '20px' }} />
             <span>{name}</span>
@@ -60,7 +60,7 @@ const IconoirImportTest = () => {
         ))}
       </div>
       
-      <div style={{ marginTop: '24px', padding: '16px', backgroundColor: '#e8f5e8', borderRadius: '8px' }}>
+      <div style={{ marginTop: '24px', padding: '16px', backgroundPalette: '#e8f5e8', borderRadius: '8px' }}>
         <h3>✅ Success!</h3>
         <p>If you can see this component with icons, then these Iconoir icons are working correctly.</p>
       </div>

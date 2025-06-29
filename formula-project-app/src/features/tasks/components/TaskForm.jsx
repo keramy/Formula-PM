@@ -212,7 +212,7 @@ function TaskForm({ projects, teamMembers = [], onSubmit, onCancel, initialTask 
           {teamMembers.filter(member => member.status === 'active').map((member) => (
             <MenuItem key={member.id} value={member.id}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Avatar sx={{ width: 24, height: 24, fontSize: 12, bgcolor: member.roleColor }}>
+                <Avatar sx={{ width: 24, height: 24, fontSize: 12, bgcolor: member.rolePalette }}>
                   {member.initials}
                 </Avatar>
                 {member.fullName} - {member.role}

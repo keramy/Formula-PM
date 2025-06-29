@@ -26,18 +26,18 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  Notifications as NotificationsIcon,
-  NotificationsNone as NotificationsNoneIcon,
+  Bell as NotificationsIcon,
+  Bell as NotificationsNoneIcon,
   Check as CheckIcon,
-  Clear as ClearIcon,
+  Xmark as ClearIcon,
   Settings as SettingsIcon,
-  Task as TaskIcon,
-  Update as UpdateIcon,
-  Person as PersonIcon,
-  Comment as CommentIcon,
-  Warning as WarningIcon,
-  Info as InfoIcon
-} from '@mui/icons-material';
+  Check as TaskIcon,
+  Refresh as UpdateIcon,
+  User as PersonIcon,
+  ChatBubble as CommentIcon,
+  WarningTriangle as WarningIcon,
+  InfoCircle as InfoIcon
+} from 'iconoir-react';
 import { useNotifications, useSocketEvent } from '../../hooks/useSocket';
 import apiService from '../../services/api/apiService';
 import { formatDistanceToNow } from 'date-fns';
@@ -139,7 +139,7 @@ const NotificationCenter = () => {
     }
   };
 
-  const getNotificationColor = (type, priority) => {
+  const getNotificationPalette = (type, priority) => {
     if (priority === 'high') return 'error';
     if (priority === 'medium') return 'warning';
     
@@ -198,7 +198,7 @@ const NotificationCenter = () => {
           color="inherit"
           sx={{
             '&:hover': {
-              backgroundColor: 'rgba(255, 255, 255, 0.1)'
+              backgroundPalette: 'rgba(255, 255, 255, 0.1)'
             }
           }}
         >
@@ -228,7 +228,7 @@ const NotificationCenter = () => {
           horizontal: 'right'
         }}
       >
-        <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
+        <Box sx={{ p: 2, borderBottom: '1px solid', borderPalette: 'divider' }}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6">
               Notifications
@@ -276,11 +276,11 @@ const NotificationCenter = () => {
                       button
                       onClick={() => handleMarkAsRead(notification.id)}
                       sx={{
-                        backgroundColor: notification.read ? 'transparent' : 'action.hover',
+                        backgroundPalette: notification.read ? 'transparent' : 'action.hover',
                         borderLeft: notification.read ? 0 : 3,
-                        borderColor: `${getNotificationColor(notification.type, notification.priority)}.main`,
+                        borderPalette: `${getNotificationPalette(notification.type, notification.priority)}.main`,
                         '&:hover': {
-                          backgroundColor: 'action.selected'
+                          backgroundPalette: 'action.selected'
                         }
                       }}
                     >
@@ -288,8 +288,8 @@ const NotificationCenter = () => {
                         <Avatar
                           src={notification.fromUser?.avatar}
                           sx={{
-                            bgcolor: `${getNotificationColor(notification.type, notification.priority)}.light`,
-                            color: `${getNotificationColor(notification.type, notification.priority)}.dark`,
+                            bgcolor: `${getNotificationPalette(notification.type, notification.priority)}.light`,
+                            color: `${getNotificationPalette(notification.type, notification.priority)}.dark`,
                             width: 40,
                             height: 40
                           }}
@@ -331,7 +331,7 @@ const NotificationCenter = () => {
                               <Chip
                                 label={notification.priority}
                                 size="small"
-                                color={getNotificationColor(notification.type, notification.priority)}
+                                color={getNotificationPalette(notification.type, notification.priority)}
                                 variant="outlined"
                                 sx={{ height: 20, fontSize: '0.7rem' }}
                               />
@@ -363,7 +363,7 @@ const NotificationCenter = () => {
         </Box>
 
         {allNotifications.length > 10 && (
-          <Box sx={{ p: 1, borderTop: '1px solid', borderColor: 'divider' }}>
+          <Box sx={{ p: 1, borderTop: '1px solid', borderPalette: 'divider' }}>
             <Button fullWidth size="small" onClick={handleClose}>
               View All Notifications
             </Button>

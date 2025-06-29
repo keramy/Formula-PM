@@ -42,7 +42,7 @@ const ProjectTeamAvatars = ({
           sx={{
             width: size === 'small' ? 24 : size === 'large' ? 40 : 32,
             height: size === 'small' ? 24 : size === 'large' ? 40 : 32,
-            backgroundColor: '#bdc3c7',
+            backgroundPalette: '#bdc3c7',
             fontSize: size === 'small' ? '0.7rem' : '0.8rem'
           }}
         >
@@ -87,7 +87,7 @@ const ProjectTeamAvatars = ({
           <Tooltip key={member.id} title={member.fullName || member.firstName + ' ' + member.lastName}>
             <Avatar
               sx={{
-                bgcolor: member.roleColor || '#3498db',
+                bgcolor: member.rolePalette || '#3498db',
                 fontWeight: 600
               }}
             >
@@ -107,12 +107,12 @@ const ProjectTeamAvatars = ({
               height: size === 'small' ? 20 : 24,
               fontSize: size === 'small' ? '0.7rem' : '0.75rem',
               fontWeight: 600,
-              backgroundColor: '#f8f9fa',
+              backgroundPalette: '#f8f9fa',
               color: '#495057',
               cursor: 'pointer',
               border: '1px solid #dee2e6',
               '&:hover': {
-                backgroundColor: '#e9ecef',
+                backgroundPalette: '#e9ecef',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
               },
               transition: 'all 0.2s ease'
@@ -152,7 +152,7 @@ const ProjectTeamAvatars = ({
                   borderRadius: 1,
                   mb: 1,
                   '&:hover': {
-                    backgroundColor: 'primary.light',
+                    backgroundPalette: 'primary.light',
                     '& .MuiListItemText-primary': {
                       color: 'primary.contrastText'
                     },
@@ -165,7 +165,7 @@ const ProjectTeamAvatars = ({
                 <ListItemAvatar>
                   <Avatar
                     sx={{
-                      bgcolor: member.roleColor || '#3498db',
+                      bgcolor: member.rolePalette || '#3498db',
                       fontWeight: 600
                     }}
                   >

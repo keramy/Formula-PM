@@ -49,9 +49,9 @@ import {
   Check as OrderIcon,
   Delivery as DeliveryIcon,
   CheckCircle as CompleteIcon,
-  Warning as WarningIcon,
-  Cancel as ErrorIcon,
-  Calendar as ScheduleIcon,
+  WarningTriangle as WarningIcon,
+  Xmark as ErrorIcon,
+  Calendar as CalendarIcon,
   Timeline as TimelineIcon,
   DollarCircle as CostIcon,
   Archive as InventoryIcon,
@@ -61,7 +61,7 @@ import {
   Download as DownloadIcon,
   Mail as EmailIcon,
   ArrowDown as ExpandMoreIcon,
-  TrendingUp as TrendingUpIcon
+  ArrowUp as ArrowUpIcon
 } from 'iconoir-react';
 
 const ProcurementWorkflow = ({ 
@@ -72,7 +72,7 @@ const ProcurementWorkflow = ({
   const [activeTab, setActiveTab] = useState(0);
   const [purchaseOrders, setPurchaseOrders] = useState([]);
   const [quotes, setQuotes] = useState([]);
-  const [deliverySchedule, setDeliverySchedule] = useState([]);
+  const [deliveryCalendar, setDeliveryCalendar] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [orderDialogOpen, setOrderDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -202,7 +202,7 @@ const ProcurementWorkflow = ({
       }
     ]);
 
-    setDeliverySchedule([
+    setDeliveryCalendar([
       {
         id: 'delivery-1',
         orderNumber: 'PO-2024-002',
@@ -224,7 +224,7 @@ const ProcurementWorkflow = ({
     ]);
   }, []);
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'completed':
       case 'delivered':
@@ -254,7 +254,7 @@ const ProcurementWorkflow = ({
         return <CompleteIcon color="success" />;
       case 'in_progress':
       case 'in_production':
-        return <ScheduleIcon color="warning" />;
+        return <CalendarIcon color="warning" />;
       case 'pending':
       case 'pending_approval':
         return <WarningIcon color="warning" />;
@@ -262,7 +262,7 @@ const ProcurementWorkflow = ({
       case 'cancelled':
         return <ErrorIcon color="error" />;
       default:
-        return <ScheduleIcon />;
+        return <CalendarIcon />;
     }
   };
 
@@ -328,7 +328,7 @@ const ProcurementWorkflow = ({
               <Chip
                 label={order.status.replace('_', ' ')}
                 size="small"
-                color={getStatusColor(order.status)}
+                color={getStatusPalette(order.status)}
               />
               <Chip
                 label={order.priority}
@@ -418,7 +418,7 @@ const ProcurementWorkflow = ({
         <Grid item xs={12} sm={6} md={3}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
-              <ScheduleIcon color="warning" sx={{ fontSize: 40, mb: 1 }} />
+              <CalendarIcon color="warning" sx={{ fontSize: 40, mb: 1 }} />
               <Typography variant="h4" color="warning.main" fontWeight={600}>
                 {stats.pending + stats.inProgress}
               </Typography>
@@ -472,7 +472,7 @@ const ProcurementWorkflow = ({
       <Tabs value={activeTab} onChange={(e, newValue) => setActiveTab(newValue)} sx={{ mb: 3 }}>
         <Tab label="Purchase Orders" icon={<OrderIcon />} />
         <Tab label="Vendor Quotes" icon={<QuoteIcon />} />
-        <Tab label="Delivery Schedule" icon={<DeliveryIcon />} />
+        <Tab label="Delivery Calendar" icon={<DeliveryIcon />} />
       </Tabs>
 
       {/* Purchase Orders Tab */}
@@ -517,7 +517,7 @@ const ProcurementWorkflow = ({
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
+              <TableRow sx={{ backgroundPalette: '#f8f9fa' }}>
                 <TableCell><strong>Vendor</strong></TableCell>
                 <TableCell><strong>Specifications</strong></TableCell>
                 <TableCell><strong>Amount</strong></TableCell>
@@ -543,7 +543,7 @@ const ProcurementWorkflow = ({
                     <Chip
                       label={quote.status}
                       size="small"
-                      color={getStatusColor(quote.status)}
+                      color={getStatusPalette(quote.status)}
                       variant="outlined"
                     />
                   </TableCell>
@@ -559,22 +559,22 @@ const ProcurementWorkflow = ({
         </TableContainer>
       )}
 
-      {/* Delivery Schedule Tab */}
+      {/* Delivery Calendar Tab */}
       {activeTab === 2 && (
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
+              <TableRow sx={{ backgroundPalette: '#f8f9fa' }}>
                 <TableCell><strong>Order Number</strong></TableCell>
                 <TableCell><strong>Vendor</strong></TableCell>
                 <TableCell><strong>Items</strong></TableCell>
-                <TableCell><strong>Scheduled Date</strong></TableCell>
+                <TableCell><strong>Calendard Date</strong></TableCell>
                 <TableCell><strong>Status</strong></TableCell>
                 <TableCell><strong>Tracking</strong></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {deliverySchedule.map((delivery) => (
+              {deliveryCalendar.map((delivery) => (
                 <TableRow key={delivery.id} hover>
                   <TableCell>{delivery.orderNumber}</TableCell>
                   <TableCell>{delivery.vendor}</TableCell>
@@ -584,7 +584,7 @@ const ProcurementWorkflow = ({
                     <Chip
                       label={delivery.status.replace('_', ' ')}
                       size="small"
-                      color={getStatusColor(delivery.status)}
+                      color={getStatusPalette(delivery.status)}
                     />
                   </TableCell>
                   <TableCell>

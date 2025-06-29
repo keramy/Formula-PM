@@ -76,8 +76,8 @@ const Breadcrumbs = ({
               height: 32,
               color: colors.textSecondary,
               '&:hover': {
-                backgroundColor: colors.raptureLight,
-                borderColor: colors.caramelEssence,
+                backgroundPalette: colors.raptureLight,
+                borderPalette: colors.caramelEssence,
                 color: colors.textPrimary
               },
               '&:disabled': {
@@ -99,8 +99,8 @@ const Breadcrumbs = ({
               height: 32,
               color: colors.textSecondary,
               '&:hover': {
-                backgroundColor: colors.raptureLight,
-                borderColor: colors.caramelEssence,
+                backgroundPalette: colors.raptureLight,
+                borderPalette: colors.caramelEssence,
                 color: colors.textPrimary
               },
               '&:disabled': {
@@ -166,9 +166,9 @@ const Breadcrumbs = ({
                     sx={{ 
                       height: 24, 
                       fontSize: '0.75rem',
-                      borderColor: colors.caramelEssence,
+                      borderPalette: colors.caramelEssence,
                       color: colors.caramelEssence,
-                      backgroundColor: `${colors.caramelEssence}10`
+                      backgroundPalette: `${colors.caramelEssence}10`
                     }}
                   />
                 )}
@@ -213,8 +213,8 @@ const Breadcrumbs = ({
                 height: 32,
                 color: colors.textSecondary,
                 '&:hover': {
-                  backgroundColor: colors.raptureLight,
-                  borderColor: colors.caramelEssence,
+                  backgroundPalette: colors.raptureLight,
+                  borderPalette: colors.caramelEssence,
                   color: colors.textPrimary
                 }
               }}
@@ -233,8 +233,8 @@ const Breadcrumbs = ({
                 height: 32,
                 color: colors.textSecondary,
                 '&:hover': {
-                  backgroundColor: colors.raptureLight,
-                  borderColor: colors.caramelEssence,
+                  backgroundPalette: colors.raptureLight,
+                  borderPalette: colors.caramelEssence,
                   color: colors.textPrimary
                 }
               }}
@@ -253,7 +253,7 @@ const Breadcrumbs = ({
           sx={{ 
             fontSize: '0.7rem', 
             height: 24,
-            backgroundColor: user.role === 'admin' 
+            backgroundPalette: user.role === 'admin' 
               ? '#fee2e2' 
               : user.role === 'co_founder' 
                 ? colors.sapphireDust + '20'

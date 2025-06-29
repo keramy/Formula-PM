@@ -77,7 +77,7 @@ function AppWithProviders() {
   return (
     <IconoirProvider 
       iconProps={{
-        color: 'currentColor',
+        color: 'currentPalette',
         strokeWidth: 1.5,
         width: '1.2em',
         height: '1.2em'

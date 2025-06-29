@@ -15,7 +15,7 @@ import {
   ViewGrid as ViewKanban,
   TableRows,
   Calendar as CalendarMonth,
-  Calendar as Timeline,
+  ArrowUp as Timeline,
   Cell2x2 as ViewModule,
   Menu as MoreHoriz,
   FilterList,
@@ -90,8 +90,8 @@ const EnhancedTabSystem = ({
   return (
     <Box sx={{ 
       borderBottom: 1, 
-      borderColor: 'divider',
-      backgroundColor: 'white',
+      borderPalette: 'divider',
+      backgroundPalette: 'white',
       px: 3,
       display: 'flex',
       justifyContent: 'space-between',
@@ -116,7 +116,7 @@ const EnhancedTabSystem = ({
               }
             },
             '& .MuiTabs-indicator': {
-              backgroundColor: '#3498db',
+              backgroundPalette: '#3498db',
               height: 3,
               borderRadius: '3px 3px 0 0'
             }
@@ -137,7 +137,7 @@ const EnhancedTabSystem = ({
                       sx={{ 
                         height: 16, 
                         fontSize: '0.6rem',
-                        backgroundColor: '#f39c12',
+                        backgroundPalette: '#f39c12',
                         color: 'white'
                       }} 
                     />
@@ -178,11 +178,11 @@ const EnhancedTabSystem = ({
             size="small"
             sx={{ 
               color: hasActiveFilters ? 'primary.main' : 'text.secondary',
-              backgroundColor: hasActiveFilters ? 'primary.50' : 'transparent',
+              backgroundPalette: hasActiveFilters ? 'primary.50' : 'transparent',
               border: '1px solid',
-              borderColor: hasActiveFilters ? 'primary.main' : '#E9ECEF',
+              borderPalette: hasActiveFilters ? 'primary.main' : '#E9ECEF',
               '&:hover': {
-                backgroundColor: hasActiveFilters ? 'primary.100' : '#F8F9FA'
+                backgroundPalette: hasActiveFilters ? 'primary.100' : '#F8F9FA'
               }
             }}
           >
@@ -199,7 +199,7 @@ const EnhancedTabSystem = ({
               sx={{ 
                 color: 'text.secondary',
                 border: '1px solid #E9ECEF',
-                '&:hover': { backgroundColor: '#F8F9FA' }
+                '&:hover': { backgroundPalette: '#F8F9FA' }
               }}
             >
               <Sort fontSize="small" />
@@ -215,7 +215,7 @@ const EnhancedTabSystem = ({
             sx={{ 
               color: 'text.secondary',
               border: '1px solid #E9ECEF',
-              '&:hover': { backgroundColor: '#F8F9FA' }
+              '&:hover': { backgroundPalette: '#F8F9FA' }
             }}
           >
             <GetApp fontSize="small" />
@@ -229,7 +229,7 @@ const EnhancedTabSystem = ({
             sx={{ 
               color: 'text.secondary',
               border: '1px solid #E9ECEF',
-              '&:hover': { backgroundColor: '#F8F9FA' }
+              '&:hover': { backgroundPalette: '#F8F9FA' }
             }}
           >
             <Share fontSize="small" />
@@ -244,7 +244,7 @@ const EnhancedTabSystem = ({
             sx={{ 
               color: 'text.secondary',
               border: '1px solid #E9ECEF',
-              '&:hover': { backgroundColor: '#F8F9FA' }
+              '&:hover': { backgroundPalette: '#F8F9FA' }
             }}
           >
             <MoreHoriz fontSize="small" />

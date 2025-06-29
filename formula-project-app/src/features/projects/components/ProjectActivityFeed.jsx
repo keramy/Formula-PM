@@ -18,7 +18,7 @@ import {
   List as ListIcon,
   ViewGrid as GridIcon,
   Refresh as RefreshIcon,
-  FilterList as FilterIcon,
+  Filter as FilterIcon,
   OpenInWindow as OpenIcon
 } from 'iconoir-react';
 import ActivityFeed, { CompactActivityFeed, DetailedActivityFeed } from '../../../components/realtime/ActivityFeed';
@@ -143,7 +143,7 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
         elevation={0}
         sx={{
           p: 3,
-          backgroundColor: isDarkMode ? '#1B2951' : '#ffffff',
+          backgroundPalette: isDarkMode ? '#1B2951' : '#ffffff',
           borderRadius: 2,
           border: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}`
         }}
@@ -178,12 +178,12 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
               onChange={handleViewChange}
               size="small"
               sx={{
-                backgroundColor: isDarkMode ? '#2C3966' : '#F8F9FA',
+                backgroundPalette: isDarkMode ? '#2C3966' : '#F8F9FA',
                 '& .MuiToggleButton-root': {
                   border: 'none',
                   px: 2,
                   '&.Mui-selected': {
-                    backgroundColor: isDarkMode ? '#3A4B7D' : '#E9ECEF',
+                    backgroundPalette: isDarkMode ? '#3A4B7D' : '#E9ECEF',
                     color: isDarkMode ? '#F5F2E8' : '#2C3E50'
                   }
                 }
@@ -206,9 +206,9 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
               <IconButton 
                 onClick={handleRefresh}
                 sx={{ 
-                  backgroundColor: isDarkMode ? '#2C3966' : '#F8F9FA',
+                  backgroundPalette: isDarkMode ? '#2C3966' : '#F8F9FA',
                   '&:hover': {
-                    backgroundColor: isDarkMode ? '#3A4B7D' : '#E9ECEF'
+                    backgroundPalette: isDarkMode ? '#3A4B7D' : '#E9ECEF'
                   }
                 }}
               >
@@ -221,9 +221,9 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
               <IconButton 
                 onClick={() => exitProjectContext()}
                 sx={{ 
-                  backgroundColor: isDarkMode ? '#2C3966' : '#F8F9FA',
+                  backgroundPalette: isDarkMode ? '#2C3966' : '#F8F9FA',
                   '&:hover': {
-                    backgroundColor: isDarkMode ? '#3A4B7D' : '#E9ECEF'
+                    backgroundPalette: isDarkMode ? '#3A4B7D' : '#E9ECEF'
                   }
                 }}
               >
@@ -245,7 +245,7 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
               size="small"
               sx={{ 
                 cursor: 'pointer',
-                borderColor: isDarkMode ? '#566BA3' : '#D1D8E6'
+                borderPalette: isDarkMode ? '#566BA3' : '#D1D8E6'
               }}
             />
           ))}
@@ -277,7 +277,7 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
             {/* Recent Activity */}
             <Card sx={{ 
               height: '100%',
-              backgroundColor: isDarkMode ? '#1B2951' : '#ffffff',
+              backgroundPalette: isDarkMode ? '#1B2951' : '#ffffff',
               border: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}`
             }}>
               <CardContent sx={{ height: '100%', p: 0 }}>
@@ -306,7 +306,7 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
             {/* Today's Activity */}
             <Card sx={{ 
               height: '100%',
-              backgroundColor: isDarkMode ? '#1B2951' : '#ffffff',
+              backgroundPalette: isDarkMode ? '#1B2951' : '#ffffff',
               border: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}`
             }}>
               <CardContent sx={{ height: '100%', p: 0 }}>
@@ -341,7 +341,7 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
             elevation={0}
             sx={{
               height: '100%',
-              backgroundColor: isDarkMode ? '#1B2951' : '#ffffff',
+              backgroundPalette: isDarkMode ? '#1B2951' : '#ffffff',
               border: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}`,
               borderRadius: 2,
               overflow: 'hidden'

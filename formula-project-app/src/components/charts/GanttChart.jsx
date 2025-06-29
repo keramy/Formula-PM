@@ -13,7 +13,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import EnhancedGanttChart from './EnhancedGanttChart';
 import { useAuthenticatedData } from '../../hooks/useAuthenticatedData';
 
-const priorityColors = {
+const priorityPalettes = {
   low: '#27ae60',
   medium: '#f39c12',
   high: '#e67e22',
@@ -235,8 +235,8 @@ function GanttChart({ tasks = [], projects = [], scopeItems = [], teamMembers = 
             key={task.id}
             sx={{
               p: 2,
-              borderLeft: `4px solid ${task.isOverdue ? '#e74c3c' : priorityColors[task.priority]}`,
-              backgroundColor: task.status === 'completed' ? '#f8f9fa' : 
+              borderLeft: `4px solid ${task.isOverdue ? '#e74c3c' : priorityPalettes[task.priority]}`,
+              backgroundPalette: task.status === 'completed' ? '#f8f9fa' : 
                              task.isOverdue ? '#fff5f5' : 'white',
               opacity: task.status === 'completed' ? 0.7 : 1
             }}
@@ -262,8 +262,8 @@ function GanttChart({ tasks = [], projects = [], scopeItems = [], teamMembers = 
                   label={task.priority}
                   size="small"
                   sx={{
-                    backgroundColor: `${priorityColors[task.priority]}20`,
-                    color: priorityColors[task.priority],
+                    backgroundPalette: `${priorityPalettes[task.priority]}20`,
+                    color: priorityPalettes[task.priority],
                     fontWeight: 'bold'
                   }}
                 />

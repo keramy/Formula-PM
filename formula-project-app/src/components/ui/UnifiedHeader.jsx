@@ -63,14 +63,14 @@ const UnifiedHeader = ({
         
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
           {showViewToggle && (
-            <Box sx={{ display: 'flex', border: 1, borderColor: 'divider', borderRadius: 1 }}>
+            <Box sx={{ display: 'flex', border: 1, borderPalette: 'divider', borderRadius: 1 }}>
               <Tooltip title="Card View">
                 <IconButton
                   size="small"
                   onClick={() => onViewModeChange('card')}
                   sx={{
                     color: viewMode === 'card' ? 'primary.main' : 'text.secondary',
-                    backgroundColor: viewMode === 'card' ? 'action.selected' : 'transparent',
+                    backgroundPalette: viewMode === 'card' ? 'action.selected' : 'transparent',
                     borderRadius: '4px 0 0 4px'
                   }}
                 >
@@ -83,7 +83,7 @@ const UnifiedHeader = ({
                   onClick={() => onViewModeChange('table')}
                   sx={{
                     color: viewMode === 'table' ? 'primary.main' : 'text.secondary',
-                    backgroundColor: viewMode === 'table' ? 'action.selected' : 'transparent',
+                    backgroundPalette: viewMode === 'table' ? 'action.selected' : 'transparent',
                     borderRadius: '0 4px 4px 0'
                   }}
                 >

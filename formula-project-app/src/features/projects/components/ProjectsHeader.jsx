@@ -12,13 +12,13 @@ import {
 } from '@mui/material';
 import {
   Search as SearchIcon,
-  FilterList as FilterIcon,
+  Filter as FilterIcon,
   Download as DownloadIcon,
-  Add as AddIcon,
-  ViewList as TableViewIcon,
-  ViewModule as CardViewIcon,
-  Clear as ClearIcon
-} from '@mui/icons-material';
+  Plus as AddIcon,
+  List as TableViewIcon,
+  ViewGrid as CardViewIcon,
+  Xmark as ClearIcon
+} from 'iconoir-react';
 
 const ProjectsHeader = ({
   searchTerm,
@@ -110,7 +110,7 @@ const ProjectsHeader = ({
             sx={{ 
               minWidth: { xs: '100%', sm: '300px' },
               '& .MuiOutlinedInput-root': {
-                backgroundColor: 'white'
+                backgroundPalette: 'white'
               }
             }}
             InputProps={{
@@ -163,11 +163,11 @@ const ProjectsHeader = ({
               size="small"
               onClick={() => onViewModeChange('table')}
               sx={{
-                backgroundColor: viewMode === 'table' ? '#E67E22' : 'transparent',
+                backgroundPalette: viewMode === 'table' ? '#E67E22' : 'transparent',
                 color: viewMode === 'table' ? 'white' : '#666',
                 borderRadius: 0,
                 '&:hover': {
-                  backgroundColor: viewMode === 'table' ? '#D35400' : '#f5f5f5'
+                  backgroundPalette: viewMode === 'table' ? '#D35400' : '#f5f5f5'
                 }
               }}
             >
@@ -177,11 +177,11 @@ const ProjectsHeader = ({
               size="small"
               onClick={() => onViewModeChange('cards')}
               sx={{
-                backgroundColor: viewMode === 'cards' ? '#E67E22' : 'transparent',
+                backgroundPalette: viewMode === 'cards' ? '#E67E22' : 'transparent',
                 color: viewMode === 'cards' ? 'white' : '#666',
                 borderRadius: 0,
                 '&:hover': {
-                  backgroundColor: viewMode === 'cards' ? '#D35400' : '#f5f5f5'
+                  backgroundPalette: viewMode === 'cards' ? '#D35400' : '#f5f5f5'
                 }
               }}
             >
@@ -197,9 +197,9 @@ const ProjectsHeader = ({
               onClick={handleExport}
               sx={{ 
                 color: '#27AE60',
-                borderColor: '#27AE60',
+                borderPalette: '#27AE60',
                 '&:hover': {
-                  backgroundColor: '#27AE60',
+                  backgroundPalette: '#27AE60',
                   color: 'white'
                 }
               }}
@@ -214,9 +214,9 @@ const ProjectsHeader = ({
             startIcon={<AddIcon />}
             onClick={onCreateProject}
             sx={{
-              backgroundColor: '#E67E22',
+              backgroundPalette: '#E67E22',
               '&:hover': {
-                backgroundColor: '#D35400'
+                backgroundPalette: '#D35400'
               },
               borderRadius: 2,
               px: 3
@@ -241,7 +241,7 @@ const ProjectsHeader = ({
                 onDelete={() => onClearFilter(filter.key)}
                 size="small"
                 sx={{
-                  backgroundColor: '#EBF3FD',
+                  backgroundPalette: '#EBF3FD',
                   color: '#3498DB',
                   '& .MuiChip-deleteIcon': {
                     color: '#3498DB'

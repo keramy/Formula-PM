@@ -59,7 +59,7 @@ const OptionsMenu = ({
     return iconMap[iconType] || null;
   };
 
-  const getColorForAction = (action) => {
+  const getPaletteForAction = (action) => {
     if (action === 'delete') return 'error.main';
     if (action === 'archive') return 'warning.main';
     return 'text.primary';
@@ -76,7 +76,7 @@ const OptionsMenu = ({
           transition: 'opacity 0.2s ease',
           '&:hover': {
             opacity: 1,
-            backgroundColor: 'rgba(0, 0, 0, 0.04)'
+            backgroundPalette: 'rgba(0, 0, 0, 0.04)'
           },
           ...iconButtonProps.sx
         }}
@@ -101,7 +101,7 @@ const OptionsMenu = ({
               py: 1,
               fontSize: '0.875rem',
               '&:hover': {
-                backgroundColor: '#F8F9FA'
+                backgroundPalette: '#F8F9FA'
               }
             }
           }
@@ -121,9 +121,9 @@ const OptionsMenu = ({
               onClick={() => handleMenuAction(option.action, option)}
               disabled={option.disabled}
               sx={{
-                color: getColorForAction(option.action),
+                color: getPaletteForAction(option.action),
                 '&:hover': {
-                  backgroundColor: option.action === 'delete' 
+                  backgroundPalette: option.action === 'delete' 
                     ? 'rgba(231, 76, 60, 0.08)' 
                     : 'rgba(0, 0, 0, 0.04)'
                 }

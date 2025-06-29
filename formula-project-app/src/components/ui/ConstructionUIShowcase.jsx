@@ -19,7 +19,7 @@ import {
   Warning,
   CheckCircle,
   Refresh
-} from '@mui/icons-material';
+} from 'iconoir-react';
 
 // Import our new components
 import { 
@@ -295,7 +295,7 @@ const ConstructionUIShowcase = () => {
               <Card>
                 <CardContent>
                   <CheckCircle color="success" sx={{ mb: 2 }} />
-                  <Typography variant="h6" gutterBottom>Color Contrast</Typography>
+                  <Typography variant="h6" gutterBottom>Palette Contrast</Typography>
                   <Typography variant="body2">
                     4.5:1 contrast ratio minimum for all text and interactive elements
                   </Typography>

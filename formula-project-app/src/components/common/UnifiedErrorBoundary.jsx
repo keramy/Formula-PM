@@ -23,15 +23,15 @@ import {
 } from '@mui/material';
 import {
   Refresh as RefreshIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
-  BugReport as BugIcon,
+  ArrowDown as ExpandMoreIcon,
+  ArrowUp as ExpandLessIcon,
+  WarningTriangle as BugIcon,
   Home as HomeIcon,
-  Warning as WarningIcon,
-  Info as InfoIcon,
-  Close as CloseIcon,
-  Replay as RetryIcon
-} from '@mui/icons-material';
+  WarningTriangle as WarningIcon,
+  InfoCircle as InfoIcon,
+  Xmark as CloseIcon,
+  Refresh as RetryIcon
+} from 'iconoir-react';
 import { safeGet, safeExecute, isNullOrUndefined } from '../../utils/safety';
 
 class UnifiedErrorBoundary extends Component {

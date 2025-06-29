@@ -3,12 +3,12 @@
  * Comprehensive project lifecycle management with team assignments, budget tracking, and status transitions
  */
 
-const { PrismaClient } = require('@prisma/client');
 const cacheService = require('./cacheService');
 const auditService = require('./auditService');
 const _ = require('lodash');
 
-const prisma = new PrismaClient();
+// Will be initialized with shared database service
+let prisma = null;
 
 class ProjectService {
   constructor() {
@@ -28,6 +28,13 @@ class ProjectService {
         cancelled: []
       }
     };
+  }
+
+  /**
+   * Set the shared Prisma client
+   */
+  setPrismaClient(prismaClient) {
+    prisma = prismaClient;
   }
 
   /**

@@ -93,7 +93,7 @@ const EnhancedHeader = ({
   };
 
   // Use theme colors instead of hardcoded values
-  const headerColors = {
+  const headerPalettes = {
     background: theme.palette.background.paper,
     border: theme.palette.divider,
     text: theme.palette.text.primary,
@@ -103,8 +103,8 @@ const EnhancedHeader = ({
 
   return (
     <Box sx={{ 
-      backgroundColor: headerColors.background,
-      borderBottom: `1px solid ${headerColors.border}`,
+      backgroundPalette: headerPalettes.background,
+      borderBottom: `1px solid ${headerPalettes.border}`,
       px: 4,
       py: 3,
       transition: 'all 0.3s ease'
@@ -151,10 +151,10 @@ const EnhancedHeader = ({
               onClick={toggleTheme}
               sx={{ 
                 color: theme.palette.text.primary,
-                backgroundColor: theme.palette.action.hover,
+                backgroundPalette: theme.palette.action.hover,
                 border: `1px solid ${theme.palette.divider}`,
                 '&:hover': {
-                  backgroundColor: theme.palette.action.selected,
+                  backgroundPalette: theme.palette.action.selected,
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                 },
                 transition: 'all 0.2s ease'
@@ -182,7 +182,7 @@ const EnhancedHeader = ({
                 sx={{
                   width: 36,
                   height: 36,
-                  backgroundColor: darkMode ? theme.palette.formulaBrand.lightCream : theme.palette.formulaBrand.navy,
+                  backgroundPalette: darkMode ? theme.palette.formulaBrand.lightCream : theme.palette.formulaBrand.navy,
                   color: darkMode ? theme.palette.formulaBrand.navy : theme.palette.formulaBrand.lightCream,
                   fontSize: '1rem',
                   fontWeight: 500,
@@ -202,7 +202,7 @@ const EnhancedHeader = ({
           mb: 2, 
           fontSize: '0.875rem',
           '& .MuiBreadcrumbs-separator': {
-            color: headerColors.textSecondary
+            color: headerPalettes.textSecondary
           }
         }}
       >
@@ -214,8 +214,8 @@ const EnhancedHeader = ({
             display: 'flex', 
             alignItems: 'center', 
             gap: 0.5,
-            color: headerColors.textSecondary,
-            '&:hover': { color: headerColors.hover }
+            color: headerPalettes.textSecondary,
+            '&:hover': { color: headerPalettes.hover }
           }}
         >
           <Home sx={{ fontSize: 16 }} />
@@ -229,8 +229,8 @@ const EnhancedHeader = ({
             display: 'flex', 
             alignItems: 'center', 
             gap: 0.5,
-            color: headerColors.textSecondary,
-            '&:hover': { color: headerColors.hover }
+            color: headerPalettes.textSecondary,
+            '&:hover': { color: headerPalettes.hover }
           }}
         >
           <Business sx={{ fontSize: 16 }} />
@@ -244,8 +244,8 @@ const EnhancedHeader = ({
             color="inherit"
             href={crumb.href || '#'}
             sx={{ 
-              color: headerColors.textSecondary,
-              '&:hover': { color: headerColors.hover },
+              color: headerPalettes.textSecondary,
+              '&:hover': { color: headerPalettes.hover },
               transition: 'color 0.2s ease'
             }}
           >
@@ -257,7 +257,7 @@ const EnhancedHeader = ({
           color="text.primary" 
           fontWeight={500}
           sx={{ 
-            color: headerColors.text,
+            color: headerPalettes.text,
             fontSize: '0.875rem'
           }}
         >
@@ -274,7 +274,7 @@ const EnhancedHeader = ({
               variant="h4" 
               sx={{ 
                 fontWeight: 700, 
-                color: headerColors.text,
+                color: headerPalettes.text,
                 fontSize: '1.75rem',
                 fontFamily: "'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif"
               }}
@@ -287,10 +287,10 @@ const EnhancedHeader = ({
                 size="small" 
                 onClick={handleStarClick}
                 sx={{ 
-                  color: isStarred ? theme.palette.warning.main : headerColors.textSecondary,
+                  color: isStarred ? theme.palette.warning.main : headerPalettes.textSecondary,
                   '&:hover': {
                     color: isStarred ? theme.palette.warning.dark : theme.palette.warning.main,
-                    backgroundColor: theme.palette.action.hover,
+                    backgroundPalette: theme.palette.action.hover,
                     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                   },
                   transition: 'all 0.2s ease'
@@ -306,7 +306,7 @@ const EnhancedHeader = ({
             <Typography 
               variant="body2" 
               sx={{ 
-                color: headerColors.textSecondary,
+                color: headerPalettes.textSecondary,
                 fontSize: '0.9rem',
                 ml: 1,
                 opacity: 0.8
@@ -335,7 +335,7 @@ const EnhancedHeader = ({
                     width: 32,
                     height: 32,
                     fontSize: '0.875rem',
-                    border: `2px solid ${headerColors.background}`,
+                    border: `2px solid ${headerPalettes.background}`,
                     cursor: 'pointer',
                     transition: 'transform 0.2s ease',
                     '&:hover': {
@@ -349,7 +349,7 @@ const EnhancedHeader = ({
                   <Tooltip key={member.id} title={member.fullName}>
                     <Avatar
                       sx={{
-                        bgcolor: member.roleColor || theme.palette.info.main,
+                        bgcolor: member.rolePalette || theme.palette.info.main,
                         fontWeight: 600
                       }}
                     >
@@ -368,12 +368,12 @@ const EnhancedHeader = ({
                       height: 24,
                       fontSize: '0.75rem',
                       fontWeight: 600,
-                      backgroundColor: theme.palette.action.hover,
+                      backgroundPalette: theme.palette.action.hover,
                       color: theme.palette.text.primary,
                       cursor: 'pointer',
                       border: `1px solid ${theme.palette.divider}`,
                       '&:hover': {
-                        backgroundColor: theme.palette.action.selected,
+                        backgroundPalette: theme.palette.action.selected,
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                       },
                       transition: 'all 0.2s ease'
@@ -395,24 +395,24 @@ const EnhancedHeader = ({
               width: 240,
               height: 38,
               px: 1.5,
-              backgroundColor: theme.palette.action.hover,
+              backgroundPalette: theme.palette.action.hover,
               border: `1px solid ${theme.palette.divider}`,
               borderRadius: 2,
               boxShadow: 'none',
               transition: 'all 0.2s ease',
               '&:hover': {
-                backgroundColor: theme.palette.action.selected,
+                backgroundPalette: theme.palette.action.selected,
                 border: `1px solid ${theme.palette.primary.light}`
               },
               '&:focus-within': {
-                backgroundColor: theme.palette.action.selected,
+                backgroundPalette: theme.palette.action.selected,
                 border: `1px solid ${theme.palette.primary.main}`,
                 boxShadow: `0 0 0 3px ${theme.palette.action.focus}`
               }
             }}
           >
             <Search sx={{ 
-              color: headerColors.textSecondary, 
+              color: headerPalettes.textSecondary, 
               mr: 1, 
               fontSize: 20 
             }} />
@@ -424,9 +424,9 @@ const EnhancedHeader = ({
               sx={{ 
                 flex: 1, 
                 fontSize: '0.875rem',
-                color: headerColors.text,
+                color: headerPalettes.text,
                 '& input::placeholder': {
-                  color: headerColors.textSecondary,
+                  color: headerPalettes.textSecondary,
                   opacity: 0.7
                 }
               }}
@@ -437,14 +437,14 @@ const EnhancedHeader = ({
           <Tooltip title="Share">
             <IconButton 
               sx={{ 
-                backgroundColor: theme.palette.action.hover,
+                backgroundPalette: theme.palette.action.hover,
                 border: `1px solid ${theme.palette.divider}`,
                 borderRadius: 2,
                 width: 38,
                 height: 38,
                 color: theme.palette.text.primary,
                 '&:hover': { 
-                  backgroundColor: theme.palette.action.selected,
+                  backgroundPalette: theme.palette.action.selected,
                   border: `1px solid ${theme.palette.primary.light}`,
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                 },
@@ -464,7 +464,7 @@ const EnhancedHeader = ({
                 startIcon={<Add />}
                 onClick={onAdd}
                 sx={{
-                  backgroundColor: theme.palette.primary.main,
+                  backgroundPalette: theme.palette.primary.main,
                   color: theme.palette.primary.contrastText,
                   borderRadius: 2,
                   px: 3,
@@ -473,7 +473,7 @@ const EnhancedHeader = ({
                   fontSize: '0.875rem',
                   textTransform: 'none',
                   '&:hover': {
-                    backgroundColor: theme.palette.primary.dark,
+                    backgroundPalette: theme.palette.primary.dark,
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
                   },
                   transition: 'all 0.2s ease'
@@ -486,13 +486,13 @@ const EnhancedHeader = ({
                 <IconButton 
                   onClick={onAdd}
                   sx={{ 
-                    backgroundColor: theme.palette.primary.main, 
+                    backgroundPalette: theme.palette.primary.main, 
                     color: theme.palette.primary.contrastText,
                     borderRadius: 2,
                     width: 38,
                     height: 38,
                     '&:hover': { 
-                      backgroundColor: theme.palette.primary.dark,
+                      backgroundPalette: theme.palette.primary.dark,
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
                     },
                     transition: 'all 0.2s ease'
@@ -507,14 +507,14 @@ const EnhancedHeader = ({
           <Tooltip title="More options">
             <IconButton 
               sx={{ 
-                backgroundColor: theme.palette.action.hover,
+                backgroundPalette: theme.palette.action.hover,
                 border: `1px solid ${theme.palette.divider}`,
                 borderRadius: 2,
                 width: 38,
                 height: 38,
                 color: theme.palette.text.primary,
                 '&:hover': { 
-                  backgroundColor: theme.palette.action.selected,
+                  backgroundPalette: theme.palette.action.selected,
                   border: `1px solid ${theme.palette.primary.light}`,
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                 },
@@ -568,7 +568,7 @@ const EnhancedHeader = ({
           sx: {
             mt: 1.5,
             minWidth: 200,
-            backgroundColor: theme.palette.background.paper,
+            backgroundPalette: theme.palette.background.paper,
             border: `1px solid ${theme.palette.divider}`,
             borderRadius: 2,
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
@@ -578,7 +578,7 @@ const EnhancedHeader = ({
               mx: 1,
               my: 0.5,
               '&:hover': {
-                backgroundColor: theme.palette.action.hover,
+                backgroundPalette: theme.palette.action.hover,
               },
             },
           },
@@ -587,23 +587,23 @@ const EnhancedHeader = ({
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem onClick={() => handleUserMenuItemClick('profile')}>
-          <Person sx={{ mr: 2, fontSize: 20, color: headerColors.textSecondary }} />
+          <Person sx={{ mr: 2, fontSize: 20, color: headerPalettes.textSecondary }} />
           Profile
         </MenuItem>
         <MenuItem onClick={() => handleUserMenuItemClick('settings')}>
-          <Settings sx={{ mr: 2, fontSize: 20, color: headerColors.textSecondary }} />
+          <Settings sx={{ mr: 2, fontSize: 20, color: headerPalettes.textSecondary }} />
           Settings
         </MenuItem>
         <MenuItem onClick={toggleTheme}>
           {darkMode ? (
-            <Brightness7 sx={{ mr: 2, fontSize: 20, color: headerColors.textSecondary }} />
+            <Brightness7 sx={{ mr: 2, fontSize: 20, color: headerPalettes.textSecondary }} />
           ) : (
-            <Brightness4 sx={{ mr: 2, fontSize: 20, color: headerColors.textSecondary }} />
+            <Brightness4 sx={{ mr: 2, fontSize: 20, color: headerPalettes.textSecondary }} />
           )}
           {darkMode ? 'Light Mode' : 'Dark Mode'}
         </MenuItem>
         <Divider sx={{ 
-          borderColor: theme.palette.divider,
+          borderPalette: theme.palette.divider,
           my: 1,
         }} />
         <MenuItem onClick={() => handleUserMenuItemClick('logout')}>

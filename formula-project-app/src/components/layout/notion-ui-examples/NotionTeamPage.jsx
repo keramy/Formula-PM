@@ -27,8 +27,8 @@ import {
   Email,
   Phone,
   Work,
-  Assignment
-} from '@mui/icons-material';
+  Check
+} from 'iconoir-react';
 import CleanPageLayout, { CleanTab } from '../CleanPageLayout';
 
 const NotionTeamPage = ({ 
@@ -64,7 +64,7 @@ const NotionTeamPage = ({
     };
   }, [teamMembers, tasks]);
 
-  const getRoleColor = (role) => {
+  const getRolePalette = (role) => {
     switch (role?.toLowerCase()) {
       case 'project manager': return '#E3AF64';
       case 'foreman': return '#516AC8';
@@ -127,7 +127,7 @@ const NotionTeamPage = ({
         label="Workload" 
         isActive={activeTab === 'workload'}
         onClick={() => setActiveTab('workload')}
-        icon={<Assignment sx={{ fontSize: 16 }} />}
+        icon={<Check sx={{ fontSize: 16 }} />}
       />
     </>
   );
@@ -154,7 +154,7 @@ const NotionTeamPage = ({
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundColor: `${color}20`,
+              backgroundPalette: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -180,7 +180,7 @@ const NotionTeamPage = ({
             sx={{
               width: 48,
               height: 48,
-              bgcolor: getRoleColor(member.role),
+              bgcolor: getRolePalette(member.role),
               mr: 2,
               fontSize: '18px',
               fontWeight: 600
@@ -203,7 +203,7 @@ const NotionTeamPage = ({
             <Typography 
               variant="body2" 
               sx={{ 
-                color: getRoleColor(member.role),
+                color: getRolePalette(member.role),
                 fontSize: '13px',
                 fontWeight: 500
               }}
@@ -288,7 +288,7 @@ const NotionTeamPage = ({
                       sx={{
                         width: 32,
                         height: 32,
-                        bgcolor: getRoleColor(member.role),
+                        bgcolor: getRolePalette(member.role),
                         fontSize: '14px',
                         fontWeight: 600
                       }}
@@ -309,7 +309,7 @@ const NotionTeamPage = ({
                   <Typography 
                     variant="body2" 
                     sx={{ 
-                      color: getRoleColor(member.role),
+                      color: getRolePalette(member.role),
                       fontWeight: 500
                     }}
                   >
@@ -411,7 +411,7 @@ const NotionTeamPage = ({
               value={teamStats.totalTasks}
               subtitle="Across all projects"
               color="#E3AF64"
-              icon={<Assignment />}
+              icon={<Check />}
             />
           </Grid>
           <Grid item xs={12} sm={6} lg={3}>
@@ -420,7 +420,7 @@ const NotionTeamPage = ({
               value={Math.round(teamStats.totalTasks / (teamStats.total || 1))}
               subtitle="Tasks per member"
               color="#8B5CF6"
-              icon={<Assignment />}
+              icon={<Check />}
             />
           </Grid>
         </Grid>

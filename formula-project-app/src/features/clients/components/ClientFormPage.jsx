@@ -37,7 +37,7 @@ const ClientFormPage = ({
         sx={{ 
           maxWidth: 800, 
           mx: 'auto',
-          backgroundColor: 'white',
+          backgroundPalette: 'white',
           borderRadius: 3,
           border: '1px solid #E9ECEF',
           p: 4

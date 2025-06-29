@@ -199,7 +199,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                       </Box>
                     </ListItem>
                     {index < recentTasks.length - 1 && (
-                      <Divider sx={{ borderColor: 'var(--gray-100)' }} />
+                      <Divider sx={{ borderPalette: 'var(--gray-100)' }} />
                     )}
                   </React.Fragment>
                 ))}
@@ -278,7 +278,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                   p: 'var(--space-4)', 
                   textAlign: 'center',
                   border: '1px solid var(--construction-500)',
-                  backgroundColor: 'var(--construction-50)'
+                  backgroundPalette: 'var(--construction-50)'
                 }}>
                   <Typography className="text-2xl font-bold" sx={{ color: 'var(--construction-600)' }}>
                     {taskStats.total}
@@ -293,7 +293,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                   p: 'var(--space-4)', 
                   textAlign: 'center',
                   border: '1px solid var(--success-500)',
-                  backgroundColor: 'var(--success-50)'
+                  backgroundPalette: 'var(--success-50)'
                 }}>
                   <Typography className="text-2xl font-bold" sx={{ color: 'var(--success-500)' }}>
                     {taskStats.completed}
@@ -308,7 +308,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                   p: 'var(--space-4)', 
                   textAlign: 'center',
                   border: '1px solid var(--warning-500)',
-                  backgroundColor: 'var(--warning-50)'
+                  backgroundPalette: 'var(--warning-50)'
                 }}>
                   <Typography className="text-2xl font-bold" sx={{ color: 'var(--warning-500)' }}>
                     {taskStats.inProgress}
@@ -323,7 +323,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                   p: 'var(--space-4)', 
                   textAlign: 'center',
                   border: '1px solid var(--gray-400)',
-                  backgroundColor: 'var(--gray-50)'
+                  backgroundPalette: 'var(--gray-50)'
                 }}>
                   <Typography className="text-2xl font-bold" sx={{ color: 'var(--gray-600)' }}>
                     {taskStats.pending}
@@ -357,7 +357,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                           sx={{ 
                             width: 32, 
                             height: 32,
-                            backgroundColor: 'var(--construction-500)',
+                            backgroundPalette: 'var(--construction-500)',
                             fontSize: 'var(--text-sm)',
                             fontWeight: 600
                           }}
@@ -380,7 +380,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                       />
                     </ListItem>
                     {index < assignedMembers.length - 1 && (
-                      <Divider sx={{ borderColor: 'var(--gray-100)' }} />
+                      <Divider sx={{ borderPalette: 'var(--gray-100)' }} />
                     )}
                   </React.Fragment>
                 ))}

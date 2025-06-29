@@ -190,7 +190,7 @@ const VendorManagement = ({
     handleMenuClose();
   };
 
-  const getPerformanceColor = (percentage) => {
+  const getPerformancePalette = (percentage) => {
     if (percentage >= 95) return 'success';
     if (percentage >= 85) return 'warning';
     return 'error';
@@ -244,7 +244,7 @@ const VendorManagement = ({
                 height: '100%',
                 cursor: onVendorSelect ? 'pointer' : 'default',
                 border: selectedVendor?.id === vendor.id ? '2px solid' : '1px solid',
-                borderColor: selectedVendor?.id === vendor.id ? 'primary.main' : 'divider'
+                borderPalette: selectedVendor?.id === vendor.id ? 'primary.main' : 'divider'
               }}
               onClick={() => onVendorSelect && onVendorSelect(vendor)}
             >
@@ -334,7 +334,7 @@ const VendorManagement = ({
                     </Typography>
                     <Typography 
                       variant="body2" 
-                      color={`${getPerformanceColor(vendor.onTimeDelivery)}.main`}
+                      color={`${getPerformancePalette(vendor.onTimeDelivery)}.main`}
                       fontWeight={600}
                     >
                       {vendor.onTimeDelivery}%

@@ -22,7 +22,7 @@ import {
   MoreHoriz,
   Star,
   StarBorder
-} from '@mui/icons-material';
+} from 'iconoir-react';
 
 const UniversalBreadcrumb = ({ 
   // Navigation data
@@ -51,7 +51,7 @@ const UniversalBreadcrumb = ({
   showBackButton = true,
   
   // Custom styling
-  backgroundColor = 'white',
+  backgroundPalette = 'white',
   elevation = 0
 }) => {
   const theme = useTheme();
@@ -130,7 +130,7 @@ const UniversalBreadcrumb = ({
     <Paper
       elevation={elevation}
       sx={{
-        backgroundColor,
+        backgroundPalette,
         borderBottom: '1px solid #E9ECEF',
         px: { xs: 2, md: 4 },
         py: 3,
@@ -283,7 +283,7 @@ const UniversalBreadcrumb = ({
                   sx={{
                     height: 24,
                     fontSize: '0.75rem',
-                    backgroundColor: getStatusColor(itemData.status),
+                    backgroundPalette: getStatusPalette(itemData.status),
                     color: 'white',
                     fontWeight: 600
                   }}
@@ -298,7 +298,7 @@ const UniversalBreadcrumb = ({
                   sx={{
                     height: 24,
                     fontSize: '0.75rem',
-                    borderColor: '#D5DBDB',
+                    borderPalette: '#D5DBDB',
                     color: '#7F8C8D'
                   }}
                 />
@@ -321,7 +321,7 @@ const UniversalBreadcrumb = ({
                   onClick={action.onClick}
                   size="small"
                   sx={{ 
-                    backgroundColor: action.color === 'primary' ? '#3498DB' : '#F8F9FA',
+                    backgroundPalette: action.color === 'primary' ? '#3498DB' : '#F8F9FA',
                     color: action.color === 'primary' ? 'white' : 
                            action.color === 'error' ? '#E74C3C' : '#7F8C8D',
                     border: action.color === 'primary' ? 'none' : '1px solid #E9ECEF',
@@ -329,7 +329,7 @@ const UniversalBreadcrumb = ({
                     width: 36,
                     height: 36,
                     '&:hover': { 
-                      backgroundColor: action.color === 'primary' ? '#2980B9' :
+                      backgroundPalette: action.color === 'primary' ? '#2980B9' :
                                      action.color === 'error' ? '#fadbd8' : '#ECF0F1',
                       transform: 'translateY(-1px)',
                       boxShadow: action.color === 'primary' ? '0 4px 12px rgba(52, 152, 219, 0.3)' : 'none'
@@ -346,13 +346,13 @@ const UniversalBreadcrumb = ({
                 <IconButton 
                   size="small"
                   sx={{ 
-                    backgroundColor: '#F8F9FA',
+                    backgroundPalette: '#F8F9FA',
                     border: '1px solid #E9ECEF',
                     borderRadius: 2,
                     width: 36,
                     height: 36,
                     '&:hover': { 
-                      backgroundColor: '#ECF0F1',
+                      backgroundPalette: '#ECF0F1',
                       border: '1px solid #D5DBDB'
                     }
                   }}
@@ -369,8 +369,8 @@ const UniversalBreadcrumb = ({
 };
 
 // Helper function to get status colors
-const getStatusColor = (status) => {
-  const statusColors = {
+const getStatusPalette = (status) => {
+  const statusPalettes = {
     'completed': '#27AE60',
     'active': '#8E44AD',
     'in-progress': '#F39C12',
@@ -386,7 +386,7 @@ const getStatusColor = (status) => {
     'not_awarded': '#E74C3C'
   };
   
-  return statusColors[status?.toLowerCase()] || '#95A5A6';
+  return statusPalettes[status?.toLowerCase()] || '#95A5A6';
 };
 
 export default UniversalBreadcrumb;

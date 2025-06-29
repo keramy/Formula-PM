@@ -181,9 +181,9 @@ export const UnifiedLoading = ({
           sx={{
             height: 3,
             borderRadius: 2,
-            backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)',
+            backgroundPalette: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)',
             '& .MuiLinearProgress-bar': {
-              backgroundColor: colors.accent,
+              backgroundPalette: colors.accent,
               borderRadius: 2,
             },
           }}
@@ -285,7 +285,7 @@ export const UnifiedLoading = ({
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: colors.background,
+          backgroundPalette: colors.background,
           zIndex: 9999,
         };
         
@@ -294,7 +294,7 @@ export const UnifiedLoading = ({
           ...baseStyles,
           height: fullHeight ? '100vh' : 'auto',
           minHeight: fullHeight ? '100vh' : minHeight,
-          backgroundColor: 'transparent',
+          backgroundPalette: 'transparent',
         };
         
       case 'section':

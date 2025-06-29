@@ -109,11 +109,25 @@ class CacheService {
         this.connectionAttempts++;
       });
 
-      // Connect to Redis
-      await this.client.connect();
+      // Connect to Redis with timeout
+      const connectPromise = this.client.connect();
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Redis connection timeout after 10 seconds'));
+        }, 10000);
+      });
       
-      // Test connection
-      await this.client.ping();
+      await Promise.race([connectPromise, timeoutPromise]);
+      
+      // Test connection with timeout
+      const pingPromise = this.client.ping();
+      const pingTimeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Redis ping timeout after 2 seconds'));
+        }, 2000);
+      });
+      
+      await Promise.race([pingPromise, pingTimeoutPromise]);
       console.log('✅ Redis connection test successful');
       
       return this.client;
@@ -126,6 +140,14 @@ class CacheService {
       console.log('⚠️ Continuing without Redis caching');
       return null;
     }
+  }
+
+  /**
+   * Initialize service (called by ServiceRegistry)
+   */
+  async initialize() {
+    // No-op since connection is handled separately in server.js
+    return true;
   }
 
   /**

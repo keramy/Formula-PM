@@ -69,7 +69,7 @@ const UnifiedComponentsExample = () => {
       icon: <ProjectIcon />,
       count: 12,
       badge: 3,
-      badgeColor: 'error'
+      badgePalette: 'error'
     },
     {
       id: 'tasks',
@@ -265,7 +265,7 @@ const UnifiedComponentsExample = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: 'grey.50' }}>
+    <Box sx={{ minHeight: '100vh', backgroundPalette: 'grey.50' }}>
       {/* Master Header */}
       <MasterHeader
         title="Project Management Dashboard"

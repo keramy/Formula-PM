@@ -33,22 +33,22 @@ class ConnectionService {
         }
       },
       
-      // Rules for scope group dependencies
+      // Rules for scope group dependencies - GROUPS ARE INDEPENDENT
       groupDependencies: {
         construction: {
           dependsOn: [],
-          blocks: ['millwork', 'electric', 'mep']
+          blocks: [] // Groups are independent - no blocking
         },
         millwork: {
-          dependsOn: ['construction'],
+          dependsOn: [], // Can start independently
           blocks: []
         },
         electric: {
-          dependsOn: ['construction'],
+          dependsOn: [], // Can start independently
           blocks: []
         },
         mep: {
-          dependsOn: ['construction'], 
+          dependsOn: [], // Can start independently
           blocks: []
         }
       }
@@ -465,17 +465,17 @@ class ConnectionService {
       });
     }
 
-    // Group dependency recommendations
-    Object.entries(analysis.groupDependencies).forEach(([groupKey, deps]) => {
-      if (!deps.canStart && deps.progress > 0) {
-        recommendations.push({
-          type: 'dependency',
-          title: `${groupKey} group started prematurely`,
-          description: `This group depends on: ${deps.blockedBy.map(b => b.group).join(', ')}`,
-          actions: ['Review group dependencies', 'Adjust project timeline']
-        });
-      }
-    });
+    // Group dependency recommendations - DISABLED (groups are independent)
+    // Object.entries(analysis.groupDependencies).forEach(([groupKey, deps]) => {
+    //   if (!deps.canStart && deps.progress > 0) {
+    //     recommendations.push({
+    //       type: 'dependency',
+    //       title: `${groupKey} group started prematurely`,
+    //       description: `This group depends on: ${deps.blockedBy.map(b => b.group).join(', ')}`,
+    //       actions: ['Review group dependencies', 'Adjust project timeline']
+    //     });
+    //   }
+    // });
 
     return recommendations;
   }

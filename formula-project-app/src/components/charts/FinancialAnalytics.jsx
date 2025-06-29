@@ -9,11 +9,11 @@ import {
   useTheme 
 } from '@mui/material';
 import {
-  TrendingUp,
-  AccountBalance,
-  Timeline,
-  Assessment
-} from '@mui/icons-material';
+  ArrowUp,
+  Building as AccountBalance,
+  ArrowUp as Timeline,
+  StatsReport as Assessment
+} from 'iconoir-react';
 
 const FinancialAnalytics = ({ projects = [] }) => {
   const theme = useTheme();
@@ -97,7 +97,7 @@ const FinancialAnalytics = ({ projects = [] }) => {
           elevation={0}
           sx={{
             p: 3,
-            backgroundColor: theme.palette.background.paper,
+            backgroundPalette: theme.palette.background.paper,
             border: `1px solid ${theme.palette.divider}`,
             borderRadius: 3,
             height: '300px'
@@ -125,9 +125,9 @@ const FinancialAnalytics = ({ projects = [] }) => {
               sx={{
                 height: 8,
                 borderRadius: 4,
-                backgroundColor: '#f0f0f0',
+                backgroundPalette: '#f0f0f0',
                 '& .MuiLinearProgress-bar': {
-                  backgroundColor: budgetUtilization > 80 ? '#E74C3C' : '#3498DB',
+                  backgroundPalette: budgetUtilization > 80 ? '#E74C3C' : '#3498DB',
                   borderRadius: 4
                 }
               }}
@@ -170,7 +170,7 @@ const FinancialAnalytics = ({ projects = [] }) => {
           elevation={0}
           sx={{
             p: 3,
-            backgroundColor: theme.palette.background.paper,
+            backgroundPalette: theme.palette.background.paper,
             border: `1px solid ${theme.palette.divider}`,
             borderRadius: 3,
             height: '300px'
@@ -206,9 +206,9 @@ const FinancialAnalytics = ({ projects = [] }) => {
                 sx={{
                   height: 6,
                   borderRadius: 3,
-                  backgroundColor: '#f0f0f0',
+                  backgroundPalette: '#f0f0f0',
                   '& .MuiLinearProgress-bar': {
-                    backgroundColor: item.color,
+                    backgroundPalette: item.color,
                     borderRadius: 3
                   }
                 }}
@@ -224,7 +224,7 @@ const FinancialAnalytics = ({ projects = [] }) => {
           elevation={0}
           sx={{
             p: 3,
-            backgroundColor: theme.palette.background.paper,
+            backgroundPalette: theme.palette.background.paper,
             border: `1px solid ${theme.palette.divider}`,
             borderRadius: 3
           }}
@@ -253,7 +253,7 @@ const FinancialAnalytics = ({ projects = [] }) => {
                       border: `1px solid ${theme.palette.divider}`,
                       borderRadius: 2,
                       textAlign: 'center',
-                      backgroundColor: theme.palette.background.default
+                      backgroundPalette: theme.palette.background.default
                     }}
                   >
                     <Typography variant="h6" fontWeight={600} sx={{ color: '#3498DB' }}>

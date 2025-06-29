@@ -52,7 +52,7 @@ import {
   ArrowDown as ExpandMoreIcon,
   CheckCircle as CheckIcon,
   Check as RuleIcon,
-  Color as CustomizeIcon
+  Palette as CustomizeIcon
 } from 'iconoir-react';
 
 const SpecificationTemplates = ({ 

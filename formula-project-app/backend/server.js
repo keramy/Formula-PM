@@ -12,7 +12,7 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-const { PrismaClient } = require('@prisma/client');
+const databaseService = require('./services/DatabaseService');
 const cacheService = require('./services/cacheService');
 const auditService = require('./services/auditService');
 const ServiceRegistry = require('./services/ServiceRegistry');
@@ -26,11 +26,8 @@ const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5014;
 
-// Initialize Prisma client
-const prisma = new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
-  errorFormat: 'pretty'
-});
+// Database service will be initialized in startServer function
+let prisma = null;
 
 // Middleware setup
 app.use(helmet({
@@ -63,23 +60,23 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Make services available to routes
-app.locals.prisma = prisma;
+// Make services available to routes (prisma will be set after initialization)
 app.locals.cacheService = cacheService;
 app.locals.auditService = auditService;
+app.locals.databaseService = databaseService;
 
 // Health check endpoints
 app.get('/health', async (req, res) => {
   try {
-    // Test database connection
-    await prisma.$queryRaw`SELECT 1`;
+    // Test database connection using shared service
+    const dbHealth = await databaseService.getHealthStatus();
     
     // Test cache connection
     const cacheHealth = await cacheService.healthCheck();
     
     // Get basic stats
     const stats = {
-      database: 'healthy',
+      database: dbHealth.status,
       cache: cacheHealth,
       uptime: process.uptime(),
       memory: process.memoryUsage(),
@@ -101,12 +98,9 @@ app.get('/health', async (req, res) => {
 
 app.get('/health/detailed', async (req, res) => {
   try {
-    // Database stats
-    const [userCount, projectCount, taskCount] = await Promise.all([
-      prisma.user.count(),
-      prisma.project.count(),
-      prisma.task.count()
-    ]);
+    // Database stats using shared service
+    const dbHealth = await databaseService.getHealthStatus();
+    const dbMetrics = await databaseService.getConnectionMetrics();
     
     // Cache stats
     const cacheStats = await cacheService.getStats();
@@ -124,10 +118,11 @@ app.get('/health/detailed', async (req, res) => {
     }
     
     res.json({
-      status: 'healthy',
+      status: dbHealth.status === 'healthy' ? 'healthy' : 'unhealthy',
       database: {
-        status: 'connected',
-        counts: { users: userCount, projects: projectCount, tasks: taskCount }
+        status: dbHealth.status,
+        connected: dbHealth.connected,
+        metrics: dbMetrics
       },
       cache: cacheStats,
       audit: auditStats,
@@ -363,9 +358,9 @@ process.on('SIGTERM', async () => {
       // Flush audit logs
       await auditService.shutdown();
       
-      // Disconnect from database
-      await prisma.$disconnect();
-      console.log('✅ Database connection closed');
+      // Shutdown database service
+      await databaseService.shutdown();
+      console.log('✅ Database service shutdown complete');
       
       // Disconnect from Redis
       await cacheService.disconnect();
@@ -385,9 +380,13 @@ async function startServer() {
   try {
     console.log('🚀 Starting Formula PM Backend Server...');
     
-    // Initialize database connection
-    await prisma.$connect();
-    console.log('✅ Database connected successfully');
+    // Initialize shared database service
+    prisma = await databaseService.initialize();
+    app.locals.prisma = prisma; // Make available to routes
+    console.log('✅ Shared database service initialized successfully');
+    
+    // Set Prisma client for all services that need it
+    auditService.setPrismaClient(prisma);
     
     // Initialize cache connection
     await cacheService.connect();
@@ -395,14 +394,13 @@ async function startServer() {
     
     // Initialize all services through ServiceRegistry
     console.log('🔧 Initializing advanced services...');
+    
+    // Pass the HTTP server and Prisma client to ServiceRegistry
+    ServiceRegistry.httpServer = server;
+    ServiceRegistry.setPrismaClient(prisma);
+    
     await ServiceRegistry.initializeServices();
     console.log('✅ All services initialized successfully');
-    
-    // Initialize Socket.IO realtime service
-    console.log('🔧 Initializing realtime service...');
-    const realtimeService = ServiceRegistry.getService('RealtimeService');
-    await realtimeService.initialize(server);
-    console.log('✅ Realtime service initialized successfully');
     
     // Log system startup
     await auditService.logSystemEvent({

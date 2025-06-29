@@ -59,12 +59,12 @@ const ProjectsTableView = ({
 
   const getStatusConfig = (status) => {
     const configs = {
-      'on-tender': { label: 'On Tender', color: '#3498db', bgColor: '#ebf3fd' },
-      'awarded': { label: 'Awarded', color: '#27ae60', bgColor: '#eafaf1' },
-      'on-hold': { label: 'On Hold', color: '#f39c12', bgColor: '#fef9e7' },
-      'not-awarded': { label: 'Not Awarded', color: '#e74c3c', bgColor: '#fdedec' },
-      'active': { label: 'Active', color: '#9b59b6', bgColor: '#f4ecf7' },
-      'completed': { label: 'Completed', color: '#2c3e50', bgColor: '#eaeded' }
+      'on-tender': { label: 'On Tender', color: '#3498db', bgPalette: '#ebf3fd' },
+      'awarded': { label: 'Awarded', color: '#27ae60', bgPalette: '#eafaf1' },
+      'on-hold': { label: 'On Hold', color: '#f39c12', bgPalette: '#fef9e7' },
+      'not-awarded': { label: 'Not Awarded', color: '#e74c3c', bgPalette: '#fdedec' },
+      'active': { label: 'Active', color: '#9b59b6', bgPalette: '#f4ecf7' },
+      'completed': { label: 'Completed', color: '#2c3e50', bgPalette: '#eaeded' }
     };
     return configs[status] || configs['on-tender'];
   };
@@ -182,7 +182,7 @@ const ProjectsTableView = ({
       <Box sx={{ 
         textAlign: 'center', 
         py: 8,
-        backgroundColor: 'white',
+        backgroundPalette: 'white',
         borderRadius: 2,
         border: '1px solid #E9ECEF'
       }}>
@@ -216,7 +216,7 @@ const ProjectsTableView = ({
                   key={column.id}
                   sx={{ 
                     minWidth: column.minWidth,
-                    backgroundColor: '#F8F9FA',
+                    backgroundPalette: '#F8F9FA',
                     fontWeight: 600,
                     color: '#2C3E50'
                   }}
@@ -248,7 +248,7 @@ const ProjectsTableView = ({
                   hover
                   sx={{ 
                     '&:hover': { 
-                      backgroundColor: '#F8F9FA' 
+                      backgroundPalette: '#F8F9FA' 
                     }
                   }}
                 >
@@ -259,7 +259,7 @@ const ProjectsTableView = ({
                         sx={{
                           width: 32,
                           height: 32,
-                          backgroundColor: typeConfig.color,
+                          backgroundPalette: typeConfig.color,
                           fontSize: '0.8rem',
                           fontWeight: 600
                         }}
@@ -303,7 +303,7 @@ const ProjectsTableView = ({
                       label={typeConfig.label}
                       size="small"
                       sx={{
-                        backgroundColor: `${typeConfig.color}15`,
+                        backgroundPalette: `${typeConfig.color}15`,
                         color: typeConfig.color,
                         fontWeight: 500,
                         border: `1px solid ${typeConfig.color}30`
@@ -317,7 +317,7 @@ const ProjectsTableView = ({
                       label={statusConfig.label}
                       size="small"
                       sx={{
-                        backgroundColor: statusConfig.bgColor,
+                        backgroundPalette: statusConfig.bgPalette,
                         color: statusConfig.color,
                         fontWeight: 500
                       }}
@@ -376,9 +376,9 @@ const ProjectsTableView = ({
                           sx={{ 
                             height: 6, 
                             borderRadius: 3,
-                            backgroundColor: '#E0E0E0',
+                            backgroundPalette: '#E0E0E0',
                             '& .MuiLinearProgress-bar': {
-                              backgroundColor: progress > 75 ? '#27AE60' : 
+                              backgroundPalette: progress > 75 ? '#27AE60' : 
                                              progress > 50 ? '#F39C12' : 
                                              progress > 25 ? '#3498DB' : '#E74C3C'
                             }

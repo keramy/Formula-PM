@@ -30,17 +30,17 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import {
-  TrendingUp,
+  ArrowUp,
   ClipboardCheck as Task,
   Group as Group,
-  Clock as Schedule,
+  Clock as Calendar,
   WarningTriangle as Warning,
   CheckCircle,
   Star,
   Calendar as DateRange
 } from 'iconoir-react';
 
-// Color palettes for charts
+// Palette palettes for charts
 const COLORS = {
   primary: '#37444B',
   secondary: '#C0B19E',
@@ -51,7 +51,7 @@ const COLORS = {
   info: '#2196f3'
 };
 
-const pieColors = [COLORS.primary, COLORS.secondary, COLORS.light, COLORS.success];
+const piePalettes = [COLORS.primary, COLORS.secondary, COLORS.light, COLORS.success];
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -135,14 +135,14 @@ function AdvancedDashboard({ projects, tasks, teamMembers }) {
           { 
             title: 'Total Projects', 
             value: stats.totalProjects, 
-            icon: <Assignment />, 
+            icon: <Check />, 
             color: COLORS.primary,
             subtitle: 'Active projects'
           },
           { 
             title: 'Total Tasks', 
             value: stats.totalTasks, 
-            icon: <Schedule />, 
+            icon: <Calendar />, 
             color: COLORS.secondary,
             subtitle: 'All tasks'
           },
@@ -213,7 +213,7 @@ function AdvancedDashboard({ projects, tasks, teamMembers }) {
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 3, height: 350 }}>
               <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Assignment color="primary" />
+                <Check color="primary" />
                 Project Types Distribution
               </Typography>
               {projectTypeData.length > 0 ? (
@@ -230,7 +230,7 @@ function AdvancedDashboard({ projects, tasks, teamMembers }) {
                       dataKey="value"
                     >
                       {projectTypeData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
+                        <Cell key={`cell-${index}`} fill={piePalettes[index % piePalettes.length]} />
                       ))}
                     </Pie>
                     <Tooltip />
@@ -247,7 +247,7 @@ function AdvancedDashboard({ projects, tasks, teamMembers }) {
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 3, height: 350 }}>
               <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <TrendingUp color="primary" />
+                <ArrowUp color="primary" />
                 Project Progress Summary
               </Typography>
               <Box sx={{ py: 2 }}>
@@ -272,10 +272,10 @@ function AdvancedDashboard({ projects, tasks, teamMembers }) {
                         sx={{
                           height: 6,
                           borderRadius: 3,
-                          backgroundColor: '#e0e0e0',
+                          backgroundPalette: '#e0e0e0',
                           '& .MuiLinearProgress-bar': {
                             borderRadius: 3,
-                            backgroundColor: progress === 100 ? COLORS.success : COLORS.primary
+                            backgroundPalette: progress === 100 ? COLORS.success : COLORS.primary
                           }
                         }}
                       />
@@ -315,7 +315,7 @@ function AdvancedDashboard({ projects, tasks, teamMembers }) {
                         if (active && payload && payload.length) {
                           const data = payload[0].payload;
                           return (
-                            <Paper sx={{ p: 2, border: 1, borderColor: 'divider' }}>
+                            <Paper sx={{ p: 2, border: 1, borderPalette: 'divider' }}>
                               <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                                 {data.fullName}
                               </Typography>
@@ -356,7 +356,7 @@ function AdvancedDashboard({ projects, tasks, teamMembers }) {
               {upcomingDeadlines.length > 0 ? (
                 <List>
                   {upcomingDeadlines.map((task, index) => (
-                    <ListItem key={task.id} sx={{ border: 1, borderColor: 'divider', borderRadius: 2, mb: 1 }}>
+                    <ListItem key={task.id} sx={{ border: 1, borderPalette: 'divider', borderRadius: 2, mb: 1 }}>
                       <ListItemAvatar>
                         <Avatar sx={{ 
                           bgcolor: task.daysLeft < 0 ? COLORS.error : task.daysLeft <= 1 ? COLORS.warning : COLORS.primary,

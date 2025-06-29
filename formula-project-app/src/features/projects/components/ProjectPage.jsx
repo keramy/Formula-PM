@@ -6,7 +6,7 @@ import {
   Alert
 } from '@mui/material';
 import {
-  ArrowUp as TrendingUp,
+  ArrowUp as ArrowUp,
   ClipboardCheck,
   Calendar,
   EditPencil as DesignPencil,
@@ -414,7 +414,7 @@ const ProjectPage = ({
   // Icon mapping for the tabs
   const getIconComponent = (iconName) => {
     const iconMap = {
-      'ArrowUp': TrendingUp,
+      'ArrowUp': ArrowUp,
       'ClipboardCheck': ClipboardCheck,
       'Calendar': Calendar,
       'EditPencil': DesignPencil,

@@ -126,9 +126,9 @@ const LoginPage = () => {
           top: 20,
           right: 20,
           color: colors.text,
-          backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)',
+          backgroundPalette: darkMode ? 'rgba(245, 242, 232, 0.1)' : 'rgba(27, 41, 81, 0.1)',
           '&:hover': {
-            backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)',
+            backgroundPalette: darkMode ? 'rgba(245, 242, 232, 0.2)' : 'rgba(27, 41, 81, 0.2)',
           },
         }}
       >
@@ -142,7 +142,7 @@ const LoginPage = () => {
             elevation={0}
             sx={{ 
               borderRadius: 3,
-              backgroundColor: colors.cardBg,
+              backgroundPalette: colors.cardBg,
               border: `1px solid ${colors.cardBorder}`,
               boxShadow: darkMode 
                 ? '0 20px 40px rgba(0, 0, 0, 0.3)'
@@ -183,7 +183,7 @@ const LoginPage = () => {
                   severity="error" 
                   sx={{ 
                     mb: 3,
-                    backgroundColor: darkMode ? 'rgba(220, 38, 38, 0.1)' : '#FEE2E2',
+                    backgroundPalette: darkMode ? 'rgba(220, 38, 38, 0.1)' : '#FEE2E2',
                     color: darkMode ? '#FCA5A5' : '#DC2626',
                     border: `1px solid ${darkMode ? '#DC2626' : '#FCA5A5'}`,
                   }}
@@ -204,15 +204,15 @@ const LoginPage = () => {
                   sx={{ 
                     mb: 2,
                     '& .MuiOutlinedInput-root': {
-                      backgroundColor: colors.input,
+                      backgroundPalette: colors.input,
                       '& fieldset': {
-                        borderColor: colors.cardBorder,
+                        borderPalette: colors.cardBorder,
                       },
                       '&:hover fieldset': {
-                        borderColor: colors.text,
+                        borderPalette: colors.text,
                       },
                       '&.Mui-focused fieldset': {
-                        borderColor: colors.accent,
+                        borderPalette: colors.accent,
                       },
                     },
                     '& .MuiInputLabel-root': {
@@ -242,15 +242,15 @@ const LoginPage = () => {
                   sx={{ 
                     mb: 3,
                     '& .MuiOutlinedInput-root': {
-                      backgroundColor: colors.input,
+                      backgroundPalette: colors.input,
                       '& fieldset': {
-                        borderColor: colors.cardBorder,
+                        borderPalette: colors.cardBorder,
                       },
                       '&:hover fieldset': {
-                        borderColor: colors.text,
+                        borderPalette: colors.text,
                       },
                       '&.Mui-focused fieldset': {
-                        borderColor: colors.accent,
+                        borderPalette: colors.accent,
                       },
                     },
                     '& .MuiInputLabel-root': {
@@ -290,13 +290,13 @@ const LoginPage = () => {
                     py: 1.5, 
                     fontSize: '1.1rem', 
                     fontWeight: 600,
-                    backgroundColor: colors.accent,
+                    backgroundPalette: colors.accent,
                     color: darkMode ? '#1B2951' : '#F5F2E8',
                     '&:hover': {
-                      backgroundColor: darkMode ? '#E8E2D5' : '#566BA3',
+                      backgroundPalette: darkMode ? '#E8E2D5' : '#566BA3',
                     },
                     '&:disabled': {
-                      backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.3)' : 'rgba(27, 41, 81, 0.3)',
+                      backgroundPalette: darkMode ? 'rgba(245, 242, 232, 0.3)' : 'rgba(27, 41, 81, 0.3)',
                     },
                   }}
                 >
@@ -314,7 +314,7 @@ const LoginPage = () => {
             sx={{ 
               p: 3, 
               borderRadius: 3, 
-              backgroundColor: colors.cardBg,
+              backgroundPalette: colors.cardBg,
               border: `1px solid ${colors.cardBorder}`,
               boxShadow: darkMode 
                 ? '0 20px 40px rgba(0, 0, 0, 0.2)'
@@ -350,14 +350,14 @@ const LoginPage = () => {
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   border: `1px solid ${colors.cardBorder}`,
-                  backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.02)' : 'rgba(27, 41, 81, 0.02)',
+                  backgroundPalette: darkMode ? 'rgba(245, 242, 232, 0.02)' : 'rgba(27, 41, 81, 0.02)',
                   '&:hover': {
                     transform: 'translateY(-2px)',
                     boxShadow: darkMode 
                       ? '0 8px 25px rgba(0, 0, 0, 0.2)'
                       : '0 8px 25px rgba(27, 41, 81, 0.1)',
-                    borderColor: demo.color,
-                    backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.05)' : 'rgba(27, 41, 81, 0.05)',
+                    borderPalette: demo.color,
+                    backgroundPalette: darkMode ? 'rgba(245, 242, 232, 0.05)' : 'rgba(27, 41, 81, 0.05)',
                   }
                 }}
                 onClick={() => fillDemoCredentials(demo)}
@@ -412,7 +412,7 @@ const LoginPage = () => {
               severity="info" 
               sx={{ 
                 mt: 3,
-                backgroundColor: darkMode ? 'rgba(59, 130, 246, 0.1)' : '#EFF6FF',
+                backgroundPalette: darkMode ? 'rgba(59, 130, 246, 0.1)' : '#EFF6FF',
                 color: darkMode ? '#93C5FD' : '#1E40AF',
                 border: `1px solid ${darkMode ? '#3B82F6' : '#93C5FD'}`,
               }}

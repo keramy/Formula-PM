@@ -3,10 +3,10 @@
  * Comprehensive audit trail for compliance and data integrity tracking
  */
 
-const { PrismaClient } = require('@prisma/client');
 const cacheService = require('./cacheService');
 
-const prisma = new PrismaClient();
+// Will be initialized with shared database service
+let prisma = null;
 
 class AuditService {
   constructor() {
@@ -33,7 +33,33 @@ class AuditService {
       lastFlush: Date.now()
     };
     
+    this.flushTimer = null;
+    this.isInitialized = false;
+  }
+  
+  /**
+   * Set the shared Prisma client
+   */
+  setPrismaClient(prismaClient) {
+    prisma = prismaClient;
+  }
+
+  /**
+   * Initialize service (called by ServiceRegistry)
+   */
+  async initialize() {
+    if (this.isInitialized) {
+      return;
+    }
+
+    if (!prisma) {
+      throw new Error('AuditService: Prisma client must be set before initialization');
+    }
+    
+    console.log('Initializing audit service...');
     this.startBatchProcessor();
+    this.isInitialized = true;
+    console.log('Audit service initialized successfully');
   }
 
   /**

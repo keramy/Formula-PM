@@ -154,9 +154,9 @@ const UnifiedFilters = ({
         sx={{ 
           p: 3, 
           mb: 3, 
-          backgroundColor: 'grey.50',
+          backgroundPalette: 'grey.50',
           border: 1,
-          borderColor: 'divider'
+          borderPalette: 'divider'
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -187,7 +187,7 @@ const UnifiedFilters = ({
                   onClick={() => onApplyQuickFilter(quickFilter)}
                   variant="outlined"
                   size="small"
-                  sx={{ '&:hover': { backgroundColor: 'primary.light', color: 'white' } }}
+                  sx={{ '&:hover': { backgroundPalette: 'primary.light', color: 'white' } }}
                 />
               ))}
             </Box>

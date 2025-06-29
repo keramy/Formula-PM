@@ -8,7 +8,7 @@ import {
   Card,
   CardContent,
   Typography,
-  Timeline,
+  ArrowUp as Timeline,
   TimelineItem,
   TimelineSeparator,
   TimelineConnector,
@@ -34,7 +34,7 @@ const TimelineView = ({
   currentTimeIndex,
   onTimelineClick,
   formatTimeRange,
-  getStatusColor,
+  getStatusPalette,
   getStatusIcon,
   formatLocation
 }) => {
@@ -121,7 +121,7 @@ const TimelineView = ({
                             height: 40,
                             cursor: 'pointer',
                             border: isActive ? 2 : 1,
-                            borderColor: isActive ? 'primary.main' : 'divider',
+                            borderPalette: isActive ? 'primary.main' : 'divider',
                             '&:hover': { 
                               transform: 'scale(1.1)',
                               zIndex: 1
@@ -170,17 +170,17 @@ const TimelineView = ({
                   <Box sx={{ mt: 1, display: 'flex', gap: 0.5 }}>
                     {period.photos.some(p => p.category === 'issue') && (
                       <Tooltip title="Issues detected">
-                        <FaExclamationTriangle color={getStatusColor('warning')} size={16} />
+                        <FaExclamationTriangle color={getStatusPalette('warning')} size={16} />
                       </Tooltip>
                     )}
                     {period.photos.some(p => p.category === 'milestone') && (
                       <Tooltip title="Milestone achieved">
-                        <FaCheckCircle color={getStatusColor('success')} size={16} />
+                        <FaCheckCircle color={getStatusPalette('success')} size={16} />
                       </Tooltip>
                     )}
                     {period.photos.some(p => p.category === 'progress') && (
                       <Tooltip title="Progress documented">
-                        <FaInfoCircle color={getStatusColor('info')} size={16} />
+                        <FaInfoCircle color={getStatusPalette('info')} size={16} />
                       </Tooltip>
                     )}
                   </Box>

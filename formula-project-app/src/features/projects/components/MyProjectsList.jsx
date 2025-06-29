@@ -19,12 +19,12 @@ import {
   Tooltip
 } from '@mui/material';
 import { 
-  FaClipboardList as Assignment, 
+  FaClipboardList as Check, 
   FaCheckCircle as CheckCircle,
   FaFlag as Flag,
   FaExclamationTriangle as Warning,
   FaExclamation as PriorityHigh,
-  FaClock as Schedule,
+  FaClock as Calendar,
   FaPause as Pause,
   FaEye as ViewIcon,
   FaEdit as EditIcon,
@@ -381,7 +381,7 @@ const MyProjectsList = ({
           onClearFilter={handleClearFilter}
         />
         <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Assignment sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+          <Check sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
           <Typography variant="body1" color="text.secondary">
             No projects or tasks assigned to you yet.
           </Typography>
@@ -450,7 +450,7 @@ const MyProjectsList = ({
             onChange={(e, newValue) => setActiveTab(newValue)}
             sx={{
               borderBottom: 1,
-              borderColor: 'divider',
+              borderPalette: 'divider',
               '& .MuiTab-root': {
                 textTransform: 'none',
                 fontWeight: 500,
@@ -460,7 +460,7 @@ const MyProjectsList = ({
           >
             <Tab
               icon={<Badge badgeContent={taskStats.overdue} color="error" invisible={taskStats.overdue === 0}>
-                <Assignment />
+                <Check />
               </Badge>}
               label="My Tasks"
               iconPosition="start"
@@ -535,7 +535,7 @@ const MyProjectsList = ({
                     icon={<OverdueIcon />}
                     label={`${taskStats.overdue} Overdue`}
                     size="small"
-                    sx={{ backgroundColor: '#fdf2f2', color: '#e74c3c', fontWeight: 600 }}
+                    sx={{ backgroundPalette: '#fdf2f2', color: '#e74c3c', fontWeight: 600 }}
                   />
                 )}
                 {taskStats.dueSoon > 0 && (
@@ -543,14 +543,14 @@ const MyProjectsList = ({
                     icon={<TodayIcon />}
                     label={`${taskStats.dueSoon} Due Soon`}
                     size="small"
-                    sx={{ backgroundColor: '#fef9e7', color: '#f39c12', fontWeight: 600 }}
+                    sx={{ backgroundPalette: '#fef9e7', color: '#f39c12', fontWeight: 600 }}
                   />
                 )}
                 <Chip
                   icon={<CheckCircle />}
                   label={`${taskStats.completed} Completed`}
                   size="small"
-                  sx={{ backgroundColor: '#eafaf1', color: '#27ae60', fontWeight: 600 }}
+                  sx={{ backgroundPalette: '#eafaf1', color: '#27ae60', fontWeight: 600 }}
                 />
                 </Box>
               </Box>
@@ -561,7 +561,7 @@ const MyProjectsList = ({
           <Box sx={{ p: 3 }}>
             {myTasks.length === 0 ? (
               <Box sx={{ textAlign: 'center', py: 4 }}>
-                <Assignment sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+                <Check sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
                 <Typography variant="h6" color="text.secondary" gutterBottom>
                   No tasks assigned
                 </Typography>
@@ -593,7 +593,7 @@ const MyProjectsList = ({
                               minHeight: 180,
                               '&:hover': {
                                 transform: 'translateY(-2px)',
-                                borderColor: taskOverdue ? '#e74c3c' : 'var(--caramel-essence)',
+                                borderPalette: taskOverdue ? '#e74c3c' : 'var(--caramel-essence)',
                               }
                             }}
                           >
@@ -618,7 +618,7 @@ const MyProjectsList = ({
                                 icon={<ProjectIcon />}
                                 size="small"
                                 label={getProjectName(task.projectId)}
-                                sx={{ backgroundColor: '#F8F9FA', color: '#7F8C8D', fontSize: '0.75rem' }}
+                                sx={{ backgroundPalette: '#F8F9FA', color: '#7F8C8D', fontSize: '0.75rem' }}
                               />
                               <StatusChip type="priority" status={task.priority} size="small" />
                             </Box>
@@ -636,7 +636,7 @@ const MyProjectsList = ({
                                   fontSize: '0.875rem'
                                 }}
                               >
-                                <Schedule fontSize="small" />
+                                <Calendar fontSize="small" />
                                 Due: {formatDate(task.dueDate)}
                                 {taskOverdue && ' (Overdue)'}
                                 {taskDueSoon && !taskOverdue && ' (Due Soon)'}
@@ -660,9 +660,9 @@ const MyProjectsList = ({
                                   sx={{ 
                                     height: 6,
                                     borderRadius: 3,
-                                    backgroundColor: '#E9ECEF',
+                                    backgroundPalette: '#E9ECEF',
                                     '& .MuiLinearProgress-bar': {
-                                      backgroundColor: task.progress === 100 ? '#27ae60' : '#3498db',
+                                      backgroundPalette: task.progress === 100 ? '#27ae60' : '#3498db',
                                       borderRadius: 3
                                     }
                                   }}
@@ -687,7 +687,7 @@ const MyProjectsList = ({
                                   <ActionTooltip title="Mark as completed" component="custom">
                                     <Button
                                       onClick={() => handleQuickStatusChange(task.id, 'completed')}
-                                      sx={{ color: '#27ae60', borderColor: '#27ae60', minWidth: 'auto', px: 1 }}
+                                      sx={{ color: '#27ae60', borderPalette: '#27ae60', minWidth: 'auto', px: 1 }}
                                     >
                                       <CompleteIcon fontSize="small" />
                                     </Button>
@@ -697,7 +697,7 @@ const MyProjectsList = ({
                                   <ActionTooltip title="Start working" component="custom">
                                     <Button
                                       onClick={() => handleQuickStatusChange(task.id, 'in-progress')}
-                                      sx={{ color: '#3498db', borderColor: '#3498db', minWidth: 'auto', px: 1 }}
+                                      sx={{ color: '#3498db', borderPalette: '#3498db', minWidth: 'auto', px: 1 }}
                                     >
                                       <PlayArrow fontSize="small" />
                                     </Button>
@@ -743,7 +743,7 @@ const MyProjectsList = ({
                                 <StatusChip type="task" status={task.status} size="small" />
                                 <StatusChip type="priority" status={task.priority} size="small" />
                                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-                                  <Schedule fontSize="small" sx={{ mr: 0.5 }} />
+                                  <Calendar fontSize="small" sx={{ mr: 0.5 }} />
                                   {formatDate(task.dueDate)}
                                   {taskOverdue && ' (Overdue)'}
                                   {taskDueSoon && !taskOverdue && ' (Due Soon)'}
@@ -780,7 +780,7 @@ const MyProjectsList = ({
         <Paper
           elevation={0}
           sx={{
-            backgroundColor: 'white',
+            backgroundPalette: 'white',
             border: '1px solid #E9ECEF',
             borderRadius: 3,
             overflow: 'hidden'
@@ -793,7 +793,7 @@ const MyProjectsList = ({
               </Typography>
               
               {/* View Mode Toggle */}
-              <Box sx={{ display: 'flex', border: 1, borderColor: 'divider', borderRadius: 1 }}>
+              <Box sx={{ display: 'flex', border: 1, borderPalette: 'divider', borderRadius: 1 }}>
                 <Button
                   size="small"
                   onClick={() => setViewMode('card')}

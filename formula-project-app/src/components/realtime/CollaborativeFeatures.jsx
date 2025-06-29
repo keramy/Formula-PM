@@ -29,7 +29,7 @@ import {
   ChatBubble,
   Visibility,
   VisibilityOff
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useCollaborativeComments, usePresence } from '../../hooks/useRealTime';
 
@@ -292,7 +292,7 @@ export const CollaborativeCursors = ({
             width: 20,
             height: 20,
             borderRadius: '50%',
-            backgroundColor: 'primary.main',
+            backgroundPalette: 'primary.main',
             border: '2px solid white',
             boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
             zIndex: 9999,
@@ -308,7 +308,7 @@ export const CollaborativeCursors = ({
                 top: 25,
                 left: '50%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'primary.main',
+                backgroundPalette: 'primary.main',
                 color: 'white',
                 px: 1,
                 py: 0.5,
@@ -333,7 +333,7 @@ export const CollaborativeCursors = ({
             width: 16,
             height: 16,
             borderRadius: '50%',
-            backgroundColor: 'success.main',
+            backgroundPalette: 'success.main',
             border: '2px solid white',
             zIndex: 9998,
             pointerEvents: 'none',
@@ -361,7 +361,7 @@ export const LiveEditingIndicator = ({
         gap: 1, 
         py: 1,
         px: 2,
-        backgroundColor: isEditing ? 'primary.light' : 'warning.light',
+        backgroundPalette: isEditing ? 'primary.light' : 'warning.light',
         borderRadius: 1,
         mb: 2
       }}>
@@ -431,7 +431,7 @@ export const CollaborativeNotification = ({
           minWidth: 300,
           maxWidth: 400,
           zIndex: 1300,
-          backgroundColor: 'background.paper',
+          backgroundPalette: 'background.paper',
           boxShadow: 3
         }}
       >

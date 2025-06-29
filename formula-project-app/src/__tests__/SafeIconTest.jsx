@@ -78,7 +78,7 @@ const SafeIconTest = () => {
             padding: '8px', 
             border: '1px solid #ddd', 
             borderRadius: '4px',
-            backgroundColor: '#f9f9f9',
+            backgroundPalette: '#f9f9f9',
             fontSize: '14px'
           }}>
             <IconComponent style={{ marginRight: '6px', width: '16px', height: '16px' }} />
@@ -87,7 +87,7 @@ const SafeIconTest = () => {
         ))}
       </div>
       
-      <div style={{ marginTop: '20px', padding: '12px', backgroundColor: '#e8f5e8', borderRadius: '6px' }}>
+      <div style={{ marginTop: '20px', padding: '12px', backgroundPalette: '#e8f5e8', borderRadius: '6px' }}>
         <strong>✅ Success!</strong> All icons above are verified working in Iconoir.
       </div>
     </div>

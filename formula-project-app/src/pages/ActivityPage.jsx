@@ -33,7 +33,7 @@ import {
   Calendar as CalendarIcon,
   Clock as TimeIcon,
   Bell as NotificationIcon,
-  TrendingUp as TrendingUpIcon,
+  ArrowUp as ArrowUpIcon,
   StatUp as StatsIcon,
   User as UserIcon,
   Settings as SettingsIcon,
@@ -495,7 +495,7 @@ const ActivityPage = React.memo(() => {
         return (
           <Card className="clean-card">
             <Box className="clean-section-header">
-              <Box className="clean-section-indicator" sx={{ backgroundColor: '#10B981' }}></Box>
+              <Box className="clean-section-indicator" sx={{ backgroundPalette: '#10B981' }}></Box>
               <Typography className="clean-section-title">
                 Team Insights
               </Typography>
@@ -530,7 +530,7 @@ const ActivityPage = React.memo(() => {
         return (
           <Card className="clean-card">
             <Box className="clean-section-header">
-              <Box className="clean-section-indicator" sx={{ backgroundColor: '#516AC8' }}></Box>
+              <Box className="clean-section-indicator" sx={{ backgroundPalette: '#516AC8' }}></Box>
               <Typography className="clean-section-title">
                 Timeline Overview
               </Typography>
@@ -571,7 +571,7 @@ const ActivityPage = React.memo(() => {
         return (
           <Card className="clean-card">
             <Box className="clean-section-header">
-              <Box className="clean-section-indicator" sx={{ backgroundColor: '#9CA3AF' }}></Box>
+              <Box className="clean-section-indicator" sx={{ backgroundPalette: '#9CA3AF' }}></Box>
               <Typography className="clean-section-title">
                 System Status
               </Typography>

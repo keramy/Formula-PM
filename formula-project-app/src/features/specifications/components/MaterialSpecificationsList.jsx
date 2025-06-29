@@ -238,7 +238,7 @@ const MaterialSpecificationsList = ({
     <TableContainer component={Paper} elevation={1}>
       <Table>
         <TableHead>
-          <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
+          <TableRow sx={{ backgroundPalette: '#f8f9fa' }}>
             <TableCell><strong>Item ID</strong></TableCell>
             <TableCell><strong>Description</strong></TableCell>
             <TableCell><strong>Category</strong></TableCell>
@@ -270,7 +270,7 @@ const MaterialSpecificationsList = ({
                   label={spec.category}
                   size="small"
                   variant="outlined"
-                  sx={{ backgroundColor: '#e3f2fd' }}
+                  sx={{ backgroundPalette: '#e3f2fd' }}
                 />
               </TableCell>
               <TableCell>
@@ -697,7 +697,7 @@ const MaterialSpecificationsList = ({
                   bgcolor: 'grey.50', 
                   borderRadius: 1,
                   border: '1px solid',
-                  borderColor: 'grey.300'
+                  borderPalette: 'grey.300'
                 }}>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
                     Total Cost Calculation:

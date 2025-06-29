@@ -104,16 +104,16 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
   };
 
   // Get status color
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status?.toLowerCase()) {
       case 'active':
-        return { backgroundColor: '#E8F5E8', color: '#2E7D32' };
+        return { backgroundPalette: '#E8F5E8', color: '#2E7D32' };
       case 'completed':
-        return { backgroundColor: '#E3F2FD', color: '#1565C0' };
+        return { backgroundPalette: '#E3F2FD', color: '#1565C0' };
       case 'on hold':
-        return { backgroundColor: '#FFF3E0', color: '#F57C00' };
+        return { backgroundPalette: '#FFF3E0', color: '#F57C00' };
       default:
-        return { backgroundColor: '#F5F5F5', color: '#757575' };
+        return { backgroundPalette: '#F5F5F5', color: '#757575' };
     }
   };
 
@@ -267,7 +267,7 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
     <Paper
       elevation={0}
       sx={{
-        backgroundColor: 'white',
+        backgroundPalette: 'white',
         border: '1px solid #E9ECEF',
         borderRadius: 3,
         overflow: 'hidden'
@@ -289,11 +289,11 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
               startIcon={<ExportIcon />}
               onClick={handleExportProjects}
               sx={{
-                borderColor: '#27AE60',
+                borderPalette: '#27AE60',
                 color: '#27AE60',
                 '&:hover': {
-                  backgroundColor: 'rgba(39, 174, 96, 0.1)',
-                  borderColor: '#229954'
+                  backgroundPalette: 'rgba(39, 174, 96, 0.1)',
+                  borderPalette: '#229954'
                 }
               }}
             >
@@ -353,10 +353,10 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
               endIcon={sortDirection === 'asc' ? <ArrowUpIcon /> : <ArrowDownIcon />}
               onClick={handleSortClick}
               sx={{
-                borderColor: '#E67E22',
+                borderPalette: '#E67E22',
                 color: '#E67E22',
                 '&:hover': {
-                  backgroundColor: 'rgba(230, 126, 34, 0.1)'
+                  backgroundPalette: 'rgba(230, 126, 34, 0.1)'
                 }
               }}
             >
@@ -371,11 +371,11 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
                   onClick={() => setFilter(filterOption)}
                   variant={filter === filterOption ? 'contained' : 'outlined'}
                   sx={{
-                    backgroundColor: filter === filterOption ? '#E67E22' : 'transparent',
-                    borderColor: '#E67E22',
+                    backgroundPalette: filter === filterOption ? '#E67E22' : 'transparent',
+                    borderPalette: '#E67E22',
                     color: filter === filterOption ? 'white' : '#E67E22',
                     '&:hover': {
-                      backgroundColor: filter === filterOption ? '#D35400' : 'rgba(230, 126, 34, 0.1)'
+                      backgroundPalette: filter === filterOption ? '#D35400' : 'rgba(230, 126, 34, 0.1)'
                     }
                   }}
                 >
@@ -414,7 +414,7 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
       <TableContainer>
         <Table>
           <TableHead>
-            <TableRow sx={{ backgroundColor: '#F8F9FA' }}>
+            <TableRow sx={{ backgroundPalette: '#F8F9FA' }}>
               <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Project Name</TableCell>
               <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Status</TableCell>
               <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Type</TableCell>
@@ -442,7 +442,7 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
                   <TableRow
                     key={project.id}
                     sx={{
-                      '&:hover': { backgroundColor: '#F8F9FA' },
+                      '&:hover': { backgroundPalette: '#F8F9FA' },
                       borderBottom: '1px solid #E9ECEF'
                     }}
                   >
@@ -468,7 +468,7 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
                         label={project.status || 'Active'}
                         size="small"
                         sx={{
-                          ...getStatusColor(project.status),
+                          ...getStatusPalette(project.status),
                           fontWeight: 500,
                           textTransform: 'capitalize'
                         }}
@@ -519,7 +519,7 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
                         label={dueInfo.text}
                         size="small"
                         sx={{
-                          backgroundColor: `${dueInfo.color}20`,
+                          backgroundPalette: `${dueInfo.color}20`,
                           color: dueInfo.color,
                           fontWeight: 600,
                           fontSize: '0.75rem'
@@ -535,9 +535,9 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
                             sx={{
                               height: 8,
                               borderRadius: 4,
-                              backgroundColor: '#f0f0f0',
+                              backgroundPalette: '#f0f0f0',
                               '& .MuiLinearProgress-bar': {
-                                backgroundColor: stats.progress === 100 ? '#27AE60' : '#E67E22',
+                                backgroundPalette: stats.progress === 100 ? '#27AE60' : '#E67E22',
                                 borderRadius: 4
                               }
                             }}

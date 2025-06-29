@@ -46,7 +46,7 @@ class PerformanceMonitoringService {
       averageLatency: 0
     };
     
-    // Time-series data for trends
+    // Time-series data for trends (with size limits)
     this.historicalData = {
       cpu: [],
       memory: [],
@@ -60,6 +60,11 @@ class PerformanceMonitoringService {
     
     // Monitoring intervals
     this.intervals = [];
+    
+    // Memory management
+    this.maxHistoricalDataPoints = 100;
+    this.maxAlertHistory = 1000;
+    this.maxMetrics = 50;
   }
 
   /**
@@ -239,14 +244,15 @@ class PerformanceMonitoringService {
    * Setup data retention cleanup
    */
   setupDataRetention() {
-    // Clean up old metrics every hour
+    // Clean up old metrics every 30 minutes
     const cleanupInterval = setInterval(() => {
       try {
         this.cleanupOldMetrics();
+        this.cleanupMemory();
       } catch (error) {
         console.error('❌ Metrics cleanup error:', error);
       }
-    }, 3600000);
+    }, 1800000); // 30 minutes
 
     this.intervals.push(cleanupInterval);
   }
@@ -383,7 +389,7 @@ class PerformanceMonitoringService {
   }
 
   /**
-   * Add data to historical tracking
+   * Add data to historical tracking with memory management
    */
   addToHistoricalData(metric, value) {
     try {
@@ -396,9 +402,11 @@ class PerformanceMonitoringService {
         timestamp: new Date()
       });
       
-      // Keep only last 100 data points
-      if (this.historicalData[metric].length > 100) {
-        this.historicalData[metric].shift();
+      // Keep only last N data points to prevent memory leak
+      if (this.historicalData[metric].length > this.maxHistoricalDataPoints) {
+        // Remove oldest 10% when limit reached
+        const removeCount = Math.floor(this.maxHistoricalDataPoints * 0.1);
+        this.historicalData[metric].splice(0, removeCount);
       }
     } catch (error) {
       console.error('❌ Add historical data error:', error);
@@ -406,7 +414,7 @@ class PerformanceMonitoringService {
   }
 
   /**
-   * Aggregate all metrics
+   * Aggregate all metrics with memory management
    */
   async aggregateMetrics() {
     try {
@@ -420,6 +428,13 @@ class PerformanceMonitoringService {
       
       // Add to metrics collection
       this.metrics.set('current', aggregatedMetrics);
+      
+      // Limit metrics map size to prevent memory leak
+      if (this.metrics.size > this.maxMetrics) {
+        // Delete oldest metrics
+        const keysToDelete = Array.from(this.metrics.keys()).slice(0, this.metrics.size - this.maxMetrics);
+        keysToDelete.forEach(key => this.metrics.delete(key));
+      }
       
       return aggregatedMetrics;
     } catch (error) {
@@ -506,6 +521,13 @@ class PerformanceMonitoringService {
 
       this.alerts.set(alertId, alert);
       this.alertHistory.push(alert);
+      
+      // Prevent alert history from growing unbounded
+      if (this.alertHistory.length > this.maxAlertHistory) {
+        // Remove oldest 10%
+        const removeCount = Math.floor(this.maxAlertHistory * 0.1);
+        this.alertHistory.splice(0, removeCount);
+      }
 
       // Log alert
       await auditService.logSystemEvent({
@@ -725,6 +747,36 @@ class PerformanceMonitoringService {
   }
 
   /**
+   * Cleanup memory to prevent leaks
+   */
+  cleanupMemory() {
+    try {
+      // Limit alert map size
+      if (this.alerts.size > 100) {
+        const alertsArray = Array.from(this.alerts.entries());
+        const toKeep = alertsArray.slice(-100);
+        this.alerts.clear();
+        toKeep.forEach(([key, value]) => this.alerts.set(key, value));
+      }
+      
+      // Reset counters if they get too large
+      if (this.requestMetrics.totalRequests > Number.MAX_SAFE_INTEGER / 2) {
+        this.requestMetrics.totalRequests = 0;
+        this.requestMetrics.errors = 0;
+      }
+      
+      if (this.databaseMetrics.queryCount > Number.MAX_SAFE_INTEGER / 2) {
+        this.databaseMetrics.queryCount = 0;
+        this.databaseMetrics.slowQueries = 0;
+      }
+      
+      console.log('🧹 Performance monitoring memory cleanup completed');
+    } catch (error) {
+      console.error('❌ Memory cleanup error:', error);
+    }
+  }
+
+  /**
    * Graceful shutdown
    */
   async shutdown() {
@@ -741,18 +793,26 @@ class PerformanceMonitoringService {
       // Clear data
       this.metrics.clear();
       this.alerts.clear();
+      this.historicalData = {
+        cpu: [],
+        memory: [],
+        requests: [],
+        database: []
+      };
+      this.alertHistory = [];
       this.isInitialized = false;
       
       console.log('✅ Performance Monitoring Service shutdown complete');
       
-      await auditService.logSystemEvent({
+      // Don't wait for audit log
+      auditService.logSystemEvent({
         event: 'performance_monitoring_shutdown',
         description: 'Performance monitoring service stopped gracefully',
         metadata: {
           totalAlerts: this.alertHistory.length,
           finalMetrics: this.getCurrentMetrics()
         }
-      });
+      }).catch(err => console.error('Failed to log shutdown:', err));
 
     } catch (error) {
       console.error('❌ Performance Monitoring Service shutdown error:', error);

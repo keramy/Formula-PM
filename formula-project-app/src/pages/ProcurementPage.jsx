@@ -42,11 +42,11 @@ import {
   Badge
 } from '@mui/material';
 import {
-  ShoppingCart as ProcurementIcon,
+  Cart as ProcurementIcon,
   Plus as AddIcon,
   Receipt as PurchaseOrderIcon,
   Building as VendorIcon,
-  Analytics as AnalyticsIcon,
+  StatsReport as AnalyticsIcon,
   Truck as DeliveryIcon,
   CheckCircle as ApprovedIcon,
   Clock as PendingIcon,
@@ -617,7 +617,7 @@ const ProcurementOverview = ({ stats }) => {
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundColor: `${color}20`,
+              backgroundPalette: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -705,7 +705,7 @@ const PurchaseOrdersTab = ({ purchaseOrders, vendors, projects, onViewPO, onCrea
     }).format(amount);
   };
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'approved': return '#10B981';
       case 'pending': return '#F59E0B';
@@ -725,7 +725,7 @@ const PurchaseOrdersTab = ({ purchaseOrders, vendors, projects, onViewPO, onCrea
     }
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityPalette = (priority) => {
     switch (priority) {
       case 'high': return '#EF4444';
       case 'medium': return '#F59E0B';
@@ -744,7 +744,7 @@ const PurchaseOrdersTab = ({ purchaseOrders, vendors, projects, onViewPO, onCrea
           variant="contained"
           startIcon={<AddIcon />}
           onClick={onCreatePO}
-          sx={{ backgroundColor: '#E3AF64' }}
+          sx={{ backgroundPalette: '#E3AF64' }}
         >
           Create New Order
         </Button>
@@ -789,8 +789,8 @@ const PurchaseOrdersTab = ({ purchaseOrders, vendors, projects, onViewPO, onCrea
                     label={po.status.replace('-', ' ').toUpperCase()}
                     size="small"
                     sx={{
-                      backgroundColor: `${getStatusColor(po.status)}20`,
-                      color: getStatusColor(po.status),
+                      backgroundPalette: `${getStatusPalette(po.status)}20`,
+                      color: getStatusPalette(po.status),
                       fontWeight: 600,
                       fontSize: '11px'
                     }}
@@ -801,8 +801,8 @@ const PurchaseOrdersTab = ({ purchaseOrders, vendors, projects, onViewPO, onCrea
                     label={po.priority.toUpperCase()}
                     size="small"
                     sx={{
-                      backgroundColor: `${getPriorityColor(po.priority)}20`,
-                      color: getPriorityColor(po.priority),
+                      backgroundPalette: `${getPriorityPalette(po.priority)}20`,
+                      color: getPriorityPalette(po.priority),
                       fontWeight: 500,
                       fontSize: '10px'
                     }}
@@ -863,7 +863,7 @@ const VendorManagementTab = ({ vendors, purchaseOrders, onCreateVendor }) => {
     return purchaseOrders.filter(po => po.vendorId === vendorId);
   };
 
-  const getVendorRatingColor = (rating) => {
+  const getVendorRatingPalette = (rating) => {
     if (rating >= 4.5) return '#10B981';
     if (rating >= 4.0) return '#E3AF64';
     if (rating >= 3.5) return '#F59E0B';
@@ -880,7 +880,7 @@ const VendorManagementTab = ({ vendors, purchaseOrders, onCreateVendor }) => {
           variant="contained"
           startIcon={<AddIcon />}
           onClick={onCreateVendor}
-          sx={{ backgroundColor: '#E3AF64' }}
+          sx={{ backgroundPalette: '#E3AF64' }}
         >
           Add New Vendor
         </Button>
@@ -908,7 +908,7 @@ const VendorManagementTab = ({ vendors, purchaseOrders, onCreateVendor }) => {
                       label={vendor.status.toUpperCase()}
                       size="small"
                       sx={{
-                        backgroundColor: vendor.status === 'active' ? '#10B98120' : '#6B728020',
+                        backgroundPalette: vendor.status === 'active' ? '#10B98120' : '#6B728020',
                         color: vendor.status === 'active' ? '#10B981' : '#6B7280',
                         fontSize: '10px'
                       }}
@@ -916,7 +916,7 @@ const VendorManagementTab = ({ vendors, purchaseOrders, onCreateVendor }) => {
                   </Box>
 
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                    <StarIcon sx={{ fontSize: 16, color: getVendorRatingColor(vendor.rating) }} />
+                    <StarIcon sx={{ fontSize: 16, color: getVendorRatingPalette(vendor.rating) }} />
                     <Typography variant="body2" sx={{ color: '#0F1939', fontWeight: 600 }}>
                       {vendor.rating.toFixed(1)}
                     </Typography>
@@ -987,7 +987,7 @@ const VendorManagementTab = ({ vendors, purchaseOrders, onCreateVendor }) => {
                             label={cert}
                             size="small"
                             sx={{
-                              backgroundColor: '#F6F3E7',
+                              backgroundPalette: '#F6F3E7',
                               color: '#6B7280',
                               fontSize: '10px',
                               height: 20
@@ -1092,7 +1092,7 @@ const CostAnalysisTab = ({ purchaseOrders, projects, vendors, stats }) => {
                     <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} />
                     <RechartsTooltip
                       contentStyle={{
-                        backgroundColor: '#FFFFFF',
+                        backgroundPalette: '#FFFFFF',
                         border: '1px solid #E5E7EB',
                         borderRadius: 8,
                         fontSize: 12
@@ -1141,7 +1141,7 @@ const CostAnalysisTab = ({ purchaseOrders, projects, vendors, stats }) => {
                     </Pie>
                     <RechartsTooltip
                       contentStyle={{
-                        backgroundColor: '#FFFFFF',
+                        backgroundPalette: '#FFFFFF',
                         border: '1px solid #E5E7EB',
                         borderRadius: 8,
                         fontSize: 12
@@ -1213,7 +1213,7 @@ const CostAnalysisTab = ({ purchaseOrders, projects, vendors, stats }) => {
 
 // Delivery Tracking Tab Component
 const DeliveryTrackingTab = ({ deliveries, purchaseOrders, vendors }) => {
-  const getDeliveryStatusColor = (status) => {
+  const getDeliveryStatusPalette = (status) => {
     switch (status) {
       case 'delivered': return '#10B981';
       case 'in-transit': return '#E3AF64';
@@ -1263,8 +1263,8 @@ const DeliveryTrackingTab = ({ deliveries, purchaseOrders, vendors }) => {
                       label={delivery.status.replace('-', ' ').toUpperCase()}
                       size="small"
                       sx={{
-                        backgroundColor: `${getDeliveryStatusColor(delivery.status)}20`,
-                        color: getDeliveryStatusColor(delivery.status),
+                        backgroundPalette: `${getDeliveryStatusPalette(delivery.status)}20`,
+                        color: getDeliveryStatusPalette(delivery.status),
                         fontWeight: 600,
                         fontSize: '11px'
                       }}
@@ -1331,7 +1331,7 @@ const PendingApprovalTab = ({ purchaseOrders, vendors, projects, onApprovePO, on
     }).format(amount);
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityPalette = (priority) => {
     switch (priority) {
       case 'high': return '#EF4444';
       case 'medium': return '#F59E0B';
@@ -1385,8 +1385,8 @@ const PendingApprovalTab = ({ purchaseOrders, vendors, projects, onApprovePO, on
                       label={po.priority.toUpperCase()}
                       size="small"
                       sx={{
-                        backgroundColor: `${getPriorityColor(po.priority)}20`,
-                        color: getPriorityColor(po.priority),
+                        backgroundPalette: `${getPriorityPalette(po.priority)}20`,
+                        color: getPriorityPalette(po.priority),
                         fontWeight: 600,
                         fontSize: '11px'
                       }}
@@ -1444,8 +1444,8 @@ const PendingApprovalTab = ({ purchaseOrders, vendors, projects, onApprovePO, on
                       startIcon={<ApprovedIcon />}
                       onClick={() => onApprovePO(po.id)}
                       sx={{ 
-                        backgroundColor: '#10B981',
-                        '&:hover': { backgroundColor: '#059669' }
+                        backgroundPalette: '#10B981',
+                        '&:hover': { backgroundPalette: '#059669' }
                       }}
                     >
                       Approve
@@ -1457,8 +1457,8 @@ const PendingApprovalTab = ({ purchaseOrders, vendors, projects, onApprovePO, on
                       onClick={() => onRejectPO(po.id)}
                       sx={{ 
                         color: '#EF4444',
-                        borderColor: '#EF4444',
-                        '&:hover': { backgroundColor: '#EF444420' }
+                        borderPalette: '#EF4444',
+                        '&:hover': { backgroundPalette: '#EF444420' }
                       }}
                     >
                       Reject

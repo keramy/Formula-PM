@@ -43,17 +43,17 @@ import {
   Megaphone as AnnouncementIcon,
   Search as SearchIcon,
   Star as StarIcon,
-  StarBorder as StarBorderIcon,
+  StarDashed as StarBorderIcon,
   Archive as ArchiveIcon,
-  Delete as DeleteIcon,
+  Trash as DeleteIcon,
   Forward as ForwardIcon,
   Reply as ReplyIcon,
-  Attachment as AttachIcon,
-  Send as SendIcon,
+  Upload as AttachIcon,
+  ArrowRight as SendIcon,
   Filter as FilterIcon,
   Refresh as RefreshIcon,
   CheckCircle as CheckIcon,
-  XmarkCircle as CancelIcon,
+  Xmark as CancelIcon,
   Group as GroupIcon,
   User as PersonIcon,
   Circle as OnlineIcon,
@@ -138,7 +138,7 @@ const mockNotifications = [
   {
     id: 'notif-2',
     type: 'task',
-    title: 'Task assigned: Review Aerodynamics Module',
+    title: 'Check assigned: Review Aerodynamics Module',
     message: 'High priority task assigned by Michael Torres',
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
     read: false,
@@ -471,11 +471,11 @@ const InboxPage = () => {
                     onClick={() => handleSelectMessage(message)}
                     sx={{
                       borderBottom: '1px solid #E5E7EB',
-                      backgroundColor: !message.read ? '#F3F4F6' : 'transparent',
-                      '&:hover': { backgroundColor: '#F9FAFB' },
+                      backgroundPalette: !message.read ? '#F3F4F6' : 'transparent',
+                      '&:hover': { backgroundPalette: '#F9FAFB' },
                       '&.Mui-selected': { 
-                        backgroundColor: '#EEF2FF',
-                        '&:hover': { backgroundColor: '#E0E7FF' }
+                        backgroundPalette: '#EEF2FF',
+                        '&:hover': { backgroundPalette: '#E0E7FF' }
                       }
                     }}
                   >
@@ -612,7 +612,7 @@ const InboxPage = () => {
                         sx={{
                           cursor: 'pointer',
                           '&:hover': {
-                            backgroundColor: 'primary.light',
+                            backgroundPalette: 'primary.light',
                             color: 'primary.contrastText'
                           }
                         }}
@@ -721,10 +721,10 @@ const InboxPage = () => {
                   <ListItem
                     key={notification.id}
                     sx={{
-                      backgroundColor: !notification.read ? '#F3F4F6' : 'transparent',
+                      backgroundPalette: !notification.read ? '#F3F4F6' : 'transparent',
                       borderRadius: 1,
                       mb: 1,
-                      '&:hover': { backgroundColor: '#F9FAFB' }
+                      '&:hover': { backgroundPalette: '#F9FAFB' }
                     }}
                   >
                     <ListItemAvatar>

@@ -47,7 +47,7 @@ class EmailService {
             
             <p><strong>Project:</strong> ${data.projectName}</p>
             <p><strong>Assigned to:</strong> ${data.assigneeName}</p>
-            <p><strong>Priority:</strong> <span style="color: ${data.priorityColor}; font-weight: bold;">${data.priority.toUpperCase()}</span></p>
+            <p><strong>Priority:</strong> <span style="color: ${data.priorityPalette}; font-weight: bold;">${data.priority.toUpperCase()}</span></p>
             <p><strong>Due Date:</strong> ${data.dueDate}</p>
             
             ${data.description ? `<p><strong>Description:</strong></p><div style="background-color: #f8f9fa; padding: 10px; border-radius: 3px;">${data.description}</div>` : ''}
@@ -72,7 +72,7 @@ class EmailService {
             <p><strong>Project:</strong> ${data.projectName}</p>
             <p><strong>Assigned to:</strong> ${data.assigneeName}</p>
             <p><strong>Due Date:</strong> ${data.dueDate}</p>
-            <p><strong>Priority:</strong> <span style="color: ${data.priorityColor}; font-weight: bold;">${data.priority.toUpperCase()}</span></p>
+            <p><strong>Priority:</strong> <span style="color: ${data.priorityPalette}; font-weight: bold;">${data.priority.toUpperCase()}</span></p>
             
             <div style="margin-top: 30px; padding: 15px; background-color: #fff5f5; border-radius: 5px; border-left: 4px solid #e74c3c;">
               <p style="margin: 0; color: #e74c3c;"><strong>⚡ Action Required</strong></p>
@@ -248,7 +248,7 @@ class NotificationManager {
   async notifyTaskAssigned(task, project, assignee) {
     if (!this.emailService.settings.notifications?.task_assigned) return;
 
-    const priorityColors = {
+    const priorityPalettes = {
       low: '#27ae60',
       medium: '#f39c12',
       high: '#e67e22',
@@ -260,7 +260,7 @@ class NotificationManager {
       projectName: project.name,
       assigneeName: assignee.fullName,
       priority: task.priority,
-      priorityColor: priorityColors[task.priority],
+      priorityPalette: priorityPalettes[task.priority],
       dueDate: new Date(task.dueDate).toLocaleDateString('en-US', { 
         year: 'numeric', 
         month: 'long', 
@@ -277,7 +277,7 @@ class NotificationManager {
   async notifyDeadlineReminder(task, project, assignee, daysLeft) {
     if (!this.emailService.settings.notifications?.deadline_reminder) return;
 
-    const priorityColors = {
+    const priorityPalettes = {
       low: '#27ae60',
       medium: '#f39c12',
       high: '#e67e22',
@@ -289,7 +289,7 @@ class NotificationManager {
       projectName: project.name,
       assigneeName: assignee.fullName,
       priority: task.priority,
-      priorityColor: priorityColors[task.priority],
+      priorityPalette: priorityPalettes[task.priority],
       dueDate: new Date(task.dueDate).toLocaleDateString('en-US', { 
         year: 'numeric', 
         month: 'long', 

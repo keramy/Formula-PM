@@ -34,7 +34,7 @@ const PageLoader = () => (
       justifyContent: 'center',
       alignItems: 'center',
       height: '100vh',
-      backgroundColor: 'background.default',
+      backgroundPalette: 'background.default',
     }}
   >
     <CircularProgress size={60} />
@@ -44,13 +44,13 @@ const PageLoader = () => (
 // Skeleton loader for dashboard content
 const DashboardSkeleton = () => (
   <Box sx={{ p: 3 }}>
-    <Box sx={{ mb: 3, height: 40, backgroundColor: 'action.hover', borderRadius: 1 }} />
+    <Box sx={{ mb: 3, height: 40, backgroundPalette: 'action.hover', borderRadius: 1 }} />
     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2, mb: 3 }}>
       {[1, 2, 3, 4].map((i) => (
-        <Box key={i} sx={{ height: 100, backgroundColor: 'action.hover', borderRadius: 1 }} />
+        <Box key={i} sx={{ height: 100, backgroundPalette: 'action.hover', borderRadius: 1 }} />
       ))}
     </Box>
-    <Box sx={{ height: 400, backgroundColor: 'action.hover', borderRadius: 1 }} />
+    <Box sx={{ height: 400, backgroundPalette: 'action.hover', borderRadius: 1 }} />
   </Box>
 );
 

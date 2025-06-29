@@ -42,7 +42,7 @@ import {
   Trash as DeleteIcon,
   Download as DownloadIcon,
   CheckCircle as ApproveIcon,
-  Cancel as RejectIcon,
+  Xmark as RejectIcon,
   HistoryCircle as HistoryIcon,
   Folder as FolderIcon
 } from 'iconoir-react';
@@ -159,7 +159,7 @@ const ShopDrawingsList = ({
     notes: ''
   });
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'approved': return '#4CAF50';
       case 'pending': return '#FF9800';
@@ -239,7 +239,7 @@ const ShopDrawingsList = ({
     <TableContainer sx={{ height: '100%' }}>
       <Table stickyHeader>
         <TableHead>
-          <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
+          <TableRow sx={{ backgroundPalette: '#f8f9fa' }}>
             <TableCell><strong>Drawing</strong></TableCell>
             <TableCell><strong>Project</strong></TableCell>
             <TableCell><strong>Type</strong></TableCell>
@@ -274,7 +274,7 @@ const ShopDrawingsList = ({
                   label={drawing.drawingType} 
                   size="small"
                   variant="outlined"
-                  sx={{ backgroundColor: '#e3f2fd' }}
+                  sx={{ backgroundPalette: '#e3f2fd' }}
                 />
               </TableCell>
               <TableCell>{drawing.room}</TableCell>
@@ -282,7 +282,7 @@ const ShopDrawingsList = ({
                 <Chip 
                   label={drawing.version} 
                   size="small"
-                  sx={{ backgroundColor: '#f3e5f5' }}
+                  sx={{ backgroundPalette: '#f3e5f5' }}
                 />
               </TableCell>
               <TableCell>
@@ -290,7 +290,7 @@ const ShopDrawingsList = ({
                   label={getStatusLabel(drawing.status)}
                   size="small"
                   sx={{ 
-                    backgroundColor: getStatusColor(drawing.status),
+                    backgroundPalette: getStatusPalette(drawing.status),
                     color: 'white',
                     fontWeight: 600
                   }}
@@ -352,13 +352,13 @@ const ShopDrawingsList = ({
                 <Chip 
                   label={drawing.version} 
                   size="small"
-                  sx={{ backgroundColor: '#f3e5f5' }}
+                  sx={{ backgroundPalette: '#f3e5f5' }}
                 />
                 <Chip 
                   label={getStatusLabel(drawing.status)}
                   size="small"
                   sx={{ 
-                    backgroundColor: getStatusColor(drawing.status),
+                    backgroundPalette: getStatusPalette(drawing.status),
                     color: 'white',
                     fontWeight: 600
                   }}
@@ -395,7 +395,7 @@ const ShopDrawingsList = ({
         px: 1,
         py: 0.5,
         borderBottom: '1px solid #e0e0e0',
-        backgroundColor: '#f8f9fa'
+        backgroundPalette: '#f8f9fa'
       }}>
         <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 600 }}>
           Shop Drawings ({filteredDrawings.length})
@@ -453,7 +453,7 @@ const ShopDrawingsList = ({
         flexGrow: 1, 
         overflow: 'hidden',
         '& .MuiTableRow-root:hover': {
-          backgroundColor: 'transparent'
+          backgroundPalette: 'transparent'
         }
       }}>
         {activeLoading ? (
@@ -649,7 +649,7 @@ const ShopDrawingsList = ({
                 </TableHead>
                 <TableBody>
                   {getVersionHistory(selectedDrawingForHistory).map((version, index) => (
-                    <TableRow key={index} sx={version.current ? { backgroundColor: '#f0f8ff' } : {}}>
+                    <TableRow key={index} sx={version.current ? { backgroundPalette: '#f0f8ff' } : {}}>
                       <TableCell>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <Chip 
@@ -677,7 +677,7 @@ const ShopDrawingsList = ({
                           label={getStatusLabel(version.status)}
                           size="small"
                           sx={{ 
-                            backgroundColor: getStatusColor(version.status),
+                            backgroundPalette: getStatusPalette(version.status),
                             color: 'white',
                             fontWeight: 600
                           }}

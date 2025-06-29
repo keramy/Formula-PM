@@ -45,7 +45,7 @@ const getActivityIcon = (type, action) => {
       deleted: <Delete color="error" />,
     },
     task: {
-      created: <Assignment color="primary" />,
+      created: <Check color="primary" />,
       updated: <Edit color="info" />,
       completed: <Check color="success" />,
       started: <PlayArrow color="warning" />,
@@ -99,7 +99,7 @@ const getActivityIcon = (type, action) => {
 };
 
 // Activity type colors
-const getActivityColor = (type, action) => {
+const getActivityPalette = (type, action) => {
   const colorMap = {
     project: {
       created: 'primary',
@@ -196,7 +196,7 @@ const ActivityItem = ({ activity, onActivityClick, onProjectClick, onTaskClick, 
   const activityType = activity.type || 'unknown';
   const activityAction = activity.action || 'updated';
   const icon = getActivityIcon(activityType, activityAction);
-  const color = getActivityColor(activityType, activityAction);
+  const color = getActivityPalette(activityType, activityAction);
 
   return (
     <ListItem
@@ -235,8 +235,8 @@ const ActivityItem = ({ activity, onActivityClick, onProjectClick, onTaskClick, 
                 fontSize: '0.7rem',
                 height: '20px',
                 color: '#1976d2',
-                borderColor: '#1976d2',
-                backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                borderPalette: '#1976d2',
+                backgroundPalette: 'rgba(25, 118, 210, 0.08)',
                 '& .MuiChip-label': {
                   px: 1,
                   color: '#1976d2',

@@ -24,13 +24,13 @@ import {
 import {
   NavArrowDown as NavArrowDown,
   NavArrowUp as NavArrowUp,
-  TrendingUp,
+  ArrowUp,
   TrendingDown,
   ClipboardCheck as Task,
   CheckCircle,
-  Clock as Schedule,
+  Clock as Calendar,
   WarningTriangle as Warning,
-  XmarkCircle as Error,
+  Xmark as Error,
   Group as Group,
   MoneySquare as AttachMoney,
   Calendar as CalendarToday,
@@ -61,14 +61,14 @@ export const RealTimeProgressIndicator = ({ project, showDetails = true }) => {
     }
   }, [project?.progress, currentProgress]);
 
-  const getProgressColor = (progress) => {
+  const getProgressPalette = (progress) => {
     if (progress >= 100) return 'success';
     if (progress >= 75) return 'info';
     if (progress >= 50) return 'warning';
     return 'error';
   };
 
-  const progressColor = getProgressColor(currentProgress);
+  const progressPalette = getProgressPalette(currentProgress);
 
   return (
     <Card sx={{ position: 'relative', overflow: 'visible' }}>
@@ -116,7 +116,7 @@ export const RealTimeProgressIndicator = ({ project, showDetails = true }) => {
           <LinearProgress
             variant="determinate"
             value={currentProgress}
-            color={progressColor}
+            color={progressPalette}
             sx={{ height: 8, borderRadius: 4 }}
           />
         </Box>
@@ -131,7 +131,7 @@ export const RealTimeProgressIndicator = ({ project, showDetails = true }) => {
                 <Box sx={{ mt: 0.5 }}>
                   <Chip
                     label={project?.status || 'Unknown'}
-                    color={progressColor}
+                    color={progressPalette}
                     size="small"
                     variant="outlined"
                   />
@@ -174,13 +174,13 @@ export const RealTimeTaskStatusFeed = ({ limit = 10 }) => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'completed': return <CheckCircle color="success" />;
-      case 'in-progress': return <Schedule color="warning" />;
+      case 'in-progress': return <Calendar color="warning" />;
       case 'blocked': return <Error color="error" />;
-      default: return <Assignment color="primary" />;
+      default: return <Check color="primary" />;
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'completed': return 'success';
       case 'in-progress': return 'warning';
@@ -194,7 +194,7 @@ export const RealTimeTaskStatusFeed = ({ limit = 10 }) => {
       <Card>
         <CardContent>
           <Box sx={{ textAlign: 'center', py: 2 }}>
-            <Assignment color="disabled" sx={{ fontSize: 48, mb: 1 }} />
+            <Check color="disabled" sx={{ fontSize: 48, mb: 1 }} />
             <Typography variant="body2" color="textSecondary">
               No recent task updates
             </Typography>
@@ -234,7 +234,7 @@ export const RealTimeTaskStatusFeed = ({ limit = 10 }) => {
                   minWidth: 32, 
                   height: 32, 
                   borderRadius: '50%', 
-                  backgroundColor: `${getStatusColor(change.newStatus)}.main`,
+                  backgroundPalette: `${getStatusPalette(change.newStatus)}.main`,
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
@@ -262,7 +262,7 @@ export const RealTimeTaskStatusFeed = ({ limit = 10 }) => {
                 <Chip
                   label={change.newStatus}
                   size="small"
-                  color={getStatusColor(change.newStatus)}
+                  color={getStatusPalette(change.newStatus)}
                   sx={{ fontSize: '0.7rem' }}
                 />
               </Box>
@@ -323,7 +323,7 @@ export const RealTimeProjectDashboard = ({ projectId }) => {
                 p: 2,
                 mb: 1,
                 minWidth: 250,
-                backgroundColor: 'primary.light',
+                backgroundPalette: 'primary.light',
                 color: 'primary.contrastText'
               }}
             >
@@ -358,9 +358,9 @@ export const RealTimeProjectDashboard = ({ projectId }) => {
                 <ListItem key={index} divider={index < 4}>
                   <ListItemIcon>
                     {activity.type === 'project_updated' ? (
-                      <TrendingUp color="primary" />
+                      <ArrowUp color="primary" />
                     ) : (
-                      <Assignment color="info" />
+                      <Check color="info" />
                     )}
                   </ListItemIcon>
                   <ListItemText
@@ -398,7 +398,7 @@ export const RealTimeMetricsWidget = ({ metrics = {} }) => {
       key: 'activeProjects',
       label: 'Active Projects',
       value: metrics.activeProjects || 0,
-      icon: <Assignment color="primary" />,
+      icon: <Check color="primary" />,
       color: 'primary'
     },
     {

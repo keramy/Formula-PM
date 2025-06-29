@@ -146,7 +146,7 @@ const SpecificationLinkingPanel = ({
           <List dense>
             {items.map((item) => (
               <ListItem key={item.id} divider>
-                <Avatar sx={{ mr: 2, backgroundColor: type === 'drawings' ? '#1976d2' : '#2e7d32' }}>
+                <Avatar sx={{ mr: 2, backgroundPalette: type === 'drawings' ? '#1976d2' : '#2e7d32' }}>
                   {type === 'drawings' ? <PdfIcon /> : <TaskIcon />}
                 </Avatar>
                 <ListItemText
@@ -312,7 +312,7 @@ const SpecificationLinkingPanel = ({
           )}
 
           {/* Link Summary */}
-          <Box sx={{ mt: 3, p: 2, backgroundColor: '#f8f9fa', borderRadius: 1 }}>
+          <Box sx={{ mt: 3, p: 2, backgroundPalette: '#f8f9fa', borderRadius: 1 }}>
             <Typography variant="subtitle2" gutterBottom>
               Link Summary
             </Typography>

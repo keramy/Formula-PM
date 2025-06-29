@@ -4,13 +4,12 @@
  * production readiness analysis, and dependency tracking
  */
 
-const { PrismaClient } = require('@prisma/client');
 const cacheService = require('./cacheService');
 const auditService = require('./auditService');
 const _ = require('lodash');
 
-const prisma = new PrismaClient();
-
+// Will be initialized with shared database service
+let prisma = null;
 class WorkflowEngine {
   constructor() {
     this.config = {
@@ -29,6 +28,13 @@ class WorkflowEngine {
         resource_conflict: 'Resource scheduling conflict'
       }
     };
+  }
+
+  /**
+   * Set the shared Prisma client
+   */
+  setPrismaClient(prismaClient) {
+    prisma = prismaClient;
   }
 
   /**

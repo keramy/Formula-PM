@@ -10,8 +10,8 @@ import { getIcon } from './ReactIcons';
 const IconWrapper = ({
   name,
   size = 20,
-  color = 'currentColor',
-  hoverColor,
+  color = 'currentPalette',
+  hoverPalette,
   onClick,
   disabled = false,
   sx = {},
@@ -30,7 +30,7 @@ const IconWrapper = ({
   }
 
   // Handle color variants
-  const getColor = () => {
+  const getPalette = () => {
     if (disabled) {
       return theme.palette.text.disabled;
     }
@@ -45,15 +45,15 @@ const IconWrapper = ({
     return color;
   };
 
-  const iconColor = getColor();
+  const iconPalette = getPalette();
 
   // Handle hover effects
   const getHoverStyles = () => {
-    if (!onClick && !hoverColor) return {};
+    if (!onClick && !hoverPalette) return {};
     
     return {
       '&:hover': {
-        color: hoverColor || (onClick ? theme.palette.primary.main : iconColor),
+        color: hoverPalette || (onClick ? theme.palette.primary.main : iconPalette),
         cursor: onClick ? 'pointer' : 'inherit',
         transform: onClick ? 'scale(1.05)' : 'none',
         transition: 'all 0.2s ease-in-out'
@@ -68,7 +68,7 @@ const IconWrapper = ({
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        color: iconColor,
+        color: iconPalette,
         cursor: onClick && !disabled ? 'pointer' : 'inherit',
         opacity: disabled ? 0.5 : 1,
         pointerEvents: disabled ? 'none' : 'auto',
@@ -97,7 +97,7 @@ export const NavigationIcon = ({ name, active = false, size = 24, ...props }) =>
   <IconWrapper
     name={name}
     size={size}
-    color={active ? 'inherit' : 'currentColor'}
+    color={active ? 'inherit' : 'currentPalette'}
     {...props}
   />
 );
@@ -107,14 +107,14 @@ export const ActionIcon = ({ name, size = 20, ...props }) => (
   <IconWrapper
     name={name}
     size={size}
-    hoverColor="primary.main"
+    hoverPalette="primary.main"
     {...props}
   />
 );
 
 // Status icons with predefined colors
 export const StatusIcon = ({ type, size = 16, ...props }) => {
-  const statusColors = {
+  const statusPalettes = {
     success: 'success',
     error: 'error',
     warning: 'warning',
@@ -140,7 +140,7 @@ export const StatusIcon = ({ type, size = 16, ...props }) => {
     <IconWrapper
       name={statusIcons[type] || 'info'}
       size={size}
-      color={statusColors[type] || 'currentColor'}
+      color={statusPalettes[type] || 'currentPalette'}
       {...props}
     />
   );

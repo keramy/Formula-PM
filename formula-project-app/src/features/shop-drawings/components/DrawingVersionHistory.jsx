@@ -24,7 +24,7 @@ import {
 import {
   CheckCircle as ApprovedIcon,
   Clock as PendingIcon,
-  XmarkCircle as RejectedIcon,
+  Xmark as RejectedIcon,
   EditPencil as RevisionIcon,
   Eye as ViewIcon,
   Download as DownloadIcon,
@@ -60,7 +60,7 @@ const DrawingVersionHistory = ({
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'approved': return '#4CAF50';
       case 'pending': return '#FF9800';
@@ -139,7 +139,7 @@ const DrawingVersionHistory = ({
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => setAddRevisionOpen(true)}
-          sx={{ backgroundColor: '#37444B' }}
+          sx={{ backgroundPalette: '#37444B' }}
         >
           New Revision
         </Button>
@@ -156,7 +156,7 @@ const DrawingVersionHistory = ({
               minWidth: '40px'
             }}>
               <Box sx={{ 
-                backgroundColor: getStatusColor(revision.status), 
+                backgroundPalette: getStatusPalette(revision.status), 
                 borderRadius: '50%',
                 width: 40,
                 height: 40,
@@ -171,7 +171,7 @@ const DrawingVersionHistory = ({
                 <Box sx={{ 
                   width: '2px', 
                   height: '30px', 
-                  backgroundColor: '#E0E0E0', 
+                  backgroundPalette: '#E0E0E0', 
                   mt: 1 
                 }} />
               )}
@@ -195,7 +195,7 @@ const DrawingVersionHistory = ({
                         label={getStatusLabel(revision.status)}
                         size="small"
                         sx={{ 
-                          backgroundColor: getStatusColor(revision.status),
+                          backgroundPalette: getStatusPalette(revision.status),
                           color: 'white',
                           fontWeight: 600
                         }}
@@ -327,7 +327,7 @@ const DrawingVersionHistory = ({
             onClick={handleAddRevision} 
             variant="contained"
             disabled={!newRevision.file}
-            sx={{ backgroundColor: '#37444B' }}
+            sx={{ backgroundPalette: '#37444B' }}
           >
             Upload Revision
           </Button>

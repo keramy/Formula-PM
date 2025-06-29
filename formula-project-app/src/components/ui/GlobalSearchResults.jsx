@@ -19,18 +19,18 @@ import {
   Button
 } from '@mui/material';
 import {
-  FolderOpen as ProjectIcon,
-  Architecture as DrawingIcon,
-  Inventory as SpecIcon,
-  Assignment as TaskIcon,
-  Person as PersonIcon,
-  Business as ClientIcon,
-  Description as DocumentIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
-  Visibility as ViewIcon,
+  Folder as ProjectIcon,
+  Design2D as DrawingIcon,
+  Archive as SpecIcon,
+  Check as TaskIcon,
+  User as PersonIcon,
+  Building as ClientIcon,
+  Page as DocumentIcon,
+  ArrowDown as ExpandMoreIcon,
+  ArrowUp as ExpandLessIcon,
+  Eye as ViewIcon,
   Search as SearchIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import useGlobalSearch from '../../hooks/useGlobalSearch';
 
 const GlobalSearchResults = ({ 
@@ -62,7 +62,7 @@ const GlobalSearchResults = ({
       case 'FolderOpen': return <ProjectIcon {...iconProps} />;
       case 'Architecture': return <DrawingIcon {...iconProps} />;
       case 'Inventory': return <SpecIcon {...iconProps} />;
-      case 'Assignment': return <TaskIcon {...iconProps} />;
+      case 'Check': return <TaskIcon {...iconProps} />;
       case 'Person': return <PersonIcon {...iconProps} />;
       case 'Business': return <ClientIcon {...iconProps} />;
       case 'Description': return <DocumentIcon {...iconProps} />;
@@ -70,7 +70,7 @@ const GlobalSearchResults = ({
     }
   };
 
-  const getStatusColor = (result) => {
+  const getStatusPalette = (result) => {
     if (!result.status) return '#2196F3';
     
     switch (result.status) {
@@ -149,7 +149,7 @@ const GlobalSearchResults = ({
   return (
     <Card elevation={8} sx={{ maxHeight, overflow: 'auto' }}>
       {/* Header */}
-      <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0', backgroundColor: '#f8f9fa' }}>
+      <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0', backgroundPalette: '#f8f9fa' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="subtitle1" fontWeight={600}>
             Search Results
@@ -189,7 +189,7 @@ const GlobalSearchResults = ({
             <ListItem 
               button 
               onClick={() => toggleCategory(group.category)}
-              sx={{ backgroundColor: '#f8f9fa' }}
+              sx={{ backgroundPalette: '#f8f9fa' }}
             >
               <ListItemIcon>
                 <Avatar sx={{ bgcolor: group.color, width: 32, height: 32 }}>
@@ -226,7 +226,7 @@ const GlobalSearchResults = ({
                     onClick={() => handleResultClick(result)}
                     sx={{ 
                       pl: 4,
-                      '&:hover': { backgroundColor: '#f5f5f5' }
+                      '&:hover': { backgroundPalette: '#f5f5f5' }
                     }}
                   >
                     <ListItemIcon>
@@ -261,7 +261,7 @@ const GlobalSearchResults = ({
                           label={result.status}
                           size="small"
                           sx={{
-                            backgroundColor: getStatusColor(result),
+                            backgroundPalette: getStatusPalette(result),
                             color: 'white',
                             fontSize: '0.65rem',
                             height: 18

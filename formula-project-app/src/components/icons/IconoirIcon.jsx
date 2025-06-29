@@ -11,7 +11,7 @@ import { getIconoirIcon } from '../../services/iconMapping';
 const IconoirIcon = ({ 
   name, 
   size = '1.2em', 
-  color = 'currentColor',
+  color = 'currentPalette',
   strokeWidth = 1.5,
   className,
   style,
@@ -72,7 +72,7 @@ export const NavIcon = ({ name, ...props }) => (
     name={name} 
     size="1.1em" 
     strokeWidth={1.5}
-    color="currentColor"
+    color="currentPalette"
     {...props} 
   />
 );
@@ -83,19 +83,19 @@ export const ActionIcon = ({ name, ...props }) => (
     name={name} 
     size="1em" 
     strokeWidth={1.8}
-    color="currentColor"
+    color="currentPalette"
     {...props} 
   />
 );
 
 // Status icons with emphasis
 export const StatusIcon = ({ name, status = 'default', ...props }) => {
-  const statusColors = {
+  const statusPalettes = {
     success: '#10B981',
     warning: '#F59E0B', 
     error: '#EF4444',
     info: '#3B82F6',
-    default: 'currentColor'
+    default: 'currentPalette'
   };
   
   return (
@@ -103,7 +103,7 @@ export const StatusIcon = ({ name, status = 'default', ...props }) => {
       name={name} 
       size="1.1em" 
       strokeWidth={1.6}
-      color={statusColors[status]}
+      color={statusPalettes[status]}
       {...props} 
     />
   );
@@ -115,7 +115,7 @@ export const BusinessIcon = ({ name, ...props }) => (
     name={name} 
     size="1.3em" 
     strokeWidth={1.4}
-    color="currentColor"
+    color="currentPalette"
     {...props} 
   />
 );

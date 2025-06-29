@@ -20,7 +20,7 @@ import {
   FaCheckCircle
 } from 'react-icons/fa';
 
-const ProgressOverview = ({ metrics, photos, getDeltaColor, formatDelta }) => {
+const ProgressOverview = ({ metrics, photos, getDeltaPalette, formatDelta }) => {
   const progressPercentage = photos.length > 0 ? 
     (metrics.byCategory.progress / photos.length) * 100 : 0;
 
@@ -101,7 +101,7 @@ const ProgressOverview = ({ metrics, photos, getDeltaColor, formatDelta }) => {
                 size="small"
                 variant="outlined"
                 sx={{ 
-                  bgcolor: getDeltaColor(count, 'category'),
+                  bgcolor: getDeltaPalette(count, 'category'),
                   color: 'white',
                   '& .MuiChip-label': { color: 'white' }
                 }}

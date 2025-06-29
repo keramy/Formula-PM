@@ -9,15 +9,15 @@ import {
 } from '@mui/material';
 import {
   CheckCircle as SuccessIcon,
-  Error as ErrorIcon,
-  Warning as WarningIcon,
-  Info as InfoIcon,
-  Close as CloseIcon,
+  XmarkCircle as ErrorIcon,
+  WarningTriangle as WarningIcon,
+  InfoCircle as InfoIcon,
+  Xmark as CloseIcon,
   CloudUpload as UploadIcon,
-  Save as SaveIcon,
-  Delete as DeleteIcon,
-  Sync as SyncIcon
-} from '@mui/icons-material';
+  FloppyDisk as SaveIcon,
+  Trash as DeleteIcon,
+  Refresh as SyncIcon
+} from 'iconoir-react';
 
 const EnhancedNotification = ({ 
   notification, 
@@ -116,7 +116,7 @@ const EnhancedNotification = ({
             onClick={handleClose}
             sx={{
               '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.2)'
+                backgroundPalette: 'rgba(255, 255, 255, 0.2)'
               }
             }}
           >
@@ -147,9 +147,9 @@ const EnhancedNotification = ({
               left: 0,
               right: 0,
               height: 3,
-              backgroundColor: 'rgba(255, 255, 255, 0.3)',
+              backgroundPalette: 'rgba(255, 255, 255, 0.3)',
               '& .MuiLinearProgress-bar': {
-                backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                backgroundPalette: 'rgba(255, 255, 255, 0.8)'
               }
             }}
           />

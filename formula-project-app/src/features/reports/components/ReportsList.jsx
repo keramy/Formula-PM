@@ -166,7 +166,7 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
     setAnchorEl(null);
   };
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'draft': return 'default';
       case 'submitted': return 'primary';
@@ -341,7 +341,7 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
                       icon={getStatusIcon(report.status)}
                       label={report.status}
                       size="small"
-                      color={getStatusColor(report.status)}
+                      color={getStatusPalette(report.status)}
                     />
                   </TableCell>
                   <TableCell>{report.createdBy}</TableCell>

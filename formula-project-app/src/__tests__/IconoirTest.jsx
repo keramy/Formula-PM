@@ -190,7 +190,7 @@ const IconoirTest = () => {
       </Grid>
 
       {/* Summary */}
-      <Paper sx={{ p: 3, mt: 3, backgroundColor: 'info.light' }}>
+      <Paper sx={{ p: 3, mt: 3, backgroundPalette: 'info.light' }}>
         <Typography variant="h6" sx={{ mb: 2 }}>
           📊 Migration Summary
         </Typography>

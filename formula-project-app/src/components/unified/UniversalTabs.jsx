@@ -133,13 +133,13 @@ const UniversalTabs = ({
     },
     enhanced: {
       tabs: {
-        backgroundColor: theme.palette.grey[100],
+        backgroundPalette: theme.palette.grey[100],
         borderRadius: 2,
         padding: 0.5,
         '& .MuiTabs-indicator': {
           height: '100%',
           borderRadius: 1.5,
-          backgroundColor: theme.palette.background.paper,
+          backgroundPalette: theme.palette.background.paper,
           boxShadow: 1,
           zIndex: 1
         }
@@ -151,7 +151,7 @@ const UniversalTabs = ({
         borderRadius: 1.5,
         zIndex: 2,
         '&:hover': {
-          backgroundColor: 'transparent'
+          backgroundPalette: 'transparent'
         },
         '&.Mui-selected': {
           fontWeight: 600,
@@ -174,18 +174,18 @@ const UniversalTabs = ({
         minHeight: 36,
         borderRadius: 20,
         border: `1px solid ${theme.palette.divider}`,
-        backgroundColor: theme.palette.background.paper,
+        backgroundPalette: theme.palette.background.paper,
         '&:hover': {
-          backgroundColor: theme.palette.action.hover,
-          borderColor: theme.palette.primary.light
+          backgroundPalette: theme.palette.action.hover,
+          borderPalette: theme.palette.primary.light
         },
         '&.Mui-selected': {
           fontWeight: 600,
-          backgroundColor: theme.palette.primary.main,
+          backgroundPalette: theme.palette.primary.main,
           color: theme.palette.primary.contrastText,
-          borderColor: theme.palette.primary.main,
+          borderPalette: theme.palette.primary.main,
           '&:hover': {
-            backgroundColor: theme.palette.primary.dark
+            backgroundPalette: theme.palette.primary.dark
           }
         }
       }
@@ -243,7 +243,7 @@ const UniversalTabs = ({
             sx={{
               height: 20,
               fontSize: '0.7rem',
-              backgroundColor: variant === 'pills' && value === tab.id
+              backgroundPalette: variant === 'pills' && value === tab.id
                 ? theme.palette.primary.contrastText
                 : theme.palette.action.hover,
               color: variant === 'pills' && value === tab.id
@@ -257,7 +257,7 @@ const UniversalTabs = ({
         {showBadges && tab.badge && (
           <Badge
             badgeContent={tab.badge}
-            color={tab.badgeColor || 'primary'}
+            color={tab.badgePalette || 'primary'}
             sx={{ ml: 1 }}
           />
         )}
@@ -269,7 +269,7 @@ const UniversalTabs = ({
               width: 8,
               height: 8,
               borderRadius: '50%',
-              backgroundColor: 
+              backgroundPalette: 
                 tab.status === 'success' ? theme.palette.success.main :
                 tab.status === 'warning' ? theme.palette.warning.main :
                 tab.status === 'error' ? theme.palette.error.main :
@@ -324,7 +324,7 @@ const UniversalTabs = ({
         }}
         TabIndicatorProps={{
           sx: {
-            backgroundColor: theme.palette.primary.main,
+            backgroundPalette: theme.palette.primary.main,
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
           }
         }}
@@ -358,7 +358,7 @@ const UniversalTabs = ({
               ml: 1,
               cursor: 'pointer',
               '&:hover': {
-                backgroundColor: theme.palette.action.hover
+                backgroundPalette: theme.palette.action.hover
               }
             }}
           />

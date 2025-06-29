@@ -24,6 +24,9 @@ const {
 const cacheService = require('./cacheService');
 const auditService = require('./auditService');
 
+// Will be initialized with shared database service
+let prisma = null;
+
 class RealtimeService {
   constructor() {
     this.io = null;
@@ -46,6 +49,17 @@ class RealtimeService {
     this.messageCount = 0;
     this.latencySum = 0;
     this.latencyCount = 0;
+    
+    // Cleanup intervals
+    this.cleanupInterval = null;
+    this.metricsInterval = null;
+  }
+
+  /**
+   * Set the shared Prisma client
+   */
+  setPrismaClient(prismaClient) {
+    prisma = prismaClient;
   }
 
   /**
@@ -54,6 +68,12 @@ class RealtimeService {
   async initialize(httpServer) {
     try {
       console.log('🚀 Initializing Realtime Service...');
+      
+      // Skip initialization if no HTTP server provided
+      if (!httpServer) {
+        console.warn('⚠️  No HTTP server provided, Realtime Service will be initialized later');
+        return;
+      }
       
       this.server = httpServer;
       
@@ -72,11 +92,25 @@ class RealtimeService {
       });
 
       // Setup Redis adapter for scaling (if Redis is available)
+      // Use timeout to prevent hanging on Redis connection
       if (cacheService.isConnected && createAdapter) {
         try {
-          const redisClient = cacheService.client;
-          const adapter = createAdapter(redisClient, redisClient.duplicate());
-          this.io.adapter(adapter);
+          const redisSetupPromise = new Promise(async (resolve, reject) => {
+            try {
+              const redisClient = cacheService.client;
+              const adapter = createAdapter(redisClient, redisClient.duplicate());
+              this.io.adapter(adapter);
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          });
+          
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Redis adapter setup timeout')), 5000);
+          });
+          
+          await Promise.race([redisSetupPromise, timeoutPromise]);
           console.log('✅ Socket.IO Redis adapter configured');
         } catch (error) {
           console.warn('⚠️ Redis adapter setup failed, using memory adapter:', error.message);
@@ -99,18 +133,20 @@ class RealtimeService {
 
       console.log('✅ Realtime Service initialized successfully');
       
-      await auditService.logSystemEvent({
+      // Don't wait for audit log to prevent hanging
+      auditService.logSystemEvent({
         event: 'realtime_service_initialized',
         description: 'Socket.IO realtime service started',
         metadata: {
           corsOrigin: process.env.CORS_ORIGIN,
           redisEnabled: cacheService.isConnected
         }
-      });
+      }).catch(err => console.error('Failed to log realtime init:', err));
 
     } catch (error) {
       console.error('❌ Realtime Service initialization failed:', error);
-      throw error;
+      // Don't throw - allow service to be marked as failed
+      // throw error;
     }
   }
 
@@ -330,9 +366,6 @@ class RealtimeService {
    */
   async joinUserProjectRooms(socket) {
     try {
-      const { PrismaClient } = require('@prisma/client');
-      const prisma = new PrismaClient();
-
       // Get user's projects
       const userProjects = await prisma.projectMember.findMany({
         where: { userId: socket.userId },
@@ -532,15 +565,10 @@ class RealtimeService {
         case 'drawing':
         case 'material':
           // These are project-scoped, need to validate through project
-          const { PrismaClient } = require('@prisma/client');
-          const prisma = new PrismaClient();
-          
           const resource = await prisma[resourceType].findUnique({
             where: { id: resourceId },
             select: { projectId: true }
           });
-          
-          await prisma.$disconnect();
           
           if (!resource) return false;
           return await validateProjectAccess(socket, resource.projectId);
@@ -722,16 +750,21 @@ class RealtimeService {
    */
   startPerformanceMonitoring() {
     // Update stats every minute
-    setInterval(() => {
+    this.metricsInterval = setInterval(() => {
       this.stats.messagesPerMinute = this.messageCount;
       this.stats.averageLatency = this.latencyCount > 0 ? this.latencySum / this.latencyCount : 0;
-      this.stats.roomCount = this.io.sockets.adapter.rooms.size;
+      this.stats.roomCount = this.io?.sockets?.adapter?.rooms?.size || 0;
       
       // Reset counters
       this.messageCount = 0;
       this.latencySum = 0;
       this.latencyCount = 0;
     }, 60000);
+    
+    // Cleanup stale connections every 5 minutes
+    this.cleanupInterval = setInterval(() => {
+      this.cleanupStaleConnections();
+    }, 300000);
   }
 
   /**
@@ -800,23 +833,79 @@ class RealtimeService {
   }
 
   /**
+   * Cleanup stale connections
+   */
+  cleanupStaleConnections() {
+    try {
+      const now = Date.now();
+      const staleThreshold = 10 * 60 * 1000; // 10 minutes
+      
+      // Cleanup stale user connections
+      for (const [socketId, data] of this.connectedUsers) {
+        if (now - new Date(data.lastActivity).getTime() > staleThreshold) {
+          this.connectedUsers.delete(socketId);
+          console.log(`🧹 Cleaned up stale connection: ${socketId}`);
+        }
+      }
+      
+      // Cleanup empty user socket sets
+      for (const [userId, socketSet] of this.userSockets) {
+        if (socketSet.size === 0) {
+          this.userSockets.delete(userId);
+        }
+      }
+      
+      // Cleanup empty project rooms
+      for (const [projectId, userSet] of this.projectRooms) {
+        if (userSet.size === 0) {
+          this.projectRooms.delete(projectId);
+        }
+      }
+      
+      // Cleanup old collaborations
+      for (const [collaborationId, data] of this.activeCollaborations) {
+        if (data.participants.size === 0 || now - new Date(data.startedAt).getTime() > 24 * 60 * 60 * 1000) {
+          this.activeCollaborations.delete(collaborationId);
+          console.log(`🧹 Cleaned up stale collaboration: ${collaborationId}`);
+        }
+      }
+      
+    } catch (error) {
+      console.error('❌ Cleanup stale connections error:', error);
+    }
+  }
+
+  /**
    * Graceful shutdown
    */
   async shutdown() {
     try {
       console.log('🔄 Shutting down Realtime Service...');
       
-      // Notify all connected users
-      this.io.emit('server_shutdown', {
-        message: 'Server is shutting down for maintenance',
-        timestamp: new Date()
-      });
+      // Clear intervals
+      if (this.metricsInterval) {
+        clearInterval(this.metricsInterval);
+        this.metricsInterval = null;
+      }
+      
+      if (this.cleanupInterval) {
+        clearInterval(this.cleanupInterval);
+        this.cleanupInterval = null;
+      }
+      
+      // Notify all connected users if io exists
+      if (this.io) {
+        this.io.emit('server_shutdown', {
+          message: 'Server is shutting down for maintenance',
+          timestamp: new Date()
+        });
 
-      // Wait a moment for messages to be sent
-      await new Promise(resolve => setTimeout(resolve, 1000));
+        // Wait a moment for messages to be sent
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Close all connections
-      this.io.close();
+        // Close all connections
+        this.io.close();
+      }
       
       // Clear tracking data
       this.connectedUsers.clear();
@@ -826,11 +915,12 @@ class RealtimeService {
 
       console.log('✅ Realtime Service shutdown complete');
       
-      await auditService.logSystemEvent({
+      // Don't wait for audit log
+      auditService.logSystemEvent({
         event: 'realtime_service_shutdown',
         description: 'Socket.IO realtime service stopped gracefully',
         metadata: { finalStats: this.stats }
-      });
+      }).catch(err => console.error('Failed to log shutdown:', err));
 
     } catch (error) {
       console.error('❌ Realtime Service shutdown error:', error);

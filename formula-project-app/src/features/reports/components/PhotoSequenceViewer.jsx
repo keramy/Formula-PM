@@ -35,7 +35,7 @@ import {
   Clock as FaClock,
   MapPin as FaMapMarkerAlt,
   MediaImage as FaImages,
-  TrendingUp as FaChartLine,
+  ArrowUp as FaChartLine,
   Tag as FaTags,
   Eye as FaEye,
   Download as FaDownload
@@ -137,7 +137,7 @@ const PhotoSequenceViewer = ({
     });
   };
 
-  const getSequenceTypeColor = (type) => {
+  const getSequenceTypePalette = (type) => {
     const colors = {
       'before-after': '#2196F3',
       'progress-sequence': '#4CAF50',
@@ -177,7 +177,7 @@ const PhotoSequenceViewer = ({
                   size="small"
                   sx={{ 
                     mt: 0.5,
-                    bgcolor: getSequenceTypeColor(sequence.type),
+                    bgcolor: getSequenceTypePalette(sequence.type),
                     color: 'white',
                     fontSize: '0.7rem'
                   }}
@@ -314,7 +314,7 @@ const PhotoSequenceViewer = ({
               sx={{ 
                 cursor: 'pointer',
                 border: currentPhotoIndex === index ? 2 : 0,
-                borderColor: 'primary.main'
+                borderPalette: 'primary.main'
               }}
               onClick={() => handlePhotoChange(index)}
             >
@@ -440,7 +440,7 @@ const PhotoSequenceViewer = ({
               <Chip 
                 label={currentSequence.type}
                 sx={{ 
-                  bgcolor: getSequenceTypeColor(currentSequence.type),
+                  bgcolor: getSequenceTypePalette(currentSequence.type),
                   color: 'white',
                   mb: 1
                 }}

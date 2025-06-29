@@ -17,7 +17,7 @@ import {
   List as ViewList,
   ViewGrid as ViewModule,
   Building as BusinessIcon,
-  ArrowUp as TrendingUp,
+  ArrowUp as ArrowUp,
   ClipboardCheck as Task,
   CheckCircle,
   User as PersonIcon
@@ -133,7 +133,7 @@ const ClientsPage = ({
         label="Overview" 
         isActive={activeTab === 'overview'}
         onClick={() => setActiveTab('overview')}
-        icon={<TrendingUp sx={{ fontSize: 16 }} />}
+        icon={<ArrowUp sx={{ fontSize: 16 }} />}
       />
       <CleanTab 
         label="All Clients" 
@@ -146,7 +146,7 @@ const ClientsPage = ({
         label="Analytics" 
         isActive={activeTab === 'analytics'}
         onClick={() => setActiveTab('analytics')}
-        icon={<Assignment sx={{ fontSize: 16 }} />}
+        icon={<Check sx={{ fontSize: 16 }} />}
       />
     </>
   );
@@ -195,7 +195,7 @@ const ClientsPage = ({
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundColor: `${color}20`,
+              backgroundPalette: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -286,7 +286,7 @@ const ClientsPage = ({
               className="clean-progress-bar"
               sx={{
                 '& .MuiLinearProgress-bar': {
-                  backgroundColor: '#10B981'
+                  backgroundPalette: '#10B981'
                 }
               }}
             />
@@ -349,7 +349,7 @@ const ClientsPage = ({
             title="Potential Clients"
             value={clientStats.potential}
             subtitle="In pipeline"
-            icon={<Assignment />}
+            icon={<Check />}
             color="#E3AF64"
           />
         </Grid>
@@ -358,7 +358,7 @@ const ClientsPage = ({
             title="Total Projects"
             value={clientStats.totalProjects}
             subtitle={`${clientStats.averageProjectsPerClient} avg per client`}
-            icon={<TrendingUp />}
+            icon={<ArrowUp />}
             color="#E3AF64"
           />
         </Grid>
@@ -401,7 +401,7 @@ const ClientsPage = ({
         <Grid item xs={12} lg={4}>
           <Card className="clean-card">
             <Box className="clean-section-header">
-              <Box className="clean-section-indicator" sx={{ backgroundColor: '#516AC8' }}></Box>
+              <Box className="clean-section-indicator" sx={{ backgroundPalette: '#516AC8' }}></Box>
               <Typography className="clean-section-title">
                 Recent Clients
               </Typography>
@@ -415,7 +415,7 @@ const ClientsPage = ({
                       p: 2,
                       borderBottom: index < recentClients.length - 1 ? '1px solid #E5E7EB' : 'none',
                       '&:hover': {
-                        backgroundColor: '#F6F3E7'
+                        backgroundPalette: '#F6F3E7'
                       }
                     }}
                   >

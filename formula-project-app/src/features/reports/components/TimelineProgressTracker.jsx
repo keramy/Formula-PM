@@ -304,7 +304,7 @@ const TimelineProgressTracker = ({
     }
   };
 
-  const getDeltaColor = (deltaValue, type = 'default') => {
+  const getDeltaPalette = (deltaValue, type = 'default') => {
     if (deltaValue === 0) return '#9E9E9E'; // Grey for no change
     
     switch (type) {
@@ -333,7 +333,7 @@ const TimelineProgressTracker = ({
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     const colors = {
       'completed': '#4CAF50',
       'in-progress': '#2196F3',
@@ -562,7 +562,7 @@ const TimelineProgressTracker = ({
         <ProgressOverview
           metrics={progressOverview}
           photos={photos}
-          getDeltaColor={getDeltaColor}
+          getDeltaPalette={getDeltaPalette}
           formatDelta={formatDelta}
         />
       )}
@@ -600,7 +600,7 @@ const TimelineProgressTracker = ({
           currentTimeIndex={currentTimeIndex}
           onTimelineClick={handleTimelineClick}
           formatTimeRange={formatTimeRange}
-          getStatusColor={getStatusColor}
+          getStatusPalette={getStatusPalette}
           getStatusIcon={getStatusIcon}
           formatLocation={formatLocation}
         />

@@ -29,14 +29,14 @@ import {
   ZoomIn as ZoomInIcon,
   ZoomOut as ZoomOutIcon,
   Refresh as RefreshIcon,
-  ViewModule as ViewModuleIcon,
-  ViewList as ViewListIcon,
-  FilterList as FilterIcon,
+  ViewGrid as ViewModuleIcon,
+  List as ViewListIcon,
+  Filter as FilterIcon,
   Settings as SettingsIcon,
   Download as ExportIcon,
-  Add as AddIcon,
+  Plus as AddIcon,
   Timeline as TimelineIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 // import { Gantt } from 'frappe-gantt';
 import { format, addDays, startOfWeek, endOfWeek, isSameDay } from 'date-fns';
 import connectionService from '../../services/connectionService';
@@ -617,7 +617,7 @@ const EnhancedGanttChart = ({
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
-            backgroundColor: 'rgba(255,255,255,0.8)',
+            backgroundPalette: 'rgba(255,255,255,0.8)',
             zIndex: 10
           }}>
             <Typography>Loading timeline...</Typography>

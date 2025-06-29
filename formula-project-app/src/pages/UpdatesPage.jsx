@@ -60,29 +60,28 @@ import {
   Settings as SettingsIcon,
   Check as CheckIcon,
   Circle as CircleIcon,
-  Flag as FlagIcon,
   Calendar as CalendarIcon,
   Clock as ClockIcon,
   Eye as EyeIcon,
-  EyeOff as EyeOffIcon,
-  Attachment as AttachIcon,
-  Send as SendIcon,
+  Eye as EyeOffIcon,
+  Settings as AttachIcon,
+  Settings as SendIcon,
   ArrowUp as ArrowUpIcon,
   ArrowDown as ArrowDownIcon,
-  Tag as TagIcon,
+  Settings as TagIcon,
   Group as GroupIcon,
   Building as ProjectIcon,
-  Computer as SystemIcon,
-  PinAlt as PinIcon,
-  Timeline as TimelineIcon,
-  MessageSquare as CommentIcon,
-  MoreVert as MoreIcon,
-  CheckCircle as ReadIcon,
-  Email as EmailIcon,
-  Smartphone as PhoneIcon,
-  Desktop as DesktopIcon,
-  Globe as GlobalIcon,
-  Archive as ArchiveIcon,
+  Settings as SystemIcon,
+  Star as PinIcon,
+  Calendar as TimelineIcon,
+  Bell as CommentIcon,
+  Settings as MoreIcon,
+  Check as ReadIcon,
+  Bell as EmailIcon,
+  Bell as PhoneIcon,
+  Settings as DesktopIcon,
+  Settings as GlobalIcon,
+  Settings as ArchiveIcon,
   Book as BookIcon,
   Lightning as LightningIcon,
   WarningTriangle as WarningTriangleIcon
@@ -96,7 +95,7 @@ import apiService from '../services/api/apiService';
 // Priority levels with colors and icons
 const PRIORITY_LEVELS = {
   critical: { label: 'Critical', color: 'error', icon: WarningTriangleIcon },
-  important: { label: 'Important', color: 'warning', icon: FlagIcon },
+  important: { label: 'Important', color: 'warning', icon: StarIcon },
   normal: { label: 'Normal', color: 'primary', icon: CircleIcon },
   info: { label: 'Info', color: 'info', icon: BellIcon }
 };
@@ -143,7 +142,7 @@ const mockUpdates = [
   {
     id: 'update-2',
     type: 'system',
-    title: 'Scheduled Maintenance Window',
+    title: 'Calendard Maintenance Window',
     content: 'System maintenance is scheduled for Saturday, 2 AM - 4 AM EST. During this time, the platform may experience brief interruptions. We\'re upgrading our infrastructure to improve performance and reliability.',
     priority: 'critical',
     category: 'maintenance',
@@ -631,8 +630,8 @@ const UpdatesPage = () => {
       sx={{ 
         mb: 2,
         border: update.pinned ? '2px solid' : '1px solid',
-        borderColor: update.pinned ? 'primary.main' : '#E5E7EB',
-        backgroundColor: !update.read ? '#F9FAFB' : 'background.paper',
+        borderPalette: update.pinned ? 'primary.main' : '#E5E7EB',
+        backgroundPalette: !update.read ? '#F9FAFB' : 'background.paper',
         transition: 'all 0.2s ease',
         '&:hover': {
           boxShadow: 2,
@@ -660,7 +659,7 @@ const UpdatesPage = () => {
                 label={UPDATE_CATEGORIES[update.category].label}
                 size="small"
                 sx={{ 
-                  backgroundColor: UPDATE_CATEGORIES[update.category].color + '20',
+                  backgroundPalette: UPDATE_CATEGORIES[update.category].color + '20',
                   color: UPDATE_CATEGORIES[update.category].color,
                   fontWeight: 500
                 }}
@@ -669,7 +668,7 @@ const UpdatesPage = () => {
                 <Chip
                   label={update.project.name}
                   size="small"
-                  sx={{ backgroundColor: update.project.color + '20', color: update.project.color }}
+                  sx={{ backgroundPalette: update.project.color + '20', color: update.project.color }}
                 />
               )}
               {update.type === 'team' && update.team && (
@@ -719,7 +718,7 @@ const UpdatesPage = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                   <CalendarIcon style={{ fontSize: 14, color: '#6B7280' }} />
                   <Typography variant="body2" color="text.secondary">
-                    Scheduled: {format(update.scheduledFor, 'MMM d, h:mm a')}
+                    Calendard: {format(update.scheduledFor, 'MMM d, h:mm a')}
                   </Typography>
                 </Box>
               )}
@@ -758,7 +757,7 @@ const UpdatesPage = () => {
 
             {/* Metrics for performance updates */}
             {update.metrics && (
-              <Paper sx={{ p: 2, mb: 2, backgroundColor: '#F3F4F6' }}>
+              <Paper sx={{ p: 2, mb: 2, backgroundPalette: '#F3F4F6' }}>
                 <Typography variant="subtitle2" gutterBottom>Performance Metrics</Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={4}>
@@ -796,7 +795,7 @@ const UpdatesPage = () => {
                       sx={{ 
                         cursor: 'pointer',
                         '&:hover': {
-                          backgroundColor: 'primary.light',
+                          backgroundPalette: 'primary.light',
                           color: 'primary.contrastText'
                         }
                       }}
@@ -816,7 +815,7 @@ const UpdatesPage = () => {
                       label={`#${tag}`}
                       size="small"
                       sx={{ 
-                        backgroundColor: '#E5E7EB',
+                        backgroundPalette: '#E5E7EB',
                         fontSize: 12,
                         height: 24
                       }}
@@ -839,7 +838,7 @@ const UpdatesPage = () => {
                     sx={{ 
                       cursor: 'pointer',
                       '&:hover': {
-                        backgroundColor: 'action.hover'
+                        backgroundPalette: 'action.hover'
                       }
                     }}
                   />
@@ -903,7 +902,7 @@ const UpdatesPage = () => {
           top: 0,
           bottom: 0,
           width: 2,
-          backgroundColor: '#E5E7EB'
+          backgroundPalette: '#E5E7EB'
         }} />
 
         {Object.entries(groupedUpdates).map(([date, dateUpdates]) => (
@@ -935,7 +934,7 @@ const UpdatesPage = () => {
                     width: 12,
                     height: 12,
                     borderRadius: '50%',
-                    backgroundColor: !update.read ? 'primary.main' : '#9CA3AF',
+                    backgroundPalette: !update.read ? 'primary.main' : '#9CA3AF',
                     zIndex: 1,
                     mt: 1
                   }} />

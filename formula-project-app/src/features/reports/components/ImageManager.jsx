@@ -149,7 +149,7 @@ const ImageManager = ({
           p: 4,
           mb: 3,
           border: '2px dashed',
-          borderColor: isDragActive ? 'primary.main' : 'grey.300',
+          borderPalette: isDragActive ? 'primary.main' : 'grey.300',
           bgcolor: isDragActive ? 'action.hover' : 'background.paper',
           cursor: 'pointer',
           textAlign: 'center',

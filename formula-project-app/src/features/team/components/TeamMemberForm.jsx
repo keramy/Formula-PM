@@ -17,7 +17,7 @@ import {
   Phone,
   Work,
   Star
-} from '@mui/icons-material';
+} from 'iconoir-react';
 
 const roles = [
   { value: 'project_manager', label: 'Project Manager', color: '#e74c3c', level: 5 },
@@ -108,7 +108,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
         fullName: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
         initials: `${formData.firstName.charAt(0)}${formData.lastName.charAt(0)}`.toUpperCase(),
         roleLevel: selectedRole.level,
-        roleColor: selectedRole.color,
+        rolePalette: selectedRole.color,
         status: 'active',
         joinedAt: new Date().toISOString()
       });
@@ -153,7 +153,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
       )}
 
       {/* Preview Card */}
-      <Paper sx={{ p: 2, backgroundColor: '#f8f9fa' }}>
+      <Paper sx={{ p: 2, backgroundPalette: '#f8f9fa' }}>
         <Typography variant="subtitle2" gutterBottom color="text.secondary">
           Preview
         </Typography>
@@ -174,7 +174,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
                   label={roles.find(r => r.value === formData.role)?.label} 
                   size="small"
                   sx={{ 
-                    backgroundColor: roles.find(r => r.value === formData.role)?.color + '20',
+                    backgroundPalette: roles.find(r => r.value === formData.role)?.color + '20',
                     color: roles.find(r => r.value === formData.role)?.color 
                   }}
                 />
@@ -276,7 +276,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
                   <Chip 
                     label={`Level ${role.level}`} 
                     size="small" 
-                    sx={{ backgroundColor: role.color + '20', color: role.color }}
+                    sx={{ backgroundPalette: role.color + '20', color: role.color }}
                   />
                 </Box>
               </MenuItem>
@@ -321,7 +321,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
           {potentialManagers.map((manager) => (
             <MenuItem key={manager.id} value={manager.id}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Avatar sx={{ width: 24, height: 24, fontSize: 12, bgcolor: manager.roleColor }}>
+                <Avatar sx={{ width: 24, height: 24, fontSize: 12, bgcolor: manager.rolePalette }}>
                   {manager.initials}
                 </Avatar>
                 {manager.fullName} - {roles.find(r => r.value === manager.role)?.label}

@@ -91,7 +91,7 @@ const ClientsList = ({ clients = [], onUpdateClient, onDeleteClient, onAddClient
     setSelectedClient(null);
   };
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'active':
         return '#4CAF50';
@@ -189,7 +189,7 @@ const ClientsList = ({ clients = [], onUpdateClient, onDeleteClient, onAddClient
       type: 'avatar',
       render: (value, row) => ({
         fallback: getCompanyInitials(row.companyName),
-        bgColor: '#E67E22',
+        bgPalette: '#E67E22',
         text: row.companyName
       })
     },
@@ -228,8 +228,8 @@ const ClientsList = ({ clients = [], onUpdateClient, onDeleteClient, onAddClient
       type: 'chip',
       render: (value) => ({
         label: value.charAt(0).toUpperCase() + value.slice(1),
-        color: getStatusColor(value),
-        bgColor: `${getStatusColor(value)}20`
+        color: getStatusPalette(value),
+        bgPalette: `${getStatusPalette(value)}20`
       })
     }
   ];
@@ -537,7 +537,7 @@ const ClientsList = ({ clients = [], onUpdateClient, onDeleteClient, onAddClient
                       label={client.status}
                       size="small"
                       sx={{
-                        backgroundColor: getStatusColor(client.status),
+                        backgroundPalette: getStatusPalette(client.status),
                         color: 'white',
                         fontWeight: 500,
                         textTransform: 'capitalize'
@@ -653,7 +653,7 @@ const ClientsList = ({ clients = [], onUpdateClient, onDeleteClient, onAddClient
                           sx={{
                             fontSize: '0.7rem',
                             height: 24,
-                            borderColor: '#E67E22',
+                            borderPalette: '#E67E22',
                             color: '#E67E22'
                           }}
                         />
@@ -670,7 +670,7 @@ const ClientsList = ({ clients = [], onUpdateClient, onDeleteClient, onAddClient
                             sx={{
                               fontSize: '0.7rem',
                               height: 24,
-                              borderColor: '#BDC3C7',
+                              borderPalette: '#BDC3C7',
                               color: '#7F8C8D'
                             }}
                           />

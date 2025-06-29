@@ -171,7 +171,7 @@ const RealtimeActivityFeed = ({
                 width: '4px'
               },
               '&::-webkit-scrollbar-thumb': {
-                backgroundColor: 'rgba(0,0,0,0.2)',
+                backgroundPalette: 'rgba(0,0,0,0.2)',
                 borderRadius: '2px'
               }
             }}
@@ -185,7 +185,7 @@ const RealtimeActivityFeed = ({
                   py={0.5}
                   sx={{
                     borderLeft: activity.isNew ? 2 : 0,
-                    borderColor: 'primary.main',
+                    borderPalette: 'primary.main',
                     pl: activity.isNew ? 1 : 0,
                     opacity: index > 5 ? 0.7 : 1
                   }}
@@ -237,7 +237,7 @@ const RealtimeActivityFeed = ({
               width: '8px'
             },
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: 'rgba(0,0,0,0.2)',
+              backgroundPalette: 'rgba(0,0,0,0.2)',
               borderRadius: '4px'
             }
           }}
@@ -256,8 +256,8 @@ const RealtimeActivityFeed = ({
                     <ListItem
                       sx={{
                         borderLeft: activity.isNew ? 3 : 0,
-                        borderColor: 'primary.main',
-                        backgroundColor: activity.isNew ? 'action.hover' : 'transparent',
+                        borderPalette: 'primary.main',
+                        backgroundPalette: activity.isNew ? 'action.hover' : 'transparent',
                         mb: 1,
                         borderRadius: 1
                       }}

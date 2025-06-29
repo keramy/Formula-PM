@@ -3,14 +3,13 @@
  * Real-time notification system with email integration and activity feeds
  */
 
-const { PrismaClient } = require('@prisma/client');
 const cacheService = require('./cacheService');
 const auditService = require('./auditService');
 const Queue = require('bull');
 const _ = require('lodash');
 
-const prisma = new PrismaClient();
-
+// Will be initialized with shared database service
+let prisma = null;
 class NotificationService {
   constructor() {
     this.config = {
@@ -71,6 +70,13 @@ class NotificationService {
     });
 
     this.setupQueueProcessors();
+  }
+
+  /**
+   * Set the shared Prisma client
+   */
+  setPrismaClient(prismaClient) {
+    prisma = prismaClient;
   }
 
   /**

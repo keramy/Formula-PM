@@ -12,6 +12,10 @@ class ServiceRegistry {
     this.dependencies = new Map();
     this.healthChecks = new Map();
     this.initialized = false;
+    this.failedServices = new Set();
+    this.initializationStartTime = null;
+    this.httpServer = null; // Will be set by server.js
+    this.prismaClient = null; // Will be set by server.js
     
     this.serviceOrder = [
       'auditService',
@@ -32,6 +36,13 @@ class ServiceRegistry {
   }
 
   /**
+   * Set the shared Prisma client for all services
+   */
+  setPrismaClient(prismaClient) {
+    this.prismaClient = prismaClient;
+  }
+
+  /**
    * Initialize all services in correct order
    */
   async initializeServices() {
@@ -42,18 +53,35 @@ class ServiceRegistry {
       }
 
       console.log('🚀 Initializing Formula PM services...');
+      this.initializationStartTime = Date.now();
 
       // Register all services
       await this.registerServices();
 
-      // Initialize services in dependency order
-      await this.initializeInOrder();
+      // Initialize services in dependency order with overall timeout
+      const overallTimeout = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Service initialization timed out after 60 seconds'));
+        }, 60000); // 60 second overall timeout
+      });
+      
+      await Promise.race([
+        this.initializeInOrder(),
+        overallTimeout
+      ]);
 
       // Set up health checks
       this.setupHealthChecks();
 
       this.initialized = true;
-      console.log('✅ All services initialized successfully');
+      const totalTime = Date.now() - this.initializationStartTime;
+      
+      if (this.failedServices.size > 0) {
+        console.warn(`⚠️  Services initialized with ${this.failedServices.size} failures:`, Array.from(this.failedServices));
+        console.log(`✅ ${this.services.size - this.failedServices.size} services initialized successfully in ${totalTime}ms`);
+      } else {
+        console.log(`✅ All services initialized successfully in ${totalTime}ms`);
+      }
 
       // Log service initialization
       await auditService.logSystemEvent({
@@ -108,7 +136,7 @@ class ServiceRegistry {
       const ReportGenerator = require('./ReportGenerator');
       this.registerService('ReportGenerator', ReportGenerator, ['auditService', 'ProjectService', 'WorkflowEngine', 'AnalyticsService']);
 
-      // Realtime service
+      // Realtime service (special handling)
       const RealtimeService = require('./RealtimeService');
       this.registerService('RealtimeService', RealtimeService, ['auditService', 'cacheService']);
 
@@ -158,7 +186,7 @@ class ServiceRegistry {
   }
 
   /**
-   * Initialize a single service
+   * Initialize a single service with timeout
    */
   async initializeService(serviceName, initialized) {
     if (initialized.has(serviceName)) {
@@ -171,15 +199,55 @@ class ServiceRegistry {
       await this.initializeService(dep, initialized);
     }
 
-    // Initialize the service
+    // Initialize the service with timeout
     const service = this.services.get(serviceName);
     if (service && typeof service.initialize === 'function') {
       try {
-        await service.initialize();
-        console.log(`✅ Initialized service: ${serviceName}`);
+        const startTime = Date.now();
+        console.log(`🔄 Initializing service: ${serviceName}...`);
+        
+        // Set Prisma client if service supports it
+        if (this.prismaClient && typeof service.setPrismaClient === 'function') {
+          service.setPrismaClient(this.prismaClient);
+        }
+        
+        // Create a timeout promise
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => {
+            reject(new Error(`Service ${serviceName} initialization timed out after 30 seconds`));
+          }, 30000); // 30 second timeout
+        });
+        
+        // Special handling for RealtimeService - pass HTTP server
+        let initPromise;
+        if (serviceName === 'RealtimeService' && this.httpServer) {
+          initPromise = service.initialize(this.httpServer);
+        } else {
+          initPromise = service.initialize();
+        }
+        
+        // Race between initialization and timeout
+        await Promise.race([
+          initPromise,
+          timeoutPromise
+        ]);
+        
+        const duration = Date.now() - startTime;
+        console.log(`✅ Initialized service: ${serviceName} (${duration}ms)`);
+        
+        // Warn if initialization took too long
+        if (duration > 10000) {
+          console.warn(`⚠️  Service ${serviceName} took ${duration}ms to initialize`);
+        }
       } catch (error) {
         console.error(`❌ Failed to initialize service ${serviceName}:`, error);
-        throw error;
+        
+        // Mark service as failed but continue with others
+        this.failedServices = this.failedServices || new Set();
+        this.failedServices.add(serviceName);
+        
+        // Don't throw - allow other services to initialize
+        // throw error;
       }
     }
 
@@ -385,7 +453,9 @@ class ServiceRegistry {
     const info = {
       initialized: this.initialized,
       services: {},
-      dependencyGraph: {}
+      dependencyGraph: {},
+      failedServices: Array.from(this.failedServices || []),
+      initializationTime: this.initializationStartTime ? Date.now() - this.initializationStartTime : null
     };
 
     this.services.forEach((service, name) => {
@@ -394,7 +464,8 @@ class ServiceRegistry {
         dependencies: this.dependencies.get(name) || [],
         hasHealthCheck: this.healthChecks.has(name),
         hasInitialize: typeof service.initialize === 'function',
-        hasShutdown: typeof service.shutdown === 'function'
+        hasShutdown: typeof service.shutdown === 'function',
+        failed: this.failedServices ? this.failedServices.has(name) : false
       };
     });
 

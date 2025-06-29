@@ -263,9 +263,9 @@ function EnhancedTasksList({
     return member ? member.initials : '?';
   };
 
-  const getAssigneeColor = (assigneeId) => {
+  const getAssigneePalette = (assigneeId) => {
     const member = teamMembers.find(m => m.id === assigneeId);
-    return member ? member.roleColor : '#95A5A6';
+    return member ? member.rolePalette : '#95A5A6';
   };
 
   // Event handlers
@@ -359,7 +359,7 @@ function EnhancedTasksList({
         return {
           label: config.label,
           color: config.color,
-          bgColor: config.bgColor
+          bgPalette: config.bgPalette
         };
       }
     },
@@ -372,7 +372,7 @@ function EnhancedTasksList({
         return {
           label: config.label,
           color: config.color,
-          bgColor: config.bgColor
+          bgPalette: config.bgPalette
         };
       }
     },
@@ -384,7 +384,7 @@ function EnhancedTasksList({
         if (!value) return { text: 'Unassigned', fallback: '?' };
         return {
           fallback: getAssigneeInitials(value),
-          bgColor: getAssigneeColor(value),
+          bgPalette: getAssigneePalette(value),
           text: getAssigneeName(value)
         };
       }
@@ -425,7 +425,7 @@ function EnhancedTasksList({
               width: 60, 
               height: 6,
               borderRadius: 3,
-              backgroundColor: '#E9ECEF'
+              backgroundPalette: '#E9ECEF'
             }}
           />
           <Typography variant="caption">
@@ -489,7 +489,7 @@ function EnhancedTasksList({
           showViewToggle={false}
         />
         <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Assignment sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+          <Check sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
           <Typography variant="body1" color="text.secondary">
             No tasks added yet. Create a project and add your first task!
           </Typography>
@@ -574,7 +574,7 @@ function EnhancedTasksList({
                       status={task.status}
                       overdue={false}
                       variant="compact"
-                      borderColor="#27ae60"
+                      borderPalette="#27ae60"
                       borderWidth={4}
                     >
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
@@ -600,7 +600,7 @@ function EnhancedTasksList({
                               width: 24,
                               height: 24,
                               fontSize: '0.75rem',
-                              bgcolor: getAssigneeColor(task.assignedTo)
+                              bgcolor: getAssigneePalette(task.assignedTo)
                             }}
                           >
                             {getAssigneeInitials(task.assignedTo)}
@@ -649,7 +649,7 @@ function EnhancedTasksList({
                 onRowAction={handleRowAction}
                 actions={tableActions}
                 emptyStateMessage="No active tasks match your filters"
-                emptyStateIcon={Assignment}
+                emptyStateIcon={Check}
               />
             </Box>
           )}
@@ -657,7 +657,7 @@ function EnhancedTasksList({
           {/* Empty state for no tasks */}
           {filteredAndSortedTasks.length === 0 && (
             <Paper elevation={0} sx={{ p: 4, textAlign: 'center', border: '1px solid #E9ECEF' }}>
-              <Assignment sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+              <Check sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
               <Typography variant="h6" color="textSecondary" gutterBottom>
                 No tasks match your filters
               </Typography>

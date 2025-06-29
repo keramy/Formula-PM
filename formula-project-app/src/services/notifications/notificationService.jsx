@@ -17,16 +17,16 @@ import {
   Alert
 } from '@mui/material';
 import {
-  Notifications as NotificationsIcon,
-  Assignment as TaskIcon,
-  FolderOpen as ProjectIcon,
-  Schedule as DueDateIcon,
-  Warning as OverdueIcon,
+  Bell as NotificationsIcon,
+  Check as TaskIcon,
+  Folder as ProjectIcon,
+  Calendar as DueDateIcon,
+  WarningTriangle as OverdueIcon,
   CheckCircle as CompletedIcon,
-  Person as PersonIcon,
-  Close as CloseIcon,
+  User as PersonIcon,
+  Xmark as CloseIcon,
   Settings as SettingsIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import { format, differenceInDays, isAfter, isBefore, startOfDay } from 'date-fns';
 
 // Notification Types
@@ -67,8 +67,8 @@ class NotificationService {
     }
     
     return {
-      taskAssignments: true,
-      projectAssignments: true,
+      taskChecks: true,
+      projectChecks: true,
       dueDateReminders: true,
       overdueAlerts: true,
       taskCompletions: true,
@@ -188,7 +188,7 @@ class NotificationService {
     switch (notification.type) {
       case NOTIFICATION_TYPES.TASK_ASSIGNED:
         return {
-          title: '📋 New Task Assignment',
+          title: '📋 New Task Check',
           message: `"${notification.taskName}" assigned to ${notification.assigneeName}`,
           icon: '📋'
         };
@@ -200,7 +200,7 @@ class NotificationService {
         };
       case NOTIFICATION_TYPES.PROJECT_ASSIGNED:
         return {
-          title: '📁 New Project Assignment',
+          title: '📁 New Project Check',
           message: `Project "${notification.projectName}" assigned to ${notification.assigneeName}`,
           icon: '📁'
         };
@@ -226,11 +226,11 @@ class NotificationService {
   }
 
   // Notification Methods
-  notifyTaskAssignment(task, project, assignee, assignedBy) {
-    if (!this.settings.taskAssignments) return;
+  notifyTaskCheck(task, project, assignee, assignedBy) {
+    if (!this.settings.taskChecks) return;
 
     return this.createNotification(NOTIFICATION_TYPES.TASK_ASSIGNED, {
-      title: 'New Task Assignment',
+      title: 'New Task Check',
       message: `New task "${task.name}" has been assigned to ${assignee.fullName}`,
       taskId: task.id,
       taskName: task.name,
@@ -268,11 +268,11 @@ class NotificationService {
     });
   }
 
-  notifyProjectAssignment(project, assignee, assignedBy) {
-    if (!this.settings.projectAssignments) return;
+  notifyProjectCheck(project, assignee, assignedBy) {
+    if (!this.settings.projectChecks) return;
 
     return this.createNotification(NOTIFICATION_TYPES.PROJECT_ASSIGNED, {
-      title: 'New Project Assignment',
+      title: 'New Project Check',
       message: `Project "${project.name}" has been assigned to ${assignee.fullName}`,
       projectId: project.id,
       projectName: project.name,
@@ -560,7 +560,7 @@ export const NotificationPanel = () => {
     }
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityPalette = (priority) => {
     switch (priority) {
       case 'high': return '#f44336';
       case 'medium': return '#ff9800';
@@ -590,12 +590,12 @@ export const NotificationPanel = () => {
       <IconButton
         onClick={handleClick}
         sx={{
-          backgroundColor: '#F8F9FA',
+          backgroundPalette: '#F8F9FA',
           border: '1px solid #E9ECEF',
           borderRadius: 2,
           p: 1.5,
           '&:hover': {
-            backgroundColor: '#E9ECEF'
+            backgroundPalette: '#E9ECEF'
           }
         }}
       >
@@ -659,9 +659,9 @@ export const NotificationPanel = () => {
                 onClick={() => handleNotificationClick(notification)}
                 sx={{
                   borderBottom: '1px solid #f0f0f0',
-                  backgroundColor: notification.read ? 'transparent' : '#f8f9fa',
+                  backgroundPalette: notification.read ? 'transparent' : '#f8f9fa',
                   '&:hover': {
-                    backgroundColor: '#e3f2fd'
+                    backgroundPalette: '#e3f2fd'
                   }
                 }}
               >
@@ -681,7 +681,7 @@ export const NotificationPanel = () => {
                               width: 8,
                               height: 8,
                               borderRadius: '50%',
-                              backgroundColor: getPriorityColor(notification.priority)
+                              backgroundPalette: getPriorityPalette(notification.priority)
                             }}
                           />
                         )}

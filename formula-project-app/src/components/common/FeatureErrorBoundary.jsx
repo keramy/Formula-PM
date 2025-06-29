@@ -19,12 +19,12 @@ import {
 import {
   Refresh as RefreshIcon,
   Dashboard as DashboardIcon,
-  Build as BuildIcon,
-  Assignment as TaskIcon,
-  People as TeamIcon,
-  Business as ClientIcon,
-  Description as ReportIcon
-} from '@mui/icons-material';
+  Building as BuildIcon,
+  Check as TaskIcon,
+  Group as TeamIcon,
+  Building as ClientIcon,
+  Page as ReportIcon
+} from 'iconoir-react';
 import UnifiedErrorBoundary from './UnifiedErrorBoundary';
 import { safeGet } from '../../utils/safety';
 

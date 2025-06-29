@@ -167,7 +167,7 @@ const ModernDashboardLayout = ({ projects = [] }) => {
     <Box sx={{ 
       display: 'flex', 
       minHeight: '100vh', 
-      backgroundColor: theme.palette.background.default 
+      backgroundPalette: theme.palette.background.default 
     }}>
       {/* Sidebar */}
       <NotionStyleSidebar 
@@ -184,7 +184,7 @@ const ModernDashboardLayout = ({ projects = [] }) => {
           flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: '#FBFAF8',
+          backgroundPalette: '#FBFAF8',
           minHeight: '100vh',
           width: `calc(100vw - ${sidebarCollapsed ? '70px' : '240px'})`,
           transition: 'width 0.3s ease'
@@ -193,7 +193,7 @@ const ModernDashboardLayout = ({ projects = [] }) => {
         {/* Enhanced Breadcrumb Header */}
         <Box
           sx={{
-            backgroundColor: theme.palette.background.paper,
+            backgroundPalette: theme.palette.background.paper,
             borderBottom: `1px solid ${theme.palette.divider}`,
             px: 4,
             py: 2,

@@ -51,7 +51,7 @@ import {
   Calendar as FaCalendarAlt,
   MapPin as FaMapMarkerAlt,
   Tag as FaTags,
-  TrendingUp as FaChartLine,
+  ArrowUp as FaChartLine,
   NavArrowDown as MdExpandMore
 } from 'iconoir-react';
 
@@ -275,7 +275,7 @@ const AutoReportGenerator = ({
                   sx={{ 
                     cursor: 'pointer',
                     border: selectedPhotos.find(p => p.id === photo.id) ? 2 : 0,
-                    borderColor: 'primary.main'
+                    borderPalette: 'primary.main'
                   }}
                   onClick={() => {
                     const isSelected = selectedPhotos.find(p => p.id === photo.id);

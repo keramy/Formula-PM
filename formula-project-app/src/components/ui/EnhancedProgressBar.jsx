@@ -11,8 +11,8 @@ const EnhancedProgressBar = ({
   label = '',
   sx = {}
 }) => {
-  // Color mapping for different progress ranges
-  const getProgressColor = () => {
+  // Palette mapping for different progress ranges
+  const getProgressPalette = () => {
     if (color !== 'auto') return color;
     
     if (value >= 80) return 'var(--success, #10B981)';
@@ -22,26 +22,26 @@ const EnhancedProgressBar = ({
     return 'var(--error, #EF4444)';
   };
 
-  const progressColor = getProgressColor();
+  const progressPalette = getProgressPalette();
 
   // Gradient backgrounds for different variants
   const variantStyles = {
     default: {
-      backgroundColor: progressColor,
+      backgroundPalette: progressPalette,
     },
     striped: {
       backgroundImage: `repeating-linear-gradient(
         45deg,
-        ${progressColor},
-        ${progressColor} 10px,
-        ${progressColor}dd 10px,
-        ${progressColor}dd 20px
+        ${progressPalette},
+        ${progressPalette} 10px,
+        ${progressPalette}dd 10px,
+        ${progressPalette}dd 20px
       )`,
       backgroundSize: '40px 40px',
       animation: animated ? 'progress-bar-stripes 1s linear infinite' : 'none',
     },
     gradient: {
-      background: `linear-gradient(90deg, ${progressColor}cc 0%, ${progressColor} 50%, ${progressColor}ee 100%)`,
+      background: `linear-gradient(90deg, ${progressPalette}cc 0%, ${progressPalette} 50%, ${progressPalette}ee 100%)`,
     }
   };
 
@@ -53,7 +53,7 @@ const EnhancedProgressBar = ({
             {label}
           </Typography>
           {showPercentage && (
-            <Typography variant="caption" sx={{ color: progressColor, fontWeight: 600 }}>
+            <Typography variant="caption" sx={{ color: progressPalette, fontWeight: 600 }}>
               {value}%
             </Typography>
           )}
@@ -64,7 +64,7 @@ const EnhancedProgressBar = ({
         <Box sx={{ 
           flex: 1, 
           height: height, 
-          backgroundColor: 'var(--border-light, #E5E7EB)', 
+          backgroundPalette: 'var(--border-light, #E5E7EB)', 
           borderRadius: height / 2,
           overflow: 'hidden',
           position: 'relative'
@@ -103,7 +103,7 @@ const EnhancedProgressBar = ({
             sx={{ 
               minWidth: 35, 
               textAlign: 'right',
-              color: progressColor,
+              color: progressPalette,
               fontWeight: 600
             }}
           >

@@ -12,7 +12,7 @@ import {
   Trash as Delete,
   User as Person,
   Calendar as CalendarToday,
-  Check as Assignment,
+  Check as Check,
   Warning,
   Undo,
   Edit as EditIcon,
@@ -121,7 +121,7 @@ function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, 
         if (!member) return { fallback: '?', text: 'Unassigned' };
         return {
           fallback: member.initials,
-          bgColor: member.roleColor,
+          bgPalette: member.rolePalette,
           text: member.fullName
         };
       }
@@ -135,7 +135,7 @@ function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, 
         return {
           label: config.label,
           color: config.color,
-          bgColor: config.bgColor,
+          bgPalette: config.bgPalette,
           icon: config.icon
         };
       }
@@ -149,7 +149,7 @@ function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, 
         return {
           label: config.label,
           color: config.color,
-          bgColor: config.bgColor,
+          bgPalette: config.bgPalette,
           icon: config.icon
         };
       }
@@ -412,7 +412,7 @@ function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, 
           onClearFilter={handleClearFilter}
         />
         <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Assignment sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+          <Check sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
           <Typography variant="body1" color="text.secondary">
             No tasks added yet. Create a project and add your first task!
           </Typography>
@@ -462,7 +462,7 @@ function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, 
           onRowAction={handleRowAction}
           actions={tableActions}
           emptyStateMessage="No tasks match your filters"
-          emptyStateIcon={Assignment}
+          emptyStateIcon={Check}
         />
       )}
 
@@ -472,7 +472,7 @@ function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, 
           {filteredAndSortedTasks.length === 0 ? (
             <Grid item xs={12}>
               <Box sx={{ textAlign: 'center', py: 4 }}>
-                <Assignment sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+                <Check sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
                 <Typography variant="body1" color="text.secondary">
                   No tasks match your filters
                 </Typography>
@@ -524,7 +524,7 @@ function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, 
 
                     {/* Project Info */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                      <Assignment fontSize="small" color="action" />
+                      <Check fontSize="small" color="action" />
                       <Typography variant="body2" color="text.secondary">
                         <strong>Project:</strong> {project ? project.name : 'Unknown Project'}
                       </Typography>
@@ -536,7 +536,7 @@ function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, 
                         width: 20, 
                         height: 20, 
                         fontSize: 12, 
-                        bgcolor: assignedMember ? assignedMember.roleColor : '#95a5a6' 
+                        bgcolor: assignedMember ? assignedMember.rolePalette : '#95a5a6' 
                       }}>
                         {assignedMember ? assignedMember.initials : '?'}
                       </Avatar>
@@ -590,7 +590,7 @@ function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, 
                           sx={{ 
                             height: 8, 
                             borderRadius: 4,
-                            backgroundColor: 'grey.200'
+                            backgroundPalette: 'grey.200'
                           }}
                         />
                       )}

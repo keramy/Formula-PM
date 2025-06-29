@@ -353,7 +353,7 @@ const SmartTemplateSelector = ({
                 height: '100%',
                 cursor: 'pointer',
                 border: '2px dashed',
-                borderColor: 'primary.main',
+                borderPalette: 'primary.main',
                 '&:hover': { 
                   bgcolor: 'action.hover'
                 }

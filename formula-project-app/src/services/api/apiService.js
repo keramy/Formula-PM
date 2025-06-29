@@ -10,7 +10,7 @@ const API_BASE_URL = (() => {
   
   // In development mode, use empty string to leverage Vite proxy
   if (import.meta.env.DEV) {
-    return import.meta.env.VITE_API_URL || 'http://localhost:5014/api/v1';
+    return import.meta.env.VITE_API_URL || '';
   }
   
   // In production, use full URL

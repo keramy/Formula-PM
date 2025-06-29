@@ -23,17 +23,17 @@ import {
   Delete,
   Person,
   CalendarToday,
-  Assignment,
+  Check,
   Warning,
   Undo,
   Edit as EditIcon,
-  Visibility as ViewIcon,
-  Schedule,
+  Eye as ViewIcon,
+  Calendar,
   PlayArrow,
   Flag,
   Error,
   PriorityHigh,
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import { exportTasksToExcel } from '../../../services/export/excelExport';
@@ -42,34 +42,34 @@ const priorityConfig = {
   low: {
     label: 'Low',
     color: '#27ae60',
-    bgColor: '#eafaf1',
+    bgPalette: '#eafaf1',
     icon: <Flag />
   },
   medium: {
     label: 'Medium',
     color: '#f39c12',
-    bgColor: '#fef9e7',
+    bgPalette: '#fef9e7',
     icon: <Flag />
   },
   high: {
     label: 'High',
     color: '#e67e22',
-    bgColor: '#fef5e7',
+    bgPalette: '#fef5e7',
     icon: <Warning />
   },
   urgent: {
     label: 'Urgent',
     color: '#e74c3c',
-    bgColor: '#fdf2f2',
+    bgPalette: '#fdf2f2',
     icon: <PriorityHigh />
   }
 };
 
 const statusConfig = {
-  pending: { label: 'To Do', color: '#f39c12', bgColor: '#fef9e7', icon: <Schedule /> },
-  'in-progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb', icon: <PlayArrow /> },
-  'in_progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb', icon: <PlayArrow /> },
-  completed: { label: 'Completed', color: '#27ae60', bgColor: '#eafaf1', icon: <CheckCircle /> }
+  pending: { label: 'To Do', color: '#f39c12', bgPalette: '#fef9e7', icon: <Calendar /> },
+  'in-progress': { label: 'In Progress', color: '#3498db', bgPalette: '#ebf5fb', icon: <PlayArrow /> },
+  'in_progress': { label: 'In Progress', color: '#3498db', bgPalette: '#ebf5fb', icon: <PlayArrow /> },
+  completed: { label: 'Completed', color: '#27ae60', bgPalette: '#eafaf1', icon: <CheckCircle /> }
 };
 
 const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers = [], onUpdateTask, onDeleteTask, onAddTask, onViewTask, onEditTask }) {
@@ -328,7 +328,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
         sx={{
           mb: 1,
           borderLeft: `4px solid ${overdue ? '#e74c3c' : priority.color}`,
-          backgroundColor: overdue ? '#fff5f5' : 'white',
+          backgroundPalette: overdue ? '#fff5f5' : 'white',
           '&:hover': {
             boxShadow: 2
           }
@@ -344,7 +344,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
               label={priority.label}
               size="small"
               sx={{
-                backgroundColor: priority.bgColor,
+                backgroundPalette: priority.bgPalette,
                 color: priority.color,
                 fontSize: '0.7rem'
               }}
@@ -354,7 +354,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
                 label="Overdue"
                 size="small"
                 sx={{
-                  backgroundColor: '#fdf2f2',
+                  backgroundPalette: '#fdf2f2',
                   color: '#e74c3c',
                   fontSize: '0.7rem'
                 }}
@@ -369,7 +369,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {assignedMember && (
-                <Avatar sx={{ width: 24, height: 24, fontSize: 12, bgcolor: assignedMember.roleColor }}>
+                <Avatar sx={{ width: 24, height: 24, fontSize: 12, bgcolor: assignedMember.rolePalette }}>
                   {assignedMember.initials}
                 </Avatar>
               )}
@@ -424,7 +424,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
             <ListItem
               sx={{
                 borderLeft: `4px solid ${overdue ? '#e74c3c' : priority.color}`,
-                backgroundColor: overdue ? '#fff5f5' : 'white',
+                backgroundPalette: overdue ? '#fff5f5' : 'white',
                 mb: 1,
                 borderRadius: 1,
                 boxShadow: 1
@@ -432,7 +432,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
             >
               <ListItemAvatar>
                 {assignedMember ? (
-                  <Avatar sx={{ bgcolor: assignedMember.roleColor }}>
+                  <Avatar sx={{ bgcolor: assignedMember.rolePalette }}>
                     {assignedMember.initials}
                   </Avatar>
                 ) : (
@@ -461,7 +461,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
                     label={priority.label}
                     size="small"
                     sx={{
-                      backgroundColor: priority.bgColor,
+                      backgroundPalette: priority.bgPalette,
                       color: priority.color,
                       fontSize: '0.7rem'
                     }}
@@ -470,7 +470,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
                     label={status.label}
                     size="small"
                     sx={{
-                      backgroundColor: status.bgColor,
+                      backgroundPalette: status.bgPalette,
                       color: status.color,
                       fontSize: '0.7rem'
                     }}
@@ -480,7 +480,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
                       label="Overdue"
                       size="small"
                       sx={{
-                        backgroundColor: '#fdf2f2',
+                        backgroundPalette: '#fdf2f2',
                         color: '#e74c3c',
                         fontSize: '0.7rem'
                       }}
@@ -542,7 +542,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
                   label={statusTasks.length}
                   size="small"
                   sx={{
-                    backgroundColor: statusInfo.bgColor,
+                    backgroundPalette: statusInfo.bgPalette,
                     color: statusInfo.color
                   }}
                 />
@@ -576,7 +576,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
               <Card
                 sx={{
                   borderLeft: `4px solid ${overdue ? '#e74c3c' : priority.color}`,
-                  backgroundColor: overdue ? '#fff5f5' : 'white'
+                  backgroundPalette: overdue ? '#fff5f5' : 'white'
                 }}
               >
                 <CardContent>
@@ -594,7 +594,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
                   </Box>
                   {assignedMember && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Avatar sx={{ width: 20, height: 20, fontSize: 12, bgcolor: assignedMember.roleColor }}>
+                      <Avatar sx={{ width: 20, height: 20, fontSize: 12, bgcolor: assignedMember.rolePalette }}>
                         {assignedMember.initials}
                       </Avatar>
                       <Typography variant="body2" color="text.secondary">
@@ -633,7 +633,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
           showViewToggle={true}
         />
         <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Assignment sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+          <Check sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
           <Typography variant="body1" color="text.secondary">
             No tasks added yet. Create a project and add your first task!
           </Typography>

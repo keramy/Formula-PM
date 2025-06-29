@@ -31,25 +31,25 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
           id: 'on-tender',
           title: 'ON TENDER',
           color: '#3498db',
-          bgColor: '#ebf3fd'
+          bgPalette: '#ebf3fd'
         },
         {
           id: 'awarded',
           title: 'AWARDED', 
           color: '#27ae60',
-          bgColor: '#eafaf1'
+          bgPalette: '#eafaf1'
         },
         {
           id: 'active',
           title: 'ACTIVE',
           color: '#9b59b6',
-          bgColor: '#f4ecf7'
+          bgPalette: '#f4ecf7'
         },
         {
           id: 'completed',
           title: 'COMPLETED',
           color: '#2c3e50',
-          bgColor: '#eaeded'
+          bgPalette: '#eaeded'
         }
       ];
 
@@ -83,19 +83,19 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
           id: 'pending',
           title: 'TO DO',
           color: '#f39c12',
-          bgColor: '#fef9e7'
+          bgPalette: '#fef9e7'
         },
         {
           id: 'in-progress',
           title: 'IN PROGRESS', 
           color: '#3498db',
-          bgColor: '#ebf5fb'
+          bgPalette: '#ebf5fb'
         },
         {
           id: 'completed',
           title: 'DONE',
           color: '#27ae60',
-          bgColor: '#eafaf1'
+          bgPalette: '#eafaf1'
         }
       ];
 
@@ -186,7 +186,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
         sx={{
           mb: 1.5,
           cursor: 'pointer',
-          backgroundColor: 'white',
+          backgroundPalette: 'white',
           border: '1px solid #E9ECEF',
           borderRadius: 2,
           transition: 'all 0.2s ease-in-out',
@@ -250,9 +250,9 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                 sx={{ 
                   height: 4,
                   borderRadius: 2,
-                  backgroundColor: '#E9ECEF',
+                  backgroundPalette: '#E9ECEF',
                   '& .MuiLinearProgress-bar': {
-                    backgroundColor: progress === 100 ? '#27ae60' : '#3498db',
+                    backgroundPalette: progress === 100 ? '#27ae60' : '#3498db',
                     borderRadius: 2
                   }
                 }}
@@ -286,7 +286,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
         sx={{
           mb: 1.5,
           cursor: 'pointer',
-          backgroundColor: 'white',
+          backgroundPalette: 'white',
           border: '1px solid #E9ECEF',
           borderRadius: 2,
           transition: 'all 0.2s ease-in-out',
@@ -367,7 +367,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                           width: 24,
                           height: 24,
                           fontSize: '0.7rem',
-                          backgroundColor: assignedMember.roleColor || '#3498db'
+                          backgroundPalette: assignedMember.rolePalette || '#3498db'
                         }}
                       >
                         {assignedMember.initials}
@@ -378,7 +378,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                       sx={{
                         width: 24,
                         height: 24,
-                        backgroundColor: '#bdc3c7'
+                        backgroundPalette: '#bdc3c7'
                       }}
                     >
                       <PersonIcon sx={{ fontSize: 14 }} />
@@ -395,7 +395,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                     sx={{
                       height: 20,
                       fontSize: '0.7rem',
-                      borderColor: task.progress === 100 ? '#27ae60' : '#3498db',
+                      borderPalette: task.progress === 100 ? '#27ae60' : '#3498db',
                       color: task.progress === 100 ? '#27ae60' : '#3498db'
                     }}
                   />
@@ -425,7 +425,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
               sx={{
                 minWidth: 320,
                 maxWidth: 320,
-                backgroundColor: column.bgColor,
+                backgroundPalette: column.bgPalette,
                 border: `1px solid ${column.color}30`,
                 borderRadius: 2,
                 display: 'flex',
@@ -439,7 +439,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                 sx={{ 
                   p: 2, 
                   borderBottom: `1px solid ${column.color}30`,
-                  backgroundColor: 'white',
+                  backgroundPalette: 'white',
                   borderRadius: '8px 8px 0 0'
                 }}
               >
@@ -461,7 +461,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                     size="small" 
                     sx={{ 
                       height: 20,
-                      backgroundColor: column.color,
+                      backgroundPalette: column.color,
                       color: 'white',
                       fontWeight: 600,
                       fontSize: '0.7rem'
@@ -477,7 +477,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                   minHeight: 400,
                   maxHeight: 'calc(100vh - 350px)',
                   overflowY: 'auto',
-                  backgroundColor: 'transparent',
+                  backgroundPalette: 'transparent',
                   transition: 'background-color 0.2s ease'
                 }}
               >

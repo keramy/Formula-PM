@@ -35,7 +35,7 @@ export const useAuthenticatedData = () => {
       setError(null);
       
       // Enhanced error handling with retry logic
-      const loadDataWithRetry = async (loadFunction, dataType, retries = 2) => {
+      const loadDataWithRetry = async (loadFunction, dataType, retries = 1) => {
         for (let attempt = 0; attempt <= retries; attempt++) {
           try {
             return await loadFunction(signal);
@@ -45,12 +45,17 @@ export const useAuthenticatedData = () => {
             }
             
             if (attempt === retries) {
-              console.warn(`Failed to load ${dataType} after ${retries + 1} attempts:`, error.message);
+              // Only log warning if this is not a network connectivity issue
+              if (!error.message?.includes('Network connection failed') && 
+                  !error.message?.includes('fetch') && 
+                  !error.originalError?.name?.includes('TypeError')) {
+                console.warn(`Failed to load ${dataType} after ${retries + 1} attempts:`, error.message);
+              }
               throw error;
             }
             
-            // Wait before retry (exponential backoff)
-            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+            // Wait before retry (shorter delay for faster fallback to demo data)
+            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 500));
           }
         }
       };

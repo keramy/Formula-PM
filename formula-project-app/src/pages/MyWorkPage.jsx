@@ -20,12 +20,12 @@ import {
   Badge
 } from '@mui/material';
 import {
-  CheckCircle as AssignmentIcon,
+  CheckCircle as CheckIcon,
   Calendar as CalendarIcon,
-  TrendingUp as TrendingUpIcon,
+  ArrowUp as ArrowUpIcon,
   Clock as ClockIcon,
   CheckCircle as CheckCircleIcon,
-  Warning as WarningIcon,
+  WarningTriangle as WarningIcon,
   User as PersonIcon,
   Folder as FolderIcon,
   Play as PlayIcon,
@@ -153,7 +153,7 @@ const MyWorkPage = () => {
             status: 'ahead'
           }
         ],
-        todaysSchedule: [
+        todaysCalendar: [
           {
             id: 'S001',
             time: '09:00',
@@ -213,7 +213,7 @@ const MyWorkPage = () => {
     });
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityPalette = (priority) => {
     switch (priority) {
       case 'high': return 'error';
       case 'medium': return 'warning';
@@ -222,7 +222,7 @@ const MyWorkPage = () => {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'completed': return 'success';
       case 'in_progress': return 'primary';
@@ -281,7 +281,7 @@ const MyWorkPage = () => {
         label="Overview" 
         isActive={activeTab === 'overview'}
         onClick={() => setActiveTab('overview')}
-        icon={<AssignmentIcon sx={{ fontSize: 16 }} />}
+        icon={<CheckIcon sx={{ fontSize: 16 }} />}
       />
       <CleanTab 
         label="My Tasks" 
@@ -298,17 +298,17 @@ const MyWorkPage = () => {
         badge={workData?.overview?.activeProjects || 0}
       />
       <CleanTab 
-        label="Schedule" 
+        label="Calendar" 
         isActive={activeTab === 'schedule'}
         onClick={() => setActiveTab('schedule')}
         icon={<CalendarIcon sx={{ fontSize: 16 }} />}
-        badge={workData?.todaysSchedule?.length || 0}
+        badge={workData?.todaysCalendar?.length || 0}
       />
       <CleanTab 
         label="Analytics" 
         isActive={activeTab === 'analytics'}
         onClick={() => setActiveTab('analytics')}
-        icon={<TrendingUpIcon sx={{ fontSize: 16 }} />}
+        icon={<ArrowUpIcon sx={{ fontSize: 16 }} />}
       />
     </>
   );
@@ -411,10 +411,10 @@ const MyWorkPage = () => {
                     <ListItem>
                       <ListItemIcon>
                         <Badge
-                          color={getPriorityColor(task.priority)}
+                          color={getPriorityPalette(task.priority)}
                           variant="dot"
                         >
-                          <AssignmentIcon />
+                          <CheckIcon />
                         </Badge>
                       </ListItemIcon>
                       <ListItemText
@@ -434,7 +434,7 @@ const MyWorkPage = () => {
                       />
                       <Chip 
                         label={task.status.replace('_', ' ')} 
-                        color={getStatusColor(task.status)}
+                        color={getStatusPalette(task.status)}
                         size="small"
                       />
                       <IconButton 
@@ -453,15 +453,15 @@ const MyWorkPage = () => {
           </Card>
         </Grid>
 
-        {/* Today's Schedule */}
+        {/* Today's Calendar */}
         <Grid item xs={12} md={4}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Today's Schedule
+                Today's Calendar
               </Typography>
               <List dense>
-                {workData.todaysSchedule.map((item) => (
+                {workData.todaysCalendar.map((item) => (
                   <ListItem key={item.id}>
                     <ListItemIcon>
                       <ClockIcon />
@@ -495,7 +495,7 @@ const MyWorkPage = () => {
                   </Typography>
                   <Chip 
                     label={task.priority} 
-                    color={getPriorityColor(task.priority)}
+                    color={getPriorityPalette(task.priority)}
                     size="small"
                   />
                 </Box>
@@ -515,7 +515,7 @@ const MyWorkPage = () => {
                 <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
                   <Chip 
                     label={task.status.replace('_', ' ')} 
-                    color={getStatusColor(task.status)}
+                    color={getStatusPalette(task.status)}
                     size="small"
                   />
                   <Button size="small" variant="outlined">
@@ -573,16 +573,16 @@ const MyWorkPage = () => {
     );
   };
 
-  const renderScheduleView = () => {
+  const renderCalendarView = () => {
     if (!workData) return null;
 
     return (
       <Paper sx={{ p: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Today's Schedule - {new Date().toLocaleDateString()}
+          Today's Calendar - {new Date().toLocaleDateString()}
         </Typography>
         <List>
-          {workData.todaysSchedule.map((item, index) => (
+          {workData.todaysCalendar.map((item, index) => (
             <React.Fragment key={item.id}>
               <ListItem>
                 <ListItemIcon>
@@ -610,7 +610,7 @@ const MyWorkPage = () => {
                   Join
                 </Button>
               </ListItem>
-              {index < workData.todaysSchedule.length - 1 && <Divider />}
+              {index < workData.todaysCalendar.length - 1 && <Divider />}
             </React.Fragment>
           ))}
         </List>
@@ -713,7 +713,7 @@ const MyWorkPage = () => {
       case 'projects':
         return renderProjectsView();
       case 'schedule':
-        return renderScheduleView();
+        return renderCalendarView();
       case 'analytics':
         return renderAnalyticsView();
       default:

@@ -111,7 +111,18 @@
       "Bash(tree:*)",
       "Bash(npx prisma:*)",
       "Bash(VITE_FORCE_DEMO_MODE=false npm run dev)",
-      "Bash(./stop-full-backend.sh:*)"
+      "Bash(./stop-full-backend.sh:*)",
+      "Bash(git clone:*)",
+      "WebFetch(domain:gemini.google.com)",
+      "Bash(sudo service:*)",
+      "Bash(pg_isready:*)",
+      "Bash(redis-cli:*)",
+      "Bash(npm audit:*)",
+      "Bash(time npm run build)",
+      "Bash(time npm run build:fast)",
+      "Bash(time timeout:*)",
+      "Bash(npm update)",
+      "Bash(src/scripts/fix-icons.sh:*)"
     ],
     "deny": []
   }

@@ -25,16 +25,16 @@ import {
   Phone,
   Work,
   CalendarToday,
-  Assignment,
+  Check,
   CheckCircle,
   Warning,
   Person,
-  TrendingUp,
-  Schedule,
+  ArrowUp,
+  Calendar,
   PlayArrow,
   Flag,
   PriorityHigh
-} from '@mui/icons-material';
+} from 'iconoir-react';
 
 const TeamMemberDetail = ({ 
   member, 
@@ -70,17 +70,17 @@ const TeamMemberDetail = ({
   };
 
   const priorityConfig = {
-    low: { label: 'Low', color: '#27ae60', bgColor: '#eafaf1', icon: <Flag /> },
-    medium: { label: 'Medium', color: '#f39c12', bgColor: '#fef9e7', icon: <Flag /> },
-    high: { label: 'High', color: '#e67e22', bgColor: '#fef5e7', icon: <Warning /> },
-    urgent: { label: 'Urgent', color: '#e74c3c', bgColor: '#fdf2f2', icon: <PriorityHigh /> }
+    low: { label: 'Low', color: '#27ae60', bgPalette: '#eafaf1', icon: <Flag /> },
+    medium: { label: 'Medium', color: '#f39c12', bgPalette: '#fef9e7', icon: <Flag /> },
+    high: { label: 'High', color: '#e67e22', bgPalette: '#fef5e7', icon: <Warning /> },
+    urgent: { label: 'Urgent', color: '#e74c3c', bgPalette: '#fdf2f2', icon: <PriorityHigh /> }
   };
 
   const statusConfig = {
-    pending: { label: 'Pending', color: '#f39c12', bgColor: '#fef9e7', icon: <Schedule /> },
-    'in-progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb', icon: <PlayArrow /> },
-    'in_progress': { label: 'In Progress', color: '#3498db', bgColor: '#ebf5fb', icon: <PlayArrow /> },
-    completed: { label: 'Completed', color: '#27ae60', bgColor: '#eafaf1', icon: <CheckCircle /> }
+    pending: { label: 'Pending', color: '#f39c12', bgPalette: '#fef9e7', icon: <Calendar /> },
+    'in-progress': { label: 'In Progress', color: '#3498db', bgPalette: '#ebf5fb', icon: <PlayArrow /> },
+    'in_progress': { label: 'In Progress', color: '#3498db', bgPalette: '#ebf5fb', icon: <PlayArrow /> },
+    completed: { label: 'Completed', color: '#27ae60', bgPalette: '#eafaf1', icon: <CheckCircle /> }
   };
 
   const formatDate = (dateString) => {
@@ -133,7 +133,7 @@ const TeamMemberDetail = ({
                 sx={{
                   width: 80,
                   height: 80,
-                  bgcolor: member.roleColor || '#3498db',
+                  bgcolor: member.rolePalette || '#3498db',
                   fontSize: '2rem',
                   fontWeight: 600,
                   mx: 'auto',
@@ -151,8 +151,8 @@ const TeamMemberDetail = ({
                 label={member.role}
                 size="medium"
                 sx={{
-                  backgroundColor: member.roleColor + '20',
-                  color: member.roleColor,
+                  backgroundPalette: member.rolePalette + '20',
+                  color: member.rolePalette,
                   fontWeight: 600,
                   mb: 2
                 }}
@@ -248,9 +248,9 @@ const TeamMemberDetail = ({
                   sx={{
                     height: 8,
                     borderRadius: 4,
-                    backgroundColor: '#f0f0f0',
+                    backgroundPalette: '#f0f0f0',
                     '& .MuiLinearProgress-bar': {
-                      backgroundColor: stats.completionRate >= 80 ? '#27ae60' : stats.completionRate >= 60 ? '#f39c12' : '#e74c3c'
+                      backgroundPalette: stats.completionRate >= 80 ? '#27ae60' : stats.completionRate >= 60 ? '#f39c12' : '#e74c3c'
                     }
                   }}
                 />
@@ -272,7 +272,7 @@ const TeamMemberDetail = ({
               
               {memberTasks.length === 0 ? (
                 <Box sx={{ textAlign: 'center', py: 4 }}>
-                  <Assignment sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+                  <Check sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
                   <Typography variant="body1" color="text.secondary">
                     No tasks assigned to this team member
                   </Typography>
@@ -316,7 +316,7 @@ const TeamMemberDetail = ({
                                 size="small"
                                 icon={priority.icon}
                                 sx={{
-                                  backgroundColor: priority.bgColor,
+                                  backgroundPalette: priority.bgPalette,
                                   color: priority.color,
                                   fontWeight: 500,
                                   '& .MuiChip-icon': {
@@ -332,7 +332,7 @@ const TeamMemberDetail = ({
                                 size="small"
                                 icon={status.icon}
                                 sx={{
-                                  backgroundColor: status.bgColor,
+                                  backgroundPalette: status.bgPalette,
                                   color: status.color,
                                   fontWeight: 500,
                                   '& .MuiChip-icon': {
@@ -375,7 +375,7 @@ const TeamMemberDetail = ({
                                     flex: 1,
                                     height: 6,
                                     borderRadius: 3,
-                                    backgroundColor: '#f0f0f0'
+                                    backgroundPalette: '#f0f0f0'
                                   }}
                                 />
                                 <Typography variant="caption" sx={{ minWidth: 30 }}>
@@ -404,7 +404,7 @@ const TeamMemberDetail = ({
               
               {memberProjects.length === 0 ? (
                 <Box sx={{ textAlign: 'center', py: 4 }}>
-                  <TrendingUp sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+                  <ArrowUp sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
                   <Typography variant="body1" color="text.secondary">
                     Not involved in any projects
                   </Typography>
@@ -426,7 +426,7 @@ const TeamMemberDetail = ({
                               label={project.status}
                               size="small"
                               sx={{
-                                backgroundColor: project.projectManager === member.id ? '#e3f2fd' : '#f5f5f5',
+                                backgroundPalette: project.projectManager === member.id ? '#e3f2fd' : '#f5f5f5',
                                 color: project.projectManager === member.id ? '#1976d2' : '#757575',
                                 fontWeight: 500
                               }}

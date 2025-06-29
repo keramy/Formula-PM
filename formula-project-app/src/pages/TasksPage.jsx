@@ -35,7 +35,7 @@ import {
   Play as InProgressIcon,
   User as PersonIcon,
   Calendar as CalendarToday,
-  ArrowUp as TrendingUp,
+  ArrowUp as ArrowUp,
   WarningTriangle as Warning,
   Trash as MoreVert
 } from 'iconoir-react';
@@ -170,7 +170,7 @@ const TasksPage = ({
         label="My Tasks" 
         isActive={activeTab === 'my-tasks'}
         onClick={() => setActiveTab('my-tasks')}
-        icon={<Assignment sx={{ fontSize: 16 }} />}
+        icon={<Check sx={{ fontSize: 16 }} />}
         badge={myTasks.length}
       />
       <CleanTab 
@@ -239,7 +239,7 @@ const TasksPage = ({
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundColor: `${color}20`,
+              backgroundPalette: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -307,7 +307,7 @@ const TasksPage = ({
               className="clean-progress-bar"
               sx={{
                 '& .MuiLinearProgress-bar': {
-                  backgroundColor: task.progress >= 75 ? '#10B981' : task.progress >= 50 ? '#E3AF64' : '#516AC8'
+                  backgroundPalette: task.progress >= 75 ? '#10B981' : task.progress >= 50 ? '#E3AF64' : '#516AC8'
                 }
               }}
             />
@@ -333,7 +333,7 @@ const TasksPage = ({
               label="Overdue"
               size="small"
               sx={{
-                backgroundColor: '#EF444420',
+                backgroundPalette: '#EF444420',
                 color: '#EF4444',
                 fontSize: '10px'
               }}
@@ -378,7 +378,7 @@ const TasksPage = ({
             title="My Tasks"
             value={myTasks.length}
             subtitle={`${myTasks.filter(t => t.status === 'completed').length} completed`}
-            icon={<Assignment />}
+            icon={<Check />}
             color="#516AC8"
           />
         </Grid>
@@ -422,7 +422,7 @@ const TasksPage = ({
           <Grid item xs={12}>
             <Card className="clean-card">
               <CardContent sx={{ p: 4, textAlign: 'center' }}>
-                <Assignment sx={{ fontSize: 64, color: '#9CA3AF', mb: 2 }} />
+                <Check sx={{ fontSize: 64, color: '#9CA3AF', mb: 2 }} />
                 <Typography variant="h6" sx={{ color: '#6B7280', mb: 1 }}>
                   No tasks assigned to you
                 </Typography>
@@ -575,7 +575,7 @@ const TasksPage = ({
                         color: 'var(--gray-400)',
                         '&:hover': {
                           color: 'var(--construction-500)',
-                          backgroundColor: 'var(--construction-50)'
+                          backgroundPalette: 'var(--construction-50)'
                         }
                       }}
                     >

@@ -3,14 +3,13 @@
  * Advanced @mention system with project, user, and scope-item references
  */
 
-const { PrismaClient } = require('@prisma/client');
 const cacheService = require('./cacheService');
 const auditService = require('./auditService');
 const NotificationService = require('./NotificationService');
 const _ = require('lodash');
 
-const prisma = new PrismaClient();
-
+// Will be initialized with shared database service
+let prisma = null;
 class MentionService {
   constructor() {
     this.config = {
@@ -45,6 +44,13 @@ class MentionService {
         taskMention: false
       }
     };
+  }
+
+  /**
+   * Set the shared Prisma client
+   */
+  setPrismaClient(prismaClient) {
+    prisma = prismaClient;
   }
 
   /**

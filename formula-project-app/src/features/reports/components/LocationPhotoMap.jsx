@@ -188,7 +188,7 @@ const LocationPhotoMap = ({
     }
   };
 
-  const getLocationColor = (type) => {
+  const getLocationPalette = (type) => {
     switch (type) {
       case 'building': return 'primary';
       case 'floor': return 'secondary';
@@ -225,7 +225,7 @@ const LocationPhotoMap = ({
             {showPhotoCount && photoCount > 0 && (
               <Badge
                 badgeContent={photoCount}
-                color={getLocationColor(location.type)}
+                color={getLocationPalette(location.type)}
                 sx={{ mr: 1 }}
               >
                 <FaImage />
@@ -256,7 +256,7 @@ const LocationPhotoMap = ({
                     borderRadius: 1,
                     cursor: 'pointer',
                     border: '1px solid',
-                    borderColor: 'divider'
+                    borderPalette: 'divider'
                   }}
                   onClick={(e) => {
                     e.stopPropagation();

@@ -3,14 +3,13 @@
  * Advanced business intelligence with KPIs, trends, and predictive analytics
  */
 
-const { PrismaClient } = require('@prisma/client');
 const cacheService = require('./cacheService');
 const auditService = require('./auditService');
 const moment = require('moment');
 const _ = require('lodash');
 
-const prisma = new PrismaClient();
-
+// Will be initialized with shared database service
+let prisma = null;
 class AnalyticsService {
   constructor() {
     this.config = {
@@ -56,6 +55,13 @@ class AnalyticsService {
 
     this.kpiCache = new Map();
     this.lastKpiRefresh = 0;
+  }
+
+  /**
+   * Set the shared Prisma client
+   */
+  setPrismaClient(prismaClient) {
+    prisma = prismaClient;
   }
 
   /**

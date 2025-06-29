@@ -22,12 +22,12 @@ import {
   Snackbar
 } from '@mui/material';
 import {
-  Assignment as TaskIcon,
-  Description as FileIcon,
-  People as TeamIcon,
-  Analytics as AnalyticsIcon,
+  Check as TaskIcon,
+  Page as FileIcon,
+  Group as TeamIcon,
+  StatsReport as AnalyticsIcon,
   Timeline as TimelineIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import { useProjectRealtime } from '../../../hooks/useSocket';
 import PresenceIndicators from '../../../components/realtime/PresenceIndicators';
 import RealtimeActivityFeed from '../../../components/realtime/RealtimeActivityFeed';
@@ -99,7 +99,7 @@ const EnhancedProjectDetailPage = () => {
     setActiveTab(newValue);
   };
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status?.toLowerCase()) {
       case 'active': return 'success';
       case 'on_hold': return 'warning';
@@ -109,7 +109,7 @@ const EnhancedProjectDetailPage = () => {
     }
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityPalette = (priority) => {
     switch (priority?.toLowerCase()) {
       case 'high': return 'error';
       case 'medium': return 'warning';
@@ -156,12 +156,12 @@ const EnhancedProjectDetailPage = () => {
             <Box display="flex" alignItems="center" gap={2} mb={2}>
               <Chip
                 label={project.status}
-                color={getStatusColor(project.status)}
+                color={getStatusPalette(project.status)}
                 variant="filled"
               />
               <Chip
                 label={`${project.priority} Priority`}
-                color={getPriorityColor(project.priority)}
+                color={getPriorityPalette(project.priority)}
                 variant="outlined"
               />
               {project.progress !== undefined && (
@@ -240,7 +240,7 @@ const EnhancedProjectDetailPage = () => {
         <Grid item xs={12} lg={9}>
           {/* Project Tabs */}
           <Card>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ borderBottom: 1, borderPalette: 'divider' }}>
               <Tabs value={activeTab} onChange={handleTabChange}>
                 <Tab 
                   icon={<TaskIcon />} 

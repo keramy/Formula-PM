@@ -16,15 +16,15 @@ import {
 } from '@mui/material';
 import {
   Search as SearchIcon,
-  FolderOpen as ProjectIcon,
-  Assignment as TaskIcon,
-  Person as PersonIcon,
-  Business as ClientIcon,
-  Architecture as DrawingIcon,
-  Inventory as SpecIcon,
-  Description as ComplianceIcon,
+  Folder as ProjectIcon,
+  Check as TaskIcon,
+  User as PersonIcon,
+  Building as ClientIcon,
+  Design2D as DrawingIcon,
+  Archive as SpecIcon,
+  Page as ComplianceIcon,
   KeyboardArrowRight as ArrowIcon
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import { useEnhancedSearch } from '../../hooks/useEnhancedSearch';
 import { useAuthenticatedData } from '../../hooks/useAuthenticatedData';
 
@@ -248,13 +248,13 @@ const LiveSearchDropdown = ({
             display: 'flex',
             alignItems: 'center',
             width: 300,
-            backgroundColor: '#F8F9FA',
+            backgroundPalette: '#F8F9FA',
             border: '1px solid #E9ECEF',
             borderRadius: 2,
             boxShadow: 'none',
             position: 'relative',
             ...(isOpen && {
-              borderColor: '#2196F3',
+              borderPalette: '#2196F3',
               borderBottomLeftRadius: 0,
               borderBottomRightRadius: 0,
             })
@@ -323,12 +323,12 @@ const LiveSearchDropdown = ({
                         py: 1.5,
                         px: 2,
                         '&:hover': {
-                          backgroundColor: '#F5F5F5'
+                          backgroundPalette: '#F5F5F5'
                         },
                         '&.Mui-selected': {
-                          backgroundColor: '#E3F2FD',
+                          backgroundPalette: '#E3F2FD',
                           '&:hover': {
-                            backgroundColor: '#BBDEFB'
+                            backgroundPalette: '#BBDEFB'
                           }
                         }
                       }}
@@ -355,7 +355,7 @@ const LiveSearchDropdown = ({
                               sx={{
                                 height: 20,
                                 fontSize: '0.7rem',
-                                backgroundColor: result.color,
+                                backgroundPalette: result.color,
                                 color: 'white',
                                 textTransform: 'capitalize'
                               }}
@@ -387,9 +387,9 @@ const LiveSearchDropdown = ({
                       sx={{
                         py: 1,
                         px: 2,
-                        backgroundColor: '#FAFAFA',
+                        backgroundPalette: '#FAFAFA',
                         '&:hover': {
-                          backgroundColor: '#F5F5F5'
+                          backgroundPalette: '#F5F5F5'
                         }
                       }}
                     >

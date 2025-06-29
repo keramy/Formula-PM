@@ -40,7 +40,7 @@ const UserProfileMenu = () => {
     handleClose();
   };
 
-  const getRoleColor = (role) => {
+  const getRolePalette = (role) => {
     switch (role) {
       case USER_ROLES.ADMIN:
         return '#f44336';
@@ -95,7 +95,7 @@ const UserProfileMenu = () => {
           sx={{
             width: 32,
             height: 32,
-            bgcolor: getRoleColor(user.role),
+            bgcolor: getRolePalette(user.role),
             fontSize: '0.875rem'
           }}
         >
@@ -134,7 +134,7 @@ const UserProfileMenu = () => {
               sx={{
                 width: 40,
                 height: 40,
-                bgcolor: getRoleColor(user.role)
+                bgcolor: getRolePalette(user.role)
               }}
             >
               {user.name?.charAt(0)?.toUpperCase() || 'U'}
@@ -153,7 +153,7 @@ const UserProfileMenu = () => {
             label={getRoleLabel(user.role)}
             size="small"
             sx={{
-              bgcolor: getRoleColor(user.role),
+              bgcolor: getRolePalette(user.role),
               color: 'white',
               fontWeight: 500
             }}

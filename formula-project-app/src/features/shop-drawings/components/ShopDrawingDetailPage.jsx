@@ -22,7 +22,7 @@ import {
   Edit as EditIcon,
   Trash as DeleteIcon,
   CheckCircle as ApproveIcon,
-  Cancel as RejectIcon,
+  Xmark as RejectIcon,
   HistoryCircle as HistoryIcon,
   Share as ShareIcon
 } from 'iconoir-react';
@@ -54,7 +54,7 @@ const ShopDrawingDetailPage = ({
     );
   }
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'approved': return '#4CAF50';
       case 'pending': return '#FF9800';
@@ -217,7 +217,7 @@ const ShopDrawingDetailPage = ({
                 <Chip 
                   label={getStatusLabel(drawing.status)}
                   sx={{ 
-                    backgroundColor: getStatusColor(drawing.status),
+                    backgroundPalette: getStatusPalette(drawing.status),
                     color: 'white',
                     fontWeight: 600,
                     mt: 0.5

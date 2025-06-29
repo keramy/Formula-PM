@@ -22,12 +22,12 @@ import {
 import {
   Add,
   FilterList,
-  Assignment,
+  Check,
   ViewList,
   ViewModule,
-  Schedule,
+  Calendar,
   CheckCircle
-} from '@mui/icons-material';
+} from 'iconoir-react';
 import CleanPageLayout, { CleanTab } from '../CleanPageLayout';
 
 const NotionTasksPage = ({ 
@@ -94,7 +94,7 @@ const NotionTasksPage = ({
         label="My Tasks" 
         isActive={activeTab === 'my-tasks'}
         onClick={() => setActiveTab('my-tasks')}
-        icon={<Assignment sx={{ fontSize: 16 }} />}
+        icon={<Check sx={{ fontSize: 16 }} />}
         badge={taskStats.myTasks}
       />
       <CleanTab 
@@ -114,7 +114,7 @@ const NotionTasksPage = ({
         label="Overdue" 
         isActive={activeTab === 'overdue'}
         onClick={() => setActiveTab('overdue')}
-        icon={<Schedule sx={{ fontSize: 16 }} />}
+        icon={<Calendar sx={{ fontSize: 16 }} />}
         badge={taskStats.overdue}
       />
     </>
@@ -137,7 +137,7 @@ const NotionTasksPage = ({
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundColor: `${color}20`,
+              backgroundPalette: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -271,7 +271,7 @@ const NotionTasksPage = ({
               title="Total Tasks"
               value={taskStats.total}
               color="#516AC8"
-              icon={<Assignment />}
+              icon={<Check />}
             />
           </Grid>
           <Grid item xs={12} sm={6} lg={3}>
@@ -279,7 +279,7 @@ const NotionTasksPage = ({
               title="My Tasks"
               value={taskStats.myTasks}
               color="#E3AF64"
-              icon={<Assignment />}
+              icon={<Check />}
             />
           </Grid>
           <Grid item xs={12} sm={6} lg={3}>
@@ -295,7 +295,7 @@ const NotionTasksPage = ({
               title="Overdue"
               value={taskStats.overdue}
               color="#EF4444"
-              icon={<Schedule />}
+              icon={<Calendar />}
             />
           </Grid>
         </Grid>

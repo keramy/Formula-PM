@@ -20,7 +20,7 @@ import {
   Building as DrawingIcon,
   Package as SpecIcon,
   ClipboardCheck as TaskIcon,
-  TrendingUp as TrendingUpIcon,
+  ArrowUp as ArrowUpIcon,
   TrendingDown as TrendingDownIcon,
   CheckCircle as CheckIcon,
   Clock as PendingIcon,
@@ -345,7 +345,7 @@ const EnhancedDashboardWidgets = ({
                 borderRadius: 1, 
                 textAlign: 'center',
                 cursor: 'pointer',
-                '&:hover': { backgroundColor: '#f5f5f5' }
+                '&:hover': { backgroundPalette: '#f5f5f5' }
               }}
             >
               <DrawingIcon sx={{ fontSize: 32, color: '#1976d2', mb: 1 }} />
@@ -362,7 +362,7 @@ const EnhancedDashboardWidgets = ({
                 borderRadius: 1, 
                 textAlign: 'center',
                 cursor: 'pointer',
-                '&:hover': { backgroundColor: '#f5f5f5' }
+                '&:hover': { backgroundPalette: '#f5f5f5' }
               }}
             >
               <SpecIcon sx={{ fontSize: 32, color: '#388e3c', mb: 1 }} />
@@ -379,7 +379,7 @@ const EnhancedDashboardWidgets = ({
                 borderRadius: 1, 
                 textAlign: 'center',
                 cursor: 'pointer',
-                '&:hover': { backgroundColor: '#f5f5f5' }
+                '&:hover': { backgroundPalette: '#f5f5f5' }
               }}
             >
               <TaskIcon sx={{ fontSize: 32, color: '#f57c00', mb: 1 }} />
@@ -396,7 +396,7 @@ const EnhancedDashboardWidgets = ({
                 borderRadius: 1, 
                 textAlign: 'center',
                 cursor: 'pointer',
-                '&:hover': { backgroundColor: '#f5f5f5' }
+                '&:hover': { backgroundPalette: '#f5f5f5' }
               }}
             >
               <MoneyIcon sx={{ fontSize: 32, color: '#7b1fa2', mb: 1 }} />

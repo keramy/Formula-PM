@@ -23,18 +23,18 @@ import {
 import {
   Email,
   NotificationsActive,
-  Schedule,
+  Calendar,
   Task,
   CheckCircle,
   Warning,
   Settings,
   Send
-} from '@mui/icons-material';
+} from 'iconoir-react';
 
 const notificationTypes = [
   {
     id: 'task_assigned',
-    label: 'Task Assignment',
+    label: 'Task Check',
     description: 'When a new task is assigned to a team member',
     icon: <Task />,
     defaultEnabled: true
@@ -43,7 +43,7 @@ const notificationTypes = [
     id: 'deadline_reminder',
     label: 'Deadline Reminders',
     description: 'Reminders before task deadlines',
-    icon: <Schedule />,
+    icon: <Calendar />,
     defaultEnabled: true
   },
   {

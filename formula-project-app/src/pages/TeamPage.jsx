@@ -18,10 +18,10 @@ import {
   ViewGrid as ViewModule,
   User as PersonIcon,
   Group as TeamIcon,
-  ArrowUp as TrendingUp,
+  ArrowUp as ArrowUp,
   ClipboardCheck as Task,
   CheckCircle,
-  Clock as Schedule
+  Clock as Calendar
 } from 'iconoir-react';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import TeamMembersList from '../features/team/components/TeamMembersList';
@@ -153,7 +153,7 @@ const TeamPage = ({
         label="Overview" 
         isActive={activeTab === 'overview'}
         onClick={() => setActiveTab('overview')}
-        icon={<TrendingUp sx={{ fontSize: 16 }} />}
+        icon={<ArrowUp sx={{ fontSize: 16 }} />}
       />
       <CleanTab 
         label="All Members" 
@@ -166,7 +166,7 @@ const TeamPage = ({
         label="Performance" 
         isActive={activeTab === 'performance'}
         onClick={() => setActiveTab('performance')}
-        icon={<Assignment sx={{ fontSize: 16 }} />}
+        icon={<Check sx={{ fontSize: 16 }} />}
       />
       <CleanTab 
         label="Org Chart" 
@@ -221,7 +221,7 @@ const TeamPage = ({
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundColor: `${color}20`,
+              backgroundPalette: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -251,7 +251,7 @@ const TeamPage = ({
                 height: 48,
                 fontSize: '16px',
                 fontWeight: 600,
-                bgcolor: member.roleColor || '#E3AF64',
+                bgcolor: member.rolePalette || '#E3AF64',
                 mr: 2
               }}
             >
@@ -330,7 +330,7 @@ const TeamPage = ({
                 sx={{
                   mb: 1,
                   '& .MuiLinearProgress-bar': {
-                    backgroundColor: completionRate >= 75 ? '#10B981' : completionRate >= 50 ? '#E3AF64' : '#516AC8'
+                    backgroundPalette: completionRate >= 75 ? '#10B981' : completionRate >= 50 ? '#E3AF64' : '#516AC8'
                   }
                 }}
               />
@@ -348,7 +348,7 @@ const TeamPage = ({
 
           {member.joinedAt && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
-              <Schedule sx={{ fontSize: 14, color: '#9CA3AF' }} />
+              <Calendar sx={{ fontSize: 14, color: '#9CA3AF' }} />
               <Typography 
                 variant="caption" 
                 sx={{ 
@@ -383,7 +383,7 @@ const TeamPage = ({
             title="High Performers"
             value={teamStats.highPerformers}
             subtitle="80%+ completion rate"
-            icon={<TrendingUp />}
+            icon={<ArrowUp />}
             color="#10B981"
           />
         </Grid>
@@ -392,7 +392,7 @@ const TeamPage = ({
             title="Task Completion"
             value={`${teamStats.averageCompletion}%`}
             subtitle="Team average"
-            icon={<Assignment />}
+            icon={<Check />}
             color="#E3AF64"
           />
         </Grid>
@@ -444,7 +444,7 @@ const TeamPage = ({
         <Grid item xs={12} lg={4}>
           <Card className="clean-card">
             <Box className="clean-section-header">
-              <Box className="clean-section-indicator" sx={{ backgroundColor: '#516AC8' }}></Box>
+              <Box className="clean-section-indicator" sx={{ backgroundPalette: '#516AC8' }}></Box>
               <Typography className="clean-section-title">
                 Recent Hires
               </Typography>
@@ -458,7 +458,7 @@ const TeamPage = ({
                       p: 2,
                       borderBottom: index < recentHires.length - 1 ? '1px solid #E5E7EB' : 'none',
                       '&:hover': {
-                        backgroundColor: '#F6F3E7'
+                        backgroundPalette: '#F6F3E7'
                       }
                     }}
                   >
@@ -469,7 +469,7 @@ const TeamPage = ({
                           height: 32,
                           fontSize: '12px',
                           fontWeight: 600,
-                          bgcolor: member.roleColor || '#E3AF64'
+                          bgcolor: member.rolePalette || '#E3AF64'
                         }}
                       >
                         {member.initials || member.fullName?.charAt(0) || '?'}

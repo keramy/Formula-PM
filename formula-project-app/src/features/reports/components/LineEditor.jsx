@@ -108,7 +108,7 @@ const LineEditor = ({ line, lineNumber, reportId, sectionId, onUpdate, onDelete 
           border: '1px solid #e0e0e0',
           '&:hover': {
             boxShadow: 1,
-            borderColor: 'primary.main'
+            borderPalette: 'primary.main'
           }
         }}
       >

@@ -57,8 +57,8 @@ const ProjectsTab = ({
           startIcon={<Add />}
           onClick={onAddProject}
           sx={{ 
-            backgroundColor: '#E3AF64',
-            '&:hover': { backgroundColor: '#d19a4d' }
+            backgroundPalette: '#E3AF64',
+            '&:hover': { backgroundPalette: '#d19a4d' }
           }}
         >
           Add Project
@@ -123,7 +123,7 @@ const ProjectsTab = ({
           elevation={0}
           sx={{ 
             p: 3, 
-            backgroundColor: 'white',
+            backgroundPalette: 'white',
             border: (theme) => `1px solid ${theme.palette.divider}`,
             borderRadius: 3
           }}
@@ -148,7 +148,7 @@ const ProjectsTab = ({
           elevation={0}
           sx={{ 
             p: 3, 
-            backgroundColor: 'white',
+            backgroundPalette: 'white',
             border: (theme) => `1px solid ${theme.palette.divider}`,
             borderRadius: 3
           }}

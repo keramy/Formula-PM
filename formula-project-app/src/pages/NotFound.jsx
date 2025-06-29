@@ -13,7 +13,7 @@ const NotFound = () => {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
-        backgroundColor: 'background.default',
+        backgroundPalette: 'background.default',
       }}
     >
       <Paper

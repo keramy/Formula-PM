@@ -3,14 +3,13 @@
  * Advanced global search with full-text search, filtering, and intelligent ranking
  */
 
-const { PrismaClient } = require('@prisma/client');
 const cacheService = require('./cacheService');
 const auditService = require('./auditService');
 const MentionService = require('./MentionService');
 const _ = require('lodash');
 
-const prisma = new PrismaClient();
-
+// Will be initialized with shared database service
+let prisma = null;
 class SearchService {
   constructor() {
     this.config = {
@@ -120,6 +119,13 @@ class SearchService {
     };
 
     this.searchHistory = new Map();
+  }
+
+  /**
+   * Set the shared Prisma client
+   */
+  setPrismaClient(prismaClient) {
+    prisma = prismaClient;
   }
 
   /**

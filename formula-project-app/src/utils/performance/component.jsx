@@ -103,7 +103,7 @@ const PerformanceMonitorComponent = () => {
         elevation={3}
         sx={{
           p: 1,
-          backgroundColor: 'background.paper',
+          backgroundPalette: 'background.paper',
           minWidth: 200,
         }}
       >

@@ -64,7 +64,7 @@ const PageWrapper = ({
   const breadcrumbConfig = getBreadcrumbConfig();
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: '#F8F9FA' }}>
+    <Box sx={{ minHeight: '100vh', backgroundPalette: '#F8F9FA' }}>
       {/* Universal Breadcrumb */}
       {showBreadcrumb && (
         <UniversalBreadcrumb

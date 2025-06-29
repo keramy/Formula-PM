@@ -17,14 +17,14 @@ import {
 } from '@mui/material';
 import {
   MoreVert,
-  Schedule,
+  Calendar,
   LocationOn,
   Engineering,
   Warning,
   CheckCircle,
   Group,
   AttachMoney
-} from '@mui/icons-material';
+} from 'iconoir-react';
 // Now using React Icons system
 import { getConstructionIcon, ConstructionIcons } from '../icons';
 import { FaHardHat, FaSearch } from 'react-icons/fa';
@@ -42,7 +42,7 @@ const getCardStyles = (theme, { selected, hoverable, variant, projectType }) => 
     electrical: 'linear-gradient(135deg, rgba(241, 196, 15, 0.1) 0%, rgba(255, 255, 255, 1) 100%)',
   };
   
-  const typeBorderColors = {
+  const typeBorderPalettes = {
     construction: '#E3AF64', // Caramel Essence
     fitout: '#E3AF64',
     millwork: '#516AC8', // Sapphire Dust
@@ -53,7 +53,7 @@ const getCardStyles = (theme, { selected, hoverable, variant, projectType }) => 
   return {
     border: `1px solid var(--border-light, #E5E7EB)`,
     borderRadius: 'var(--border-radius-lg, 12px)',
-    borderLeft: selected ? `4px solid ${typeBorderColors[projectType] || '#516AC8'}` : undefined,
+    borderLeft: selected ? `4px solid ${typeBorderPalettes[projectType] || '#516AC8'}` : undefined,
     background: selected 
       ? typeGradients[projectType] || typeGradients.construction
       : 'linear-gradient(135deg, rgba(246, 243, 231, 0.3) 0%, rgba(255, 255, 255, 1) 100%)',
@@ -65,7 +65,7 @@ const getCardStyles = (theme, { selected, hoverable, variant, projectType }) => 
     boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1))',
     '&:hover': hoverable ? {
       boxShadow: 'var(--shadow-hover, 0 4px 20px rgba(0, 0, 0, 0.15))',
-      borderColor: typeBorderColors[projectType] || 'var(--caramel-essence)',
+      borderPalette: typeBorderPalettes[projectType] || 'var(--caramel-essence)',
       transform: 'translateY(-2px)',
     } : {},
     '&::before': {
@@ -75,7 +75,7 @@ const getCardStyles = (theme, { selected, hoverable, variant, projectType }) => 
       left: 0,
       right: 0,
       height: '4px',
-      background: typeBorderColors[projectType] || 'transparent',
+      background: typeBorderPalettes[projectType] || 'transparent',
       opacity: 0.8,
       transition: 'opacity 0.2s ease'
     },
@@ -102,7 +102,7 @@ export const ProjectCard = ({
   const phaseConfig = getConstructionIcon(project.phase, 'phase');
   
   // Calculate safety score color
-  const getSafetyColor = (score) => {
+  const getSafetyPalette = (score) => {
     if (score >= 90) return theme.palette.success.main;
     if (score >= 70) return theme.palette.warning.main;
     return theme.palette.error.main;
@@ -251,7 +251,7 @@ export const ProjectCard = ({
             {/* Timeline */}
             <Stack direction="row" spacing={2}>
               <Stack direction="row" spacing={0.5} alignItems="center">
-                <Schedule sx={{ fontSize: 16, color: 'text.secondary' }} />
+                <Calendar sx={{ fontSize: 16, color: 'text.secondary' }} />
                 <Typography variant="caption" color="text.secondary">
                   {project.startDate ? format(new Date(project.startDate), 'MMM dd, yyyy') : 'TBD'}
                 </Typography>
@@ -272,13 +272,13 @@ export const ProjectCard = ({
                   <FaHardHat 
                     style={{ 
                       fontSize: 16, 
-                      color: getSafetyColor(project.safetyScore || 100) 
+                      color: getSafetyPalette(project.safetyScore || 100) 
                     }} 
                   />
                   <Typography 
                     variant="caption" 
                     sx={{ 
-                      color: getSafetyColor(project.safetyScore || 100),
+                      color: getSafetyPalette(project.safetyScore || 100),
                       fontWeight: 600 
                     }}
                   >
@@ -309,7 +309,7 @@ export const ProjectCard = ({
             </Stack>
           )}
 
-          {/* Team Assignment */}
+          {/* Team Check */}
           {variant === 'full' && project.teamMembers && (
             <Stack direction="row" spacing={1} alignItems="center" pt={1}>
               <Group sx={{ fontSize: 16, color: 'text.secondary' }} />
@@ -449,7 +449,7 @@ export const TaskCard = ({
                 
                 {task.dueDate && (
                   <Stack direction="row" spacing={0.5} alignItems="center">
-                    <Schedule sx={{ fontSize: 14, color: 'text.secondary' }} />
+                    <Calendar sx={{ fontSize: 14, color: 'text.secondary' }} />
                     <Typography variant="caption" color="text.secondary">
                       {format(new Date(task.dueDate), 'MMM dd')}
                     </Typography>

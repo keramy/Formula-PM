@@ -18,7 +18,7 @@ import {
   Home as HomeIcon,
   ArrowLeft as BackIcon,
   HelpCircle as HelpIcon,
-  AlertTriangle as WarningIcon
+  WarningTriangle as WarningIcon
 } from 'iconoir-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -227,11 +227,11 @@ class RouteErrorBoundary extends React.Component {
       const context = this.getErrorContext();
       const errorMessage = this.getContextualMessage();
       const isDevelopment = import.meta.env.MODE === 'development';
-      const canRetry = this.state.retryCount < 3;
+      const canRetry = this.state.retryCount < 2;
       
       return (
         <Container maxWidth="md" sx={{ py: 4 }}>
-          <Card elevation={0} sx={{ border: '1px solid #ffcdd2', backgroundColor: '#fef7f7' }}>
+          <Card elevation={0} sx={{ border: '1px solid #ffcdd2', backgroundPalette: '#fef7f7' }}>
             <CardContent sx={{ p: 4 }}>
               <Box sx={{ textAlign: 'center', mb: 3 }}>
                 <WarningIcon 
@@ -355,7 +355,7 @@ class RouteErrorBoundary extends React.Component {
                   <Paper 
                     sx={{ 
                       p: 2, 
-                      backgroundColor: '#f5f5f5', 
+                      backgroundPalette: '#f5f5f5', 
                       fontFamily: 'monospace',
                       fontSize: '0.75rem',
                       overflow: 'auto',

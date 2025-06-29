@@ -26,14 +26,14 @@ import {
 } from '@mui/material';
 import {
   Link as LinkIcon,
-  LinkOff as UnlinkIcon,
-  Add as AddIcon,
-  Warning as WarningIcon,
+  Unlink as UnlinkIcon,
+  Plus as AddIcon,
+  WarningTriangle as WarningIcon,
   CheckCircle as CheckIcon,
-  Architecture as DrawingIcon,
-  Inventory as MaterialIcon,
-  Assignment as ScopeIcon
-} from '@mui/icons-material';
+  Design2D as DrawingIcon,
+  Archive as MaterialIcon,
+  Check as ScopeIcon
+} from 'iconoir-react';
 import { FaSave } from 'react-icons/fa';
 import connectionService from '../../../services/connectionService';
 
@@ -120,7 +120,7 @@ const ConnectionManagementDialog = ({
     onConnectionsUpdated?.();
   };
 
-  const getStatusColor = (status) => {
+  const getStatusPalette = (status) => {
     switch (status) {
       case 'approved': return '#4CAF50';
       case 'pending': return '#FF9800';
@@ -212,7 +212,7 @@ const ConnectionManagementDialog = ({
                         label={drawing.status}
                         size="small"
                         sx={{
-                          backgroundColor: getStatusColor(drawing.status),
+                          backgroundPalette: getStatusPalette(drawing.status),
                           color: 'white',
                           mt: 0.5
                         }}
@@ -303,7 +303,7 @@ const ConnectionManagementDialog = ({
                         label={spec.status}
                         size="small"
                         sx={{
-                          backgroundColor: getStatusColor(spec.status),
+                          backgroundPalette: getStatusPalette(spec.status),
                           color: 'white',
                           mt: 0.5
                         }}
@@ -381,7 +381,7 @@ const ConnectionManagementDialog = ({
       <DialogContent>
         {renderDependencyStatus()}
         
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+        <Box sx={{ borderBottom: 1, borderPalette: 'divider', mb: 3 }}>
           <Tabs value={activeTab} onChange={(_, value) => setActiveTab(value)}>
             <Tab 
               icon={<DrawingIcon />} 
