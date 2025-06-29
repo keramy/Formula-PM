@@ -179,6 +179,57 @@ Try the enterprise system with these pre-configured accounts:
 - `/api/tasks` - Task management with team assignment
 - `/api/clients` - Client database operations
 
+## 🤖 AI Agent Documentation System
+
+### **NEW: Comprehensive AI Agent Documentation**
+Formula PM now includes a sophisticated documentation system designed specifically for AI agents to understand the codebase and continue development efficiently.
+
+#### **Key Features**
+- **Session Startup Guide**: Essential reading for AI agents starting new sessions
+- **Business Logic Documentation**: Detailed docs for connection system, dependency engine, and production workflows
+- **Component Architecture**: Complete React component patterns and integration guides
+- **Auto-Update System**: Documentation automatically updates when code changes
+- **Troubleshooting Guides**: Common issues and solutions for development
+
+#### **Quick Access for AI Agents**
+```bash
+# For AI agents starting a new session
+cat docs/ai-agent-system/workflows/session-startup-guide.md
+
+# Generate/update documentation
+npm run docs:generate
+
+# Validate documentation
+npm run docs:validate
+
+# Verify system status
+npm run verify-system
+```
+
+#### **Documentation Structure**
+```
+docs/ai-agent-system/
+├── README.md                    # Master index and navigation
+├── business-logic/              # Core business logic documentation
+│   ├── connection-system.md     # Connection management patterns
+│   ├── dependency-engine.md     # Three-group dependency system
+│   └── production-readiness.md  # Production workflow
+├── workflows/                   # Development workflows
+│   ├── session-startup-guide.md # Essential AI agent guide
+│   ├── feature-development.md   # Adding new features
+│   └── error-resolution.md      # Debugging and fixes
+├── components/                  # React component architecture
+├── api/                        # Backend API documentation
+├── patterns/                   # Reusable code patterns
+└── troubleshooting/            # Common issues and solutions
+```
+
+### **AI Agent Maintenance Strategy**
+- **Manual Git Control**: Documentation updates generated but require manual review and commit
+- **Real-time Generation**: Auto-generate docs when code changes (no auto-commit)
+- **Scheduled Validation**: Weekly automated accuracy checks
+- **Manual Review**: All documentation changes require your approval before commit
+
 ## 🛠️ Development
 
 ### Prerequisites
