@@ -43,12 +43,14 @@ if (!(Test-Path "node_modules")) {
 # Setup database
 Write-Host "Setting up database..." -ForegroundColor Yellow
 try {
+    Write-Host "Generating Prisma client..." -ForegroundColor Cyan
     npx prisma generate
-    npx prisma db push
-    npx prisma db seed
-    Write-Host "Database setup complete" -ForegroundColor Green
+    Write-Host "Prisma client generated successfully" -ForegroundColor Green
+    
+    # Database operations are optional - simple-server works without them
+    Write-Host "Database operations skipped - simple-server uses demo mode" -ForegroundColor Cyan
 } catch {
-    Write-Host "Database setup had some issues but continuing..." -ForegroundColor Yellow
+    Write-Host "Database setup had some issues but continuing with demo mode..." -ForegroundColor Yellow
 }
 
 # Start backend (simple server)

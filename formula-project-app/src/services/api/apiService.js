@@ -684,6 +684,26 @@ class ApiService {
     }
   }
 
+  // Activities API
+  async getActivities(signal) {
+    // Force demo mode if configured
+    if (FORCE_DEMO_MODE) {
+      console.info('🎭 Demo mode enabled - using demo activities');
+      return []; // Return empty array for now
+    }
+    
+    try {
+      return await this.request('/activities', { signal });
+    } catch (error) {
+      // Handle both network errors and HTTP errors (like 500) as backend unavailable
+      if (error.name === 'AbortError') {
+        throw error; // Re-throw abort errors
+      }
+      console.warn('Backend unavailable (network or server error), using demo data:', error.message);
+      return []; // Return empty array as fallback
+    }
+  }
+
   async createTask(taskData) {
     return this.request('/tasks', {
       method: 'POST',

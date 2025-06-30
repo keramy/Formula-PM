@@ -420,16 +420,16 @@ const MyWorkPage = () => {
                       <ListItemText
                         primary={task.title}
                         secondary={
-                          <Box>
-                            <Typography variant="caption" display="block">
+                          <>
+                            <Typography variant="caption" display="block" component="span">
                               {task.project} • {formatDate(task.dueDate)}
                             </Typography>
                             <LinearProgress 
                               variant="determinate" 
                               value={task.progress} 
-                              sx={{ mt: 1, maxWidth: 200 }}
+                              sx={{ display: 'block', mt: 1, maxWidth: 200 }}
                             />
-                          </Box>
+                          </>
                         }
                       />
                       <Chip 
@@ -591,19 +591,19 @@ const MyWorkPage = () => {
                 <ListItemText
                   primary={`${item.time} - ${item.title}`}
                   secondary={
-                    <Box>
-                      <Typography variant="body2">
+                    <>
+                      <Typography variant="body2" component="span" display="block">
                         {item.project}
                       </Typography>
                       <Chip 
                         label={item.type} 
                         size="small" 
-                        sx={{ mt: 0.5 }}
+                        sx={{ mt: 0.5, display: 'inline-block' }}
                       />
-                      <Typography variant="caption" sx={{ ml: 1 }}>
+                      <Typography variant="caption" component="span" sx={{ ml: 1 }}>
                         {item.duration} minutes
                       </Typography>
-                    </Box>
+                    </>
                   }
                 />
                 <Button variant="outlined" size="small">

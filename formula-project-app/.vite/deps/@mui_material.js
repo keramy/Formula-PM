@@ -1,4 +1,9 @@
 import {
+  CssBaseline_default,
+  body,
+  html
+} from "./chunk-2X5TFPGY.js";
+import {
   ArrowDropDown_default,
   Backdrop_default,
   ButtonBase_default,
@@ -135,11 +140,6 @@ import {
   useId_default,
   useIsFocusVisible_default
 } from "./chunk-NTCG7W7G.js";
-import {
-  CssBaseline_default,
-  body,
-  html
-} from "./chunk-2X5TFPGY.js";
 import {
   GlobalStyles_default,
   useDefaultProps
