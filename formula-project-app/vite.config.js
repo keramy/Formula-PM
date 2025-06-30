@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer'
 import path from 'path'
 import { fileURLToPath, URL } from 'node:url'
 
@@ -7,12 +8,14 @@ export default defineConfig({
   plugins: [
     react({
       fastRefresh: true,
-      include: "**/*.{jsx,tsx,js,ts}",
-      babel: {
-        // Disable babel plugins that slow down builds
-        plugins: [],
-        presets: []
-      }
+      include: "**/*.{jsx,tsx,js,ts}"
+    }),
+    visualizer({
+      filename: 'dist/stats.html',
+      open: false, // Don't auto-open in WSL2
+      gzipSize: true,
+      brotliSize: true,
+      template: 'treemap'
     })
   ],
   server: {
@@ -40,7 +43,7 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:5015',
+        target: 'http://localhost:5014',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '/api/v1'),
@@ -89,8 +92,10 @@ export default defineConfig({
       'xlsx',
       'file-saver',
       
-      // Icons (selected subset)
-      'iconoir-react',
+      // Icons (React Icons)
+      'react-icons/md',
+      'react-icons/fa',
+      'react-icons/ai',
       
       // Charts
       'recharts'
@@ -116,64 +121,35 @@ export default defineConfig({
     chunkSizeWarningLimit: 1500,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          // Advanced chunking strategy for optimal performance
-          if (id.includes('node_modules')) {
-            // Core React ecosystem - loaded first
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'react-core';
-            }
-            if (id.includes('react-router') || id.includes('@tanstack/react-query')) {
-              return 'react-routing';
-            }
-            
-            // UI Framework - separate for caching
-            if (id.includes('@mui/material') || id.includes('@mui/icons-material')) {
-              return 'mui-core';
-            }
-            if (id.includes('@emotion')) {
-              return 'emotion';
-            }
-            
-            // Icons - separate chunk for lazy loading
-            if (id.includes('iconoir-react')) {
-              return 'icons';
-            }
-            
-            // Charts and visualization
-            if (id.includes('recharts') || id.includes('d3')) {
-              return 'charts';
-            }
-            
-            // Utilities - frequently changing
-            if (id.includes('date-fns') || id.includes('lodash') || id.includes('axios')) {
-              return 'utils';
-            }
-            
-            // File handling
-            if (id.includes('xlsx') || id.includes('file-saver') || id.includes('pdf')) {
-              return 'file-utils';
-            }
-            
-            // Large libraries that change infrequently
-            if (id.includes('monaco-editor') || id.includes('codemirror')) {
-              return 'editors';
-            }
-            
-            // Everything else
-            return 'vendor';
-          }
+        manualChunks: {
+          // React core - highest priority, loaded first
+          'react-vendor': ['react', 'react-dom'],
           
-          // App-level chunking for pages
-          if (id.includes('/src/pages/')) {
-            return 'pages';
-          }
-          if (id.includes('/src/components/')) {
-            return 'components';
-          }
-          if (id.includes('/src/services/')) {
-            return 'services';
-          }
+          // UI Framework - Material-UI core (frequently used)
+          'mui-core': ['@mui/material', '@mui/system', '@mui/styled-engine'],
+          'mui-utils': ['@emotion/react', '@emotion/styled'],
+          
+          // Data & State Management
+          'react-query': ['@tanstack/react-query', '@tanstack/react-query-devtools'],
+          'react-router': ['react-router-dom'],
+          
+          // Heavy Visualization Libraries - lazy load
+          'charts': ['recharts'],
+          
+          // Document Generation - lazy load
+          'pdf-utils': ['jspdf', 'html2canvas'],
+          
+          // File Handling - lazy load
+          'file-utils': ['xlsx', 'file-saver'],
+          
+          // React Icons - separate for tree shaking
+          'icons': ['react-icons/md', 'react-icons/fa', 'react-icons/ai'],
+          
+          // Utilities - stable dependencies
+          'utils': ['date-fns', 'socket.io-client', 'react-beautiful-dnd', 'react-dropzone'],
+          
+          // Development tools
+          'dev-tools': ['web-vitals']
         },
         // Optimize chunk names for better caching
         chunkFileNames: (chunkInfo) => {

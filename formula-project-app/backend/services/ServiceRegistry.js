@@ -17,6 +17,12 @@ class ServiceRegistry {
     this.httpServer = null; // Will be set by server.js
     this.prismaClient = null; // Will be set by server.js
     
+    // Critical services that must start successfully
+    this.CRITICAL_SERVICES = ['auditService', 'cacheService', 'ProjectService'];
+    
+    // Optional services that can fail without stopping initialization
+    this.OPTIONAL_SERVICES = ['EmailService', 'BackgroundJobService', 'CloudStorageService', 'RealtimeService'];
+    
     this.serviceOrder = [
       'auditService',
       'cacheService',
@@ -33,6 +39,26 @@ class ServiceRegistry {
       'PerformanceMonitoringService',
       'CloudStorageService'
     ];
+
+    // Environment-based service configuration
+    this.serviceConfigs = {
+      'EmailService': { 
+        enabled: process.env.ENABLE_EMAIL_SERVICE !== 'false',
+        required: false 
+      },
+      'BackgroundJobService': { 
+        enabled: process.env.ENABLE_BACKGROUND_JOBS !== 'false',
+        required: false 
+      },
+      'CloudStorageService': { 
+        enabled: process.env.ENABLE_CLOUD_STORAGE !== 'false',
+        required: false 
+      },
+      'RealtimeService': { 
+        enabled: process.env.ENABLE_REALTIME !== 'false',
+        required: false 
+      }
+    };
   }
 
   /**
@@ -186,17 +212,30 @@ class ServiceRegistry {
   }
 
   /**
-   * Initialize a single service with timeout
+   * Initialize a single service with timeout and detailed logging
    */
   async initializeService(serviceName, initialized) {
     if (initialized.has(serviceName)) {
       return;
     }
 
+    // Check if service is disabled by environment configuration
+    const config = this.serviceConfigs[serviceName];
+    if (config && !config.enabled) {
+      console.log(`⏭️  [SKIP] Service ${serviceName} disabled by environment configuration`);
+      initialized.add(serviceName);
+      return;
+    }
+
+    console.log(`🔍 [DEBUG] Starting ${serviceName} initialization...`);
+    console.log(`🔍 [DEBUG] Dependencies for ${serviceName}:`, this.dependencies.get(serviceName) || []);
+
     // Initialize dependencies first
     const dependencies = this.dependencies.get(serviceName) || [];
     for (const dep of dependencies) {
+      console.log(`🔍 [DEBUG] Initializing dependency ${dep} for ${serviceName}...`);
       await this.initializeService(dep, initialized);
+      console.log(`🔍 [DEBUG] Dependency ${dep} completed for ${serviceName}`);
     }
 
     // Initialize the service with timeout
@@ -204,16 +243,18 @@ class ServiceRegistry {
     if (service && typeof service.initialize === 'function') {
       try {
         const startTime = Date.now();
-        console.log(`🔄 Initializing service: ${serviceName}...`);
+        console.log(`🔄 [DEBUG] Starting ${serviceName} initialize() method...`);
         
         // Set Prisma client if service supports it
         if (this.prismaClient && typeof service.setPrismaClient === 'function') {
+          console.log(`🔍 [DEBUG] Setting Prisma client for ${serviceName}...`);
           service.setPrismaClient(this.prismaClient);
         }
         
-        // Create a timeout promise
+        // Create a timeout promise with detailed logging
         const timeoutPromise = new Promise((_, reject) => {
           setTimeout(() => {
+            console.error(`❌ [TIMEOUT] Service ${serviceName} timed out after 30 seconds`);
             reject(new Error(`Service ${serviceName} initialization timed out after 30 seconds`));
           }, 30000); // 30 second timeout
         });
@@ -233,24 +274,31 @@ class ServiceRegistry {
         ]);
         
         const duration = Date.now() - startTime;
-        console.log(`✅ Initialized service: ${serviceName} (${duration}ms)`);
+        console.log(`✅ [SUCCESS] Initialized service: ${serviceName} (${duration}ms)`);
         
         // Warn if initialization took too long
         if (duration > 10000) {
           console.warn(`⚠️  Service ${serviceName} took ${duration}ms to initialize`);
         }
       } catch (error) {
-        console.error(`❌ Failed to initialize service ${serviceName}:`, error);
+        const isCritical = this.CRITICAL_SERVICES.includes(serviceName);
         
-        // Mark service as failed but continue with others
-        this.failedServices = this.failedServices || new Set();
-        this.failedServices.add(serviceName);
+        console.error(`❌ [ERROR] Service ${serviceName} failed:`, error.message);
+        console.error(`❌ [STACK] ${serviceName}:`, error.stack);
         
-        // Don't throw - allow other services to initialize
-        // throw error;
+        if (isCritical) {
+          console.error(`❌ CRITICAL service ${serviceName} failed - stopping initialization`);
+          throw error; // Stop initialization for critical services
+        } else {
+          console.warn(`⚠️  Optional service ${serviceName} failed, continuing:`, error.message);
+          this.failedServices = this.failedServices || new Set();
+          this.failedServices.add(serviceName);
+          // Continue initialization for optional services
+        }
       }
     }
 
+    console.log(`✅ [DEBUG] Completed ${serviceName} initialization`);
     initialized.add(serviceName);
   }
 

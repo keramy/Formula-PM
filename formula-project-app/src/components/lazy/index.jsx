@@ -87,6 +87,19 @@ export const GanttChart = lazy(() =>
   import('../charts/GanttChart')
 );
 
+export const AdvancedDashboard = lazy(() => 
+  import('../charts/AdvancedDashboard')
+);
+
+export const EnhancedDashboardWidgets = lazy(() => 
+  import('../charts/EnhancedDashboardWidgets')
+);
+
+// Heavy library components
+export const PDFViewer = lazy(() => 
+  import('../../features/shop-drawings/components/PDFViewer')
+);
+
 // View components
 export const BoardView = lazy(() => 
   import('../views/BoardView')
@@ -122,6 +135,23 @@ export const DialogContainer = lazy(() =>
 
 // Import unified loading components
 import { LoadingFallback, FormSkeleton } from '../ui/UnifiedLoading';
+
+// Import enhanced lazy components (temporarily commented out for debugging)
+// export {
+//   LazyGanttChart,
+//   LazyAdvancedDashboard,
+//   LazyEnhancedDashboardWidgets,
+//   LazyChart
+// } from './LazyCharts';
+
+// export {
+//   LazyPDFViewer,
+//   LazyExportComponent,
+//   useFileLibraries,
+//   loadJSPDF,
+//   loadHtml2Canvas,
+//   loadXLSX
+// } from './LazyFileHandlers';
 
 // Re-export for compatibility
 export { LoadingFallback, FormSkeleton };
@@ -281,6 +311,9 @@ export default {
   ClientForm,
   ClientsList,
   GanttChart,
+  AdvancedDashboard,
+  EnhancedDashboardWidgets,
+  PDFViewer,
   BoardView,
   GlobalSearchResults,
   ShopDrawingsList,
