@@ -122,7 +122,18 @@
       "Bash(time npm run build:fast)",
       "Bash(time timeout:*)",
       "Bash(npm update)",
-      "Bash(src/scripts/fix-icons.sh:*)"
+      "Bash(src/scripts/fix-icons.sh:*)",
+      "Bash(mcp:*)",
+      "Bash(npx vite optimize:*)",
+      "Bash(npx:*)",
+      "Bash(npm search:*)",
+      "Bash(export NVM_DIR=\"$HOME/.nvm\")",
+      "Bash([ -s \"$NVM_DIR/nvm.sh\" ])",
+      "Bash(. \"$NVM_DIR/nvm.sh\")",
+      "Bash(nvm install:*)",
+      "Bash(nvm use:*)",
+      "Bash(nvm alias:*)",
+      "Bash(gemini:*)"
     ],
     "deny": []
   }

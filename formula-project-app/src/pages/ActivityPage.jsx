@@ -261,7 +261,7 @@ const ActivityPage = React.memo(() => {
 
   // Memoized search term processing
   const searchTermLower = useMemo(() => 
-    searchTerm.toLowerCase().trim(), 
+    (searchTerm || '').toLowerCase().trim(), 
     [searchTerm]
   );
 
@@ -482,14 +482,14 @@ const ActivityPage = React.memo(() => {
           />
         </Grid>
         <Grid item xs={12} lg={4}>
-          {renderActivitySidebar()}
+          {renderActivitySidebar(filteredActivities)}
         </Grid>
       </Grid>
     );
   };
 
   // Render activity sidebar for different tabs
-  const renderActivitySidebar = () => {
+  const renderActivitySidebar = (filteredActivities = []) => {
     switch (activeTab) {
       case 'team-activity':
         return (
@@ -547,7 +547,7 @@ const ActivityPage = React.memo(() => {
                   </Box>
                   <LinearProgress 
                     variant="determinate" 
-                    value={(activityStats.byType.projects / activityStats.total) * 100} 
+                    value={activityStats.total > 0 ? (activityStats.byType.projects / activityStats.total) * 100 : 0} 
                     sx={{ height: 6, borderRadius: 3 }}
                   />
                 </Box>
@@ -558,7 +558,7 @@ const ActivityPage = React.memo(() => {
                   </Box>
                   <LinearProgress 
                     variant="determinate" 
-                    value={(activityStats.byType.tasks / activityStats.total) * 100} 
+                    value={activityStats.total > 0 ? (activityStats.byType.tasks / activityStats.total) * 100 : 0} 
                     sx={{ height: 6, borderRadius: 3 }}
                     color="success"
                   />

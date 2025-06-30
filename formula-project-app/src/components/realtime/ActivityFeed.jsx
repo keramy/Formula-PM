@@ -30,7 +30,8 @@ import {
   MdClose as Block,
   MdDescription as Description,
   MdDownload as FileDownload,
-  MdSend as Publish
+  MdSend as Publish,
+  MdPeople as People
 } from 'react-icons/md';
 import { formatDistanceToNow } from 'date-fns';
 import { useActivityFeed } from '../../hooks/useRealTime';
@@ -48,7 +49,7 @@ const getActivityIcon = (type, action) => {
       created: <Check color="primary" />,
       updated: <Edit color="info" />,
       completed: <Check color="success" />,
-      started: <PlayArrow color="warning" />,
+      started: <Play color="warning" />,
       paused: <Pause color="warning" />,
       blocked: <Block color="error" />,
     },

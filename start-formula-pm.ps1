@@ -21,10 +21,10 @@ if (!(Test-Path $PROJECT_ROOT)) {
 Write-Host "Installing frontend dependencies..." -ForegroundColor Yellow
 Set-Location $FRONTEND_DIR
 
-# Create .env.development file
-$envContent = "VITE_FORCE_DEMO_MODE=false`nVITE_API_BASE_URL=http://localhost:5014/api/v1"
+# Create .env.development file with proper settings
+$envContent = "VITE_FORCE_DEMO_MODE=true`nVITE_API_BASE_URL=http://localhost:5014"
 Set-Content -Path ".env.development" -Value $envContent
-Write-Host "Environment configured for backend mode" -ForegroundColor Green
+Write-Host "Environment configured with demo mode fallback" -ForegroundColor Green
 
 # Install frontend dependencies if needed
 if (!(Test-Path "node_modules")) {
@@ -51,12 +51,12 @@ try {
     Write-Host "Database setup had some issues but continuing..." -ForegroundColor Yellow
 }
 
-# Start backend
+# Start backend (simple server)
 Write-Host "Starting backend server..." -ForegroundColor Yellow
 $backendJob = Start-Job -ScriptBlock {
     param($dir)
     Set-Location $dir
-    npm run dev
+    node simple-server.js
 } -ArgumentList $BACKEND_DIR
 
 Write-Host "Backend started (Job ID: $($backendJob.Id))" -ForegroundColor Green
@@ -72,7 +72,7 @@ Set-Location $FRONTEND_DIR
 $frontendJob = Start-Job -ScriptBlock {
     param($dir)
     Set-Location $dir
-    $env:VITE_FORCE_DEMO_MODE = "false"
+    $env:VITE_FORCE_DEMO_MODE = "true"
     npm run dev
 } -ArgumentList $FRONTEND_DIR
 
