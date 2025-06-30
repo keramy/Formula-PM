@@ -23,21 +23,21 @@ import {
   LinearProgress
 } from '@mui/material';
 import {
-  ArrowLeft as BackIcon,
-  Edit as EditIcon,
-  Design2D as DrawingIcon,
-  Archive as SpecIcon,
-  Check as TaskIcon,
-  Page as DocumentIcon,
-  Timeline as TimelineIcon,
-  DollarCircle as BudgetIcon,
-  Group as TeamIcon,
-  Calendar as CalendarIcon,
-  Link as LinkIcon,
-  Eye as ViewIcon,
-  Plus as AddIcon,
-  ArrowUp as ProgressIcon
-} from 'iconoir-react';
+  MdArrowBack as BackIcon,
+  MdEdit as EditIcon,
+  MdDesignServices as DrawingIcon,
+  MdArchive as SpecIcon,
+  MdCheck as TaskIcon,
+  MdDescription as DocumentIcon,
+  MdTimeline as TimelineIcon,
+  MdAttachMoney as BudgetIcon,
+  MdGroup as TeamIcon,
+  MdCalendarToday as CalendarIcon,
+  MdLink as LinkIcon,
+  MdVisibility as ViewIcon,
+  MdAdd as AddIcon,
+  MdKeyboardArrowUp as ProgressIcon
+} from 'react-icons/md';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import ComplianceDocumentation from './ComplianceDocumentation';
 import { useShopDrawings } from '../../shop-drawings/hooks/useShopDrawings';
@@ -124,7 +124,7 @@ const ProjectDetailPage = ({
               <Chip 
                 label={project.status || 'Active'}
                 sx={{ 
-                  backgroundPalette: getStatusPalette(project.status),
+                  backgroundColor: getStatusPalette(project.status),
                   color: 'white',
                   fontWeight: 600,
                   mt: 0.5
@@ -301,7 +301,7 @@ const ProjectDetailPage = ({
                       label={drawing.status}
                       size="small"
                       sx={{ 
-                        backgroundPalette: 
+                        backgroundColor: 
                           drawing.status === 'approved' ? '#4CAF50' :
                           drawing.status === 'pending' ? '#FF9800' : '#F44336',
                         color: 'white',
@@ -381,7 +381,7 @@ const ProjectDetailPage = ({
                         label={spec.status}
                         size="small"
                         sx={{ 
-                          backgroundPalette: 
+                          backgroundColor: 
                             spec.status === 'approved' ? '#4CAF50' : '#FF9800',
                           color: 'white',
                           fontSize: '0.7rem',
@@ -480,7 +480,7 @@ const ProjectDetailPage = ({
                       label={task.status}
                       size="small"
                       sx={{ 
-                        backgroundPalette: 
+                        backgroundColor: 
                           task.status === 'completed' ? '#4CAF50' :
                           task.status === 'in-progress' ? '#FF9800' : '#2196F3',
                         color: 'white',

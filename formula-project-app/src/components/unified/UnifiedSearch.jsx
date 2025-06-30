@@ -298,7 +298,7 @@ const UnifiedSearch = ({
           sx={{
             display: 'flex',
             alignItems: 'center',
-            backgroundPalette: 'background.paper',
+            backgroundColor: 'background.paper',
             border: 1,
             borderPalette: isOpen ? 'primary.main' : 'divider',
             borderRadius: 1,
@@ -427,7 +427,7 @@ const UnifiedSearch = ({
                         sx={{
                           py: 1,
                           px: 2,
-                          '&:hover': { backgroundPalette: 'action.hover' }
+                          '&:hover': { backgroundColor: 'action.hover' }
                         }}
                       >
                         <ListItemIcon sx={{ minWidth: 36 }}>
@@ -456,10 +456,10 @@ const UnifiedSearch = ({
                       sx={{
                         py: 1.5,
                         px: 2,
-                        '&:hover': { backgroundPalette: 'action.hover' },
+                        '&:hover': { backgroundColor: 'action.hover' },
                         '&.Mui-selected': {
-                          backgroundPalette: 'action.selected',
-                          '&:hover': { backgroundPalette: 'action.selected' }
+                          backgroundColor: 'action.selected',
+                          '&:hover': { backgroundColor: 'action.selected' }
                         }
                       }}
                       role="option"
@@ -482,7 +482,7 @@ const UnifiedSearch = ({
                               sx={{
                                 height: 20,
                                 fontSize: '0.7rem',
-                                backgroundPalette: color,
+                                backgroundColor: color,
                                 color: 'white'
                               }}
                             />
@@ -512,8 +512,8 @@ const UnifiedSearch = ({
                       sx={{
                         py: 1,
                         px: 2,
-                        backgroundPalette: 'grey.50',
-                        '&:hover': { backgroundPalette: 'grey.100' }
+                        backgroundColor: 'grey.50',
+                        '&:hover': { backgroundColor: 'grey.100' }
                       }}
                     >
                       <ListItemText

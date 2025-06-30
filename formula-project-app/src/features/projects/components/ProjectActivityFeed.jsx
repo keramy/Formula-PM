@@ -15,12 +15,12 @@ import {
   Alert
 } from '@mui/material';
 import {
-  List as ListIcon,
-  ViewGrid as GridIcon,
-  Refresh as RefreshIcon,
-  Filter as FilterIcon,
-  OpenInWindow as OpenIcon
-} from 'iconoir-react';
+  MdList as ListIcon,
+  MdViewModule as GridIcon,
+  MdRefresh as RefreshIcon,
+  MdFilterList as FilterIcon,
+  MdOpenInNew as OpenIcon
+} from 'react-icons/md';
 import ActivityFeed, { CompactActivityFeed, DetailedActivityFeed } from '../../../components/realtime/ActivityFeed';
 import { useTheme } from '../../../context/ThemeContext';
 import { useNavigation } from '../../../context/NavigationContext';
@@ -143,7 +143,7 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
         elevation={0}
         sx={{
           p: 3,
-          backgroundPalette: isDarkMode ? '#1B2951' : '#ffffff',
+          backgroundColor: isDarkMode ? '#1B2951' : '#ffffff',
           borderRadius: 2,
           border: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}`
         }}
@@ -178,12 +178,12 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
               onChange={handleViewChange}
               size="small"
               sx={{
-                backgroundPalette: isDarkMode ? '#2C3966' : '#F8F9FA',
+                backgroundColor: isDarkMode ? '#2C3966' : '#F8F9FA',
                 '& .MuiToggleButton-root': {
                   border: 'none',
                   px: 2,
                   '&.Mui-selected': {
-                    backgroundPalette: isDarkMode ? '#3A4B7D' : '#E9ECEF',
+                    backgroundColor: isDarkMode ? '#3A4B7D' : '#E9ECEF',
                     color: isDarkMode ? '#F5F2E8' : '#2C3E50'
                   }
                 }
@@ -206,9 +206,9 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
               <IconButton 
                 onClick={handleRefresh}
                 sx={{ 
-                  backgroundPalette: isDarkMode ? '#2C3966' : '#F8F9FA',
+                  backgroundColor: isDarkMode ? '#2C3966' : '#F8F9FA',
                   '&:hover': {
-                    backgroundPalette: isDarkMode ? '#3A4B7D' : '#E9ECEF'
+                    backgroundColor: isDarkMode ? '#3A4B7D' : '#E9ECEF'
                   }
                 }}
               >
@@ -221,9 +221,9 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
               <IconButton 
                 onClick={() => exitProjectContext()}
                 sx={{ 
-                  backgroundPalette: isDarkMode ? '#2C3966' : '#F8F9FA',
+                  backgroundColor: isDarkMode ? '#2C3966' : '#F8F9FA',
                   '&:hover': {
-                    backgroundPalette: isDarkMode ? '#3A4B7D' : '#E9ECEF'
+                    backgroundColor: isDarkMode ? '#3A4B7D' : '#E9ECEF'
                   }
                 }}
               >
@@ -277,7 +277,7 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
             {/* Recent Activity */}
             <Card sx={{ 
               height: '100%',
-              backgroundPalette: isDarkMode ? '#1B2951' : '#ffffff',
+              backgroundColor: isDarkMode ? '#1B2951' : '#ffffff',
               border: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}`
             }}>
               <CardContent sx={{ height: '100%', p: 0 }}>
@@ -306,7 +306,7 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
             {/* Today's Activity */}
             <Card sx={{ 
               height: '100%',
-              backgroundPalette: isDarkMode ? '#1B2951' : '#ffffff',
+              backgroundColor: isDarkMode ? '#1B2951' : '#ffffff',
               border: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}`
             }}>
               <CardContent sx={{ height: '100%', p: 0 }}>
@@ -341,7 +341,7 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
             elevation={0}
             sx={{
               height: '100%',
-              backgroundPalette: isDarkMode ? '#1B2951' : '#ffffff',
+              backgroundColor: isDarkMode ? '#1B2951' : '#ffffff',
               border: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}`,
               borderRadius: 2,
               overflow: 'hidden'

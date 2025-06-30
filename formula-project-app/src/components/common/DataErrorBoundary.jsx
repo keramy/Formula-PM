@@ -95,7 +95,7 @@ class DataErrorBoundary extends React.Component {
       
       return (
         <Box sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 2 }}>
-          <Paper elevation={0} sx={{ p: 3, border: '1px solid #ffcdd2', backgroundPalette: '#fef7f7' }}>
+          <Paper elevation={0} sx={{ p: 3, border: '1px solid #ffcdd2', backgroundColor: '#fef7f7' }}>
             <Alert severity="error" sx={{ mb: 3 }}>
               <AlertTitle>
                 {isDataError ? 'Data Loading Failed' : 'Component Error'}
@@ -178,7 +178,7 @@ class DataErrorBoundary extends React.Component {
                 <Paper 
                   sx={{ 
                     p: 2, 
-                    backgroundPalette: '#f5f5f5', 
+                    backgroundColor: '#f5f5f5', 
                     fontFamily: 'monospace',
                     fontSize: '0.75rem',
                     overflow: 'auto',

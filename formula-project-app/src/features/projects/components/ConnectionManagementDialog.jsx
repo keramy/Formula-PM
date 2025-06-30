@@ -25,15 +25,15 @@ import {
   Switch
 } from '@mui/material';
 import {
-  Link as LinkIcon,
-  Unlink as UnlinkIcon,
-  Plus as AddIcon,
-  WarningTriangle as WarningIcon,
-  CheckCircle as CheckIcon,
-  Design2D as DrawingIcon,
-  Archive as MaterialIcon,
-  Check as ScopeIcon
-} from 'iconoir-react';
+  MdLink as LinkIcon,
+  MdLinkOff as UnlinkIcon,
+  MdAdd as AddIcon,
+  MdWarning as WarningIcon,
+  MdCheckCircle as CheckIcon,
+  MdDesignServices as DrawingIcon,
+  MdArchive as MaterialIcon,
+  MdCheck as ScopeIcon
+} from 'react-icons/md';
 import { FaSave } from 'react-icons/fa';
 import connectionService from '../../../services/connectionService';
 
@@ -212,7 +212,7 @@ const ConnectionManagementDialog = ({
                         label={drawing.status}
                         size="small"
                         sx={{
-                          backgroundPalette: getStatusPalette(drawing.status),
+                          backgroundColor: getStatusPalette(drawing.status),
                           color: 'white',
                           mt: 0.5
                         }}
@@ -303,7 +303,7 @@ const ConnectionManagementDialog = ({
                         label={spec.status}
                         size="small"
                         sx={{
-                          backgroundPalette: getStatusPalette(spec.status),
+                          backgroundColor: getStatusPalette(spec.status),
                           color: 'white',
                           mt: 0.5
                         }}

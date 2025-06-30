@@ -4,13 +4,13 @@ import {
   defaultTheme_default,
   identifier_default,
   useDefaultProps
-} from "./chunk-3VO6WOJH.js";
-import {
-  require_prop_types
-} from "./chunk-Q23ZINBZ.js";
+} from "./chunk-TTN5RY6T.js";
 import {
   require_jsx_runtime
 } from "./chunk-UVB6IW5S.js";
+import {
+  require_prop_types
+} from "./chunk-Q23ZINBZ.js";
 import {
   _extends,
   init_extends
@@ -79,4 +79,4 @@ export {
   useDefaultProps2 as useDefaultProps,
   GlobalStyles_default2 as GlobalStyles_default
 };
-//# sourceMappingURL=chunk-CTWFGSO4.js.map
+//# sourceMappingURL=chunk-K3QTIL7G.js.map

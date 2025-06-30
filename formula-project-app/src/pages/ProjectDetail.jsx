@@ -1,22 +1,34 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, Paper } from '@mui/material';
+import { Box, Typography, Card, CardContent } from '@mui/material';
+import CleanPageLayout from '../components/layout/CleanPageLayout';
 
 const ProjectDetail = () => {
   const { projectId } = useParams();
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Project Detail
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Project ID: {projectId}
-        </Typography>
-        {/* Add your project detail content here */}
-      </Paper>
-    </Box>
+    <CleanPageLayout
+      title="Project Detail"
+      subtitle={`Detailed view for project ${projectId}`}
+      breadcrumbs={[
+        { label: 'Projects', href: '/projects' },
+        { label: 'Project Detail', href: `/projects/${projectId}` }
+      ]}
+    >
+      <Box className="clean-fade-in">
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Project Information
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Project ID: {projectId}
+            </Typography>
+            {/* Add your project detail content here */}
+          </CardContent>
+        </Card>
+      </Box>
+    </CleanPageLayout>
   );
 };
 

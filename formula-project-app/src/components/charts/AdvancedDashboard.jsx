@@ -30,15 +30,15 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import {
-  ArrowUp,
-  ClipboardCheck as Task,
-  Group as Group,
-  Clock as Calendar,
-  WarningTriangle as Warning,
-  CheckCircle,
-  Star,
-  Calendar as DateRange
-} from 'iconoir-react';
+  MdKeyboardArrowUp as ArrowUp,
+  MdTask as Task,
+  MdGroup as Group,
+  MdSchedule as Calendar,
+  MdWarning as Warning,
+  MdCheckCircle as CheckCircle,
+  MdStar as Star,
+  MdCalendarToday as DateRange
+} from 'react-icons/md';
 
 // Palette palettes for charts
 const COLORS = {
@@ -272,10 +272,10 @@ function AdvancedDashboard({ projects, tasks, teamMembers }) {
                         sx={{
                           height: 6,
                           borderRadius: 3,
-                          backgroundPalette: '#e0e0e0',
+                          backgroundColor: '#e0e0e0',
                           '& .MuiLinearProgress-bar': {
                             borderRadius: 3,
-                            backgroundPalette: progress === 100 ? COLORS.success : COLORS.primary
+                            backgroundColor: progress === 100 ? COLORS.success : COLORS.primary
                           }
                         }}
                       />

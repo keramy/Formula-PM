@@ -30,16 +30,16 @@ import {
   Avatar
 } from '@mui/material';
 import {
-  Link as LinkIcon,
-  Unlink as UnlinkIcon,
-  Design2D as DrawingIcon,
-  Check as TaskIcon,
-  Archive as SpecIcon,
-  ArrowDown as ExpandMoreIcon,
-  Page as PdfIcon,
-  Plus as AddIcon,
-  Minus as RemoveIcon
-} from 'iconoir-react';
+  MdLink as LinkIcon,
+  MdLinkOff as UnlinkIcon,
+  MdDesignServices as DrawingIcon,
+  MdCheck as TaskIcon,
+  MdArchive as SpecIcon,
+  MdKeyboardArrowDown as ExpandMoreIcon,
+  MdDescription as PdfIcon,
+  MdAdd as AddIcon,
+  MdMinus as RemoveIcon
+} from 'react-icons/md';
 
 const SpecificationLinkingPanel = ({
   specification,
@@ -146,7 +146,7 @@ const SpecificationLinkingPanel = ({
           <List dense>
             {items.map((item) => (
               <ListItem key={item.id} divider>
-                <Avatar sx={{ mr: 2, backgroundPalette: type === 'drawings' ? '#1976d2' : '#2e7d32' }}>
+                <Avatar sx={{ mr: 2, backgroundColor: type === 'drawings' ? '#1976d2' : '#2e7d32' }}>
                   {type === 'drawings' ? <PdfIcon /> : <TaskIcon />}
                 </Avatar>
                 <ListItemText
@@ -312,7 +312,7 @@ const SpecificationLinkingPanel = ({
           )}
 
           {/* Link Summary */}
-          <Box sx={{ mt: 3, p: 2, backgroundPalette: '#f8f9fa', borderRadius: 1 }}>
+          <Box sx={{ mt: 3, p: 2, backgroundColor: '#f8f9fa', borderRadius: 1 }}>
             <Typography variant="subtitle2" gutterBottom>
               Link Summary
             </Typography>

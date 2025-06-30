@@ -17,12 +17,12 @@ import {
   DialogActions
 } from '@mui/material';
 import {
-  Reports as ReportsIcon,
-  Plus as AddIcon,
-  MagicWand as AutoIcon,
-  List as ListIcon,
-  GraphUp as AnalyticsIcon
-} from 'iconoir-react';
+  MdAnalytics as ReportsIcon,
+  MdAdd as AddIcon,
+  MdAutoFixHigh as AutoIcon,
+  MdList as ListIcon,
+  MdTrendingUp as AnalyticsIcon
+} from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import AutoReportGenerator from '../features/reports/components/AutoReportGenerator';
 import ReportsList from '../features/reports/components/ReportsList';

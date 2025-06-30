@@ -1,7 +1,10 @@
 import React from 'react';
 import { Grid, Paper, Typography, Box, useTheme } from '@mui/material';
 // Iconoir icons - migrated trending icons
-import { ArrowUp as ArrowUp, ArrowDown as TrendingDown } from 'iconoir-react';
+import {
+  MdKeyboardArrowUp as ArrowUp,
+  MdKeyboardArrowDown as TrendingDown
+} from 'react-icons/md';
 
 const ModernStatsCards = ({ projects = [], tasks = [], teamMembers = [] }) => {
   const theme = useTheme();
@@ -110,7 +113,7 @@ const ModernStatsCards = ({ projects = [], tasks = [], teamMembers = [] }) => {
             sx={{
               p: 3,
               background: stat.gradient,
-              backgroundPalette: theme.palette.background.paper,
+              backgroundColor: theme.palette.background.paper,
               border: `1px solid ${theme.palette.divider}`,
               borderRadius: 'var(--border-radius-lg, 12px)',
               height: '140px',

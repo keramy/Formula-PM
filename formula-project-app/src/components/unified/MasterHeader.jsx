@@ -156,7 +156,7 @@ const MasterHeader = ({
   return (
     <Box
       sx={{
-        backgroundPalette: colors.background,
+        backgroundColor: colors.background,
         borderBottom: `1px solid ${colors.border}`,
         ...variantStyles[variant],
         ...sx
@@ -243,7 +243,7 @@ const MasterHeader = ({
                     borderRadius: 1,
                     color: activeFiltersCount > 0 ? colors.primary : colors.textSecondary,
                     '&:hover': {
-                      backgroundPalette: theme.palette.action.hover,
+                      backgroundColor: theme.palette.action.hover,
                       borderPalette: colors.primary
                     }
                   }}
@@ -266,7 +266,7 @@ const MasterHeader = ({
                       borderRadius: 1,
                       color: colors.textSecondary,
                       '&:hover': {
-                        backgroundPalette: theme.palette.action.hover,
+                        backgroundColor: theme.palette.action.hover,
                         borderPalette: colors.primary
                       }
                     }}
@@ -299,7 +299,7 @@ const MasterHeader = ({
                     borderRadius: 1,
                     color: colors.textSecondary,
                     '&:hover': {
-                      backgroundPalette: theme.palette.action.hover,
+                      backgroundColor: theme.palette.action.hover,
                       borderPalette: colors.primary
                     }
                   }}
@@ -370,7 +370,7 @@ const MasterHeader = ({
                     borderRadius: 1,
                     color: colors.textSecondary,
                     '&:hover': {
-                      backgroundPalette: theme.palette.action.hover,
+                      backgroundColor: theme.palette.action.hover,
                       borderPalette: colors.primary
                     }
                   }}
@@ -412,7 +412,7 @@ const MasterHeader = ({
               sx={{
                 p: 0.5,
                 '&:hover': {
-                  backgroundPalette: 'transparent'
+                  backgroundColor: 'transparent'
                 }
               }}
             >
@@ -421,7 +421,7 @@ const MasterHeader = ({
                 sx={{
                   width: 36,
                   height: 36,
-                  backgroundPalette: colors.primary,
+                  backgroundColor: colors.primary,
                   fontSize: '0.875rem',
                   fontWeight: 600
                 }}

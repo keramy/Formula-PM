@@ -20,15 +20,15 @@ import {
   LinearProgress
 } from '@mui/material';
 import {
-  Add,
-  ViewModule,
-  ViewList,
-  Person,
-  Email,
-  Phone,
-  Work,
-  Check
-} from 'iconoir-react';
+  MdAdd as Add,
+  MdViewModule as ViewModule,
+  MdViewList as ViewList,
+  MdPerson as Person,
+  MdEmail as Email,
+  MdPhone as Phone,
+  MdWork as Work,
+  MdCheck as Check
+} from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../CleanPageLayout';
 
 const NotionTeamPage = ({ 
@@ -154,7 +154,7 @@ const NotionTeamPage = ({
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundPalette: `${color}20`,
+              backgroundColor: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'

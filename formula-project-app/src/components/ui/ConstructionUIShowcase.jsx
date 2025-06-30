@@ -15,11 +15,11 @@ import {
   Alert
 } from '@mui/material';
 import {
-  Construction,
-  Warning,
-  CheckCircle,
-  Refresh
-} from 'iconoir-react';
+  MdConstruction as Construction,
+  MdWarning as Warning,
+  MdCheckCircle as CheckCircle,
+  MdRefresh as Refresh
+} from 'react-icons/md';
 
 // Import our new components
 import { 

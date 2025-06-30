@@ -18,30 +18,28 @@ import {
 } from '@mui/material';
 // Iconoir icons - verified working icons only
 import {
-  Home,
-  Bell as Notifications,
-  Mail as Inbox,
-  Check as Task,
-  Group,
-  List as ViewList,
-  Folder,
-  ArrowUp as NavArrowUp,
-  ArrowDown as NavArrowDown,
-  Plus as Add,
-  Search,
-  Settings,
-  User as User,
-  Dashboard,
-  Folder as FolderOpen,
-  ArrowUp as Timeline,
-  Building as Engineering,
-  Menu as MenuOpen,
-  Menu,
-  Page as Description,
-  Building as Business,
-  NavArrowUp as ExpandLess,
-  NavArrowDown as ExpandMore
-} from 'iconoir-react';
+  MdHome as Home,
+  MdNotifications as Notifications,
+  MdEmail as Inbox,
+  MdCheck as Task,
+  MdGroup as Group,
+  MdList as ViewList,
+  MdFolder as Folder,
+  MdKeyboardArrowUp as NavArrowUp,
+  MdKeyboardArrowDown as NavArrowDown,
+  MdAdd as Add,
+  MdSearch as Search,
+  MdSettings as Settings,
+  MdPerson as User,
+  MdDashboard as Dashboard,
+  MdFolder as FolderOpen,
+  MdKeyboardArrowUp as Timeline,
+  MdBusiness as Engineering,
+  MdMenu as MenuOpen,
+  MdMenu as Menu,
+  MdDescription as Description,
+  MdBusiness as Business
+} from 'react-icons/md';
 import FormulaLogo from '../branding/FormulaLogo';
 
 const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onToggleCollapse }) => {
@@ -132,12 +130,12 @@ const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onTogg
           borderRadius: 1.5,
           mx: 1,
           minHeight: 28,
-          backgroundPalette: itemIsActive ? colors.activeBackground : 'transparent',
+          backgroundColor: itemIsActive ? colors.activeBackground : 'transparent',
           color: itemIsActive ? colors.textPrimary : colors.textSecondary,
           fontSize: '14px',
           justifyContent: isCollapsed ? 'center' : 'flex-start',
           '&:hover': {
-            backgroundPalette: colors.hoverBackground,
+            backgroundColor: colors.hoverBackground,
             color: colors.textPrimary
           },
           transition: 'all 0.2s ease'
@@ -165,7 +163,7 @@ const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onTogg
           />
         )}
         {!isCollapsed && item.hasSubmenu && (
-          <ExpandLess sx={{ fontSize: '16px', color: colors.textMuted }} />
+          <NavArrowUp size={16} color={colors.textMuted} />
         )}
       </ListItemButton>
     </Tooltip>
@@ -196,7 +194,7 @@ const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onTogg
         }}
         onClick={onToggle}
       >
-        {isOpen ? <ExpandLess sx={{ fontSize: 14 }} /> : <ExpandMore sx={{ fontSize: 14 }} />}
+        {isOpen ? <NavArrowUp size={14} /> : <NavArrowDown size={14} />}
         {title}
       </Typography>
       {showAdd && (
@@ -212,7 +210,7 @@ const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onTogg
       sx={{
         width: isCollapsed ? 70 : 240,
         height: '100vh',
-        backgroundPalette: colors.background,
+        backgroundColor: colors.background,
         borderRight: `1px solid ${colors.border}`,
         display: 'flex',
         flexDirection: 'column',

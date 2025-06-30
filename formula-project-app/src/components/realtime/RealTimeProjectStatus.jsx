@@ -22,22 +22,22 @@ import {
 } from '@mui/material';
 // Timeline components replaced with simple layout - @mui/lab not available
 import {
-  NavArrowDown as NavArrowDown,
-  NavArrowUp as NavArrowUp,
-  ArrowUp,
-  TrendingDown,
-  ClipboardCheck as Task,
-  CheckCircle,
-  Clock as Calendar,
-  WarningTriangle as Warning,
-  Xmark as Error,
-  Group as Group,
-  MoneySquare as AttachMoney,
-  Calendar as CalendarToday,
-  Bell as Notifications,
-  BellNotification as NotificationsActive,
-  Refresh
-} from 'iconoir-react';
+  MdExpandMore as NavArrowDown,
+  MdExpandLess as NavArrowUp,
+  MdKeyboardArrowUp as ArrowUp,
+  MdTrendingDown as TrendingDown,
+  MdTask as Task,
+  MdCheckCircle as CheckCircle,
+  MdSchedule as Calendar,
+  MdWarning as Warning,
+  MdClose as Error,
+  MdGroup as Group,
+  MdAttachMoney as AttachMoney,
+  MdCalendarToday as CalendarToday,
+  MdNotifications as Notifications,
+  MdBellNotification as NotificationsActive,
+  MdRefresh as Refresh
+} from 'react-icons/md';
 import { formatDistanceToNow, format } from 'date-fns';
 import { 
   useProjectUpdates, 
@@ -234,7 +234,7 @@ export const RealTimeTaskStatusFeed = ({ limit = 10 }) => {
                   minWidth: 32, 
                   height: 32, 
                   borderRadius: '50%', 
-                  backgroundPalette: `${getStatusPalette(change.newStatus)}.main`,
+                  backgroundColor: `${getStatusPalette(change.newStatus)}.main`,
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
@@ -323,7 +323,7 @@ export const RealTimeProjectDashboard = ({ projectId }) => {
                 p: 2,
                 mb: 1,
                 minWidth: 250,
-                backgroundPalette: 'primary.light',
+                backgroundColor: 'primary.light',
                 color: 'primary.contrastText'
               }}
             >

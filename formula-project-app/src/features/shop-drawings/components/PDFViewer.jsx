@@ -11,16 +11,16 @@ import {
   Alert
 } from '@mui/material';
 import {
-  ZoomIn as ZoomInIcon,
-  ZoomOut as ZoomOutIcon,
-  Expand as FitToScreenIcon,
-  Download as DownloadIcon,
-  Printer as PrintIcon,
-  Xmark as CloseIcon,
-  RotateLeft as RotateLeftIcon,
-  RotateRight as RotateRightIcon,
-  Expand as FullscreenIcon
-} from 'iconoir-react';
+  MdZoomIn as ZoomInIcon,
+  MdZoomOut as ZoomOutIcon,
+  MdFitScreen as FitToScreenIcon,
+  MdDownload as DownloadIcon,
+  MdPrint as PrintIcon,
+  MdClose as CloseIcon,
+  MdRotateLeft as RotateLeftIcon,
+  MdRotateRight as RotateRightIcon,
+  MdFullscreen as FullscreenIcon
+} from 'react-icons/md';
 
 const PDFViewer = ({ 
   pdfUrl, 
@@ -112,7 +112,7 @@ const PDFViewer = ({
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundPalette: '#f5f5f5',
+          backgroundColor: '#f5f5f5',
           transform: `rotate(${rotation}deg) scale(${zoom / 100})`,
           transformOrigin: 'center center',
           transition: 'transform 0.2s ease'
@@ -124,7 +124,7 @@ const PDFViewer = ({
           sx={{
             width: '210mm', // A4 width
             height: '297mm', // A4 height
-            backgroundPalette: 'white',
+            backgroundColor: 'white',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -198,7 +198,7 @@ const PDFViewer = ({
       {/* Toolbar */}
       <Toolbar 
         sx={{ 
-          backgroundPalette: '#37444B', 
+          backgroundColor: '#37444B', 
           color: 'white',
           minHeight: '56px !important',
           gap: 1
@@ -230,7 +230,7 @@ const PDFViewer = ({
           </IconButton>
         </Tooltip>
         
-        <Divider orientation="vertical" flexItem sx={{ mx: 1, backgroundPalette: 'rgba(255,255,255,0.3)' }} />
+        <Divider orientation="vertical" flexItem sx={{ mx: 1, backgroundColor: 'rgba(255,255,255,0.3)' }} />
         
         <Tooltip title="Rotate Left">
           <IconButton color="inherit" onClick={handleRotateLeft}>
@@ -244,7 +244,7 @@ const PDFViewer = ({
           </IconButton>
         </Tooltip>
         
-        <Divider orientation="vertical" flexItem sx={{ mx: 1, backgroundPalette: 'rgba(255,255,255,0.3)' }} />
+        <Divider orientation="vertical" flexItem sx={{ mx: 1, backgroundColor: 'rgba(255,255,255,0.3)' }} />
         
         <Tooltip title="Download">
           <IconButton color="inherit" onClick={handleDownload}>
@@ -278,7 +278,7 @@ const PDFViewer = ({
         sx={{ 
           flexGrow: 1, 
           overflow: 'auto',
-          backgroundPalette: '#e0e0e0'
+          backgroundColor: '#e0e0e0'
         }}
       >
         {renderPDFContent()}

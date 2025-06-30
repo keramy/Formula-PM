@@ -40,7 +40,7 @@ const StandardCard = ({
     border: '1px solid var(--border-light, #E5E7EB)',
     borderRadius: 'var(--border-radius-lg, 12px)',
     borderLeft: selected ? '4px solid var(--sapphire-dust, #516AC8)' : undefined,
-    backgroundPalette: selected ? 'var(--rapture-light, #F6F3E7)' : 'white',
+    backgroundColor: selected ? 'var(--rapture-light, #F6F3E7)' : 'white',
     background: selected 
       ? 'linear-gradient(135deg, rgba(81, 106, 200, 0.05) 0%, rgba(246, 243, 231, 1) 100%)'
       : 'linear-gradient(135deg, rgba(227, 175, 100, 0.05) 0%, rgba(255, 255, 255, 1) 100%)',

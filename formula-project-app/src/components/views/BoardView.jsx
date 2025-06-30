@@ -12,11 +12,11 @@ import {
 } from '@mui/material';
 // Iconoir icons - safe board view icons
 import {
-  Calendar as CalendarToday,
-  User as PersonIcon,
-  Building as Business,
-  Group as AccountTree
-} from 'iconoir-react';
+  MdCalendarToday as CalendarToday,
+  MdPerson as PersonIcon,
+  MdBusiness as Business,
+  MdGroup as AccountTree
+} from 'react-icons/md';
 import { ProjectStatusChip, ProjectTypeChip, PriorityChip } from '../ui/StatusChip';
 import ProjectTeamAvatars from '../ui/ProjectTeamAvatars';
 import { getProjectStatusConfig, getProjectTypeConfig, getPriorityConfig } from '../../utils/statusConfig';
@@ -186,7 +186,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
         sx={{
           mb: 1.5,
           cursor: 'pointer',
-          backgroundPalette: 'white',
+          backgroundColor: 'white',
           border: '1px solid #E9ECEF',
           borderRadius: 2,
           transition: 'all 0.2s ease-in-out',
@@ -250,9 +250,9 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                 sx={{ 
                   height: 4,
                   borderRadius: 2,
-                  backgroundPalette: '#E9ECEF',
+                  backgroundColor: '#E9ECEF',
                   '& .MuiLinearProgress-bar': {
-                    backgroundPalette: progress === 100 ? '#27ae60' : '#3498db',
+                    backgroundColor: progress === 100 ? '#27ae60' : '#3498db',
                     borderRadius: 2
                   }
                 }}
@@ -286,7 +286,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
         sx={{
           mb: 1.5,
           cursor: 'pointer',
-          backgroundPalette: 'white',
+          backgroundColor: 'white',
           border: '1px solid #E9ECEF',
           borderRadius: 2,
           transition: 'all 0.2s ease-in-out',
@@ -367,7 +367,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                           width: 24,
                           height: 24,
                           fontSize: '0.7rem',
-                          backgroundPalette: assignedMember.rolePalette || '#3498db'
+                          backgroundColor: assignedMember.rolePalette || '#3498db'
                         }}
                       >
                         {assignedMember.initials}
@@ -378,7 +378,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                       sx={{
                         width: 24,
                         height: 24,
-                        backgroundPalette: '#bdc3c7'
+                        backgroundColor: '#bdc3c7'
                       }}
                     >
                       <PersonIcon sx={{ fontSize: 14 }} />
@@ -425,7 +425,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
               sx={{
                 minWidth: 320,
                 maxWidth: 320,
-                backgroundPalette: column.bgPalette,
+                backgroundColor: column.bgPalette,
                 border: `1px solid ${column.color}30`,
                 borderRadius: 2,
                 display: 'flex',
@@ -439,7 +439,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                 sx={{ 
                   p: 2, 
                   borderBottom: `1px solid ${column.color}30`,
-                  backgroundPalette: 'white',
+                  backgroundColor: 'white',
                   borderRadius: '8px 8px 0 0'
                 }}
               >
@@ -461,7 +461,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                     size="small" 
                     sx={{ 
                       height: 20,
-                      backgroundPalette: column.color,
+                      backgroundColor: column.color,
                       color: 'white',
                       fontWeight: 600,
                       fontSize: '0.7rem'
@@ -477,7 +477,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                   minHeight: 400,
                   maxHeight: 'calc(100vh - 350px)',
                   overflowY: 'auto',
-                  backgroundPalette: 'transparent',
+                  backgroundColor: 'transparent',
                   transition: 'background-color 0.2s ease'
                 }}
               >

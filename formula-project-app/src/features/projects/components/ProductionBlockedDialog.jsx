@@ -17,13 +17,13 @@ import {
   ListItemText
 } from '@mui/material';
 import {
-  WarningTriangle as WarningIcon,
-  Xmark as ErrorIcon,
-  Page as DocumentIcon,
-  Archive as MaterialIcon,
-  CheckCircle as CheckIcon,
-  Xmark as CancelIcon
-} from 'iconoir-react';
+  MdWarning as WarningIcon,
+  MdClose as ErrorIcon,
+  MdDescription as DocumentIcon,
+  MdArchive as MaterialIcon,
+  MdCheckCircle as CheckIcon,
+  MdClose as CancelIcon
+} from 'react-icons/md';
 
 const ProductionBlockedDialog = ({ open, onClose, scopeItem, connectionStatus, onManageConnections }) => {
   if (!scopeItem) return null;

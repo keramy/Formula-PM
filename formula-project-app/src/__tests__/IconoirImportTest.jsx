@@ -2,27 +2,28 @@ import React from 'react';
 
 // Direct import test - we'll see which ones work and which fail during build
 import {
-  // Navigation icons
+  Md// Navigation icons
+  Home as // Navigation icons
   Home,
-  Search,
-  Menu,
-  
-  // Action icons  
+  MdSearch as Search,
+  MdMenu as Menu,
+  Md// Action icons  
+  Plus as // Action icons  
   Plus,
-  Edit,
-  
-  // Status icons
+  MdEdit as Edit,
+  Md// Status icons
+  Check as // Status icons
   Check,
-  
-  // Try some common ones
+  Md// Try some common ones
+  Settings as // Try some common ones
   Settings,
-  User,
-  Calendar,
-  
-  // View icons
+  MdPerson as User,
+  MdCalendarToday as Calendar,
+  Md// View icons
+  Table as // View icons
   Table,
-  List
-} from 'iconoir-react';
+  MdList as List
+} from 'react-icons/md';
 
 const IconoirImportTest = () => {
   const iconTests = [

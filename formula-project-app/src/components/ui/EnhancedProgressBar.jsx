@@ -27,7 +27,7 @@ const EnhancedProgressBar = ({
   // Gradient backgrounds for different variants
   const variantStyles = {
     default: {
-      backgroundPalette: progressPalette,
+      backgroundColor: progressPalette,
     },
     striped: {
       backgroundImage: `repeating-linear-gradient(
@@ -64,7 +64,7 @@ const EnhancedProgressBar = ({
         <Box sx={{ 
           flex: 1, 
           height: height, 
-          backgroundPalette: 'var(--border-light, #E5E7EB)', 
+          backgroundColor: 'var(--border-light, #E5E7EB)', 
           borderRadius: height / 2,
           overflow: 'hidden',
           position: 'relative'

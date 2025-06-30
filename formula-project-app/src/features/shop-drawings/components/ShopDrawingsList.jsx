@@ -33,19 +33,19 @@ import {
   Tab
 } from '@mui/material';
 import {
-  Plus as AddIcon,
-  MoreVert as MoreVertIcon,
-  Page as PdfIcon,
-  Upload as UploadIcon,
-  Eye as ViewIcon,
-  Edit as EditIcon,
-  Trash as DeleteIcon,
-  Download as DownloadIcon,
-  CheckCircle as ApproveIcon,
-  Xmark as RejectIcon,
-  HistoryCircle as HistoryIcon,
-  Folder as FolderIcon
-} from 'iconoir-react';
+  MdAdd as AddIcon,
+  MdMoreVert as MoreVertIcon,
+  MdPictureAsPdf as PdfIcon,
+  MdCloudUpload as UploadIcon,
+  MdVisibility as ViewIcon,
+  MdEdit as EditIcon,
+  MdDelete as DeleteIcon,
+  MdDownload as DownloadIcon,
+  MdCheckCircle as ApproveIcon,
+  MdClose as RejectIcon,
+  MdHistory as HistoryIcon,
+  MdFolder as FolderIcon
+} from 'react-icons/md';
 // Note: EnhancedHeader and EnhancedTabSystem are not used in this component
 // import EnhancedHeader from '../../../components/ui/UnifiedHeader';
 // import EnhancedTabSystem from '../../../components/layout/EnhancedTabSystem';
@@ -239,7 +239,7 @@ const ShopDrawingsList = ({
     <TableContainer sx={{ height: '100%' }}>
       <Table stickyHeader>
         <TableHead>
-          <TableRow sx={{ backgroundPalette: '#f8f9fa' }}>
+          <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
             <TableCell><strong>Drawing</strong></TableCell>
             <TableCell><strong>Project</strong></TableCell>
             <TableCell><strong>Type</strong></TableCell>
@@ -274,7 +274,7 @@ const ShopDrawingsList = ({
                   label={drawing.drawingType} 
                   size="small"
                   variant="outlined"
-                  sx={{ backgroundPalette: '#e3f2fd' }}
+                  sx={{ backgroundColor: '#e3f2fd' }}
                 />
               </TableCell>
               <TableCell>{drawing.room}</TableCell>
@@ -282,7 +282,7 @@ const ShopDrawingsList = ({
                 <Chip 
                   label={drawing.version} 
                   size="small"
-                  sx={{ backgroundPalette: '#f3e5f5' }}
+                  sx={{ backgroundColor: '#f3e5f5' }}
                 />
               </TableCell>
               <TableCell>
@@ -290,7 +290,7 @@ const ShopDrawingsList = ({
                   label={getStatusLabel(drawing.status)}
                   size="small"
                   sx={{ 
-                    backgroundPalette: getStatusPalette(drawing.status),
+                    backgroundColor: getStatusPalette(drawing.status),
                     color: 'white',
                     fontWeight: 600
                   }}
@@ -352,13 +352,13 @@ const ShopDrawingsList = ({
                 <Chip 
                   label={drawing.version} 
                   size="small"
-                  sx={{ backgroundPalette: '#f3e5f5' }}
+                  sx={{ backgroundColor: '#f3e5f5' }}
                 />
                 <Chip 
                   label={getStatusLabel(drawing.status)}
                   size="small"
                   sx={{ 
-                    backgroundPalette: getStatusPalette(drawing.status),
+                    backgroundColor: getStatusPalette(drawing.status),
                     color: 'white',
                     fontWeight: 600
                   }}
@@ -395,7 +395,7 @@ const ShopDrawingsList = ({
         px: 1,
         py: 0.5,
         borderBottom: '1px solid #e0e0e0',
-        backgroundPalette: '#f8f9fa'
+        backgroundColor: '#f8f9fa'
       }}>
         <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 600 }}>
           Shop Drawings ({filteredDrawings.length})
@@ -453,7 +453,7 @@ const ShopDrawingsList = ({
         flexGrow: 1, 
         overflow: 'hidden',
         '& .MuiTableRow-root:hover': {
-          backgroundPalette: 'transparent'
+          backgroundColor: 'transparent'
         }
       }}>
         {activeLoading ? (
@@ -649,7 +649,7 @@ const ShopDrawingsList = ({
                 </TableHead>
                 <TableBody>
                   {getVersionHistory(selectedDrawingForHistory).map((version, index) => (
-                    <TableRow key={index} sx={version.current ? { backgroundPalette: '#f0f8ff' } : {}}>
+                    <TableRow key={index} sx={version.current ? { backgroundColor: '#f0f8ff' } : {}}>
                       <TableCell>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <Chip 
@@ -677,7 +677,7 @@ const ShopDrawingsList = ({
                           label={getStatusLabel(version.status)}
                           size="small"
                           sx={{ 
-                            backgroundPalette: getStatusPalette(version.status),
+                            backgroundColor: getStatusPalette(version.status),
                             color: 'white',
                             fontWeight: 600
                           }}

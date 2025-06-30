@@ -20,18 +20,18 @@ import {
   LinearProgress
 } from '@mui/material';
 import {
-  Edit,
-  Trash as Delete,
-  Mail as Email,
-  Phone,
-  Building as Work,
-  User as User,
-  Star,
-  Group as AccountTree,
-  Clock as AccessTime,
-  Eye as Eye,
-  Edit as EditIcon
-} from 'iconoir-react';
+  MdEdit as Edit,
+  MdDelete as Delete,
+  MdEmail as Email,
+  MdPhone as Phone,
+  MdBusiness as Work,
+  MdPerson as User,
+  MdStar as Star,
+  MdGroup as AccountTree,
+  MdSchedule as AccessTime,
+  MdVisibility as Eye,
+  MdEdit as EditIcon
+} from 'react-icons/md';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';
@@ -188,7 +188,7 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
     {
       key: 'view',
       label: 'View Details',
-      icon: <Visibility />
+      icon: <User />
     },
     {
       key: 'edit',
@@ -285,11 +285,11 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
   const filteredAndSortedMembers = useMemo(() => {
     let filtered = teamMembers.filter(member => {
       // Search filter
-      const searchLower = searchValue.toLowerCase();
+      const searchLower = (searchValue || '').toLowerCase();
       const matchesSearch = !searchValue || 
-        member.fullName.toLowerCase().includes(searchLower) ||
-        member.email.toLowerCase().includes(searchLower) ||
-        member.position?.toLowerCase().includes(searchLower);
+        (member.fullName || '').toLowerCase().includes(searchLower) ||
+        (member.email || '').toLowerCase().includes(searchLower) ||
+        (member.position || '').toLowerCase().includes(searchLower);
 
       // Role filter
       const matchesRole = !filters.role || member.role === filters.role;
@@ -313,28 +313,28 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
       switch (sortBy) {
         case 'member':
         case 'fullName':
-          aValue = a.fullName.toLowerCase();
-          bValue = b.fullName.toLowerCase();
+          aValue = (a.fullName || '').toLowerCase();
+          bValue = (b.fullName || '').toLowerCase();
           break;
         case 'roleLevel':
           aValue = a.level || 0;
           bValue = b.level || 0;
           break;
         case 'role':
-          aValue = a.role;
-          bValue = b.role;
+          aValue = a.role || '';
+          bValue = b.role || '';
           break;
         case 'department':
-          aValue = a.department;
-          bValue = b.department;
+          aValue = a.department || '';
+          bValue = b.department || '';
           break;
         case 'email':
-          aValue = a.email.toLowerCase();
-          bValue = b.email.toLowerCase();
+          aValue = (a.email || '').toLowerCase();
+          bValue = (b.email || '').toLowerCase();
           break;
         case 'status':
-          aValue = a.status;
-          bValue = b.status;
+          aValue = a.status || '';
+          bValue = b.status || '';
           break;
         default:
           return 0;
@@ -443,7 +443,7 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
           onClearFilter={handleClearFilter}
         />
         <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Person sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+          <User sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
           <Typography variant="body1" color="text.secondary">
             No team members added yet. Add your first team member to get started!
           </Typography>
@@ -506,7 +506,7 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
           {filteredAndSortedMembers.length === 0 ? (
             <Grid item xs={12}>
               <Box sx={{ textAlign: 'center', py: 4 }}>
-                <Person sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+                <User sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
                 <Typography variant="body1" color="text.secondary">
                   No team members match your filters
                 </Typography>
@@ -547,7 +547,7 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
                             width: 12,
                             height: 12,
                             borderRadius: '50%',
-                            backgroundPalette: member.status === 'active' ? '#27ae60' : '#95a5a6',
+                            backgroundColor: member.status === 'active' ? '#27ae60' : '#95a5a6',
                             border: '2px solid white'
                           }}
                         />
@@ -587,7 +587,7 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
                         label={roleInfo?.label}
                         size="small"
                         sx={{
-                          backgroundPalette: member.rolePalette + '20',
+                          backgroundColor: member.rolePalette + '20',
                           color: member.rolePalette,
                           fontWeight: 'bold',
                           mb: 1
@@ -649,13 +649,13 @@ function TeamMembersList({ teamMembers, tasks, projects, onUpdateMember, onDelet
                       <Chip 
                         label={`${stats.completed} done`} 
                         size="small" 
-                        sx={{ backgroundPalette: '#eafaf1', color: '#27ae60' }}
+                        sx={{ backgroundColor: '#eafaf1', color: '#27ae60' }}
                       />
                       {stats.overdue > 0 && (
                         <Chip 
                           label={`${stats.overdue} overdue`} 
                           size="small" 
-                          sx={{ backgroundPalette: '#fdf2f2', color: '#e74c3c' }}
+                          sx={{ backgroundColor: '#fdf2f2', color: '#e74c3c' }}
                         />
                       )}
                     </Box>

@@ -12,16 +12,16 @@ import {
   LinearProgress
 } from '@mui/material';
 import {
-  Plus as Add,
-  FilterList,
-  List as ViewList,
-  ViewGrid as ViewModule,
-  Building as BusinessIcon,
-  ArrowUp as ArrowUp,
-  ClipboardCheck as Task,
-  CheckCircle,
-  User as PersonIcon
-} from 'iconoir-react';
+  MdAdd as Add,
+  MdFilterList as FilterList,
+  MdList as ViewList,
+  MdViewModule as ViewModule,
+  MdBusiness as BusinessIcon,
+  MdKeyboardArrowUp as ArrowUp,
+  MdTask as Task,
+  MdCheckCircle as CheckCircle,
+  MdPerson as PersonIcon
+} from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import ClientsList from '../features/clients/components/ClientsList';
 
@@ -146,7 +146,7 @@ const ClientsPage = ({
         label="Analytics" 
         isActive={activeTab === 'analytics'}
         onClick={() => setActiveTab('analytics')}
-        icon={<Check sx={{ fontSize: 16 }} />}
+        icon={<CheckCircle sx={{ fontSize: 16 }} />}
       />
     </>
   );
@@ -195,7 +195,7 @@ const ClientsPage = ({
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundPalette: `${color}20`,
+              backgroundColor: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -286,7 +286,7 @@ const ClientsPage = ({
               className="clean-progress-bar"
               sx={{
                 '& .MuiLinearProgress-bar': {
-                  backgroundPalette: '#10B981'
+                  backgroundColor: '#10B981'
                 }
               }}
             />
@@ -349,7 +349,7 @@ const ClientsPage = ({
             title="Potential Clients"
             value={clientStats.potential}
             subtitle="In pipeline"
-            icon={<Check />}
+            icon={<CheckCircle />}
             color="#E3AF64"
           />
         </Grid>
@@ -401,7 +401,7 @@ const ClientsPage = ({
         <Grid item xs={12} lg={4}>
           <Card className="clean-card">
             <Box className="clean-section-header">
-              <Box className="clean-section-indicator" sx={{ backgroundPalette: '#516AC8' }}></Box>
+              <Box className="clean-section-indicator" sx={{ backgroundColor: '#516AC8' }}></Box>
               <Typography className="clean-section-title">
                 Recent Clients
               </Typography>
@@ -415,7 +415,7 @@ const ClientsPage = ({
                       p: 2,
                       borderBottom: index < recentClients.length - 1 ? '1px solid #E5E7EB' : 'none',
                       '&:hover': {
-                        backgroundPalette: '#F6F3E7'
+                        backgroundColor: '#F6F3E7'
                       }
                     }}
                   >

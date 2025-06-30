@@ -200,7 +200,7 @@ const NotificationSettings = () => {
         <Button 
           variant="contained" 
           onClick={handleTestNotification}
-          sx={{ backgroundPalette: '#2C3E50' }}
+          sx={{ backgroundColor: '#2C3E50' }}
         >
           Test Notifications
         </Button>

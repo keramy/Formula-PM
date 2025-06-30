@@ -22,12 +22,12 @@ import {
   Snackbar
 } from '@mui/material';
 import {
-  Check as TaskIcon,
-  Page as FileIcon,
-  Group as TeamIcon,
-  StatsReport as AnalyticsIcon,
-  Timeline as TimelineIcon
-} from 'iconoir-react';
+  MdCheck as TaskIcon,
+  MdDescription as FileIcon,
+  MdGroup as TeamIcon,
+  MdAnalytics as AnalyticsIcon,
+  MdTimeline as TimelineIcon
+} from 'react-icons/md';
 import { useProjectRealtime } from '../../../hooks/useSocket';
 import PresenceIndicators from '../../../components/realtime/PresenceIndicators';
 import RealtimeActivityFeed from '../../../components/realtime/RealtimeActivityFeed';

@@ -6,14 +6,14 @@ import {
   Button
 } from '@mui/material';
 import {
-  Settings as Build,
-  Tools as Carpenter,
-  Flash as ElectricalServices,
-  Settings as Engineering,
-  Calendar as CalendarToday,
-  Trash as Delete,
-  Building as Business
-} from 'iconoir-react';
+  MdSettings as Build,
+  MdTools as Carpenter,
+  MdElectricBolt as ElectricalServices,
+  MdSettings as Engineering,
+  MdCalendarToday as CalendarToday,
+  MdDelete as Delete,
+  MdBusiness as Business
+} from 'react-icons/md';
 import { StatusChip, ActionTooltip, StandardCard, ProjectStatusChip, ProjectTypeChip, ProjectCard, ActionIconButton, commonTooltips } from '../../../components/ui';
 import ProjectTeamAvatars from '../../../components/ui/ProjectTeamAvatars';
 import { 

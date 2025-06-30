@@ -20,17 +20,17 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  MoreVertCircle as MoreVertIcon,
-  Edit as EditIcon,
-  Trash as DeleteIcon,
-  Building as BusinessIcon,
-  Mail as EmailIcon,
-  Phone as PhoneIcon,
-  MapPin as LocationIcon,
-  Globe as WebsiteIcon,
-  User as PersonIcon,
-  Eye as ViewIcon
-} from 'iconoir-react';
+  MdMoreVert as MoreVertIcon,
+  MdEdit as EditIcon,
+  MdDelete as DeleteIcon,
+  MdBusiness as BusinessIcon,
+  MdEmail as EmailIcon,
+  MdPhone as PhoneIcon,
+  MdLocationOn as LocationIcon,
+  MdPublic as WebsiteIcon,
+  MdPerson as PersonIcon,
+  MdVisibility as ViewIcon
+} from 'react-icons/md';
 import { useNotification } from '../../../context';
 import ClientForm from './ClientForm';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
@@ -189,7 +189,7 @@ const ClientsList = ({ clients = [], onUpdateClient, onDeleteClient, onAddClient
       type: 'avatar',
       render: (value, row) => ({
         fallback: getCompanyInitials(row.companyName),
-        bgPalette: '#E67E22',
+        backgroundColor: '#E67E22',
         text: row.companyName
       })
     },
@@ -229,7 +229,7 @@ const ClientsList = ({ clients = [], onUpdateClient, onDeleteClient, onAddClient
       render: (value) => ({
         label: value.charAt(0).toUpperCase() + value.slice(1),
         color: getStatusPalette(value),
-        bgPalette: `${getStatusPalette(value)}20`
+        backgroundColor: `${getStatusPalette(value)}20`
       })
     }
   ];
@@ -537,7 +537,7 @@ const ClientsList = ({ clients = [], onUpdateClient, onDeleteClient, onAddClient
                       label={client.status}
                       size="small"
                       sx={{
-                        backgroundPalette: getStatusPalette(client.status),
+                        backgroundColor: getStatusPalette(client.status),
                         color: 'white',
                         fontWeight: 500,
                         textTransform: 'capitalize'
@@ -653,7 +653,7 @@ const ClientsList = ({ clients = [], onUpdateClient, onDeleteClient, onAddClient
                           sx={{
                             fontSize: '0.7rem',
                             height: 24,
-                            borderPalette: '#E67E22',
+                            borderColor: '#E67E22',
                             color: '#E67E22'
                           }}
                         />
@@ -670,7 +670,7 @@ const ClientsList = ({ clients = [], onUpdateClient, onDeleteClient, onAddClient
                             sx={{
                               fontSize: '0.7rem',
                               height: 24,
-                              borderPalette: '#BDC3C7',
+                              borderColor: '#BDC3C7',
                               color: '#7F8C8D'
                             }}
                           />

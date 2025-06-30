@@ -20,18 +20,18 @@ import {
   Badge
 } from '@mui/material';
 import {
-  CheckCircle as CheckIcon,
-  Calendar as CalendarIcon,
-  ArrowUp as ArrowUpIcon,
-  Clock as ClockIcon,
-  CheckCircle as CheckCircleIcon,
-  WarningTriangle as WarningIcon,
-  User as PersonIcon,
-  Folder as FolderIcon,
-  Play as PlayIcon,
-  Pause as PauseIcon,
-  Settings as SettingsIcon
-} from 'iconoir-react';
+  MdCheckCircle as CheckIcon,
+  MdCalendarToday as CalendarIcon,
+  MdKeyboardArrowUp as ArrowUpIcon,
+  MdSchedule as ClockIcon,
+  MdCheckCircle as CheckCircleIcon,
+  MdWarning as WarningIcon,
+  MdPerson as PersonIcon,
+  MdFolder as FolderIcon,
+  MdPlayArrow as PlayIcon,
+  MdPause as PauseIcon,
+  MdSettings as SettingsIcon
+} from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import { useAuth } from '../context/AuthContext';
 

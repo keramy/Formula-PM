@@ -16,16 +16,16 @@ import {
   DialogActions
 } from '@mui/material';
 import {
-  NavArrowLeft as BackIcon,
-  Eye as ViewIcon,
-  Download as DownloadIcon,
-  Edit as EditIcon,
-  Trash as DeleteIcon,
-  CheckCircle as ApproveIcon,
-  Xmark as RejectIcon,
-  HistoryCircle as HistoryIcon,
-  Share as ShareIcon
-} from 'iconoir-react';
+  MdArrowBack as BackIcon,
+  MdVisibility as ViewIcon,
+  MdDownload as DownloadIcon,
+  MdEdit as EditIcon,
+  MdDelete as DeleteIcon,
+  MdCheckCircle as ApproveIcon,
+  MdClose as RejectIcon,
+  MdHistory as HistoryIcon,
+  MdShare as ShareIcon
+} from 'react-icons/md';
 import PDFViewer from './PDFViewer';
 import DrawingVersionHistory from './DrawingVersionHistory';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
@@ -217,7 +217,7 @@ const ShopDrawingDetailPage = ({
                 <Chip 
                   label={getStatusLabel(drawing.status)}
                   sx={{ 
-                    backgroundPalette: getStatusPalette(drawing.status),
+                    backgroundColor: getStatusPalette(drawing.status),
                     color: 'white',
                     fontWeight: 600,
                     mt: 0.5

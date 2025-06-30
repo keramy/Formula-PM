@@ -16,22 +16,22 @@ import {
   Badge
 } from '@mui/material';
 import {
-  ClipboardCheck as Task,
-  Group as Group,
-  Building as Business,
-  ChatBubble as Comment,
-  Refresh as Update,
-  Plus as Add,
-  Edit,
-  Trash as Delete,
-  Check,
-  Play as Play,
-  Pause,
-  Xmark as Block,
-  Page as Description,
-  Download as FileDownload,
-  Send as Publish
-} from 'iconoir-react';
+  MdTask as Task,
+  MdGroup as Group,
+  MdBusiness as Business,
+  MdChat as Comment,
+  MdRefresh as Update,
+  MdAdd as Add,
+  MdEdit as Edit,
+  MdDelete as Delete,
+  MdCheck as Check,
+  MdPlayArrow as Play,
+  MdPause as Pause,
+  MdClose as Block,
+  MdDescription as Description,
+  MdDownload as FileDownload,
+  MdSend as Publish
+} from 'react-icons/md';
 import { formatDistanceToNow } from 'date-fns';
 import { useActivityFeed } from '../../hooks/useRealTime';
 import EnhancedActivityDescription from './EnhancedActivityDescription';
@@ -236,7 +236,7 @@ const ActivityItem = ({ activity, onActivityClick, onProjectClick, onTaskClick, 
                 height: '20px',
                 color: '#1976d2',
                 borderPalette: '#1976d2',
-                backgroundPalette: 'rgba(25, 118, 210, 0.08)',
+                backgroundColor: 'rgba(25, 118, 210, 0.08)',
                 '& .MuiChip-label': {
                   px: 1,
                   color: '#1976d2',
@@ -260,7 +260,7 @@ const ActivityItem = ({ activity, onActivityClick, onProjectClick, onTaskClick, 
 const ActivitySkeleton = () => (
   <ListItem>
     <ListItemAvatar>
-      <Skeleton variant="circular" width={40} height={40} />
+      <Skeleton variant="circular" size={40} />
     </ListItemAvatar>
     <ListItemText
       primary={<Skeleton variant="text" width="80%" />}

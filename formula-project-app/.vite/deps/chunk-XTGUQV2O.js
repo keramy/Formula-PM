@@ -1,13 +1,13 @@
 import {
   GlobalStyles_default,
   useDefaultProps
-} from "./chunk-CTWFGSO4.js";
-import {
-  require_prop_types
-} from "./chunk-Q23ZINBZ.js";
+} from "./chunk-K3QTIL7G.js";
 import {
   require_jsx_runtime
 } from "./chunk-UVB6IW5S.js";
+import {
+  require_prop_types
+} from "./chunk-Q23ZINBZ.js";
 import {
   _extends,
   init_extends
@@ -123,4 +123,4 @@ export {
   body,
   CssBaseline_default
 };
-//# sourceMappingURL=chunk-2X5TFPGY.js.map
+//# sourceMappingURL=chunk-XTGUQV2O.js.map

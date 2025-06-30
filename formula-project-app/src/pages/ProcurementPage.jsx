@@ -42,33 +42,33 @@ import {
   Badge
 } from '@mui/material';
 import {
-  Cart as ProcurementIcon,
-  Plus as AddIcon,
-  Receipt as PurchaseOrderIcon,
-  Building as VendorIcon,
-  StatsReport as AnalyticsIcon,
-  Truck as DeliveryIcon,
-  CheckCircle as ApprovedIcon,
-  Clock as PendingIcon,
-  AlertCircle as OverdueIcon,
-  DollarSign as CostIcon,
-  Trending as TrendIcon,
-  Package as PackageIcon,
-  Edit as EditIcon,
-  Eye as ViewIcon,
-  Download as DownloadIcon,
-  Filter as FilterIcon,
-  Calendar as CalendarIcon,
-  User as UserIcon,
-  Phone as PhoneIcon,
-  Mail as EmailIcon,
-  Star as StarIcon,
-  ArrowUp as ArrowUpIcon,
-  ArrowDown as ArrowDownIcon,
-  MoreVert as MoreIcon,
-  Refresh as RefreshIcon,
-  Upload as UploadIcon
-} from 'iconoir-react';
+  MdShoppingBag as ProcurementIcon,
+  MdAdd as AddIcon,
+  MdReceipt as PurchaseOrderIcon,
+  MdBusiness as VendorIcon,
+  MdAnalytics as AnalyticsIcon,
+  MdLocalShipping as DeliveryIcon,
+  MdCheckCircle as ApprovedIcon,
+  MdSchedule as PendingIcon,
+  MdError as OverdueIcon,
+  MdAttachMoney as CostIcon,
+  MdTrendingUp as TrendIcon,
+  MdInventory as PackageIcon,
+  MdEdit as EditIcon,
+  MdVisibility as ViewIcon,
+  MdDownload as DownloadIcon,
+  MdFilterList as FilterIcon,
+  MdCalendarToday as CalendarIcon,
+  MdPerson as UserIcon,
+  MdPhone as PhoneIcon,
+  MdEmail as EmailIcon,
+  MdStar as StarIcon,
+  MdKeyboardArrowUp as ArrowUpIcon,
+  MdKeyboardArrowDown as ArrowDownIcon,
+  MdMoreVert as MoreIcon,
+  MdRefresh as RefreshIcon,
+  MdCloudUpload as UploadIcon
+} from 'react-icons/md';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line, Legend } from 'recharts';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import apiService from '../services/api/apiService';
@@ -383,34 +383,34 @@ const ProcurementPage = () => {
         label="Purchase Orders" 
         isActive={activeTab === 'purchase-orders'}
         onClick={() => setActiveTab('purchase-orders')}
-        icon={<PurchaseOrderIcon sx={{ fontSize: 16 }} />}
+        icon={<PurchaseOrderIcon size={16} />}
         badge={procurementStats.totalOrders}
       />
       <CleanTab 
         label="Vendor Management" 
         isActive={activeTab === 'vendor-management'}
         onClick={() => setActiveTab('vendor-management')}
-        icon={<VendorIcon sx={{ fontSize: 16 }} />}
+        icon={<VendorIcon size={16} />}
         badge={procurementStats.activeVendors}
       />
       <CleanTab 
         label="Cost Analysis" 
         isActive={activeTab === 'cost-analysis'}
         onClick={() => setActiveTab('cost-analysis')}
-        icon={<AnalyticsIcon sx={{ fontSize: 16 }} />}
+        icon={<AnalyticsIcon size={16} />}
       />
       <CleanTab 
         label="Delivery Tracking" 
         isActive={activeTab === 'delivery-tracking'}
         onClick={() => setActiveTab('delivery-tracking')}
-        icon={<DeliveryIcon sx={{ fontSize: 16 }} />}
+        icon={<DeliveryIcon size={16} />}
         badge={procurementStats.overdueDeliveries > 0 ? procurementStats.overdueDeliveries : null}
       />
       <CleanTab 
         label="Pending Approval" 
         isActive={activeTab === 'pending-approval'}
         onClick={() => setActiveTab('pending-approval')}
-        icon={<PendingIcon sx={{ fontSize: 16 }} />}
+        icon={<PendingIcon size={16} />}
         badge={procurementStats.pendingOrders}
       />
     </>
@@ -617,7 +617,7 @@ const ProcurementOverview = ({ stats }) => {
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundPalette: `${color}20`,
+              backgroundColor: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -631,9 +631,9 @@ const ProcurementOverview = ({ stats }) => {
         {trend && (
           <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
             {trend > 0 ? (
-              <ArrowUpIcon sx={{ fontSize: 16, color: '#10B981', mr: 0.5 }} />
+              <ArrowUpIcon size={16} style={{ color: '#10B981', marginRight: 4 }} />
             ) : (
-              <ArrowDownIcon sx={{ fontSize: 16, color: '#EF4444', mr: 0.5 }} />
+              <ArrowDownIcon size={16} style={{ color: '#EF4444', marginRight: 4 }} />
             )}
             <Typography variant="caption" sx={{ 
               color: trend > 0 ? '#10B981' : '#EF4444',
@@ -717,11 +717,11 @@ const PurchaseOrdersTab = ({ purchaseOrders, vendors, projects, onViewPO, onCrea
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'approved': return <ApprovedIcon sx={{ fontSize: 16 }} />;
-      case 'pending': return <PendingIcon sx={{ fontSize: 16 }} />;
-      case 'rejected': return <OverdueIcon sx={{ fontSize: 16 }} />;
+      case 'approved': return <ApprovedIcon size={16} />;
+      case 'pending': return <PendingIcon size={16} />;
+      case 'rejected': return <OverdueIcon size={16} />;
       case 'delivered': return <PackageIcon sx={{ fontSize: 16 }} />;
-      default: return <PendingIcon sx={{ fontSize: 16 }} />;
+      default: return <PendingIcon size={16} />;
     }
   };
 
@@ -744,7 +744,7 @@ const PurchaseOrdersTab = ({ purchaseOrders, vendors, projects, onViewPO, onCrea
           variant="contained"
           startIcon={<AddIcon />}
           onClick={onCreatePO}
-          sx={{ backgroundPalette: '#E3AF64' }}
+          sx={{ backgroundColor: '#E3AF64' }}
         >
           Create New Order
         </Button>
@@ -789,7 +789,7 @@ const PurchaseOrdersTab = ({ purchaseOrders, vendors, projects, onViewPO, onCrea
                     label={po.status.replace('-', ' ').toUpperCase()}
                     size="small"
                     sx={{
-                      backgroundPalette: `${getStatusPalette(po.status)}20`,
+                      backgroundColor: `${getStatusPalette(po.status)}20`,
                       color: getStatusPalette(po.status),
                       fontWeight: 600,
                       fontSize: '11px'
@@ -801,7 +801,7 @@ const PurchaseOrdersTab = ({ purchaseOrders, vendors, projects, onViewPO, onCrea
                     label={po.priority.toUpperCase()}
                     size="small"
                     sx={{
-                      backgroundPalette: `${getPriorityPalette(po.priority)}20`,
+                      backgroundColor: `${getPriorityPalette(po.priority)}20`,
                       color: getPriorityPalette(po.priority),
                       fontWeight: 500,
                       fontSize: '10px'
@@ -826,7 +826,7 @@ const PurchaseOrdersTab = ({ purchaseOrders, vendors, projects, onViewPO, onCrea
                 <TableCell>
                   <Box sx={{ display: 'flex', gap: 0.5 }}>
                     <IconButton size="small" onClick={() => onViewPO(po)}>
-                      <ViewIcon sx={{ fontSize: 16 }} />
+                      <ViewIcon size={16} />
                     </IconButton>
                     {po.status === 'pending' && (
                       <>
@@ -835,14 +835,14 @@ const PurchaseOrdersTab = ({ purchaseOrders, vendors, projects, onViewPO, onCrea
                           onClick={() => onApprovePO(po.id)}
                           sx={{ color: '#10B981' }}
                         >
-                          <ApprovedIcon sx={{ fontSize: 16 }} />
+                          <ApprovedIcon size={16} />
                         </IconButton>
                         <IconButton 
                           size="small" 
                           onClick={() => onRejectPO(po.id)}
                           sx={{ color: '#EF4444' }}
                         >
-                          <OverdueIcon sx={{ fontSize: 16 }} />
+                          <OverdueIcon size={16} />
                         </IconButton>
                       </>
                     )}
@@ -880,7 +880,7 @@ const VendorManagementTab = ({ vendors, purchaseOrders, onCreateVendor }) => {
           variant="contained"
           startIcon={<AddIcon />}
           onClick={onCreateVendor}
-          sx={{ backgroundPalette: '#E3AF64' }}
+          sx={{ backgroundColor: '#E3AF64' }}
         >
           Add New Vendor
         </Button>
@@ -908,7 +908,7 @@ const VendorManagementTab = ({ vendors, purchaseOrders, onCreateVendor }) => {
                       label={vendor.status.toUpperCase()}
                       size="small"
                       sx={{
-                        backgroundPalette: vendor.status === 'active' ? '#10B98120' : '#6B728020',
+                        backgroundColor: vendor.status === 'active' ? '#10B98120' : '#6B728020',
                         color: vendor.status === 'active' ? '#10B981' : '#6B7280',
                         fontSize: '10px'
                       }}
@@ -916,7 +916,7 @@ const VendorManagementTab = ({ vendors, purchaseOrders, onCreateVendor }) => {
                   </Box>
 
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                    <StarIcon sx={{ fontSize: 16, color: getVendorRatingPalette(vendor.rating) }} />
+                    <StarIcon size={16} style={{ color: getVendorRatingPalette(vendor.rating) }} />
                     <Typography variant="body2" sx={{ color: '#0F1939', fontWeight: 600 }}>
                       {vendor.rating.toFixed(1)}
                     </Typography>
@@ -956,19 +956,19 @@ const VendorManagementTab = ({ vendors, purchaseOrders, onCreateVendor }) => {
 
                   <Box sx={{ mb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                      <UserIcon sx={{ fontSize: 14, color: '#6B7280' }} />
+                      <UserIcon size={14} style={{ color: '#6B7280' }} />
                       <Typography variant="body2" sx={{ color: '#0F1939' }}>
                         {vendor.contactPerson}
                       </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                      <EmailIcon sx={{ fontSize: 14, color: '#6B7280' }} />
+                      <EmailIcon size={14} style={{ color: '#6B7280' }} />
                       <Typography variant="body2" sx={{ color: '#6B7280' }}>
                         {vendor.email}
                       </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <PhoneIcon sx={{ fontSize: 14, color: '#6B7280' }} />
+                      <PhoneIcon size={14} style={{ color: '#6B7280' }} />
                       <Typography variant="body2" sx={{ color: '#6B7280' }}>
                         {vendor.phone}
                       </Typography>
@@ -987,7 +987,7 @@ const VendorManagementTab = ({ vendors, purchaseOrders, onCreateVendor }) => {
                             label={cert}
                             size="small"
                             sx={{
-                              backgroundPalette: '#F6F3E7',
+                              backgroundColor: '#F6F3E7',
                               color: '#6B7280',
                               fontSize: '10px',
                               height: 20
@@ -1092,7 +1092,7 @@ const CostAnalysisTab = ({ purchaseOrders, projects, vendors, stats }) => {
                     <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} />
                     <RechartsTooltip
                       contentStyle={{
-                        backgroundPalette: '#FFFFFF',
+                        backgroundColor: '#FFFFFF',
                         border: '1px solid #E5E7EB',
                         borderRadius: 8,
                         fontSize: 12
@@ -1141,7 +1141,7 @@ const CostAnalysisTab = ({ purchaseOrders, projects, vendors, stats }) => {
                     </Pie>
                     <RechartsTooltip
                       contentStyle={{
-                        backgroundPalette: '#FFFFFF',
+                        backgroundColor: '#FFFFFF',
                         border: '1px solid #E5E7EB',
                         borderRadius: 8,
                         fontSize: 12
@@ -1227,7 +1227,7 @@ const DeliveryTrackingTab = ({ deliveries, purchaseOrders, vendors }) => {
       case 'delivered': return <PackageIcon sx={{ fontSize: 16 }} />;
       case 'in-transit': return <DeliveryIcon sx={{ fontSize: 16 }} />;
       case 'delayed': return <OverdueIcon sx={{ fontSize: 16 }} />;
-      default: return <PendingIcon sx={{ fontSize: 16 }} />;
+      default: return <PendingIcon size={16} />;
     }
   };
 
@@ -1263,7 +1263,7 @@ const DeliveryTrackingTab = ({ deliveries, purchaseOrders, vendors }) => {
                       label={delivery.status.replace('-', ' ').toUpperCase()}
                       size="small"
                       sx={{
-                        backgroundPalette: `${getDeliveryStatusPalette(delivery.status)}20`,
+                        backgroundColor: `${getDeliveryStatusPalette(delivery.status)}20`,
                         color: getDeliveryStatusPalette(delivery.status),
                         fontWeight: 600,
                         fontSize: '11px'
@@ -1343,7 +1343,7 @@ const PendingApprovalTab = ({ purchaseOrders, vendors, projects, onApprovePO, on
   if (purchaseOrders.length === 0) {
     return (
       <Box sx={{ textAlign: 'center', py: 8 }}>
-        <ApprovedIcon sx={{ fontSize: 64, color: '#10B981', mb: 2 }} />
+        <ApprovedIcon size={64} style={{ color: '#10B981', marginBottom: 16 }} />
         <Typography variant="h6" sx={{ color: '#0F1939', mb: 1 }}>
           All Purchase Orders Approved
         </Typography>
@@ -1385,7 +1385,7 @@ const PendingApprovalTab = ({ purchaseOrders, vendors, projects, onApprovePO, on
                       label={po.priority.toUpperCase()}
                       size="small"
                       sx={{
-                        backgroundPalette: `${getPriorityPalette(po.priority)}20`,
+                        backgroundColor: `${getPriorityPalette(po.priority)}20`,
                         color: getPriorityPalette(po.priority),
                         fontWeight: 600,
                         fontSize: '11px'
@@ -1444,8 +1444,8 @@ const PendingApprovalTab = ({ purchaseOrders, vendors, projects, onApprovePO, on
                       startIcon={<ApprovedIcon />}
                       onClick={() => onApprovePO(po.id)}
                       sx={{ 
-                        backgroundPalette: '#10B981',
-                        '&:hover': { backgroundPalette: '#059669' }
+                        backgroundColor: '#10B981',
+                        '&:hover': { backgroundColor: '#059669' }
                       }}
                     >
                       Approve
@@ -1457,8 +1457,8 @@ const PendingApprovalTab = ({ purchaseOrders, vendors, projects, onApprovePO, on
                       onClick={() => onRejectPO(po.id)}
                       sx={{ 
                         color: '#EF4444',
-                        borderPalette: '#EF4444',
-                        '&:hover': { backgroundPalette: '#EF444420' }
+                        borderColor: '#EF4444',
+                        '&:hover': { backgroundColor: '#EF444420' }
                       }}
                     >
                       Reject

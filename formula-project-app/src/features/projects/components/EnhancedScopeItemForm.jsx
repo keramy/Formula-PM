@@ -225,7 +225,7 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
         />
 
         {/* Total Price Display */}
-        <Paper sx={{ p: 3, backgroundPalette: '#F8F9FA', border: '2px solid #27AE60', borderRadius: 2 }}>
+        <Paper sx={{ p: 3, backgroundColor: '#F8F9FA', border: '2px solid #27AE60', borderRadius: 2 }}>
           <Typography variant="h5" sx={{ color: '#27AE60', fontWeight: 700, textAlign: 'center' }}>
             Total Price: ${totalPrice.toLocaleString()}
           </Typography>
@@ -247,17 +247,17 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
                 >
                   <MenuItem value="pending">
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Chip label="Pending" size="small" sx={{ backgroundPalette: '#9E9E9E', color: 'white' }} />
+                      <Chip label="Pending" size="small" sx={{ backgroundColor: '#9E9E9E', color: 'white' }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="in-progress">
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Chip label="In Progress" size="small" sx={{ backgroundPalette: '#FF9800', color: 'white' }} />
+                      <Chip label="In Progress" size="small" sx={{ backgroundColor: '#FF9800', color: 'white' }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="completed">
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Chip label="Completed" size="small" sx={{ backgroundPalette: '#4CAF50', color: 'white' }} />
+                      <Chip label="Completed" size="small" sx={{ backgroundColor: '#4CAF50', color: 'white' }} />
                     </Box>
                   </MenuItem>
                 </Select>
@@ -296,7 +296,7 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#2C3E50' }}>
             8. Connections & Requirements
           </Typography>
-          <Paper sx={{ p: 3, backgroundPalette: '#F8F9FA', borderRadius: 2 }}>
+          <Paper sx={{ p: 3, backgroundColor: '#F8F9FA', borderRadius: 2 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <FormControlLabel
@@ -378,7 +378,7 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
             borderRadius: 2, 
             p: 3,
             textAlign: 'center',
-            backgroundPalette: '#F8F9FA'
+            backgroundColor: '#F8F9FA'
           }}>
             <input
               accept="*/*"
@@ -433,10 +433,10 @@ const EnhancedScopeItemForm = ({ item, categories, onSubmit, onCancel }) => {
                 borderRadius: '20px',
                 textTransform: 'none',
                 fontWeight: 600,
-                backgroundPalette: '#27AE60',
+                backgroundColor: '#27AE60',
                 px: 4,
                 '&:hover': {
-                  backgroundPalette: '#229954'
+                  backgroundColor: '#229954'
                 }
               }}
             >

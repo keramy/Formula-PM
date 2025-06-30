@@ -6,18 +6,18 @@ import {
   Alert
 } from '@mui/material';
 import {
-  ArrowUp as ArrowUp,
-  ClipboardCheck,
-  Calendar,
-  EditPencil as DesignPencil,
-  Building as Page,
-  Bell,
-  Reports as Reports,
-  EditPencil as Edit,
-  Settings,
-  ArrowLeft,
-  ArrowRight
-} from 'iconoir-react';
+  MdKeyboardArrowUp as ArrowUp,
+  MdTask as ClipboardCheck,
+  MdCalendarToday as Calendar,
+  MdEdit as DesignPencil,
+  MdBusiness as Page,
+  MdNotifications as Bell,
+  MdAnalytics as Reports,
+  MdEdit as Edit,
+  MdSettings as Settings,
+  MdArrowBack as ArrowLeft,
+  MdArrowForward as ArrowRight
+} from 'react-icons/md';
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigation } from '../../../context/NavigationContext';
 import CleanPageLayout, { CleanTab } from '../../../components/layout/CleanPageLayout';

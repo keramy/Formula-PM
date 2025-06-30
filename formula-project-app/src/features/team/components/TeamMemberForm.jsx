@@ -12,12 +12,12 @@ import {
   Chip
 } from '@mui/material';
 import {
-  Person,
-  Email,
-  Phone,
-  Work,
-  Star
-} from 'iconoir-react';
+  MdPerson as Person,
+  MdEmail as Email,
+  MdPhone as Phone,
+  MdWork as Work,
+  MdStar as Star
+} from 'react-icons/md';
 
 const roles = [
   { value: 'project_manager', label: 'Project Manager', color: '#e74c3c', level: 5 },
@@ -153,7 +153,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
       )}
 
       {/* Preview Card */}
-      <Paper sx={{ p: 2, backgroundPalette: '#f8f9fa' }}>
+      <Paper sx={{ p: 2, backgroundColor: '#f8f9fa' }}>
         <Typography variant="subtitle2" gutterBottom color="text.secondary">
           Preview
         </Typography>
@@ -174,7 +174,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
                   label={roles.find(r => r.value === formData.role)?.label} 
                   size="small"
                   sx={{ 
-                    backgroundPalette: roles.find(r => r.value === formData.role)?.color + '20',
+                    backgroundColor: roles.find(r => r.value === formData.role)?.color + '20',
                     color: roles.find(r => r.value === formData.role)?.color 
                   }}
                 />
@@ -276,7 +276,7 @@ function TeamMemberForm({ onSubmit, teamMembers = [] }) {
                   <Chip 
                     label={`Level ${role.level}`} 
                     size="small" 
-                    sx={{ backgroundPalette: role.color + '20', color: role.color }}
+                    sx={{ backgroundColor: role.color + '20', color: role.color }}
                   />
                 </Box>
               </MenuItem>

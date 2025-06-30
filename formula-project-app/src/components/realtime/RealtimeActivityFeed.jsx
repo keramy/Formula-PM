@@ -23,16 +23,16 @@ import {
   Collapse
 } from '@mui/material';
 import {
-  ClipboardCheck as TaskIcon,
-  Refresh as UpdateIcon,
-  User as PersonIcon,
-  ChatBubble as CommentIcon,
-  Page as FileIcon,
-  Bell as NotificationIcon,
-  NavArrowDown as ExpandMoreIcon,
-  NavArrowUp as ExpandLessIcon,
-  Dot as CircleIcon
-} from 'iconoir-react';
+  MdTask as TaskIcon,
+  MdRefresh as UpdateIcon,
+  MdPerson as PersonIcon,
+  MdComment as CommentIcon,
+  MdDescription as FileIcon,
+  MdNotifications as NotificationIcon,
+  MdExpandMore as ExpandMoreIcon,
+  MdExpandLess as ExpandLessIcon,
+  MdCircle as CircleIcon
+} from 'react-icons/md';
 // import { useSocketEvent } from '../../hooks/useSocket';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -171,7 +171,7 @@ const RealtimeActivityFeed = ({
                 width: '4px'
               },
               '&::-webkit-scrollbar-thumb': {
-                backgroundPalette: 'rgba(0,0,0,0.2)',
+                backgroundColor: 'rgba(0,0,0,0.2)',
                 borderRadius: '2px'
               }
             }}
@@ -237,7 +237,7 @@ const RealtimeActivityFeed = ({
               width: '8px'
             },
             '&::-webkit-scrollbar-thumb': {
-              backgroundPalette: 'rgba(0,0,0,0.2)',
+              backgroundColor: 'rgba(0,0,0,0.2)',
               borderRadius: '4px'
             }
           }}
@@ -257,7 +257,7 @@ const RealtimeActivityFeed = ({
                       sx={{
                         borderLeft: activity.isNew ? 3 : 0,
                         borderPalette: 'primary.main',
-                        backgroundPalette: activity.isNew ? 'action.hover' : 'transparent',
+                        backgroundColor: activity.isNew ? 'action.hover' : 'transparent',
                         mb: 1,
                         borderRadius: 1
                       }}

@@ -17,11 +17,11 @@ import {
   IconButton
 } from '@mui/material';
 import {
-  Circle as CircleIcon,
-  Eye as VisibilityIcon,
-  Edit as EditIcon,
-  Chat as ChatIcon
-} from 'iconoir-react';
+  MdCircle as CircleIcon,
+  MdVisibility as VisibilityIcon,
+  MdEdit as EditIcon,
+  MdChat as ChatIcon
+} from 'react-icons/md';
 import { usePresence, useSocketEvent } from '../../hooks/useSocket';
 
 const PresenceIndicators = ({ 

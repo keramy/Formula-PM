@@ -16,15 +16,15 @@ import {
   useTheme
 } from '@mui/material';
 import {
-  MoreVert,
-  Calendar,
-  LocationOn,
-  Engineering,
-  Warning,
-  CheckCircle,
-  Group,
-  AttachMoney
-} from 'iconoir-react';
+  MdMoreVert as MoreVert,
+  MdCalendarToday as Calendar,
+  MdLocationOn as LocationOn,
+  MdEngineering as Engineering,
+  MdWarning as Warning,
+  MdCheckCircle as CheckCircle,
+  MdGroup as Group,
+  MdAttachMoney as AttachMoney
+} from 'react-icons/md';
 // Now using React Icons system
 import { getConstructionIcon, ConstructionIcons } from '../icons';
 import { FaHardHat, FaSearch } from 'react-icons/fa';

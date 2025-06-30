@@ -39,21 +39,21 @@ import {
   Tab
 } from '@mui/material';
 import {
-  Plus as AddIcon,
-  Edit as EditIcon,
-  Trash as DeleteIcon,
-  Copy as CopyIcon,
-  Download as DownloadIcon,
-  CloudUpload as UploadIcon,
-  MoreVert as MoreVertIcon,
-  Page as TemplateIcon,
-  TagOutline as CategoryIcon,
-  Settings as StandardIcon,
-  ArrowDown as ExpandMoreIcon,
-  CheckCircle as CheckIcon,
-  Check as RuleIcon,
-  Palette as CustomizeIcon
-} from 'iconoir-react';
+  MdAdd as AddIcon,
+  MdEdit as EditIcon,
+  MdDelete as DeleteIcon,
+  MdContentCopy as CopyIcon,
+  MdDownload as DownloadIcon,
+  MdCloudUpload as UploadIcon,
+  MdMoreVert as MoreVertIcon,
+  MdDescription as TemplateIcon,
+  MdLabel as CategoryIcon,
+  MdSettings as StandardIcon,
+  MdKeyboardArrowDown as ExpandMoreIcon,
+  MdCheckCircle as CheckIcon,
+  MdCheck as RuleIcon,
+  MdPalette as CustomizeIcon
+} from 'react-icons/md';
 
 const SpecificationTemplates = ({ 
   onCreateFromTemplate,

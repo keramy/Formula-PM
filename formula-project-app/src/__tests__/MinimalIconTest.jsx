@@ -1,7 +1,14 @@
 import React from 'react';
 
 // Test minimal imports that should work
-import { Home, Search, Menu, Settings, User, Plus } from 'iconoir-react';
+import {
+  MdHome as Home,
+  MdSearch as Search,
+  MdMenu as Menu,
+  MdSettings as Settings,
+  MdPerson as User,
+  MdAdd as Plus
+} from 'react-icons/md';
 
 const MinimalIconTest = () => {
   return (

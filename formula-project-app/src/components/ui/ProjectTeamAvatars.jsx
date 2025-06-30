@@ -42,7 +42,7 @@ const ProjectTeamAvatars = ({
           sx={{
             width: size === 'small' ? 24 : size === 'large' ? 40 : 32,
             height: size === 'small' ? 24 : size === 'large' ? 40 : 32,
-            backgroundPalette: '#bdc3c7',
+            backgroundColor: '#bdc3c7',
             fontSize: size === 'small' ? '0.7rem' : '0.8rem'
           }}
         >
@@ -107,12 +107,12 @@ const ProjectTeamAvatars = ({
               height: size === 'small' ? 20 : 24,
               fontSize: size === 'small' ? '0.7rem' : '0.75rem',
               fontWeight: 600,
-              backgroundPalette: '#f8f9fa',
+              backgroundColor: '#f8f9fa',
               color: '#495057',
               cursor: 'pointer',
               border: '1px solid #dee2e6',
               '&:hover': {
-                backgroundPalette: '#e9ecef',
+                backgroundColor: '#e9ecef',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
               },
               transition: 'all 0.2s ease'
@@ -152,7 +152,7 @@ const ProjectTeamAvatars = ({
                   borderRadius: 1,
                   mb: 1,
                   '&:hover': {
-                    backgroundPalette: 'primary.light',
+                    backgroundColor: 'primary.light',
                     '& .MuiListItemText-primary': {
                       color: 'primary.contrastText'
                     },

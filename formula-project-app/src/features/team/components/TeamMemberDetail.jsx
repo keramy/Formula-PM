@@ -20,21 +20,21 @@ import {
   Paper
 } from '@mui/material';
 import {
-  ArrowBack,
-  Email,
-  Phone,
-  Work,
-  CalendarToday,
-  Check,
-  CheckCircle,
-  Warning,
-  Person,
-  ArrowUp,
-  Calendar,
-  PlayArrow,
-  Flag,
-  PriorityHigh
-} from 'iconoir-react';
+  MdArrowBack as ArrowBack,
+  MdEmail as Email,
+  MdPhone as Phone,
+  MdWork as Work,
+  MdCalendarToday as CalendarToday,
+  MdCheck as Check,
+  MdCheckCircle as CheckCircle,
+  MdWarning as Warning,
+  MdPerson as Person,
+  MdKeyboardArrowUp as ArrowUp,
+  MdCalendarToday as Calendar,
+  MdPlayArrow as PlayArrow,
+  MdFlag as Flag,
+  MdPriorityHigh as PriorityHigh
+} from 'react-icons/md';
 
 const TeamMemberDetail = ({ 
   member, 
@@ -151,7 +151,7 @@ const TeamMemberDetail = ({
                 label={member.role}
                 size="medium"
                 sx={{
-                  backgroundPalette: member.rolePalette + '20',
+                  backgroundColor: member.rolePalette + '20',
                   color: member.rolePalette,
                   fontWeight: 600,
                   mb: 2
@@ -248,9 +248,9 @@ const TeamMemberDetail = ({
                   sx={{
                     height: 8,
                     borderRadius: 4,
-                    backgroundPalette: '#f0f0f0',
+                    backgroundColor: '#f0f0f0',
                     '& .MuiLinearProgress-bar': {
-                      backgroundPalette: stats.completionRate >= 80 ? '#27ae60' : stats.completionRate >= 60 ? '#f39c12' : '#e74c3c'
+                      backgroundColor: stats.completionRate >= 80 ? '#27ae60' : stats.completionRate >= 60 ? '#f39c12' : '#e74c3c'
                     }
                   }}
                 />
@@ -316,7 +316,7 @@ const TeamMemberDetail = ({
                                 size="small"
                                 icon={priority.icon}
                                 sx={{
-                                  backgroundPalette: priority.bgPalette,
+                                  backgroundColor: priority.bgPalette,
                                   color: priority.color,
                                   fontWeight: 500,
                                   '& .MuiChip-icon': {
@@ -332,7 +332,7 @@ const TeamMemberDetail = ({
                                 size="small"
                                 icon={status.icon}
                                 sx={{
-                                  backgroundPalette: status.bgPalette,
+                                  backgroundColor: status.bgPalette,
                                   color: status.color,
                                   fontWeight: 500,
                                   '& .MuiChip-icon': {
@@ -375,7 +375,7 @@ const TeamMemberDetail = ({
                                     flex: 1,
                                     height: 6,
                                     borderRadius: 3,
-                                    backgroundPalette: '#f0f0f0'
+                                    backgroundColor: '#f0f0f0'
                                   }}
                                 />
                                 <Typography variant="caption" sx={{ minWidth: 30 }}>
@@ -426,7 +426,7 @@ const TeamMemberDetail = ({
                               label={project.status}
                               size="small"
                               sx={{
-                                backgroundPalette: project.projectManager === member.id ? '#e3f2fd' : '#f5f5f5',
+                                backgroundColor: project.projectManager === member.id ? '#e3f2fd' : '#f5f5f5',
                                 color: project.projectManager === member.id ? '#1976d2' : '#757575',
                                 fontWeight: 500
                               }}

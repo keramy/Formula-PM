@@ -43,26 +43,26 @@ import {
   AccordionDetails
 } from '@mui/material';
 import {
-  Plus as AddIcon,
-  Cart as ProcurementIcon,
-  Quote as QuoteIcon,
-  Check as OrderIcon,
-  Delivery as DeliveryIcon,
-  CheckCircle as CompleteIcon,
-  WarningTriangle as WarningIcon,
-  Xmark as ErrorIcon,
-  Calendar as CalendarIcon,
-  Timeline as TimelineIcon,
-  DollarCircle as CostIcon,
-  Archive as InventoryIcon,
-  MoreVert as MoreVertIcon,
-  Edit as EditIcon,
-  Trash as DeleteIcon,
-  Download as DownloadIcon,
-  Mail as EmailIcon,
-  ArrowDown as ExpandMoreIcon,
-  ArrowUp as ArrowUpIcon
-} from 'iconoir-react';
+  MdAdd as AddIcon,
+  MdShoppingCart as ProcurementIcon,
+  MdFormatQuote as QuoteIcon,
+  MdCheck as OrderIcon,
+  MdLocalShipping as DeliveryIcon,
+  MdCheckCircle as CompleteIcon,
+  MdWarning as WarningIcon,
+  MdClose as ErrorIcon,
+  MdCalendarToday as CalendarIcon,
+  MdTimeline as TimelineIcon,
+  MdAttachMoney as CostIcon,
+  MdArchive as InventoryIcon,
+  MdMoreVert as MoreVertIcon,
+  MdEdit as EditIcon,
+  MdDelete as DeleteIcon,
+  MdDownload as DownloadIcon,
+  MdEmail as EmailIcon,
+  MdExpandMore as ExpandMoreIcon,
+  MdKeyboardArrowUp as ArrowUpIcon
+} from 'react-icons/md';
 
 const ProcurementWorkflow = ({ 
   specifications = [],
@@ -517,7 +517,7 @@ const ProcurementWorkflow = ({
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundPalette: '#f8f9fa' }}>
+              <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
                 <TableCell><strong>Vendor</strong></TableCell>
                 <TableCell><strong>Specifications</strong></TableCell>
                 <TableCell><strong>Amount</strong></TableCell>
@@ -564,7 +564,7 @@ const ProcurementWorkflow = ({
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundPalette: '#f8f9fa' }}>
+              <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
                 <TableCell><strong>Order Number</strong></TableCell>
                 <TableCell><strong>Vendor</strong></TableCell>
                 <TableCell><strong>Items</strong></TableCell>

@@ -28,20 +28,19 @@ import {
   Stack
 } from '@mui/material';
 import {
-  FaPlus,
-  FaEye,
-  FaEdit,
-  FaTrash,
-  FaDownload,
-  FaEllipsisV,
-  FaSearch,
-  FaFilter,
-  FaFileAlt,
-  FaCheckCircle,
-  FaClock,
-  FaExclamationTriangle,
-  // FaMagic removed
-} from 'react-icons/fa';
+  MdAdd as FaPlus,
+  MdVisibility as FaEye,
+  MdEdit as FaEdit,
+  MdDelete as FaTrash,
+  MdDownload as FaDownload,
+  MdMoreVert as FaEllipsisV,
+  MdSearch as FaSearch,
+  MdFilterList as FaFilter,
+  MdDescription as FaFileAlt,
+  MdCheckCircle as FaCheckCircle,
+  MdSchedule as FaClock,
+  MdWarning as FaExclamationTriangle
+} from 'react-icons/md';
 import { formatDistanceToNow } from 'date-fns';
 import reportService from '../services/reportService';
 // Removed AutoReportGenerator import as per feedback
@@ -193,9 +192,9 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
     // Apply search filter
     if (searchTerm) {
       filtered = filtered.filter(report =>
-        report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        report.reportNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        report.createdBy.toLowerCase().includes(searchTerm.toLowerCase())
+        (report.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (report.reportNumber || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (report.createdBy || '').toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -212,9 +211,9 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
           const dateB = new Date(b.createdAt || Date.now());
           return dateB - dateA;
         case 'title':
-          return a.title.localeCompare(b.title);
+          return (a.title || '').localeCompare(b.title || '');
         case 'status':
-          return a.status.localeCompare(b.status);
+          return (a.status || '').localeCompare(b.status || '');
         default:
           return 0;
       }
@@ -323,15 +322,15 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
                 <TableRow key={report.id} hover>
                   <TableCell>
                     <Typography variant="body2" fontWeight="medium">
-                      {report.reportNumber}
+                      {report.reportNumber || 'N/A'}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2">{report.title}</Typography>
+                    <Typography variant="body2">{report.title || 'Untitled Report'}</Typography>
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={report.type}
+                      label={report.type || 'Unknown'}
                       size="small"
                       variant="outlined"
                     />
@@ -339,12 +338,12 @@ const ReportsList = ({ projectId, onEditReport, onCreateReport }) => {
                   <TableCell>
                     <Chip
                       icon={getStatusIcon(report.status)}
-                      label={report.status}
+                      label={report.status || 'unknown'}
                       size="small"
                       color={getStatusPalette(report.status)}
                     />
                   </TableCell>
-                  <TableCell>{report.createdBy}</TableCell>
+                  <TableCell>{report.createdBy || 'Unknown'}</TableCell>
                   <TableCell>
                     <Tooltip title={new Date(report.createdAt || Date.now()).toLocaleString()}>
                       <Typography variant="body2" color="textSecondary">

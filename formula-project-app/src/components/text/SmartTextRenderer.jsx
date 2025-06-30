@@ -198,7 +198,7 @@ const SmartTextRenderer = ({
                 }}
                 sx={{
                   color: style.color,
-                  backgroundPalette: style.bgcolor,
+                  backgroundColor: style.bgcolor,
                   border: `1px solid ${style.color}40`,
                   ...sx.mentionStyle
                 }}

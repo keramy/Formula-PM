@@ -34,20 +34,20 @@ import {
   AccordionDetails
 } from '@mui/material';
 import {
-  Plus as AddIcon,
-  Upload as UploadIcon,
-  Download as DownloadIcon,
-  MoreVert as MoreVertIcon,
-  Edit as EditIcon,
-  Trash as DeleteIcon,
-  Link as LinkIcon,
-  StatsReport as ReportIcon,
-  TagOutline as CategoryIcon,
-  Archive as InventoryIcon,
-  ArrowDown as ExpandMoreIcon,
-  CloudUpload as CloudUploadIcon,
-  DataTransferDown as ExcelIcon
-} from 'iconoir-react';
+  MdAdd as AddIcon,
+  MdCloudUpload as UploadIcon,
+  MdDownload as DownloadIcon,
+  MdMoreVert as MoreVertIcon,
+  MdEdit as EditIcon,
+  MdDelete as DeleteIcon,
+  MdLink as LinkIcon,
+  MdAnalytics as ReportIcon,
+  MdLabel as CategoryIcon,
+  MdArchive as InventoryIcon,
+  MdKeyboardArrowDown as ExpandMoreIcon,
+  MdCloudUpload as CloudUploadIcon,
+  MdTableChart as ExcelIcon
+} from 'react-icons/md';
 import EnhancedHeader from '../../../components/ui/UnifiedHeader';
 import EnhancedTabSystem from '../../../components/layout/EnhancedTabSystem';
 import excelSpecificationService from '../services/excelSpecificationService';
@@ -120,9 +120,9 @@ const MaterialSpecificationsList = ({
 
   // Filter specifications
   const filteredSpecs = specifications.filter(spec => {
-    const matchesSearch = spec.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         spec.itemId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         spec.material.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (spec.description || '').toLowerCase().includes((searchTerm || '').toLowerCase()) ||
+                         (spec.itemId || '').toLowerCase().includes((searchTerm || '').toLowerCase()) ||
+                         (spec.material || '').toLowerCase().includes((searchTerm || '').toLowerCase());
     const matchesProject = selectedProject === 'all' || spec.projectId === selectedProject;
     const matchesCategory = selectedCategory === 'all' || spec.category === selectedCategory;
     return matchesSearch && matchesProject && matchesCategory;
@@ -130,8 +130,9 @@ const MaterialSpecificationsList = ({
 
   // Calculate totals
   const totalCost = filteredSpecs.reduce((sum, spec) => {
-    const costStr = typeof spec.totalCost === 'string' ? spec.totalCost : String(spec.totalCost || '0');
-    return sum + parseFloat(costStr.replace(/[$,]/g, '') || 0);
+    const costValue = spec.totalCost || spec.unitCost || '0';
+    const costStr = typeof costValue === 'string' ? costValue : String(costValue);
+    return sum + parseFloat((costStr || '0').replace(/[$,]/g, '') || 0);
   }, 0);
 
   const handleMenuOpen = (event, spec) => {
@@ -149,7 +150,7 @@ const MaterialSpecificationsList = ({
       const specData = {
         ...newSpec,
         quantity: parseInt(newSpec.quantity) || 1,
-        unitCost: parseFloat(newSpec.unitCost.replace(/[$,]/g, '') || 0),
+        unitCost: parseFloat(((newSpec.unitCost || '0').toString() || '0').replace(/[$,]/g, '') || 0),
         projectId: newSpec.projectId || (selectedProject !== 'all' ? selectedProject : null),
         linkedDrawings: [],
         status: 'pending'
@@ -238,7 +239,7 @@ const MaterialSpecificationsList = ({
     <TableContainer component={Paper} elevation={1}>
       <Table>
         <TableHead>
-          <TableRow sx={{ backgroundPalette: '#f8f9fa' }}>
+          <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
             <TableCell><strong>Item ID</strong></TableCell>
             <TableCell><strong>Description</strong></TableCell>
             <TableCell><strong>Category</strong></TableCell>
@@ -270,7 +271,7 @@ const MaterialSpecificationsList = ({
                   label={spec.category}
                   size="small"
                   variant="outlined"
-                  sx={{ backgroundPalette: '#e3f2fd' }}
+                  sx={{ backgroundColor: '#e3f2fd' }}
                 />
               </TableCell>
               <TableCell>
@@ -295,7 +296,7 @@ const MaterialSpecificationsList = ({
                   <Typography variant="body2" fontWeight={600} color="primary">
                     ${(
                       (parseFloat(spec.quantity) || 0) * 
-                      (parseFloat(spec.unitCost?.replace(/[$,]/g, '')) || 0)
+                      (parseFloat(((spec.unitCost || '0').toString() || '0').replace(/[$,]/g, '')) || 0)
                     ).toFixed(2)}
                   </Typography>
                 </Box>
@@ -349,8 +350,9 @@ const MaterialSpecificationsList = ({
       <Box>
         {Object.entries(specsByCategory).map(([category, specs]) => {
           const categoryTotal = specs.reduce((sum, spec) => {
-            const costStr = typeof spec.totalCost === 'string' ? spec.totalCost : String(spec.totalCost || '0');
-            return sum + parseFloat(costStr.replace(/[$,]/g, '') || 0);
+            const costValue = spec.totalCost || spec.unitCost || '0';
+            const costStr = typeof costValue === 'string' ? costValue : String(costValue);
+            return sum + parseFloat((costStr || '0').replace(/[$,]/g, '') || 0);
           }, 0);
 
           return (
@@ -697,7 +699,7 @@ const MaterialSpecificationsList = ({
                   bgcolor: 'grey.50', 
                   borderRadius: 1,
                   border: '1px solid',
-                  borderPalette: 'grey.300'
+                  borderColor: 'grey.300'
                 }}>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
                     Total Cost Calculation:
@@ -705,7 +707,7 @@ const MaterialSpecificationsList = ({
                   <Typography variant="h6" color="primary">
                     {newSpec.quantity} × {newSpec.unitCost} = ${(
                       (parseFloat(newSpec.quantity) || 0) * 
-                      (parseFloat(newSpec.unitCost.replace(/[$,]/g, '')) || 0)
+                      (parseFloat(((newSpec.unitCost || '0').toString() || '0').replace(/[$,]/g, '')) || 0)
                     ).toFixed(2)}
                   </Typography>
                 </Box>

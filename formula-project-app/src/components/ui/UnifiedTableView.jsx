@@ -22,11 +22,11 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  MoreVertCircle as MoreVertIcon,
-  Edit as EditIcon,
-  Trash as DeleteIcon,
-  Eye as ViewIcon
-} from 'iconoir-react';
+  MdMoreVert as MoreVertIcon,
+  MdEdit as EditIcon,
+  MdDelete as DeleteIcon,
+  MdVisibility as ViewIcon
+} from 'react-icons/md';
 
 const UnifiedTableView = ({
   data,
@@ -116,7 +116,7 @@ const UnifiedTableView = ({
                 sx={{ 
                   width: 32, 
                   height: 32,
-                  backgroundPalette: renderedValue.bgPalette || 'primary.main'
+                  backgroundColor: renderedValue.bgPalette || 'primary.main'
                 }}
               >
                 {renderedValue.fallback || '?'}
@@ -150,7 +150,7 @@ const UnifiedTableView = ({
               size="small"
               icon={renderedValue.icon || null}
               sx={{
-                backgroundPalette: renderedValue.bgPalette || 'grey.100',
+                backgroundColor: renderedValue.bgPalette || 'grey.100',
                 color: renderedValue.color || 'text.primary',
                 fontWeight: 500,
                 '& .MuiChip-icon': {
@@ -189,7 +189,7 @@ const UnifiedTableView = ({
               sx={{ 
                 width: 32, 
                 height: 32,
-                backgroundPalette: value?.bgPalette || 'primary.main'
+                backgroundColor: value?.bgPalette || 'primary.main'
               }}
             >
               {value?.fallback || (typeof value === 'string' ? value.charAt(0) : '')}
@@ -206,7 +206,7 @@ const UnifiedTableView = ({
             size="small"
             icon={value.icon || null}
             sx={{
-              backgroundPalette: value.bgPalette || 'grey.100',
+              backgroundColor: value.bgPalette || 'grey.100',
               color: value.color || 'text.primary',
               fontWeight: 500,
               '& .MuiChip-icon': {
@@ -392,7 +392,7 @@ const UnifiedTableView = ({
                       color: 'var(--gray-400)',
                       '&:hover': {
                         color: 'var(--construction-500)',
-                        backgroundPalette: 'var(--construction-50)'
+                        backgroundColor: 'var(--construction-50)'
                       }
                     }}
                   >

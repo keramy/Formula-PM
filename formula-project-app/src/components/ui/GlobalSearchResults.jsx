@@ -19,18 +19,18 @@ import {
   Button
 } from '@mui/material';
 import {
-  Folder as ProjectIcon,
-  Design2D as DrawingIcon,
-  Archive as SpecIcon,
-  Check as TaskIcon,
-  User as PersonIcon,
-  Building as ClientIcon,
-  Page as DocumentIcon,
-  ArrowDown as ExpandMoreIcon,
-  ArrowUp as ExpandLessIcon,
-  Eye as ViewIcon,
-  Search as SearchIcon
-} from 'iconoir-react';
+  MdFolder as ProjectIcon,
+  MdDesignServices as DrawingIcon,
+  MdArchive as SpecIcon,
+  MdCheck as TaskIcon,
+  MdPerson as PersonIcon,
+  MdBusiness as ClientIcon,
+  MdDescription as DocumentIcon,
+  MdExpandMore as ExpandMoreIcon,
+  MdExpandLess as ExpandLessIcon,
+  MdVisibility as ViewIcon,
+  MdSearch as SearchIcon
+} from 'react-icons/md';
 import useGlobalSearch from '../../hooks/useGlobalSearch';
 
 const GlobalSearchResults = ({ 
@@ -149,7 +149,7 @@ const GlobalSearchResults = ({
   return (
     <Card elevation={8} sx={{ maxHeight, overflow: 'auto' }}>
       {/* Header */}
-      <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0', backgroundPalette: '#f8f9fa' }}>
+      <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0', backgroundColor: '#f8f9fa' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="subtitle1" fontWeight={600}>
             Search Results
@@ -189,7 +189,7 @@ const GlobalSearchResults = ({
             <ListItem 
               button 
               onClick={() => toggleCategory(group.category)}
-              sx={{ backgroundPalette: '#f8f9fa' }}
+              sx={{ backgroundColor: '#f8f9fa' }}
             >
               <ListItemIcon>
                 <Avatar sx={{ bgcolor: group.color, width: 32, height: 32 }}>
@@ -226,7 +226,7 @@ const GlobalSearchResults = ({
                     onClick={() => handleResultClick(result)}
                     sx={{ 
                       pl: 4,
-                      '&:hover': { backgroundPalette: '#f5f5f5' }
+                      '&:hover': { backgroundColor: '#f5f5f5' }
                     }}
                   >
                     <ListItemIcon>
@@ -261,7 +261,7 @@ const GlobalSearchResults = ({
                           label={result.status}
                           size="small"
                           sx={{
-                            backgroundPalette: getStatusPalette(result),
+                            backgroundColor: getStatusPalette(result),
                             color: 'white',
                             fontSize: '0.65rem',
                             height: 18

@@ -19,18 +19,18 @@ import {
   Paper
 } from '@mui/material';
 import {
-  Plus as Add,
-  FilterList,
-  List as ViewList,
-  ViewGrid as ViewModule,
-  ArrowUp as Timeline,
-  ArrowUp as ArrowUpIcon,
-  ClipboardCheck as Task,
-  User as Group,
-  Calendar as CalendarToday,
-  Clock as Calendar,
-  Trash as MoreVert
-} from 'iconoir-react';
+  MdAdd as Add,
+  MdFilterList as FilterList,
+  MdViewList as ViewList,
+  MdViewModule as ViewModule,
+  MdTimeline as Timeline,
+  MdKeyboardArrowUp as ArrowUp,
+  MdAssignment as Task,
+  MdGroup as Group,
+  MdCalendarToday as Calendar,
+  MdMoreVert as MoreVert,
+  MdCheck as Check
+} from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { 
@@ -170,26 +170,26 @@ const ProjectsPage = ({
         label="Overview" 
         isActive={activeTab === 'overview'}
         onClick={() => setActiveTab('overview')}
-        icon={<ArrowUp sx={{ fontSize: 16 }} />}
+        icon={<Timeline size={16} />}
       />
       <CleanTab 
         label="All Projects" 
         isActive={activeTab === 'projects'}
         onClick={() => setActiveTab('projects')}
-        icon={<ViewList sx={{ fontSize: 16 }} />}
+        icon={<ViewList size={16} />}
         badge={projectStats.total}
       />
       <CleanTab 
         label="Timeline" 
         isActive={activeTab === 'timeline'}
         onClick={() => setActiveTab('timeline')}
-        icon={<Timeline sx={{ fontSize: 16 }} />}
+        icon={<Timeline size={16} />}
       />
       <CleanTab 
         label="Board" 
         isActive={activeTab === 'board'}
         onClick={() => setActiveTab('board')}
-        icon={<ViewModule sx={{ fontSize: 16 }} />}
+        icon={<ViewModule size={16} />}
       />
     </>
   );
@@ -238,7 +238,7 @@ const ProjectsPage = ({
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundPalette: `${color}20`,
+              backgroundColor: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -286,7 +286,7 @@ const ProjectsPage = ({
               </Typography>
             </Box>
             <IconButton size="small" sx={{ color: '#9CA3AF' }}>
-              <MoreVert sx={{ fontSize: 18 }} />
+              <MoreVert size={18} />
             </IconButton>
           </Box>
 
@@ -314,7 +314,7 @@ const ProjectsPage = ({
               className="clean-progress-bar"
               sx={{
                 '& .MuiLinearProgress-bar': {
-                  backgroundPalette: progressPalette
+                  backgroundColor: progressPalette
                 }
               }}
             />
@@ -322,7 +322,7 @@ const ProjectsPage = ({
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Calendar sx={{ fontSize: 14, color: '#9CA3AF' }} />
+              <Calendar size={14} style={{ color: "#9CA3AF" }} />
               <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '12px' }}>
                 Due {new Date(project.endDate).toLocaleDateString()}
               </Typography>
@@ -437,7 +437,7 @@ const ProjectsPage = ({
         <Grid item xs={12} lg={4}>
           <Card className="clean-card">
             <Box className="clean-section-header">
-              <Box className="clean-section-indicator" sx={{ backgroundPalette: '#EF4444' }}></Box>
+              <Box className="clean-section-indicator" sx={{ backgroundColor: '#EF4444' }}></Box>
               <Typography className="clean-section-title">
                 Upcoming Deadlines
               </Typography>
@@ -451,7 +451,7 @@ const ProjectsPage = ({
                       p: 2,
                       borderBottom: index < upcomingDeadlines.length - 1 ? '1px solid #E5E7EB' : 'none',
                       '&:hover': {
-                        backgroundPalette: '#F6F3E7'
+                        backgroundColor: '#F6F3E7'
                       }
                     }}
                   >
@@ -533,14 +533,14 @@ const ProjectsPage = ({
             onClick={() => setViewMode('cards')}
             size="small"
           >
-            <ViewModule sx={{ fontSize: 18 }} />
+            <ViewModule size={18} />
           </IconButton>
           <IconButton
             className={viewMode === 'list' ? 'clean-button-primary' : 'clean-button-secondary'}
             onClick={() => setViewMode('list')}
             size="small"
           >
-            <ViewList sx={{ fontSize: 18 }} />
+            <ViewList size={18} />
           </IconButton>
         </Box>
       </Box>

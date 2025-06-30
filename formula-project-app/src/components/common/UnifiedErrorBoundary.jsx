@@ -22,16 +22,16 @@ import {
   Snackbar
 } from '@mui/material';
 import {
-  Refresh as RefreshIcon,
-  ArrowDown as ExpandMoreIcon,
-  ArrowUp as ExpandLessIcon,
-  WarningTriangle as BugIcon,
-  Home as HomeIcon,
-  WarningTriangle as WarningIcon,
-  InfoCircle as InfoIcon,
-  Xmark as CloseIcon,
-  Refresh as RetryIcon
-} from 'iconoir-react';
+  MdRefresh as RefreshIcon,
+  MdKeyboardArrowDown as ExpandMoreIcon,
+  MdKeyboardArrowUp as ExpandLessIcon,
+  MdWarning as BugIcon,
+  MdHome as HomeIcon,
+  MdWarning as WarningIcon,
+  MdInfo as InfoIcon,
+  MdClose as CloseIcon,
+  MdRefresh as RetryIcon
+} from 'react-icons/md';
 import { safeGet, safeExecute, isNullOrUndefined } from '../../utils/safety';
 
 class UnifiedErrorBoundary extends Component {

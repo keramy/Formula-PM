@@ -441,7 +441,7 @@ const ProjectScope = React.memo(({ project, onClose, shopDrawings = [], material
         px: 1,
         py: 0.5,
         borderBottom: '1px solid #e0e0e0',
-        backgroundPalette: '#f8f9fa'
+        backgroundColor: '#f8f9fa'
       }}>
         <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 600 }}>
           Scope Management ({summaryStats.totalItems} items)
@@ -506,17 +506,17 @@ const ProjectScope = React.memo(({ project, onClose, shopDrawings = [], material
           <TableContainer sx={{ 
             height: '100%',
             '& .MuiTableRow-root:hover': {
-              backgroundPalette: 'transparent'
+              backgroundColor: 'transparent'
             }
           }}>
               <Table stickyHeader>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 600, backgroundPalette: '#F8F9FA' }}>Item Details</TableCell>
-                    <TableCell sx={{ fontWeight: 600, backgroundPalette: '#F8F9FA' }}>Progress</TableCell>
-                    <TableCell sx={{ fontWeight: 600, backgroundPalette: '#F8F9FA' }}>Connections</TableCell>
-                    <TableCell sx={{ fontWeight: 600, backgroundPalette: '#F8F9FA' }}>Value</TableCell>
-                    <TableCell sx={{ fontWeight: 600, backgroundPalette: '#F8F9FA' }}>Actions</TableCell>
+                    <TableCell sx={{ fontWeight: 600, backgroundColor: '#F8F9FA' }}>Item Details</TableCell>
+                    <TableCell sx={{ fontWeight: 600, backgroundColor: '#F8F9FA' }}>Progress</TableCell>
+                    <TableCell sx={{ fontWeight: 600, backgroundColor: '#F8F9FA' }}>Connections</TableCell>
+                    <TableCell sx={{ fontWeight: 600, backgroundColor: '#F8F9FA' }}>Value</TableCell>
+                    <TableCell sx={{ fontWeight: 600, backgroundColor: '#F8F9FA' }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -545,7 +545,7 @@ const ProjectScope = React.memo(({ project, onClose, shopDrawings = [], material
                                 label={item.id} 
                                 size="small"
                                 sx={{ 
-                                  backgroundPalette: '#F5F5F5', 
+                                  backgroundColor: '#F5F5F5', 
                                   color: '#666666',
                                   fontFamily: 'monospace',
                                   fontSize: '0.7rem',
@@ -557,7 +557,7 @@ const ProjectScope = React.memo(({ project, onClose, shopDrawings = [], material
                               <Chip 
                                 label={item.category || 'Uncategorized'} 
                                 size="small"
-                                sx={{ backgroundPalette: '#E3F2FD', color: '#1976D2' }}
+                                sx={{ backgroundColor: '#E3F2FD', color: '#1976D2' }}
                               />
                               <Typography variant="caption" color="text.secondary">
                                 {item.quantity} {item.unit || 'pcs'}
@@ -582,7 +582,7 @@ const ProjectScope = React.memo(({ project, onClose, shopDrawings = [], material
                                 label={item.status || 'pending'}
                                 size="small"
                                 sx={{
-                                  backgroundPalette: 
+                                  backgroundColor: 
                                     item.status === 'completed' ? '#4CAF50' :
                                     item.status === 'in-progress' ? '#FF9800' : '#9E9E9E',
                                   color: 'white',
@@ -596,7 +596,7 @@ const ProjectScope = React.memo(({ project, onClose, shopDrawings = [], material
                               sx={{
                                 height: 6,
                                 borderRadius: 3,
-                                backgroundPalette: '#f0f0f0'
+                                backgroundColor: '#f0f0f0'
                               }}
                             />
                             <Typography variant="caption" sx={{ mt: 0.5, fontWeight: 600 }}>

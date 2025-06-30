@@ -29,23 +29,23 @@ import {
   Tab
 } from '@mui/material';
 import {
-  StatsReport as ReportIcon,
-  ArrowUp as ArrowUpIcon,
-  DollarCircle as CostIcon,
-  Dashboard as PerformanceIcon,
-  Timeline as TimelineIcon,
-  PieChart as PieChartIcon,
-  BarChart as BarChartIcon,
-  Download as DownloadIcon,
-  Mail as EmailIcon,
-  Calendar as CalendarIcon,
-  CheckCircle as CompleteIcon,
-  WarningTriangle as WarningIcon,
-  Leaf as SustainabilityIcon,
-  ShieldCheck as ComplianceIcon,
-  Building as VendorIcon,
-  TagOutline as CategoryIcon
-} from 'iconoir-react';
+  MdAnalytics as ReportIcon,
+  MdKeyboardArrowUp as ArrowUpIcon,
+  MdAttachMoney as CostIcon,
+  MdDashboard as PerformanceIcon,
+  MdTimeline as TimelineIcon,
+  MdPieChart as PieChartIcon,
+  MdBarChart as BarChartIcon,
+  MdDownload as DownloadIcon,
+  MdEmail as EmailIcon,
+  MdCalendarToday as CalendarIcon,
+  MdCheckCircle as CompleteIcon,
+  MdWarning as WarningIcon,
+  MdEco as SustainabilityIcon,
+  MdSecurity as ComplianceIcon,
+  MdBusiness as VendorIcon,
+  MdLabel as CategoryIcon
+} from 'react-icons/md';
 
 const MaterialSpecsReports = ({ 
   specifications = [],
@@ -296,7 +296,7 @@ const MaterialSpecsReports = ({
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-          <TableRow sx={{ backgroundPalette: '#f8f9fa' }}>
+          <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
             <TableCell><strong>Vendor</strong></TableCell>
             <TableCell><strong>Orders</strong></TableCell>
             <TableCell><strong>On-Time Delivery</strong></TableCell>

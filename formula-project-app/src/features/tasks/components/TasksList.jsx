@@ -8,16 +8,16 @@ import {
   LinearProgress
 } from '@mui/material';
 import {
-  CheckCircle,
-  Trash as Delete,
-  User as Person,
-  Calendar as CalendarToday,
-  Check as Check,
-  Warning,
-  Undo,
-  Edit as EditIcon,
-  Eye as ViewIcon
-} from 'iconoir-react';
+  MdCheckCircle as CheckCircle,
+  MdDelete as Delete,
+  MdPerson as Person,
+  MdCalendarToday as CalendarToday,
+  MdCheck as Check,
+  MdWarning as Warning,
+  MdUndo as Undo,
+  MdEdit as EditIcon,
+  MdVisibility as ViewIcon
+} from 'react-icons/md';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';
@@ -590,7 +590,7 @@ function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, 
                           sx={{ 
                             height: 8, 
                             borderRadius: 4,
-                            backgroundPalette: 'grey.200'
+                            backgroundColor: 'grey.200'
                           }}
                         />
                       )}

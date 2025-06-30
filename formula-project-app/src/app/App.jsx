@@ -1,5 +1,4 @@
 import React from 'react';
-import { IconoirProvider } from 'iconoir-react';
 import AppProviders from '../components/providers/AppProviders';
 import GlobalComponents from '../components/global/GlobalComponents';
 import { useAppInitialization } from '../hooks/useAppInitialization';
@@ -75,14 +74,7 @@ function AppWithProviders() {
 
   // Render the main app once data is loaded and initialized
   return (
-    <IconoirProvider 
-      iconProps={{
-        color: 'currentPalette',
-        strokeWidth: 1.5,
-        width: '1.2em',
-        height: '1.2em'
-      }}
-    >
+    <>
       {/* React Router based navigation with data error handling */}
       <DataErrorBoundary fallbackMessage="Navigation system encountered an error. This might be due to data loading issues.">
         <AppRouter />
@@ -90,7 +82,7 @@ function AppWithProviders() {
       
       {/* Global components (notifications, performance monitor, etc.) */}
       <GlobalComponents />
-    </IconoirProvider>
+    </>
   );
 }
 

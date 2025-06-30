@@ -11,17 +11,17 @@ import {
   CardContent
 } from '@mui/material';
 import {
-  Package as MaterialsIcon,
-  Plus as AddIcon,
-  Upload as UploadIcon,
-  TagOutline as CategoryIcon,
-  Reports as ReportIcon,
-  Table as ExcelIcon,
-  UserBag as VendorIcon,
-  Shield as ComplianceIcon,
-  Template as TemplateIcon,
-  Cart as ProcurementIcon
-} from 'iconoir-react';
+  MdInventory as MaterialsIcon,
+  MdAdd as AddIcon,
+  MdCloudUpload as UploadIcon,
+  MdLabel as CategoryIcon,
+  MdDescription as ReportIcon,
+  MdTableChart as ExcelIcon,
+  MdPerson as VendorIcon,
+  MdSecurity as ComplianceIcon,
+  MdDescription as TemplateIcon,
+  MdShoppingBag as ProcurementIcon
+} from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import MaterialSpecificationsList from '../features/specifications/components/MaterialSpecificationsList';
 import VendorManagement from '../features/specifications/components/VendorManagement';
@@ -114,51 +114,51 @@ const MaterialSpecsPage = () => {
         label="All Specifications" 
         isActive={activeTab === 'all-specs'}
         onClick={() => setActiveTab('all-specs')}
-        icon={<MaterialsIcon sx={{ fontSize: 16 }} />}
+        icon={<MaterialsIcon size={16} />}
         badge={specs.length}
       />
       <CleanTab 
         label="By Category" 
         isActive={activeTab === 'by-category'}
         onClick={() => setActiveTab('by-category')}
-        icon={<CategoryIcon sx={{ fontSize: 16 }} />}
+        icon={<CategoryIcon size={16} />}
       />
       <CleanTab 
         label="Vendor Management" 
         isActive={activeTab === 'vendors'}
         onClick={() => setActiveTab('vendors')}
-        icon={<VendorIcon sx={{ fontSize: 16 }} />}
+        icon={<VendorIcon size={16} />}
       />
       <CleanTab 
         label="Compliance Tracking" 
         isActive={activeTab === 'compliance'}
         onClick={() => setActiveTab('compliance')}
-        icon={<ComplianceIcon sx={{ fontSize: 16 }} />}
+        icon={<ComplianceIcon size={16} />}
       />
       <CleanTab 
         label="Templates & Standards" 
         isActive={activeTab === 'templates'}
         onClick={() => setActiveTab('templates')}
-        icon={<TemplateIcon sx={{ fontSize: 16 }} />}
+        icon={<TemplateIcon size={16} />}
       />
       <CleanTab 
         label="Procurement" 
         isActive={activeTab === 'procurement'}
         onClick={() => setActiveTab('procurement')}
-        icon={<ProcurementIcon sx={{ fontSize: 16 }} />}
+        icon={<ProcurementIcon size={16} />}
       />
       <CleanTab 
         label="Pending Approval" 
         isActive={activeTab === 'pending'}
         onClick={() => setActiveTab('pending')}
-        icon={<MaterialsIcon sx={{ fontSize: 16 }} />}
+        icon={<MaterialsIcon size={16} />}
         badge={specs.filter(s => s.status === 'pending').length}
       />
       <CleanTab 
         label="Reports" 
         isActive={activeTab === 'reports'}
         onClick={() => setActiveTab('reports')}
-        icon={<ReportIcon sx={{ fontSize: 16 }} />}
+        icon={<ReportIcon size={16} />}
       />
     </>
   );

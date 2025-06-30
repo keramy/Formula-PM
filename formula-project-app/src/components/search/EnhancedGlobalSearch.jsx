@@ -24,14 +24,14 @@ import {
   useTheme
 } from '@mui/material';
 import {
-  Search as SearchIcon,
-  Xmark as CloseIcon,
-  Check as TaskIcon,
-  Building as ProjectIcon,
-  User as PersonIcon,
-  Page as FileIcon,
-  ChatBubble as CommentIcon
-} from 'iconoir-react';
+  MdSearch as SearchIcon,
+  MdClose as CloseIcon,
+  MdCheck as TaskIcon,
+  MdBusiness as ProjectIcon,
+  MdPerson as PersonIcon,
+  MdDescription as FileIcon,
+  MdChat as CommentIcon
+} from 'react-icons/md';
 import { useDebounce } from '../../hooks/useDebounce';
 import apiService from '../../services/api/apiService';
 
@@ -159,7 +159,7 @@ const EnhancedGlobalSearch = ({
           key={index} 
           component="span" 
           sx={{ 
-            backgroundPalette: 'primary.light',
+            backgroundColor: 'primary.light',
             color: 'primary.contrastText',
             px: 0.5,
             borderRadius: 0.5,
@@ -189,17 +189,17 @@ const EnhancedGlobalSearch = ({
             width: width,
             height: 40,
             px: 1.5,
-            backgroundPalette: theme.palette.action.hover,
+            backgroundColor: theme.palette.action.hover,
             border: `1px solid ${theme.palette.divider}`,
             borderRadius: 2,
             boxShadow: 'none',
             transition: 'all 0.2s ease',
             '&:hover': {
-              backgroundPalette: theme.palette.action.selected,
+              backgroundColor: theme.palette.action.selected,
               border: `1px solid ${theme.palette.primary.light}`
             },
             '&:focus-within': {
-              backgroundPalette: theme.palette.action.selected,
+              backgroundColor: theme.palette.action.selected,
               border: `1px solid ${theme.palette.primary.main}`,
               boxShadow: `0 0 0 3px ${theme.palette.action.focus}`
             }
@@ -243,7 +243,7 @@ const EnhancedGlobalSearch = ({
               sx={{ 
                 p: 0.5,
                 '&:hover': {
-                  backgroundPalette: theme.palette.action.hover
+                  backgroundColor: theme.palette.action.hover
                 }
               }}
             >
@@ -272,14 +272,14 @@ const EnhancedGlobalSearch = ({
               sx={{
                 maxHeight: 400,
                 overflowY: 'auto',
-                backgroundPalette: theme.palette.background.paper,
+                backgroundColor: theme.palette.background.paper,
                 border: `1px solid ${theme.palette.divider}`,
                 borderRadius: 2,
                 '&::-webkit-scrollbar': {
                   width: '6px'
                 },
                 '&::-webkit-scrollbar-thumb': {
-                  backgroundPalette: theme.palette.action.hover,
+                  backgroundColor: theme.palette.action.hover,
                   borderRadius: '3px'
                 }
               }}
@@ -300,7 +300,7 @@ const EnhancedGlobalSearch = ({
                         sx={{
                           py: 1.5,
                           '&:hover': {
-                            backgroundPalette: theme.palette.action.hover
+                            backgroundColor: theme.palette.action.hover
                           }
                         }}
                       >
@@ -309,7 +309,7 @@ const EnhancedGlobalSearch = ({
                             sx={{
                               width: 32,
                               height: 32,
-                              backgroundPalette: 'transparent'
+                              backgroundColor: 'transparent'
                             }}
                           >
                             {getResultIcon(result.type)}

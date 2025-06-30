@@ -23,23 +23,23 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  Activity as ActivityIcon,
-  Filter as FilterIcon,
-  Refresh as RefreshIcon,
-  Search as SearchIcon,
-  Timeline as TimelineIcon,
-  Group as TeamIcon,
-  Building as ProjectIcon,
-  Calendar as CalendarIcon,
-  Clock as TimeIcon,
-  Bell as NotificationIcon,
-  ArrowUp as ArrowUpIcon,
-  StatUp as StatsIcon,
-  User as UserIcon,
-  Settings as SettingsIcon,
-  Export as ExportIcon,
-  Eye as ViewIcon
-} from 'iconoir-react';
+  MdLocalActivity as ActivityIcon,
+  MdFilterList as FilterIcon,
+  MdRefresh as RefreshIcon,
+  MdSearch as SearchIcon,
+  MdTimeline as TimelineIcon,
+  MdGroup as TeamIcon,
+  MdBusiness as ProjectIcon,
+  MdCalendarToday as CalendarIcon,
+  MdSchedule as TimeIcon,
+  MdNotifications as NotificationIcon,
+  MdKeyboardArrowUp as ArrowUpIcon,
+  MdTrendingUp as StatsIcon,
+  MdPerson as UserIcon,
+  MdSettings as SettingsIcon,
+  MdFileDownload as ExportIcon,
+  MdVisibility as ViewIcon
+} from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import ActivityFeed from '../components/realtime/ActivityFeed';
 import RealtimeActivityFeed from '../components/realtime/RealtimeActivityFeed';
@@ -495,7 +495,7 @@ const ActivityPage = React.memo(() => {
         return (
           <Card className="clean-card">
             <Box className="clean-section-header">
-              <Box className="clean-section-indicator" sx={{ backgroundPalette: '#10B981' }}></Box>
+              <Box className="clean-section-indicator" sx={{ backgroundColor: '#10B981' }}></Box>
               <Typography className="clean-section-title">
                 Team Insights
               </Typography>
@@ -530,7 +530,7 @@ const ActivityPage = React.memo(() => {
         return (
           <Card className="clean-card">
             <Box className="clean-section-header">
-              <Box className="clean-section-indicator" sx={{ backgroundPalette: '#516AC8' }}></Box>
+              <Box className="clean-section-indicator" sx={{ backgroundColor: '#516AC8' }}></Box>
               <Typography className="clean-section-title">
                 Timeline Overview
               </Typography>
@@ -571,7 +571,7 @@ const ActivityPage = React.memo(() => {
         return (
           <Card className="clean-card">
             <Box className="clean-section-header">
-              <Box className="clean-section-indicator" sx={{ backgroundPalette: '#9CA3AF' }}></Box>
+              <Box className="clean-section-indicator" sx={{ backgroundColor: '#9CA3AF' }}></Box>
               <Typography className="clean-section-title">
                 System Status
               </Typography>

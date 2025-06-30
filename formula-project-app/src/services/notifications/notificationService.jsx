@@ -17,16 +17,16 @@ import {
   Alert
 } from '@mui/material';
 import {
-  Bell as NotificationsIcon,
-  Check as TaskIcon,
-  Folder as ProjectIcon,
-  Calendar as DueDateIcon,
-  WarningTriangle as OverdueIcon,
-  CheckCircle as CompletedIcon,
-  User as PersonIcon,
-  Xmark as CloseIcon,
-  Settings as SettingsIcon
-} from 'iconoir-react';
+  MdNotifications as NotificationsIcon,
+  MdCheck as TaskIcon,
+  MdFolder as ProjectIcon,
+  MdCalendarToday as DueDateIcon,
+  MdWarning as OverdueIcon,
+  MdCheckCircle as CompletedIcon,
+  MdPerson as PersonIcon,
+  MdClose as CloseIcon,
+  MdSettings as SettingsIcon
+} from 'react-icons/md';
 import { format, differenceInDays, isAfter, isBefore, startOfDay } from 'date-fns';
 
 // Notification Types

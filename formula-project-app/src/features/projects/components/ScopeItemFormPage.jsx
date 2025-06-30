@@ -43,7 +43,7 @@ const ScopeItemFormPage = ({
         sx={{ 
           maxWidth: 700, 
           mx: 'auto',
-          backgroundPalette: 'white',
+          backgroundColor: 'white',
           borderRadius: 3,
           border: '1px solid #E9ECEF',
           p: 4

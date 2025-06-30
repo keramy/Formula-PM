@@ -17,18 +17,18 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  Building as DrawingIcon,
-  Package as SpecIcon,
-  ClipboardCheck as TaskIcon,
-  ArrowUp as ArrowUpIcon,
-  TrendingDown as TrendingDownIcon,
-  CheckCircle as CheckIcon,
-  Clock as PendingIcon,
-  WarningTriangle as WarningIcon,
-  MoneySquare as MoneyIcon,
-  Timeline as TimelineIcon,
-  Eye as ViewIcon
-} from 'iconoir-react';
+  MdBusiness as DrawingIcon,
+  MdInventory as SpecIcon,
+  MdTask as TaskIcon,
+  MdKeyboardArrowUp as ArrowUpIcon,
+  MdTrendingDown as TrendingDownIcon,
+  MdCheckCircle as CheckIcon,
+  MdSchedule as PendingIcon,
+  MdWarning as WarningIcon,
+  MdAttachMoney as MoneyIcon,
+  MdTimeline as TimelineIcon,
+  MdVisibility as ViewIcon
+} from 'react-icons/md';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 const EnhancedDashboardWidgets = ({ 
@@ -345,7 +345,7 @@ const EnhancedDashboardWidgets = ({
                 borderRadius: 1, 
                 textAlign: 'center',
                 cursor: 'pointer',
-                '&:hover': { backgroundPalette: '#f5f5f5' }
+                '&:hover': { backgroundColor: '#f5f5f5' }
               }}
             >
               <DrawingIcon sx={{ fontSize: 32, color: '#1976d2', mb: 1 }} />
@@ -362,7 +362,7 @@ const EnhancedDashboardWidgets = ({
                 borderRadius: 1, 
                 textAlign: 'center',
                 cursor: 'pointer',
-                '&:hover': { backgroundPalette: '#f5f5f5' }
+                '&:hover': { backgroundColor: '#f5f5f5' }
               }}
             >
               <SpecIcon sx={{ fontSize: 32, color: '#388e3c', mb: 1 }} />
@@ -379,7 +379,7 @@ const EnhancedDashboardWidgets = ({
                 borderRadius: 1, 
                 textAlign: 'center',
                 cursor: 'pointer',
-                '&:hover': { backgroundPalette: '#f5f5f5' }
+                '&:hover': { backgroundColor: '#f5f5f5' }
               }}
             >
               <TaskIcon sx={{ fontSize: 32, color: '#f57c00', mb: 1 }} />
@@ -396,7 +396,7 @@ const EnhancedDashboardWidgets = ({
                 borderRadius: 1, 
                 textAlign: 'center',
                 cursor: 'pointer',
-                '&:hover': { backgroundPalette: '#f5f5f5' }
+                '&:hover': { backgroundColor: '#f5f5f5' }
               }}
             >
               <MoneyIcon sx={{ fontSize: 32, color: '#7b1fa2', mb: 1 }} />

@@ -12,11 +12,11 @@ import {
   useTheme
 } from '@mui/material';
 import {
-  ArrowUp,
-  Check,
-  CheckCircle,
-  Calendar
-} from 'iconoir-react';
+  MdKeyboardArrowUp as ArrowUp,
+  MdCheck as Check,
+  MdCheckCircle as CheckCircle,
+  MdCalendarToday as Calendar
+} from 'react-icons/md';
 
 const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
   const theme = useTheme();
@@ -145,7 +145,7 @@ const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
         elevation={0}
         sx={{
           p: 3,
-          backgroundPalette: theme.palette.background.paper,
+          backgroundColor: theme.palette.background.paper,
           border: `1px solid ${theme.palette.divider}`,
           borderRadius: 3
         }}
@@ -180,7 +180,7 @@ const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
                         width: 48, 
                         height: 48, 
                         mr: 2,
-                        backgroundPalette: '#E67E22',
+                        backgroundColor: '#E67E22',
                         fontSize: '1.2rem'
                       }}
                     >
@@ -198,7 +198,7 @@ const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
                       label={stats.productivity}
                       size="small"
                       sx={{
-                        backgroundPalette: `${getProductivityPalette(stats.productivity)}20`,
+                        backgroundColor: `${getProductivityPalette(stats.productivity)}20`,
                         color: getProductivityPalette(stats.productivity),
                         fontWeight: 600
                       }}
@@ -221,9 +221,9 @@ const TeamPerformance = ({ teamMembers = [], tasks = [], projects = [] }) => {
                       sx={{
                         height: 8,
                         borderRadius: 4,
-                        backgroundPalette: '#f0f0f0',
+                        backgroundColor: '#f0f0f0',
                         '& .MuiLinearProgress-bar': {
-                          backgroundPalette: getProductivityPalette(stats.productivity),
+                          backgroundColor: getProductivityPalette(stats.productivity),
                           borderRadius: 4
                         }
                       }}

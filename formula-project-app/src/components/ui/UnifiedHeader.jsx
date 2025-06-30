@@ -12,14 +12,14 @@ import {
 } from '@mui/material';
 // Iconoir icons - safe header icons
 import {
-  Search as SearchIcon,
-  Xmark as ClearIcon,
-  Filter as FilterIcon,
-  List as TableViewIcon,
-  ViewGrid as CardViewIcon,
-  Download as ExportIcon,
-  Plus as AddIcon
-} from 'iconoir-react';
+  MdSearch as SearchIcon,
+  MdClose as ClearIcon,
+  MdFilterList as FilterIcon,
+  MdList as TableViewIcon,
+  MdViewModule as CardViewIcon,
+  MdDownload as ExportIcon,
+  MdAdd as AddIcon
+} from 'react-icons/md';
 
 const UnifiedHeader = ({
   title,
@@ -70,7 +70,7 @@ const UnifiedHeader = ({
                   onClick={() => onViewModeChange('card')}
                   sx={{
                     color: viewMode === 'card' ? 'primary.main' : 'text.secondary',
-                    backgroundPalette: viewMode === 'card' ? 'action.selected' : 'transparent',
+                    backgroundColor: viewMode === 'card' ? 'action.selected' : 'transparent',
                     borderRadius: '4px 0 0 4px'
                   }}
                 >
@@ -83,7 +83,7 @@ const UnifiedHeader = ({
                   onClick={() => onViewModeChange('table')}
                   sx={{
                     color: viewMode === 'table' ? 'primary.main' : 'text.secondary',
-                    backgroundPalette: viewMode === 'table' ? 'action.selected' : 'transparent',
+                    backgroundColor: viewMode === 'table' ? 'action.selected' : 'transparent',
                     borderRadius: '0 4px 4px 0'
                   }}
                 >

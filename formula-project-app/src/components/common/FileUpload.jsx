@@ -188,7 +188,7 @@ function FileUpload({ taskId, projectId, files = [], onFilesChange, maxFiles = 1
           p: 3,
           mb: 3,
           border: `2px dashed ${dragOver ? '#37444B' : '#C0B19E'}`,
-          backgroundPalette: dragOver ? '#F1EEEA' : 'transparent',
+          backgroundColor: dragOver ? '#F1EEEA' : 'transparent',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
           textAlign: 'center'
@@ -249,7 +249,7 @@ function FileUpload({ taskId, projectId, files = [], onFilesChange, maxFiles = 1
                     borderPalette: 'divider',
                     borderRadius: 2,
                     mb: 1,
-                    backgroundPalette: 'background.paper'
+                    backgroundColor: 'background.paper'
                   }}
                 >
                   <ListItemIcon>

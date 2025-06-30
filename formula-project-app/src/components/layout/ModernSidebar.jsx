@@ -114,7 +114,7 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
       sx={{
         width: isCollapsed ? 70 : 280,
         height: '100vh',
-        backgroundPalette: colors.background,
+        backgroundColor: colors.background,
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
@@ -169,11 +169,11 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
             onClick={onToggleCollapse}
             sx={{
               color: colors.text,
-              backgroundPalette: 'transparent',
+              backgroundColor: 'transparent',
               width: 32,
               height: 32,
               '&:hover': {
-                backgroundPalette: theme.palette.action.hover,
+                backgroundColor: theme.palette.action.hover,
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
               },
               transition: 'all 0.2s ease',
@@ -223,13 +223,13 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                         mx: 1,
                         py: isMobile ? 1.5 : 1.5,
                         px: isMobile ? 2 : 1,
-                        backgroundPalette: currentTab === item.id ? colors.accent : 'transparent',
+                        backgroundColor: currentTab === item.id ? colors.accent : 'transparent',
                         color: currentTab === item.id ? '#ffffff !important' : colors.textSecondary,
                         justifyContent: isCollapsed ? 'center' : 'flex-start',
                         minHeight: isMobile ? 44 : 48, // Minimum 44px for mobile touch targets
                         borderLeft: currentTab === item.id ? `3px solid ${colors.accent}` : 'none',
                         '&:hover': {
-                          backgroundPalette: currentTab === item.id ? colors.accent : 'var(--rapture-light)',
+                          backgroundColor: currentTab === item.id ? colors.accent : 'var(--rapture-light)',
                           color: currentTab === item.id ? '#ffffff !important' : colors.text,
                           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                           transform: 'translateX(4px)'
@@ -292,7 +292,7 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
                     justifyContent: isCollapsed ? 'center' : 'flex-start',
                     minHeight: isMobile ? 44 : 48, // Minimum 44px for mobile touch targets
                     '&:hover': {
-                      backgroundPalette: 'var(--rapture-light)',
+                      backgroundColor: 'var(--rapture-light)',
                       color: colors.text,
                       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                       transform: 'translateX(4px)'

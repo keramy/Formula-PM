@@ -12,18 +12,18 @@ import {
 } from '@mui/material';
 // Iconoir icons - ultra-safe verified icons only
 import {
-  ViewGrid as ViewKanban,
-  TableRows,
-  Calendar as CalendarMonth,
-  ArrowUp as Timeline,
-  Cell2x2 as ViewModule,
-  Menu as MoreHoriz,
-  FilterList,
-  ViewColumns2 as ViewColumn,
-  ArrowUp as Sort,
-  ShareAndroid as Share,
-  Download as GetApp
-} from 'iconoir-react';
+  MdViewModule as ViewKanban,
+  MdTableRows as TableRows,
+  MdCalendarToday as CalendarMonth,
+  MdKeyboardArrowUp as Timeline,
+  MdViewModule as ViewModule,
+  MdMenu as MoreHoriz,
+  MdFilterList as FilterList,
+  MdViewColumn as ViewColumn,
+  MdKeyboardArrowUp as Sort,
+  MdShare as Share,
+  MdDownload as GetApp
+} from 'react-icons/md';
 
 const EnhancedTabSystem = ({ 
   currentView = 'table', 
@@ -91,7 +91,7 @@ const EnhancedTabSystem = ({
     <Box sx={{ 
       borderBottom: 1, 
       borderPalette: 'divider',
-      backgroundPalette: 'white',
+      backgroundColor: 'white',
       px: 3,
       display: 'flex',
       justifyContent: 'space-between',
@@ -116,7 +116,7 @@ const EnhancedTabSystem = ({
               }
             },
             '& .MuiTabs-indicator': {
-              backgroundPalette: '#3498db',
+              backgroundColor: '#3498db',
               height: 3,
               borderRadius: '3px 3px 0 0'
             }
@@ -137,7 +137,7 @@ const EnhancedTabSystem = ({
                       sx={{ 
                         height: 16, 
                         fontSize: '0.6rem',
-                        backgroundPalette: '#f39c12',
+                        backgroundColor: '#f39c12',
                         color: 'white'
                       }} 
                     />
@@ -178,11 +178,11 @@ const EnhancedTabSystem = ({
             size="small"
             sx={{ 
               color: hasActiveFilters ? 'primary.main' : 'text.secondary',
-              backgroundPalette: hasActiveFilters ? 'primary.50' : 'transparent',
+              backgroundColor: hasActiveFilters ? 'primary.50' : 'transparent',
               border: '1px solid',
               borderPalette: hasActiveFilters ? 'primary.main' : '#E9ECEF',
               '&:hover': {
-                backgroundPalette: hasActiveFilters ? 'primary.100' : '#F8F9FA'
+                backgroundColor: hasActiveFilters ? 'primary.100' : '#F8F9FA'
               }
             }}
           >
@@ -199,7 +199,7 @@ const EnhancedTabSystem = ({
               sx={{ 
                 color: 'text.secondary',
                 border: '1px solid #E9ECEF',
-                '&:hover': { backgroundPalette: '#F8F9FA' }
+                '&:hover': { backgroundColor: '#F8F9FA' }
               }}
             >
               <Sort fontSize="small" />
@@ -215,7 +215,7 @@ const EnhancedTabSystem = ({
             sx={{ 
               color: 'text.secondary',
               border: '1px solid #E9ECEF',
-              '&:hover': { backgroundPalette: '#F8F9FA' }
+              '&:hover': { backgroundColor: '#F8F9FA' }
             }}
           >
             <GetApp fontSize="small" />
@@ -229,7 +229,7 @@ const EnhancedTabSystem = ({
             sx={{ 
               color: 'text.secondary',
               border: '1px solid #E9ECEF',
-              '&:hover': { backgroundPalette: '#F8F9FA' }
+              '&:hover': { backgroundColor: '#F8F9FA' }
             }}
           >
             <Share fontSize="small" />
@@ -244,7 +244,7 @@ const EnhancedTabSystem = ({
             sx={{ 
               color: 'text.secondary',
               border: '1px solid #E9ECEF',
-              '&:hover': { backgroundPalette: '#F8F9FA' }
+              '&:hover': { backgroundColor: '#F8F9FA' }
             }}
           >
             <MoreHoriz fontSize="small" />

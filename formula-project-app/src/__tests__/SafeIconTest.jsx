@@ -1,34 +1,34 @@
 import React from 'react';
 
 // Test only the most basic icons that should definitely exist
-import { 
-  Home,
-  Search,
-  Menu,
-  Settings,
-  User,
-  Plus,
-  Bell,
-  Mail,
-  Check,
-  Group,
-  List,
-  Folder,
-  ArrowUp,
-  ArrowDown,
-  Dashboard,
-  Calendar,
-  Building,
-  Page,
-  ViewGrid as Apps,
-  Table,
-  Filter,
-  ShareAndroid as Share,
-  Download,
-  Xmark as XmarkCircle,
-  ArrowLeft,
-  ArrowRight
-} from 'iconoir-react';
+import {
+  MdHome as Home,
+  MdSearch as Search,
+  MdMenu as Menu,
+  MdSettings as Settings,
+  MdPerson as User,
+  MdAdd as Plus,
+  MdNotifications as Bell,
+  MdEmail as Mail,
+  MdCheck as Check,
+  MdGroup as Group,
+  MdList as List,
+  MdFolder as Folder,
+  MdKeyboardArrowUp as ArrowUp,
+  MdKeyboardArrowDown as ArrowDown,
+  MdDashboard as Dashboard,
+  MdCalendarToday as Calendar,
+  MdBusiness as Building,
+  MdDescription as Page,
+  MdViewModule as Apps,
+  MdTable as Table,
+  MdFilterList as Filter,
+  MdShare as Share,
+  MdDownload as Download,
+  MdClose as XmarkCircle,
+  MdArrowBack as ArrowLeft,
+  MdArrowForward as ArrowRight
+} from 'react-icons/md';
 
 const SafeIconTest = () => {
   const iconList = [

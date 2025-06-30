@@ -11,18 +11,18 @@ import {
   useMediaQuery,
   useTheme
 } from '@mui/material';
-import { 
-  Home,
-  Business,
-  ArrowBack,
-  NavigateNext,
-  Edit,
-  Delete,
-  Share,
-  MoreHoriz,
-  Star,
-  StarBorder
-} from 'iconoir-react';
+import {
+  MdHome as Home,
+  MdBusiness as Business,
+  MdArrowBack as ArrowBack,
+  MdNavigateNext as NavigateNext,
+  MdEdit as Edit,
+  MdDelete as Delete,
+  MdShare as Share,
+  MdMoreHoriz as MoreHoriz,
+  MdStar as Star,
+  MdStarBorder as StarBorder
+} from 'react-icons/md';
 
 const UniversalBreadcrumb = ({ 
   // Navigation data
@@ -283,7 +283,7 @@ const UniversalBreadcrumb = ({
                   sx={{
                     height: 24,
                     fontSize: '0.75rem',
-                    backgroundPalette: getStatusPalette(itemData.status),
+                    backgroundColor: getStatusPalette(itemData.status),
                     color: 'white',
                     fontWeight: 600
                   }}
@@ -321,7 +321,7 @@ const UniversalBreadcrumb = ({
                   onClick={action.onClick}
                   size="small"
                   sx={{ 
-                    backgroundPalette: action.color === 'primary' ? '#3498DB' : '#F8F9FA',
+                    backgroundColor: action.color === 'primary' ? '#3498DB' : '#F8F9FA',
                     color: action.color === 'primary' ? 'white' : 
                            action.color === 'error' ? '#E74C3C' : '#7F8C8D',
                     border: action.color === 'primary' ? 'none' : '1px solid #E9ECEF',
@@ -329,7 +329,7 @@ const UniversalBreadcrumb = ({
                     width: 36,
                     height: 36,
                     '&:hover': { 
-                      backgroundPalette: action.color === 'primary' ? '#2980B9' :
+                      backgroundColor: action.color === 'primary' ? '#2980B9' :
                                      action.color === 'error' ? '#fadbd8' : '#ECF0F1',
                       transform: 'translateY(-1px)',
                       boxShadow: action.color === 'primary' ? '0 4px 12px rgba(52, 152, 219, 0.3)' : 'none'
@@ -346,13 +346,13 @@ const UniversalBreadcrumb = ({
                 <IconButton 
                   size="small"
                   sx={{ 
-                    backgroundPalette: '#F8F9FA',
+                    backgroundColor: '#F8F9FA',
                     border: '1px solid #E9ECEF',
                     borderRadius: 2,
                     width: 36,
                     height: 36,
                     '&:hover': { 
-                      backgroundPalette: '#ECF0F1',
+                      backgroundColor: '#ECF0F1',
                       border: '1px solid #D5DBDB'
                     }
                   }}

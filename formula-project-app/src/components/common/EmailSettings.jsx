@@ -21,15 +21,15 @@ import {
   InputLabel
 } from '@mui/material';
 import {
-  Email,
-  NotificationsActive,
-  Calendar,
-  Task,
-  CheckCircle,
-  Warning,
-  Settings,
-  Send
-} from 'iconoir-react';
+  MdEmail as Email,
+  MdNotificationsActive as NotificationsActive,
+  MdCalendarToday as Calendar,
+  MdTask as Task,
+  MdCheckCircle as CheckCircle,
+  MdWarning as Warning,
+  MdSettings as Settings,
+  MdSend as Send
+} from 'react-icons/md';
 
 const notificationTypes = [
   {

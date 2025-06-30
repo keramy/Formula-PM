@@ -27,7 +27,7 @@ const LogoExamples = ({ darkMode = false }) => {
   const exampleBoxStyle = {
     p: 3,
     borderRadius: 2,
-    backgroundPalette: darkMode ? '#1a2332' : '#ffffff',
+    backgroundColor: darkMode ? '#1a2332' : '#ffffff',
     border: `1px solid ${darkMode ? '#566BA3' : '#D1D8E6'}`,
     display: 'flex',
     flexDirection: 'column',
@@ -46,7 +46,7 @@ const LogoExamples = ({ darkMode = false }) => {
   };
 
   return (
-    <Box sx={{ p: 4, backgroundPalette: darkMode ? '#0F1729' : '#FDFCFA', minHeight: '100vh' }}>
+    <Box sx={{ p: 4, backgroundColor: darkMode ? '#0F1729' : '#FDFCFA', minHeight: '100vh' }}>
       <Typography variant="h4" sx={{ mb: 4, color: darkMode ? '#F5F2E8' : '#1B2951', textAlign: 'center' }}>
         Formula International Logo System
       </Typography>
@@ -190,7 +190,7 @@ const LogoExamples = ({ darkMode = false }) => {
       </Grid>
 
       {/* Usage Instructions */}
-      <Box sx={{ mt: 4, p: 3, backgroundPalette: darkMode ? '#1a2332' : '#ffffff', borderRadius: 2 }}>
+      <Box sx={{ mt: 4, p: 3, backgroundColor: darkMode ? '#1a2332' : '#ffffff', borderRadius: 2 }}>
         <Typography variant="h6" sx={{ color: darkMode ? '#F5F2E8' : '#1B2951', mb: 2 }}>
           Usage Instructions
         </Typography>

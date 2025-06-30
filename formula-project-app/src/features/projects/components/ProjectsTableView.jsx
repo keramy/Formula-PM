@@ -182,7 +182,7 @@ const ProjectsTableView = ({
       <Box sx={{ 
         textAlign: 'center', 
         py: 8,
-        backgroundPalette: 'white',
+        backgroundColor: 'white',
         borderRadius: 2,
         border: '1px solid #E9ECEF'
       }}>
@@ -216,7 +216,7 @@ const ProjectsTableView = ({
                   key={column.id}
                   sx={{ 
                     minWidth: column.minWidth,
-                    backgroundPalette: '#F8F9FA',
+                    backgroundColor: '#F8F9FA',
                     fontWeight: 600,
                     color: '#2C3E50'
                   }}
@@ -248,7 +248,7 @@ const ProjectsTableView = ({
                   hover
                   sx={{ 
                     '&:hover': { 
-                      backgroundPalette: '#F8F9FA' 
+                      backgroundColor: '#F8F9FA' 
                     }
                   }}
                 >
@@ -259,7 +259,7 @@ const ProjectsTableView = ({
                         sx={{
                           width: 32,
                           height: 32,
-                          backgroundPalette: typeConfig.color,
+                          backgroundColor: typeConfig.color,
                           fontSize: '0.8rem',
                           fontWeight: 600
                         }}
@@ -303,7 +303,7 @@ const ProjectsTableView = ({
                       label={typeConfig.label}
                       size="small"
                       sx={{
-                        backgroundPalette: `${typeConfig.color}15`,
+                        backgroundColor: `${typeConfig.color}15`,
                         color: typeConfig.color,
                         fontWeight: 500,
                         border: `1px solid ${typeConfig.color}30`
@@ -317,7 +317,7 @@ const ProjectsTableView = ({
                       label={statusConfig.label}
                       size="small"
                       sx={{
-                        backgroundPalette: statusConfig.bgPalette,
+                        backgroundColor: statusConfig.bgPalette,
                         color: statusConfig.color,
                         fontWeight: 500
                       }}
@@ -376,9 +376,9 @@ const ProjectsTableView = ({
                           sx={{ 
                             height: 6, 
                             borderRadius: 3,
-                            backgroundPalette: '#E0E0E0',
+                            backgroundColor: '#E0E0E0',
                             '& .MuiLinearProgress-bar': {
-                              backgroundPalette: progress > 75 ? '#27AE60' : 
+                              backgroundColor: progress > 75 ? '#27AE60' : 
                                              progress > 50 ? '#F39C12' : 
                                              progress > 25 ? '#3498DB' : '#E74C3C'
                             }

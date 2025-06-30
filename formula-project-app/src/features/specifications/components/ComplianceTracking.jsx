@@ -41,19 +41,19 @@ import {
   AccordionDetails
 } from '@mui/material';
 import {
-  CheckCircle as CheckCircleIcon,
-  WarningTriangle as WarningIcon,
-  Xmark as ErrorIcon,
-  Calendar as CalendarIcon,
-  Check as CheckIcon,
-  CloudUpload as UploadIcon,
-  Page as FileIcon,
-  MoreVert as MoreVertIcon,
-  ArrowDown as ExpandMoreIcon,
-  ShieldCheck as ComplianceIcon,
-  ShieldCheck as CertificationIcon,
-  Leaf as SustainabilityIcon
-} from 'iconoir-react';
+  MdCheckCircle as CheckCircleIcon,
+  MdWarning as WarningIcon,
+  MdClose as ErrorIcon,
+  MdCalendarToday as CalendarIcon,
+  MdCheck as CheckIcon,
+  MdCloudUpload as UploadIcon,
+  MdDescription as FileIcon,
+  MdMoreVert as MoreVertIcon,
+  MdKeyboardArrowDown as ExpandMoreIcon,
+  MdSecurity as ComplianceIcon,
+  MdSecurity as CertificationIcon,
+  MdEco as SustainabilityIcon
+} from 'react-icons/md';
 
 const ComplianceTracking = ({ 
   specifications = [],
@@ -272,7 +272,7 @@ const ComplianceTracking = ({
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow sx={{ backgroundPalette: '#f8f9fa' }}>
+            <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
               <TableCell><strong>Item ID</strong></TableCell>
               <TableCell><strong>Description</strong></TableCell>
               <TableCell><strong>Status</strong></TableCell>

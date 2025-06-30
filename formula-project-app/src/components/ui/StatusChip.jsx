@@ -2,30 +2,31 @@ import React from 'react';
 import { Chip, Tooltip } from '@mui/material';
 // Iconoir icons - safe construction and status icons
 import {
-  Clock as Calendar,
-  Play as Play,
-  Check as CheckCircle,
-  Pause,
-  Xmark as XmarkCircle,
-  Clock as HourglassEmpty,
-  Building as Gavel,
-  Building as Construction,
-  TriangleFlag as Flag,
-  WarningTriangle as Warning,
-  WarningCircle as PriorityHigh,
-  Building as Business,
-  Settings as Build,
-  Flash as ElectricalServices,
-  Building as Engineering,
-  Group as AccountTree,
-  DesignPencil as DesignServices,
-  QrCode as DocumentScanner,
-  Building as Foundation,
-  Settings as HomeRepairService,
-  Palette as FormatPaint,
-  Key,
-  Shield
-} from 'iconoir-react';
+  MdSchedule as Calendar,
+  MdPlayArrow as Play,
+  MdCheck as CheckCircle,
+  MdPause as Pause,
+  MdClose as XmarkCircle,
+  MdSchedule as HourglassEmpty,
+  MdBusiness as Gavel,
+  MdBusiness as Construction,
+  MdFlag as Flag,
+  MdWarning as Warning,
+  MdWarning as PriorityHigh,
+  MdBusiness as Business,
+  MdSettings as Build,
+  MdElectricBolt as ElectricalServices,
+  MdBusiness as Engineering,
+  MdGroup as AccountTree,
+  MdDesignServices as DesignServices,
+  MdQrCodeScanner as DocumentScanner,
+  MdBusiness as Foundation,
+  MdSettings as HomeRepairService,
+  MdPalette as FormatPaint,
+  MdKey as Key,
+  MdShield as Shield,
+  MdClose as Xmark
+} from 'react-icons/md';
 import { 
   getTaskStatusConfig, 
   getProjectStatusConfig, 
@@ -39,10 +40,10 @@ import {
 // Icon mapping
 const ICON_MAP = {
   Calendar: Calendar,
-  PlayArrow: PlayArrow,
+  PlayArrow: Play,
   CheckCircle: CheckCircle,
   Pause: Pause,
-  Cancel: Cancel,
+  Cancel: Xmark,
   HourglassEmpty: HourglassEmpty,
   Gavel: Gavel,
   Construction: Construction,
@@ -60,8 +61,8 @@ const ICON_MAP = {
   Hammer: Build,
   Foundation: Foundation,
   PaintBrush: FormatPaint,
-  Key: VpnKey,
-  Shield: Security
+  Key: Key,
+  Shield: Shield
 };
 
 const StatusChip = ({ 
@@ -124,7 +125,7 @@ const StatusChip = ({
     onClick,
     className: `clean-chip ${actualType === 'task' ? `status-${actualStatus}` : actualType === 'project' ? `status-${actualStatus}` : actualType === 'priority' ? `priority-${actualStatus}` : ''}`,
     sx: {
-      backgroundPalette: variant === 'filled' ? config.bgPalette : 'transparent',
+      backgroundColor: variant === 'filled' ? config.bgPalette : 'transparent',
       color: config.textPalette,
       border: variant === 'outlined' ? `1px solid ${config.borderPalette}` : `1px solid ${config.borderPalette}`,
       fontWeight: 500,
@@ -138,7 +139,7 @@ const StatusChip = ({
         color: config.textPalette
       },
       '&:hover': onClick ? {
-        backgroundPalette: config.color,
+        backgroundColor: config.color,
         color: 'white',
         cursor: 'pointer',
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'

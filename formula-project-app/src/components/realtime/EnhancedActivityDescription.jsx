@@ -161,14 +161,14 @@ const EnhancedActivityDescription = ({
                 borderRadius: '3px',
                 '&:hover': {
                   textDecoration: 'underline',
-                  backgroundPalette: 'rgba(25, 118, 210, 0.08)',
+                  backgroundColor: 'rgba(25, 118, 210, 0.08)',
                   color: '#1565c0'
                 },
                 '&:focus': {
                   outline: `2px solid #1976d2`,
                   outlineOffset: '1px',
                   borderRadius: '3px',
-                  backgroundPalette: 'rgba(25, 118, 210, 0.08)'
+                  backgroundColor: 'rgba(25, 118, 210, 0.08)'
                 }
               }}
             >

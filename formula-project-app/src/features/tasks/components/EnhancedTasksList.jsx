@@ -11,19 +11,19 @@ import {
   Tabs
 } from '@mui/material';
 import {
-  CheckCircle,
-  Trash as Delete,
-  User as User,
-  Calendar as CalendarToday,
-  ClipboardCheck as Task,
-  Warning,
-  Undo,
-  Edit as EditIcon,
-  Eye as ViewIcon,
-  List as ViewList,
-  ViewGrid as ViewModule,
-  Calendar as DateRange
-} from 'iconoir-react';
+  MdCheckCircle as CheckCircle,
+  MdDelete as Delete,
+  MdPerson as User,
+  MdCalendarToday as CalendarToday,
+  MdTask as Task,
+  MdWarning as Warning,
+  MdUndo as Undo,
+  MdEdit as EditIcon,
+  MdVisibility as ViewIcon,
+  MdList as ViewList,
+  MdViewModule as ViewModule,
+  MdCalendarToday as DateRange
+} from 'react-icons/md';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import UnifiedTableView from '../../../components/ui/UnifiedTableView';
@@ -425,7 +425,7 @@ function EnhancedTasksList({
               width: 60, 
               height: 6,
               borderRadius: 3,
-              backgroundPalette: '#E9ECEF'
+              backgroundColor: '#E9ECEF'
             }}
           />
           <Typography variant="caption">

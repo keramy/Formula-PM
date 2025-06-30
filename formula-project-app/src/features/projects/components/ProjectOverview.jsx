@@ -15,14 +15,14 @@ import {
   Divider
 } from '@mui/material';
 import {
-  ClipboardCheck as TaskIcon,
-  User as PersonIcon,
-  MoneySquare as MoneyIcon,
-  Calendar as TimelineIcon,
-  CheckCircle as CheckIcon,
-  Clock as PendingIcon,
-  Play as InProgressIcon
-} from 'iconoir-react';
+  MdTask as TaskIcon,
+  MdPerson as PersonIcon,
+  MdAttachMoney as MoneyIcon,
+  MdCalendarToday as TimelineIcon,
+  MdCheckCircle as CheckIcon,
+  MdSchedule as PendingIcon,
+  MdPlayArrow as InProgressIcon
+} from 'react-icons/md';
 import { TaskStatusChip, ProjectTypeChip } from '../../../components/ui/StatusChip';
 
 const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress = 0 }) => {
@@ -278,7 +278,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                   p: 'var(--space-4)', 
                   textAlign: 'center',
                   border: '1px solid var(--construction-500)',
-                  backgroundPalette: 'var(--construction-50)'
+                  backgroundColor: 'var(--construction-50)'
                 }}>
                   <Typography className="text-2xl font-bold" sx={{ color: 'var(--construction-600)' }}>
                     {taskStats.total}
@@ -293,7 +293,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                   p: 'var(--space-4)', 
                   textAlign: 'center',
                   border: '1px solid var(--success-500)',
-                  backgroundPalette: 'var(--success-50)'
+                  backgroundColor: 'var(--success-50)'
                 }}>
                   <Typography className="text-2xl font-bold" sx={{ color: 'var(--success-500)' }}>
                     {taskStats.completed}
@@ -308,7 +308,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                   p: 'var(--space-4)', 
                   textAlign: 'center',
                   border: '1px solid var(--warning-500)',
-                  backgroundPalette: 'var(--warning-50)'
+                  backgroundColor: 'var(--warning-50)'
                 }}>
                   <Typography className="text-2xl font-bold" sx={{ color: 'var(--warning-500)' }}>
                     {taskStats.inProgress}
@@ -323,7 +323,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                   p: 'var(--space-4)', 
                   textAlign: 'center',
                   border: '1px solid var(--gray-400)',
-                  backgroundPalette: 'var(--gray-50)'
+                  backgroundColor: 'var(--gray-50)'
                 }}>
                   <Typography className="text-2xl font-bold" sx={{ color: 'var(--gray-600)' }}>
                     {taskStats.pending}
@@ -357,7 +357,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                           sx={{ 
                             width: 32, 
                             height: 32,
-                            backgroundPalette: 'var(--construction-500)',
+                            backgroundColor: 'var(--construction-500)',
                             fontSize: 'var(--text-sm)',
                             fontWeight: 600
                           }}

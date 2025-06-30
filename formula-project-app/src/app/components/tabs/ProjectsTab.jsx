@@ -1,6 +1,8 @@
 import React, { Suspense } from 'react';
 import { Box, Typography, Button, Paper } from '@mui/material';
-import { Plus as Add } from 'iconoir-react';
+import {
+  MdAdd as Add
+} from 'react-icons/md';
 import EnhancedTabSystem from '../../../components/layout/EnhancedTabSystem';
 import ErrorBoundary from '../../../components/common/ErrorBoundary';
 import {

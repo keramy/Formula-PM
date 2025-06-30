@@ -19,21 +19,21 @@ import {
   Paper
 } from '@mui/material';
 import {
-  CheckCircle,
-  Delete,
-  Person,
-  CalendarToday,
-  Check,
-  Warning,
-  Undo,
-  Edit as EditIcon,
-  Eye as ViewIcon,
-  Calendar,
-  PlayArrow,
-  Flag,
-  Error,
-  PriorityHigh,
-} from 'iconoir-react';
+  MdCheckCircle as CheckCircle,
+  MdDelete as Delete,
+  MdPerson as Person,
+  MdCalendarToday as CalendarToday,
+  MdCheck as Check,
+  MdWarning as Warning,
+  MdUndo as Undo,
+  MdEdit as EditIcon,
+  MdVisibility as ViewIcon,
+  MdCalendarToday as Calendar,
+  MdPlayArrow as PlayArrow,
+  MdFlag as Flag,
+  MdError as Error,
+  MdPriorityHigh as PriorityHigh
+} from 'react-icons/md';
 import UnifiedHeader from '../../../components/ui/UnifiedHeader';
 import UnifiedFilters from '../../../components/ui/UnifiedFilters';
 import { exportTasksToExcel } from '../../../services/export/excelExport';
@@ -328,7 +328,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
         sx={{
           mb: 1,
           borderLeft: `4px solid ${overdue ? '#e74c3c' : priority.color}`,
-          backgroundPalette: overdue ? '#fff5f5' : 'white',
+          backgroundColor: overdue ? '#fff5f5' : 'white',
           '&:hover': {
             boxShadow: 2
           }
@@ -344,7 +344,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
               label={priority.label}
               size="small"
               sx={{
-                backgroundPalette: priority.bgPalette,
+                backgroundColor: priority.bgPalette,
                 color: priority.color,
                 fontSize: '0.7rem'
               }}
@@ -354,7 +354,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
                 label="Overdue"
                 size="small"
                 sx={{
-                  backgroundPalette: '#fdf2f2',
+                  backgroundColor: '#fdf2f2',
                   color: '#e74c3c',
                   fontSize: '0.7rem'
                 }}
@@ -424,7 +424,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
             <ListItem
               sx={{
                 borderLeft: `4px solid ${overdue ? '#e74c3c' : priority.color}`,
-                backgroundPalette: overdue ? '#fff5f5' : 'white',
+                backgroundColor: overdue ? '#fff5f5' : 'white',
                 mb: 1,
                 borderRadius: 1,
                 boxShadow: 1
@@ -461,7 +461,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
                     label={priority.label}
                     size="small"
                     sx={{
-                      backgroundPalette: priority.bgPalette,
+                      backgroundColor: priority.bgPalette,
                       color: priority.color,
                       fontSize: '0.7rem'
                     }}
@@ -470,7 +470,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
                     label={status.label}
                     size="small"
                     sx={{
-                      backgroundPalette: status.bgPalette,
+                      backgroundColor: status.bgPalette,
                       color: status.color,
                       fontSize: '0.7rem'
                     }}
@@ -480,7 +480,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
                       label="Overdue"
                       size="small"
                       sx={{
-                        backgroundPalette: '#fdf2f2',
+                        backgroundColor: '#fdf2f2',
                         color: '#e74c3c',
                         fontSize: '0.7rem'
                       }}
@@ -542,7 +542,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
                   label={statusTasks.length}
                   size="small"
                   sx={{
-                    backgroundPalette: statusInfo.bgPalette,
+                    backgroundColor: statusInfo.bgPalette,
                     color: statusInfo.color
                   }}
                 />
@@ -576,7 +576,7 @@ const TasksView = React.memo(function TasksView({ tasks, projects, teamMembers =
               <Card
                 sx={{
                   borderLeft: `4px solid ${overdue ? '#e74c3c' : priority.color}`,
-                  backgroundPalette: overdue ? '#fff5f5' : 'white'
+                  backgroundColor: overdue ? '#fff5f5' : 'white'
                 }}
               >
                 <CardContent>

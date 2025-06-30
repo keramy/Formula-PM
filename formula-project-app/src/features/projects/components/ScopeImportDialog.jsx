@@ -86,7 +86,7 @@ const ScopeImportDialog = ({ open, onClose, onImport, categories }) => {
           borderRadius: 2, 
           p: 4,
           textAlign: 'center',
-          backgroundPalette: '#F8F9FA',
+          backgroundColor: '#F8F9FA',
           mb: 3
         }}>
           <input
@@ -191,9 +191,9 @@ const ScopeImportDialog = ({ open, onClose, onImport, categories }) => {
             borderRadius: '20px',
             textTransform: 'none',
             fontWeight: 600,
-            backgroundPalette: '#27AE60',
+            backgroundColor: '#27AE60',
             '&:hover': {
-              backgroundPalette: '#229954'
+              backgroundColor: '#229954'
             }
           }}
         >

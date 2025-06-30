@@ -26,19 +26,19 @@ import {
   Paper
 } from '@mui/material';
 import {
-  Refresh as RefreshIcon,
-  ArrowDown as ExpandMoreIcon,
-  ArrowUp as ExpandLessIcon,
-  WarningTriangle as WarningIcon,
-  Home as HomeIcon,
-  InfoCircle as InfoIcon,
-  Database as DatabaseIcon,
-  Building as BuildingIcon,
-  Dashboard as DashboardIcon,
-  User as UserIcon,
-  Bug as BugIcon,
-  Xmark as CloseIcon
-} from 'iconoir-react';
+  MdRefresh as RefreshIcon,
+  MdKeyboardArrowDown as ExpandMoreIcon,
+  MdKeyboardArrowUp as ExpandLessIcon,
+  MdWarning as WarningIcon,
+  MdHome as HomeIcon,
+  MdInfo as InfoIcon,
+  MdDatabase as DatabaseIcon,
+  MdBusiness as BuildingIcon,
+  MdDashboard as DashboardIcon,
+  MdPerson as UserIcon,
+  MdBug as BugIcon,
+  MdClose as CloseIcon
+} from 'react-icons/md';
 
 // Feature configurations for intelligent error handling
 const FEATURE_CONFIGS = {
@@ -503,7 +503,7 @@ class GlobalErrorBoundary extends Component {
                       {this.state.recoveryStrategies.map((strategy, index) => (
                         <Chip
                           key={index}
-                          icon={<strategy.icon style={{ fontSize: 16 }} />}
+                          icon={<strategy.icon size={16} />}
                           label={strategy.label}
                           size="small"
                           variant={strategy.automated ? 'filled' : 'outlined'}

@@ -37,30 +37,30 @@ import {
   Autocomplete
 } from '@mui/material';
 import {
-  Mail as MailIcon,
-  Bell as BellIcon,
-  ChatBubble as ChatIcon,
-  Megaphone as AnnouncementIcon,
-  Search as SearchIcon,
-  Star as StarIcon,
-  StarDashed as StarBorderIcon,
-  Archive as ArchiveIcon,
-  Trash as DeleteIcon,
-  Forward as ForwardIcon,
-  Reply as ReplyIcon,
-  Upload as AttachIcon,
-  ArrowRight as SendIcon,
-  Filter as FilterIcon,
-  Refresh as RefreshIcon,
-  CheckCircle as CheckIcon,
-  Xmark as CancelIcon,
-  Group as GroupIcon,
-  User as PersonIcon,
-  Circle as OnlineIcon,
-  MoreVert as MoreIcon,
-  Edit as EditIcon,
-  Settings as SettingsIcon
-} from 'iconoir-react';
+  MdMail as MailIcon,
+  MdNotifications as BellIcon,
+  MdChat as ChatIcon,
+  MdCampaign as AnnouncementIcon,
+  MdSearch as SearchIcon,
+  MdStar as StarIcon,
+  MdStarBorder as StarBorderIcon,
+  MdArchive as ArchiveIcon,
+  MdDelete as DeleteIcon,
+  MdForward as ForwardIcon,
+  MdReply as ReplyIcon,
+  MdAttachFile as AttachIcon,
+  MdSend as SendIcon,
+  MdFilterList as FilterIcon,
+  MdRefresh as RefreshIcon,
+  MdCheckCircle as CheckIcon,
+  MdCancel as CancelIcon,
+  MdGroup as GroupIcon,
+  MdPerson as PersonIcon,
+  MdFiberManualRecord as OnlineIcon,
+  MdMoreVert as MoreIcon,
+  MdEdit as EditIcon,
+  MdSettings as SettingsIcon
+} from 'react-icons/md';
 import { format, formatDistanceToNow, isToday, isYesterday } from 'date-fns';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import { useAuth } from '../context/AuthContext';
@@ -358,7 +358,7 @@ const InboxPage = () => {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <SearchIcon style={{ fontSize: 18 }} />
+              <SearchIcon size={18} />
             </InputAdornment>
           ),
         }}
@@ -405,11 +405,11 @@ const InboxPage = () => {
           timeoutRef.current = null;
         }, 500);
       }}>
-        <RefreshIcon style={{ fontSize: 18 }} />
+        <RefreshIcon size={18} />
       </IconButton>
       <Button
         className="clean-button-primary"
-        startIcon={<EditIcon style={{ fontSize: 16 }} />}
+        startIcon={<EditIcon size={16} />}
         onClick={() => setComposeOpen(true)}
         size="small"
       >
@@ -424,27 +424,27 @@ const InboxPage = () => {
         label="Messages" 
         isActive={activeTab === 'messages'}
         onClick={() => setActiveTab('messages')}
-        icon={<MailIcon style={{ fontSize: 16 }} />}
+        icon={<MailIcon size={16} />}
         badge={unreadCounts.messages > 0 ? unreadCounts.messages : null}
       />
       <CleanTab 
         label="Notifications" 
         isActive={activeTab === 'notifications'}
         onClick={() => setActiveTab('notifications')}
-        icon={<BellIcon style={{ fontSize: 16 }} />}
+        icon={<BellIcon size={16} />}
         badge={unreadCounts.notifications > 0 ? unreadCounts.notifications : null}
       />
       <CleanTab 
         label="Team Chat" 
         isActive={activeTab === 'team-chat'}
         onClick={() => setActiveTab('team-chat')}
-        icon={<ChatIcon style={{ fontSize: 16 }} />}
+        icon={<ChatIcon size={16} />}
       />
       <CleanTab 
         label="Announcements" 
         isActive={activeTab === 'announcements'}
         onClick={() => setActiveTab('announcements')}
-        icon={<AnnouncementIcon style={{ fontSize: 16 }} />}
+        icon={<AnnouncementIcon size={16} />}
       />
     </>
   );
@@ -457,7 +457,7 @@ const InboxPage = () => {
             <List sx={{ p: 0 }}>
               {filteredMessages.length === 0 ? (
                 <Box sx={{ p: 3, textAlign: 'center' }}>
-                  <MailIcon style={{ fontSize: 48, color: '#9CA3AF', marginBottom: 16 }} />
+                  <MailIcon size={48} style={{ color: '#9CA3AF', marginBottom: 16 }} />
                   <Typography color="text.secondary">
                     {searchTerm ? 'No messages found' : 'No messages yet'}
                   </Typography>
@@ -471,11 +471,11 @@ const InboxPage = () => {
                     onClick={() => handleSelectMessage(message)}
                     sx={{
                       borderBottom: '1px solid #E5E7EB',
-                      backgroundPalette: !message.read ? '#F3F4F6' : 'transparent',
-                      '&:hover': { backgroundPalette: '#F9FAFB' },
+                      backgroundColor: !message.read ? '#F3F4F6' : 'transparent',
+                      '&:hover': { backgroundColor: '#F9FAFB' },
                       '&.Mui-selected': { 
-                        backgroundPalette: '#EEF2FF',
-                        '&:hover': { backgroundPalette: '#E0E7FF' }
+                        backgroundColor: '#EEF2FF',
+                        '&:hover': { backgroundColor: '#E0E7FF' }
                       }
                     }}
                   >
@@ -485,7 +485,7 @@ const InboxPage = () => {
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                         badgeContent={
                           message.from.online ? 
-                          <OnlineIcon style={{ fontSize: 12, color: '#10B981' }} /> : null
+                          <OnlineIcon size={12} style={{ color: '#10B981' }} /> : null
                         }
                       >
                         <Avatar sx={{ bgcolor: '#516AC8' }}>
@@ -542,8 +542,8 @@ const InboxPage = () => {
                         }}
                       >
                         {message.starred ? 
-                          <StarIcon style={{ fontSize: 18, color: '#E3AF64' }} /> :
-                          <StarBorderIcon style={{ fontSize: 18 }} />
+                          <StarIcon size={18} style={{ color: '#E3AF64' }} /> :
+                          <StarBorderIcon size={18} />
                         }
                       </IconButton>
                     </ListItemSecondaryAction>
@@ -576,16 +576,16 @@ const InboxPage = () => {
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <IconButton size="small">
-                    <ReplyIcon style={{ fontSize: 18 }} />
+                    <ReplyIcon size={18} />
                   </IconButton>
                   <IconButton size="small">
-                    <ForwardIcon style={{ fontSize: 18 }} />
+                    <ForwardIcon size={18} />
                   </IconButton>
                   <IconButton size="small" onClick={() => archiveMessage(selectedMessage.id)}>
-                    <ArchiveIcon style={{ fontSize: 18 }} />
+                    <ArchiveIcon size={18} />
                   </IconButton>
                   <IconButton size="small" onClick={() => deleteMessage(selectedMessage.id)}>
-                    <DeleteIcon style={{ fontSize: 18 }} />
+                    <DeleteIcon size={18} />
                   </IconButton>
                 </Box>
               </Box>
@@ -605,14 +605,14 @@ const InboxPage = () => {
                     {selectedMessage.attachments.map((attachment, index) => (
                       <Chip
                         key={index}
-                        icon={<AttachIcon style={{ fontSize: 16 }} />}
+                        icon={<AttachIcon size={16} />}
                         label={`${attachment.name} (${attachment.size})`}
                         variant="outlined"
                         onClick={() => handleAttachmentClick(attachment, selectedMessage.subject)}
                         sx={{
                           cursor: 'pointer',
                           '&:hover': {
-                            backgroundPalette: 'primary.light',
+                            backgroundColor: 'primary.light',
                             color: 'primary.contrastText'
                           }
                         }}
@@ -660,7 +660,7 @@ const InboxPage = () => {
                 />
                 <Button
                   variant="contained"
-                  endIcon={<SendIcon style={{ fontSize: 16 }} />}
+                  endIcon={<SendIcon size={16} />}
                   onClick={handleSendReply}
                   disabled={!replyContent.trim()}
                 >
@@ -681,7 +681,7 @@ const InboxPage = () => {
             border: '1px dashed #E5E7EB'
           }}>
             <Box sx={{ textAlign: 'center' }}>
-              <MailIcon style={{ fontSize: 64, color: '#9CA3AF', marginBottom: 16 }} />
+              <MailIcon size={64} style={{ color: '#9CA3AF', marginBottom: 16 }} />
               <Typography variant="h6" color="text.secondary" gutterBottom>
                 Select a message to read
               </Typography>
@@ -713,7 +713,7 @@ const InboxPage = () => {
             <List>
               {notifications.length === 0 ? (
                 <Box sx={{ py: 4, textAlign: 'center' }}>
-                  <BellIcon style={{ fontSize: 48, color: '#9CA3AF', marginBottom: 16 }} />
+                  <BellIcon size={48} style={{ color: '#9CA3AF', marginBottom: 16 }} />
                   <Typography color="text.secondary">No new notifications</Typography>
                 </Box>
               ) : (
@@ -721,10 +721,10 @@ const InboxPage = () => {
                   <ListItem
                     key={notification.id}
                     sx={{
-                      backgroundPalette: !notification.read ? '#F3F4F6' : 'transparent',
+                      backgroundColor: !notification.read ? '#F3F4F6' : 'transparent',
                       borderRadius: 1,
                       mb: 1,
-                      '&:hover': { backgroundPalette: '#F9FAFB' }
+                      '&:hover': { backgroundColor: '#F9FAFB' }
                     }}
                   >
                     <ListItemAvatar>
@@ -771,11 +771,11 @@ const InboxPage = () => {
                             size="small" 
                             onClick={() => markNotificationAsRead(notification.id)}
                           >
-                            <CheckIcon style={{ fontSize: 18, color: '#10B981' }} />
+                            <CheckIcon size={18} style={{ color: '#10B981' }} />
                           </IconButton>
                         )}
                         <IconButton size="small">
-                          <MoreIcon style={{ fontSize: 18 }} />
+                          <MoreIcon size={18} />
                         </IconButton>
                       </Box>
                     </ListItemSecondaryAction>
@@ -811,7 +811,7 @@ const InboxPage = () => {
                     <Badge
                       overlap="circular"
                       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                      badgeContent={<OnlineIcon style={{ fontSize: 8, color: '#10B981' }} />}
+                      badgeContent={<OnlineIcon size={8} style={{ color: '#10B981' }} />}
                     >
                       <Avatar sx={{ width: 32, height: 32, fontSize: 14 }}>
                         {person.charAt(0)}
@@ -830,7 +830,7 @@ const InboxPage = () => {
         <Card className="clean-card" sx={{ height: 'calc(100vh - 200px)' }}>
           <CardContent sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Box sx={{ textAlign: 'center' }}>
-              <ChatIcon style={{ fontSize: 64, color: '#9CA3AF', marginBottom: 16 }} />
+              <ChatIcon size={64} style={{ color: '#9CA3AF', marginBottom: 16 }} />
               <Typography variant="h6" color="text.secondary" gutterBottom>
                 Team Chat Coming Soon
               </Typography>
@@ -874,7 +874,7 @@ const InboxPage = () => {
                   </Box>
                 </Box>
                 <IconButton size="small">
-                  <MoreIcon style={{ fontSize: 18 }} />
+                  <MoreIcon size={18} />
                 </IconButton>
               </Box>
               <Typography variant="body1" color="text.secondary">
@@ -973,7 +973,7 @@ const InboxPage = () => {
             />
             <Box sx={{ display: 'flex', gap: 1 }}>
               <IconButton size="small">
-                <AttachIcon style={{ fontSize: 18 }} />
+                <AttachIcon size={18} />
               </IconButton>
             </Box>
           </Box>

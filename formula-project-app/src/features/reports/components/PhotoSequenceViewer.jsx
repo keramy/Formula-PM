@@ -27,19 +27,19 @@ import {
   LinearProgress
 } from '@mui/material';
 import {
-  Play as FaPlay,
-  Pause as FaPause,
-  FastArrowRight as FaStepForward,
-  FastArrowLeft as FaStepBackward,
-  Expand as FaExpand,
-  Clock as FaClock,
-  MapPin as FaMapMarkerAlt,
-  MediaImage as FaImages,
-  ArrowUp as FaChartLine,
-  Tag as FaTags,
-  Eye as FaEye,
-  Download as FaDownload
-} from 'iconoir-react';
+  MdPlayArrow as FaPlay,
+  MdPause as FaPause,
+  MdFastForward as FaStepForward,
+  MdFastRewind as FaStepBackward,
+  MdFullscreen as FaExpand,
+  MdSchedule as FaClock,
+  MdLocationOn as FaMapMarkerAlt,
+  MdImage as FaImages,
+  MdKeyboardArrowUp as FaChartLine,
+  MdLabel as FaTags,
+  MdVisibility as FaEye,
+  MdDownload as FaDownload
+} from 'react-icons/md';
 
 const PhotoSequenceViewer = ({ 
   sequences = [], 

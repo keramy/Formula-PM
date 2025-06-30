@@ -8,16 +8,16 @@ import {
   Divider
 } from '@mui/material';
 import {
-  MoreVertCircle as MoreVertIcon,
-  Edit as EditIcon,
-  Trash as DeleteIcon,
-  Eye as ViewIcon,
-  Star as StarIcon,
-  Star as StarBorderIcon,
-  ShareAndroid as ShareIcon,
-  Copy as DuplicateIcon,
-  Archive as ArchiveIcon
-} from 'iconoir-react';
+  MdMoreVert as MoreVertIcon,
+  MdEdit as EditIcon,
+  MdDelete as DeleteIcon,
+  MdVisibility as ViewIcon,
+  MdStar as StarIcon,
+  MdStar as StarBorderIcon,
+  MdShare as ShareIcon,
+  MdContentCopy as DuplicateIcon,
+  MdArchive as ArchiveIcon
+} from 'react-icons/md';
 
 const OptionsMenu = ({ 
   options = [],
@@ -76,7 +76,7 @@ const OptionsMenu = ({
           transition: 'opacity 0.2s ease',
           '&:hover': {
             opacity: 1,
-            backgroundPalette: 'rgba(0, 0, 0, 0.04)'
+            backgroundColor: 'rgba(0, 0, 0, 0.04)'
           },
           ...iconButtonProps.sx
         }}
@@ -101,7 +101,7 @@ const OptionsMenu = ({
               py: 1,
               fontSize: '0.875rem',
               '&:hover': {
-                backgroundPalette: '#F8F9FA'
+                backgroundColor: '#F8F9FA'
               }
             }
           }
@@ -123,7 +123,7 @@ const OptionsMenu = ({
               sx={{
                 color: getPaletteForAction(option.action),
                 '&:hover': {
-                  backgroundPalette: option.action === 'delete' 
+                  backgroundColor: option.action === 'delete' 
                     ? 'rgba(231, 76, 60, 0.08)' 
                     : 'rgba(0, 0, 0, 0.04)'
                 }

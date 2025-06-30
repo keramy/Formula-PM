@@ -26,18 +26,18 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  Bell as NotificationsIcon,
-  Bell as NotificationsNoneIcon,
-  Check as CheckIcon,
-  Xmark as ClearIcon,
-  Settings as SettingsIcon,
-  Check as TaskIcon,
-  Refresh as UpdateIcon,
-  User as PersonIcon,
-  ChatBubble as CommentIcon,
-  WarningTriangle as WarningIcon,
-  InfoCircle as InfoIcon
-} from 'iconoir-react';
+  MdNotifications as NotificationsIcon,
+  MdNotifications as NotificationsNoneIcon,
+  MdCheck as CheckIcon,
+  MdClose as ClearIcon,
+  MdSettings as SettingsIcon,
+  MdCheck as TaskIcon,
+  MdRefresh as UpdateIcon,
+  MdPerson as PersonIcon,
+  MdChat as CommentIcon,
+  MdWarning as WarningIcon,
+  MdInfo as InfoIcon
+} from 'react-icons/md';
 import { useNotifications, useSocketEvent } from '../../hooks/useSocket';
 import apiService from '../../services/api/apiService';
 import { formatDistanceToNow } from 'date-fns';
@@ -198,7 +198,7 @@ const NotificationCenter = () => {
           color="inherit"
           sx={{
             '&:hover': {
-              backgroundPalette: 'rgba(255, 255, 255, 0.1)'
+              backgroundColor: 'rgba(255, 255, 255, 0.1)'
             }
           }}
         >
@@ -276,11 +276,11 @@ const NotificationCenter = () => {
                       button
                       onClick={() => handleMarkAsRead(notification.id)}
                       sx={{
-                        backgroundPalette: notification.read ? 'transparent' : 'action.hover',
+                        backgroundColor: notification.read ? 'transparent' : 'action.hover',
                         borderLeft: notification.read ? 0 : 3,
                         borderPalette: `${getNotificationPalette(notification.type, notification.priority)}.main`,
                         '&:hover': {
-                          backgroundPalette: 'action.selected'
+                          backgroundColor: 'action.selected'
                         }
                       }}
                     >

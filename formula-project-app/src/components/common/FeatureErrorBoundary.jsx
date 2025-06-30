@@ -17,14 +17,14 @@ import {
   Skeleton
 } from '@mui/material';
 import {
-  Refresh as RefreshIcon,
-  Dashboard as DashboardIcon,
-  Building as BuildIcon,
-  Check as TaskIcon,
-  Group as TeamIcon,
-  Building as ClientIcon,
-  Page as ReportIcon
-} from 'iconoir-react';
+  MdRefresh as RefreshIcon,
+  MdDashboard as DashboardIcon,
+  MdBusiness as BuildIcon,
+  MdCheck as TaskIcon,
+  MdGroup as TeamIcon,
+  MdBusiness as ClientIcon,
+  MdDescription as ReportIcon
+} from 'react-icons/md';
 import UnifiedErrorBoundary from './UnifiedErrorBoundary';
 import { safeGet } from '../../utils/safety';
 

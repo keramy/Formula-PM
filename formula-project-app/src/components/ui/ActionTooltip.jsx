@@ -29,7 +29,7 @@ const ActionTooltip = ({
           sx={{ 
             color: color !== 'default' ? color : undefined,
             '&:hover': {
-              backgroundPalette: color !== 'default' ? `${color}15` : undefined
+              backgroundColor: color !== 'default' ? `${color}15` : undefined
             },
             ...sx 
           }}

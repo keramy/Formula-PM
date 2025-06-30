@@ -9,12 +9,12 @@ import {
   DialogContent
 } from '@mui/material';
 import {
-  Building as DrawingsIcon,
-  Plus as AddIcon,
-  Upload as UploadIcon,
-  Folder as FolderIcon,
-  Reports as ReportIcon
-} from 'iconoir-react';
+  MdBusiness as DrawingsIcon,
+  MdAdd as AddIcon,
+  MdCloudUpload as UploadIcon,
+  MdFolder as FolderIcon,
+  MdDescription as ReportIcon
+} from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import ShopDrawingsList from '../features/shop-drawings/components/ShopDrawingsList';
 import ShopDrawingDetailPage from '../features/shop-drawings/components/ShopDrawingDetailPage';
@@ -98,28 +98,28 @@ const ShopDrawingsPage = () => {
         label="All Drawings" 
         isActive={activeTab === 'all-drawings'}
         onClick={() => setActiveTab('all-drawings')}
-        icon={<FolderIcon sx={{ fontSize: 16 }} />}
+        icon={<FolderIcon size={16} />}
         badge={drawings.length}
       />
       <CleanTab 
         label="Pending Review" 
         isActive={activeTab === 'pending-review'}
         onClick={() => setActiveTab('pending-review')}
-        icon={<DrawingsIcon sx={{ fontSize: 16 }} />}
+        icon={<DrawingsIcon size={16} />}
         badge={drawings.filter(d => d.status === 'pending_review').length}
       />
       <CleanTab 
         label="Approved" 
         isActive={activeTab === 'approved'}
         onClick={() => setActiveTab('approved')}
-        icon={<DrawingsIcon sx={{ fontSize: 16 }} />}
+        icon={<DrawingsIcon size={16} />}
         badge={drawings.filter(d => d.status === 'approved').length}
       />
       <CleanTab 
         label="Reports" 
         isActive={activeTab === 'reports'}
         onClick={() => setActiveTab('reports')}
-        icon={<ReportIcon sx={{ fontSize: 16 }} />}
+        icon={<ReportIcon size={16} />}
       />
     </>
   );

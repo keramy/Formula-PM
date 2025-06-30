@@ -15,11 +15,11 @@ import {
   ListItemText
 } from '@mui/material';
 import {
-  Search as SearchIcon,
-  Xmark as ClearIcon,
-  Filter as FilterIcon,
-  Refresh as RefreshIcon
-} from 'iconoir-react';
+  MdSearch as SearchIcon,
+  MdClose as ClearIcon,
+  MdFilterList as FilterIcon,
+  MdRefresh as RefreshIcon
+} from 'react-icons/md';
 import ActivityFeed, { CompactActivityFeed, DetailedActivityFeed } from '../../../components/realtime/ActivityFeed';
 import { useTheme } from '../../../context/ThemeContext';
 import { useActivityFeed } from '../../../hooks/useRealTime';
@@ -255,7 +255,7 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
       <Card sx={{ 
         width: '100%',
         maxWidth: '1200px',
-        backgroundPalette: isDarkMode ? '#1B2951' : '#ffffff',
+        backgroundColor: isDarkMode ? '#1B2951' : '#ffffff',
         border: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}`,
         borderRadius: 2
       }}>
@@ -280,7 +280,7 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
                   width: 250,
                   '& .MuiOutlinedInput-root': {
                     height: 32,
-                    backgroundPalette: isDarkMode ? '#2C3966' : '#f8f9fa',
+                    backgroundColor: isDarkMode ? '#2C3966' : '#f8f9fa',
                     '& fieldset': {
                       borderPalette: isDarkMode ? '#566BA3' : '#E9ECEF'
                     },
@@ -328,12 +328,12 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
                 <IconButton
                   onClick={handleFilterClick}
                   sx={{
-                    backgroundPalette: isDarkMode ? '#2C3966' : '#f8f9fa',
+                    backgroundColor: isDarkMode ? '#2C3966' : '#f8f9fa',
                     border: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}`,
                     width: 32,
                     height: 32,
                     '&:hover': {
-                      backgroundPalette: isDarkMode ? '#3A4B7D' : '#E9ECEF'
+                      backgroundColor: isDarkMode ? '#3A4B7D' : '#E9ECEF'
                     },
                     color: filter === 'all' ? (isDarkMode ? '#A8B8D1' : '#7F8C8D') : '#1976d2'
                   }}
@@ -347,12 +347,12 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
                 <IconButton
                   onClick={handleRefresh}
                   sx={{
-                    backgroundPalette: isDarkMode ? '#2C3966' : '#f8f9fa',
+                    backgroundColor: isDarkMode ? '#2C3966' : '#f8f9fa',
                     border: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}`,
                     width: 32,
                     height: 32,
                     '&:hover': {
-                      backgroundPalette: isDarkMode ? '#3A4B7D' : '#E9ECEF'
+                      backgroundColor: isDarkMode ? '#3A4B7D' : '#E9ECEF'
                     },
                     color: isDarkMode ? '#A8B8D1' : '#7F8C8D'
                   }}
@@ -374,7 +374,7 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
         
         {/* Search Results Info */}
         {searchTerm.trim() && (
-          <Box sx={{ px: 2, py: 1, backgroundPalette: isDarkMode ? '#2C3966' : '#f8f9fa', borderBottom: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}` }}>
+          <Box sx={{ px: 2, py: 1, backgroundColor: isDarkMode ? '#2C3966' : '#f8f9fa', borderBottom: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}` }}>
             <Typography variant="caption" sx={{ color: isDarkMode ? '#A8B8D1' : '#7F8C8D' }}>
               {filteredActivities.length === 0 
                 ? `No activities found for "${searchTerm}"`
@@ -407,7 +407,7 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
         onClose={handleFilterClose}
         PaperProps={{
           sx: {
-            backgroundPalette: isDarkMode ? '#1B2951' : '#ffffff',
+            backgroundColor: isDarkMode ? '#1B2951' : '#ffffff',
             border: `1px solid ${isDarkMode ? '#566BA3' : '#E9ECEF'}`,
             mt: 1
           }
@@ -421,7 +421,7 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
             sx={{
               color: isDarkMode ? '#F5F2E8' : '#2C3E50',
               '&.Mui-selected': {
-                backgroundPalette: isDarkMode ? '#3A4B7D' : 'rgba(25, 118, 210, 0.12)'
+                backgroundColor: isDarkMode ? '#3A4B7D' : 'rgba(25, 118, 210, 0.12)'
               }
             }}
           >

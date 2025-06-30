@@ -22,15 +22,15 @@ import {
   Stack
 } from '@mui/material';
 import {
-  CheckCircle as ApprovedIcon,
-  Clock as PendingIcon,
-  Xmark as RejectedIcon,
-  EditPencil as RevisionIcon,
-  Eye as ViewIcon,
-  Download as DownloadIcon,
-  Plus as AddIcon,
-  Upload as UploadIcon
-} from 'iconoir-react';
+  MdCheckCircle as ApprovedIcon,
+  MdSchedule as PendingIcon,
+  MdClose as RejectedIcon,
+  MdEdit as RevisionIcon,
+  MdVisibility as ViewIcon,
+  MdDownload as DownloadIcon,
+  MdAdd as AddIcon,
+  MdCloudUpload as UploadIcon
+} from 'react-icons/md';
 
 const DrawingVersionHistory = ({ 
   drawing,
@@ -139,7 +139,7 @@ const DrawingVersionHistory = ({
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => setAddRevisionOpen(true)}
-          sx={{ backgroundPalette: '#37444B' }}
+          sx={{ backgroundColor: '#37444B' }}
         >
           New Revision
         </Button>
@@ -156,7 +156,7 @@ const DrawingVersionHistory = ({
               minWidth: '40px'
             }}>
               <Box sx={{ 
-                backgroundPalette: getStatusPalette(revision.status), 
+                backgroundColor: getStatusPalette(revision.status), 
                 borderRadius: '50%',
                 width: 40,
                 height: 40,
@@ -171,7 +171,7 @@ const DrawingVersionHistory = ({
                 <Box sx={{ 
                   width: '2px', 
                   height: '30px', 
-                  backgroundPalette: '#E0E0E0', 
+                  backgroundColor: '#E0E0E0', 
                   mt: 1 
                 }} />
               )}
@@ -195,7 +195,7 @@ const DrawingVersionHistory = ({
                         label={getStatusLabel(revision.status)}
                         size="small"
                         sx={{ 
-                          backgroundPalette: getStatusPalette(revision.status),
+                          backgroundColor: getStatusPalette(revision.status),
                           color: 'white',
                           fontWeight: 600
                         }}
@@ -327,7 +327,7 @@ const DrawingVersionHistory = ({
             onClick={handleAddRevision} 
             variant="contained"
             disabled={!newRevision.file}
-            sx={{ backgroundPalette: '#37444B' }}
+            sx={{ backgroundColor: '#37444B' }}
           >
             Upload Revision
           </Button>

@@ -535,7 +535,7 @@ const MyProjectsList = ({
                     icon={<OverdueIcon />}
                     label={`${taskStats.overdue} Overdue`}
                     size="small"
-                    sx={{ backgroundPalette: '#fdf2f2', color: '#e74c3c', fontWeight: 600 }}
+                    sx={{ backgroundColor: '#fdf2f2', color: '#e74c3c', fontWeight: 600 }}
                   />
                 )}
                 {taskStats.dueSoon > 0 && (
@@ -543,14 +543,14 @@ const MyProjectsList = ({
                     icon={<TodayIcon />}
                     label={`${taskStats.dueSoon} Due Soon`}
                     size="small"
-                    sx={{ backgroundPalette: '#fef9e7', color: '#f39c12', fontWeight: 600 }}
+                    sx={{ backgroundColor: '#fef9e7', color: '#f39c12', fontWeight: 600 }}
                   />
                 )}
                 <Chip
                   icon={<CheckCircle />}
                   label={`${taskStats.completed} Completed`}
                   size="small"
-                  sx={{ backgroundPalette: '#eafaf1', color: '#27ae60', fontWeight: 600 }}
+                  sx={{ backgroundColor: '#eafaf1', color: '#27ae60', fontWeight: 600 }}
                 />
                 </Box>
               </Box>
@@ -618,7 +618,7 @@ const MyProjectsList = ({
                                 icon={<ProjectIcon />}
                                 size="small"
                                 label={getProjectName(task.projectId)}
-                                sx={{ backgroundPalette: '#F8F9FA', color: '#7F8C8D', fontSize: '0.75rem' }}
+                                sx={{ backgroundColor: '#F8F9FA', color: '#7F8C8D', fontSize: '0.75rem' }}
                               />
                               <StatusChip type="priority" status={task.priority} size="small" />
                             </Box>
@@ -660,9 +660,9 @@ const MyProjectsList = ({
                                   sx={{ 
                                     height: 6,
                                     borderRadius: 3,
-                                    backgroundPalette: '#E9ECEF',
+                                    backgroundColor: '#E9ECEF',
                                     '& .MuiLinearProgress-bar': {
-                                      backgroundPalette: task.progress === 100 ? '#27ae60' : '#3498db',
+                                      backgroundColor: task.progress === 100 ? '#27ae60' : '#3498db',
                                       borderRadius: 3
                                     }
                                   }}
@@ -780,7 +780,7 @@ const MyProjectsList = ({
         <Paper
           elevation={0}
           sx={{
-            backgroundPalette: 'white',
+            backgroundColor: 'white',
             border: '1px solid #E9ECEF',
             borderRadius: 3,
             overflow: 'hidden'

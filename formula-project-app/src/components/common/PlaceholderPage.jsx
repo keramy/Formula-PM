@@ -10,7 +10,11 @@ import {
   Chip
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { Building as Construction, ArrowLeft as ArrowBack, Dashboard } from 'iconoir-react';
+import {
+  MdBusiness as Construction,
+  MdArrowBack as ArrowBack,
+  MdDashboard as Dashboard
+} from 'react-icons/md';
 
 /**
  * Reusable placeholder page component for unimplemented features

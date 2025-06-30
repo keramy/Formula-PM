@@ -49,43 +49,43 @@ import {
   StepContent
 } from '@mui/material';
 import {
-  Bell as BellIcon,
-  Megaphone as AnnouncementIcon,
-  Search as SearchIcon,
-  Filter as FilterIcon,
-  Refresh as RefreshIcon,
-  Edit as EditIcon,
-  Star as StarIcon,
-  StarDashed as StarOutlineIcon,
-  Settings as SettingsIcon,
-  Check as CheckIcon,
-  Circle as CircleIcon,
-  Calendar as CalendarIcon,
-  Clock as ClockIcon,
-  Eye as EyeIcon,
-  Eye as EyeOffIcon,
-  Settings as AttachIcon,
-  Settings as SendIcon,
-  ArrowUp as ArrowUpIcon,
-  ArrowDown as ArrowDownIcon,
-  Settings as TagIcon,
-  Group as GroupIcon,
-  Building as ProjectIcon,
-  Settings as SystemIcon,
-  Star as PinIcon,
-  Calendar as TimelineIcon,
-  Bell as CommentIcon,
-  Settings as MoreIcon,
-  Check as ReadIcon,
-  Bell as EmailIcon,
-  Bell as PhoneIcon,
-  Settings as DesktopIcon,
-  Settings as GlobalIcon,
-  Settings as ArchiveIcon,
-  Book as BookIcon,
-  Lightning as LightningIcon,
-  WarningTriangle as WarningTriangleIcon
-} from 'iconoir-react';
+  MdNotifications as BellIcon,
+  MdCampaign as AnnouncementIcon,
+  MdSearch as SearchIcon,
+  MdFilterList as FilterIcon,
+  MdRefresh as RefreshIcon,
+  MdEdit as EditIcon,
+  MdStar as StarIcon,
+  MdStarBorder as StarOutlineIcon,
+  MdSettings as SettingsIcon,
+  MdCheck as CheckIcon,
+  MdCircle as CircleIcon,
+  MdCalendarToday as CalendarIcon,
+  MdSchedule as ClockIcon,
+  MdVisibility as EyeIcon,
+  MdVisibilityOff as EyeOffIcon,
+  MdAttachFile as AttachIcon,
+  MdSend as SendIcon,
+  MdKeyboardArrowUp as ArrowUpIcon,
+  MdKeyboardArrowDown as ArrowDownIcon,
+  MdLabel as TagIcon,
+  MdGroup as GroupIcon,
+  MdBusiness as ProjectIcon,
+  MdComputer as SystemIcon,
+  MdPushPin as PinIcon,
+  MdTimeline as TimelineIcon,
+  MdComment as CommentIcon,
+  MdMoreVert as MoreIcon,
+  MdMarkEmailRead as ReadIcon,
+  MdEmail as EmailIcon,
+  MdPhone as PhoneIcon,
+  MdDesktopWindows as DesktopIcon,
+  MdPublic as GlobalIcon,
+  MdArchive as ArchiveIcon,
+  MdBook as BookIcon,
+  MdElectricBolt as LightningIcon,
+  MdWarning as WarningTriangleIcon
+} from 'react-icons/md';
 import { format, formatDistanceToNow, isToday, isYesterday, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import { useAuth } from '../context/AuthContext';
@@ -501,7 +501,7 @@ const UpdatesPage = () => {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <SearchIcon style={{ fontSize: 18 }} />
+              <SearchIcon size={18} />
             </InputAdornment>
           ),
         }}
@@ -548,14 +548,14 @@ const UpdatesPage = () => {
         <ToggleButton value="list">
           <Tooltip title="List View">
             <Box component="span">
-              <BellIcon style={{ fontSize: 18 }} />
+              <BellIcon size={18} />
             </Box>
           </Tooltip>
         </ToggleButton>
         <ToggleButton value="timeline">
           <Tooltip title="Timeline View">
             <Box component="span">
-              <TimelineIcon style={{ fontSize: 18 }} />
+              <TimelineIcon size={18} />
             </Box>
           </Tooltip>
         </ToggleButton>
@@ -572,15 +572,15 @@ const UpdatesPage = () => {
         sx={{ mr: 2 }}
       />
       <IconButton size="small" onClick={() => setPreferencesOpen(true)}>
-        <SettingsIcon style={{ fontSize: 18 }} />
+        <SettingsIcon size={18} />
       </IconButton>
       <IconButton size="small" onClick={() => window.location.reload()}>
-        <RefreshIcon style={{ fontSize: 18 }} />
+        <RefreshIcon size={18} />
       </IconButton>
       {user?.role === 'manager' && (
         <Button
           className="clean-button-primary"
-          startIcon={<EditIcon style={{ fontSize: 16 }} />}
+          startIcon={<EditIcon size={16} />}
           onClick={() => setComposeOpen(true)}
           size="small"
         >
@@ -596,28 +596,28 @@ const UpdatesPage = () => {
         label="All Updates" 
         isActive={activeTab === 'all'}
         onClick={() => setActiveTab('all')}
-        icon={<BellIcon style={{ fontSize: 16 }} />}
+        icon={<BellIcon size={16} />}
         badge={unreadCounts.all > 0 ? unreadCounts.all : null}
       />
       <CleanTab 
         label="Project Updates" 
         isActive={activeTab === 'project'}
         onClick={() => setActiveTab('project')}
-        icon={<ProjectIcon style={{ fontSize: 16 }} />}
+        icon={<ProjectIcon size={16} />}
         badge={unreadCounts.project > 0 ? unreadCounts.project : null}
       />
       <CleanTab 
         label="System Announcements" 
         isActive={activeTab === 'system'}
         onClick={() => setActiveTab('system')}
-        icon={<SystemIcon style={{ fontSize: 16 }} />}
+        icon={<SystemIcon size={16} />}
         badge={unreadCounts.system > 0 ? unreadCounts.system : null}
       />
       <CleanTab 
         label="Team News" 
         isActive={activeTab === 'team'}
         onClick={() => setActiveTab('team')}
-        icon={<GroupIcon style={{ fontSize: 16 }} />}
+        icon={<GroupIcon size={16} />}
         badge={unreadCounts.team > 0 ? unreadCounts.team : null}
       />
     </>
@@ -631,7 +631,7 @@ const UpdatesPage = () => {
         mb: 2,
         border: update.pinned ? '2px solid' : '1px solid',
         borderPalette: update.pinned ? 'primary.main' : '#E5E7EB',
-        backgroundPalette: !update.read ? '#F9FAFB' : 'background.paper',
+        backgroundColor: !update.read ? '#F9FAFB' : 'background.paper',
         transition: 'all 0.2s ease',
         '&:hover': {
           boxShadow: 2,
@@ -646,7 +646,7 @@ const UpdatesPage = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               {update.pinned && (
                 <Tooltip title="Pinned">
-                  <PinIcon style={{ fontSize: 16, color: '#6366F1' }} />
+                  <PinIcon size={16} style={{ color: '#6366F1' }} />
                 </Tooltip>
               )}
               <Chip
@@ -659,7 +659,7 @@ const UpdatesPage = () => {
                 label={UPDATE_CATEGORIES[update.category].label}
                 size="small"
                 sx={{ 
-                  backgroundPalette: UPDATE_CATEGORIES[update.category].color + '20',
+                  backgroundColor: UPDATE_CATEGORIES[update.category].color + '20',
                   color: UPDATE_CATEGORIES[update.category].color,
                   fontWeight: 500
                 }}
@@ -668,14 +668,14 @@ const UpdatesPage = () => {
                 <Chip
                   label={update.project.name}
                   size="small"
-                  sx={{ backgroundPalette: update.project.color + '20', color: update.project.color }}
+                  sx={{ backgroundColor: update.project.color + '20', color: update.project.color }}
                 />
               )}
               {update.type === 'team' && update.team && (
                 <Chip
                   label={update.team.name}
                   size="small"
-                  icon={<GroupIcon style={{ fontSize: 14 }} />}
+                  icon={<GroupIcon size={14} />}
                 />
               )}
               {update.systemWide && (
@@ -716,7 +716,7 @@ const UpdatesPage = () => {
               </Typography>
               {update.scheduledFor && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <CalendarIcon style={{ fontSize: 14, color: '#6B7280' }} />
+                  <CalendarIcon size={14} style={{ color: '#6B7280' }} />
                   <Typography variant="body2" color="text.secondary">
                     Calendard: {format(update.scheduledFor, 'MMM d, h:mm a')}
                   </Typography>
@@ -730,8 +730,8 @@ const UpdatesPage = () => {
               onClick={() => toggleStar(update.id)}
             >
               {update.starred ? 
-                <StarIcon style={{ fontSize: 18, color: '#E3AF64' }} /> :
-                <StarOutlineIcon style={{ fontSize: 18 }} />
+                <StarIcon size={18} style={{ color: '#E3AF64' }} /> :
+                <StarOutlineIcon size={18} />
               }
             </IconButton>
             {user?.role === 'manager' && (
@@ -739,11 +739,11 @@ const UpdatesPage = () => {
                 size="small"
                 onClick={() => togglePin(update.id)}
               >
-                <PinIcon style={{ fontSize: 18, color: update.pinned ? '#6366F1' : '#6B7280' }} />
+                <PinIcon size={18} style={{ color: update.pinned ? '#6366F1' : '#6B7280' }} />
               </IconButton>
             )}
             <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)}>
-              <MoreIcon style={{ fontSize: 18 }} />
+              <MoreIcon size={18} />
             </IconButton>
           </Box>
         </Box>
@@ -757,7 +757,7 @@ const UpdatesPage = () => {
 
             {/* Metrics for performance updates */}
             {update.metrics && (
-              <Paper sx={{ p: 2, mb: 2, backgroundPalette: '#F3F4F6' }}>
+              <Paper sx={{ p: 2, mb: 2, backgroundColor: '#F3F4F6' }}>
                 <Typography variant="subtitle2" gutterBottom>Performance Metrics</Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={4}>
@@ -788,14 +788,14 @@ const UpdatesPage = () => {
                   {update.attachments.map((attachment, index) => (
                     <Chip
                       key={index}
-                      icon={<AttachIcon style={{ fontSize: 16 }} />}
+                      icon={<AttachIcon size={16} />}
                       label={`${attachment.name} (${attachment.size})`}
                       variant="outlined"
                       onClick={() => handleAttachmentDownload(attachment, update.title)}
                       sx={{ 
                         cursor: 'pointer',
                         '&:hover': {
-                          backgroundPalette: 'primary.light',
+                          backgroundColor: 'primary.light',
                           color: 'primary.contrastText'
                         }
                       }}
@@ -815,7 +815,7 @@ const UpdatesPage = () => {
                       label={`#${tag}`}
                       size="small"
                       sx={{ 
-                        backgroundPalette: '#E5E7EB',
+                        backgroundColor: '#E5E7EB',
                         fontSize: 12,
                         height: 24
                       }}
@@ -838,7 +838,7 @@ const UpdatesPage = () => {
                     sx={{ 
                       cursor: 'pointer',
                       '&:hover': {
-                        backgroundPalette: 'action.hover'
+                        backgroundColor: 'action.hover'
                       }
                     }}
                   />
@@ -847,13 +847,13 @@ const UpdatesPage = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 {update.comments && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <CommentIcon style={{ fontSize: 16, color: '#6B7280' }} />
+                    <CommentIcon size={16} style={{ color: '#6B7280' }} />
                     <Typography variant="body2" color="text.secondary">
                       {update.comments} comments
                     </Typography>
                   </Box>
                 )}
-                <Button size="small" startIcon={<CommentIcon style={{ fontSize: 14 }} />}>
+                <Button size="small" startIcon={<CommentIcon size={14} />}>
                   Comment
                 </Button>
               </Box>
@@ -902,7 +902,7 @@ const UpdatesPage = () => {
           top: 0,
           bottom: 0,
           width: 2,
-          backgroundPalette: '#E5E7EB'
+          backgroundColor: '#E5E7EB'
         }} />
 
         {Object.entries(groupedUpdates).map(([date, dateUpdates]) => (
@@ -934,7 +934,7 @@ const UpdatesPage = () => {
                     width: 12,
                     height: 12,
                     borderRadius: '50%',
-                    backgroundPalette: !update.read ? 'primary.main' : '#9CA3AF',
+                    backgroundColor: !update.read ? 'primary.main' : '#9CA3AF',
                     zIndex: 1,
                     mt: 1
                   }} />
@@ -992,21 +992,21 @@ const UpdatesPage = () => {
             </Typography>
             <Button
               size="small"
-              startIcon={<ReadIcon style={{ fontSize: 16 }} />}
+              startIcon={<ReadIcon size={16} />}
               onClick={() => handleBulkAction('read')}
             >
               Mark as Read
             </Button>
             <Button
               size="small"
-              startIcon={<StarIcon style={{ fontSize: 16 }} />}
+              startIcon={<StarIcon size={16} />}
               onClick={() => handleBulkAction('star')}
             >
               Star
             </Button>
             <Button
               size="small"
-              startIcon={<ArchiveIcon style={{ fontSize: 16 }} />}
+              startIcon={<ArchiveIcon size={16} />}
               onClick={() => handleBulkAction('archive')}
             >
               Archive
@@ -1027,7 +1027,7 @@ const UpdatesPage = () => {
           </Box>
         ) : filteredUpdates.length === 0 ? (
           <Paper sx={{ p: 8, textAlign: 'center' }}>
-            <BellIcon style={{ fontSize: 64, color: '#9CA3AF', marginBottom: 16 }} />
+            <BellIcon size={64} style={{ color: '#9CA3AF', marginBottom: 16 }} />
             <Typography variant="h6" color="text.secondary" gutterBottom>
               No updates found
             </Typography>
@@ -1114,7 +1114,7 @@ const UpdatesPage = () => {
             />
             <Box sx={{ display: 'flex', gap: 1 }}>
               <IconButton size="small">
-                <AttachIcon style={{ fontSize: 18 }} />
+                <AttachIcon size={18} />
               </IconButton>
               <Typography variant="body2" color="text.secondary">
                 Attach files (optional)

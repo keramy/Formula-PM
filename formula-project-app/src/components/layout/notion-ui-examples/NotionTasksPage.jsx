@@ -20,14 +20,14 @@ import {
   LinearProgress
 } from '@mui/material';
 import {
-  Add,
-  FilterList,
-  Check,
-  ViewList,
-  ViewModule,
-  Calendar,
-  CheckCircle
-} from 'iconoir-react';
+  MdAdd as Add,
+  MdFilterList as FilterList,
+  MdCheck as Check,
+  MdViewList as ViewList,
+  MdViewModule as ViewModule,
+  MdCalendarToday as Calendar,
+  MdCheckCircle as CheckCircle
+} from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../CleanPageLayout';
 
 const NotionTasksPage = ({ 
@@ -137,7 +137,7 @@ const NotionTasksPage = ({
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundPalette: `${color}20`,
+              backgroundColor: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'

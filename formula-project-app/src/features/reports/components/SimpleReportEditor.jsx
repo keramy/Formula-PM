@@ -23,18 +23,17 @@ import {
   DialogActions
 } from '@mui/material';
 import {
-  FaSave,
-  FaArrowLeft,
-  FaArrowRight,
-  FaPlus,
-  FaImage,
-  FaEye,
-  FaFileExport,
-  FaTimes,
-  FaCheck,
-  FaCamera,
-  // FaMagic removed
-} from 'react-icons/fa';
+  MdSave as FaSave,
+  MdArrowBack as FaArrowLeft,
+  MdArrowForward as FaArrowRight,
+  MdAdd as FaPlus,
+  MdMediaImage as FaImage,
+  MdVisibility as FaEye,
+  MdFileDownload as FaFileExport,
+  MdCancel as FaTimes,
+  MdCheck as FaCheck,
+  MdCamera as FaCamera
+} from 'react-icons/md';
 import reportService from '../services/reportService';
 import pdfExportService from '../services/pdfExportService';
 import ImageManager from './ImageManager';

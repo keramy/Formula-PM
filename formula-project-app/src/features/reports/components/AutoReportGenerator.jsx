@@ -40,20 +40,20 @@ import {
   AccordionDetails
 } from '@mui/material';
 import {
-  Rocket as FaRocket,
-  Eye as FaEye,
-  Download as FaDownload,
-  MagicWand as FaMagic,
-  Cog as FaCog,
-  CheckCircle as FaCheckCircle,
-  WarningTriangle as FaExclamationTriangle,
-  InfoCircle as FaInfoCircle,
-  Calendar as FaCalendarAlt,
-  MapPin as FaMapMarkerAlt,
-  Tag as FaTags,
-  ArrowUp as FaChartLine,
-  NavArrowDown as MdExpandMore
-} from 'iconoir-react';
+  MdRocket as FaRocket,
+  MdVisibility as FaEye,
+  MdDownload as FaDownload,
+  MdAutoFixHigh as FaMagic,
+  MdSettings as FaCog,
+  MdCheckCircle as FaCheckCircle,
+  MdWarning as FaExclamationTriangle,
+  MdInfo as FaInfoCircle,
+  MdCalendarToday as FaCalendarAlt,
+  MdLocationOn as FaMapMarkerAlt,
+  MdLabel as FaTags,
+  MdTrendingUp as FaChartLine,
+  MdExpandMore as MdExpandMore
+} from 'react-icons/md';
 
 import autoReportService from '../services/autoReportService';
 import photoService from '../services/photoService';

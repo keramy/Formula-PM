@@ -9,13 +9,13 @@ import {
 } from '@mui/material';
 // Iconoir icons - safe navigation icons
 import {
-  Home as HomeIcon,
-  ArrowRight as ChevronRightIcon,
-  ArrowLeft as ArrowBackIcon,
-  ArrowRight as ArrowForwardIcon,
-  Edit as EditIcon,
-  Settings as SettingsIcon
-} from 'iconoir-react';
+  MdHome as HomeIcon,
+  MdArrowForward as ChevronRightIcon,
+  MdArrowBack as ArrowBackIcon,
+  MdArrowForward as ArrowForwardIcon,
+  MdEdit as EditIcon,
+  MdSettings as SettingsIcon
+} from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
 
 const Breadcrumbs = ({ 
@@ -76,7 +76,7 @@ const Breadcrumbs = ({
               height: 32,
               color: colors.textSecondary,
               '&:hover': {
-                backgroundPalette: colors.raptureLight,
+                backgroundColor: colors.raptureLight,
                 borderPalette: colors.caramelEssence,
                 color: colors.textPrimary
               },
@@ -99,7 +99,7 @@ const Breadcrumbs = ({
               height: 32,
               color: colors.textSecondary,
               '&:hover': {
-                backgroundPalette: colors.raptureLight,
+                backgroundColor: colors.raptureLight,
                 borderPalette: colors.caramelEssence,
                 color: colors.textPrimary
               },
@@ -168,7 +168,7 @@ const Breadcrumbs = ({
                       fontSize: '0.75rem',
                       borderPalette: colors.caramelEssence,
                       color: colors.caramelEssence,
-                      backgroundPalette: `${colors.caramelEssence}10`
+                      backgroundColor: `${colors.caramelEssence}10`
                     }}
                   />
                 )}
@@ -213,7 +213,7 @@ const Breadcrumbs = ({
                 height: 32,
                 color: colors.textSecondary,
                 '&:hover': {
-                  backgroundPalette: colors.raptureLight,
+                  backgroundColor: colors.raptureLight,
                   borderPalette: colors.caramelEssence,
                   color: colors.textPrimary
                 }
@@ -233,7 +233,7 @@ const Breadcrumbs = ({
                 height: 32,
                 color: colors.textSecondary,
                 '&:hover': {
-                  backgroundPalette: colors.raptureLight,
+                  backgroundColor: colors.raptureLight,
                   borderPalette: colors.caramelEssence,
                   color: colors.textPrimary
                 }
@@ -253,7 +253,7 @@ const Breadcrumbs = ({
           sx={{ 
             fontSize: '0.7rem', 
             height: 24,
-            backgroundPalette: user.role === 'admin' 
+            backgroundColor: user.role === 'admin' 
               ? '#fee2e2' 
               : user.role === 'co_founder' 
                 ? colors.sapphireDust + '20'

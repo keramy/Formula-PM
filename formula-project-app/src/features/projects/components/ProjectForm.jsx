@@ -276,7 +276,7 @@ function ProjectForm({ onSubmit, onCancel, clients = [], initialProject = null }
               color: '#6c757d',
               '&:hover': {
                 borderPalette: '#adb5bd',
-                backgroundPalette: '#f8f9fa'
+                backgroundColor: '#f8f9fa'
               }
             }}
           >
@@ -288,9 +288,9 @@ function ProjectForm({ onSubmit, onCancel, clients = [], initialProject = null }
             size="large"
             sx={{ 
               flex: 1,
-              backgroundPalette: '#1976d2',
+              backgroundColor: '#1976d2',
               '&:hover': {
-                backgroundPalette: '#1565c0'
+                backgroundColor: '#1565c0'
               }
             }}
           >

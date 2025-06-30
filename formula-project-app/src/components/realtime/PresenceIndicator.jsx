@@ -16,12 +16,12 @@ import {
   Collapse
 } from '@mui/material';
 import {
-  Circle,
-  ExpandMore,
-  ExpandLess,
-  Person,
-  PersonOff
-} from 'iconoir-react';
+  MdCircle as Circle,
+  MdExpandMore as ExpandMore,
+  MdExpandLess as ExpandLess,
+  MdPerson as Person,
+  MdPersonOff as PersonOff
+} from 'react-icons/md';
 import { usePresence } from '../../hooks/useRealTime';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -55,7 +55,7 @@ const PresenceAvatar = ({ user, size = 40, showTooltip = true }) => {
             fontSize: size * 0.3,
             border: '2px solid white',
             borderRadius: '50%',
-            backgroundPalette: 'white'
+            backgroundColor: 'white'
           }} 
         />
       }
@@ -277,7 +277,7 @@ export const TypingIndicator = () => {
       gap: 1, 
       py: 1, 
       px: 2,
-      backgroundPalette: 'rgba(25, 118, 210, 0.08)',
+      backgroundColor: 'rgba(25, 118, 210, 0.08)',
       borderRadius: 1,
       animation: 'pulse 1.5s infinite'
     }}>

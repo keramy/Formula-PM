@@ -22,19 +22,19 @@ import {
   Divider
 } from '@mui/material';
 import {
-  WarningTriangle as WarningIcon,
-  Xmark as ErrorIcon,
-  CheckCircle as CheckIcon,
-  Timeline as TimelineIcon,
-  ArrowDown as ExpandMoreIcon,
-  Refresh as RefreshIcon,
-  Check as ScopeIcon,
-  Design2D as DrawingIcon,
-  Archive as MaterialIcon,
-  Building as ProductionIcon,
-  ArrowUp as ProgressIcon,
-  Calendar as CalendarIcon
-} from 'iconoir-react';
+  MdWarning as WarningIcon,
+  MdClose as ErrorIcon,
+  MdCheckCircle as CheckIcon,
+  MdTimeline as TimelineIcon,
+  MdKeyboardArrowDown as ExpandMoreIcon,
+  MdRefresh as RefreshIcon,
+  MdCheck as ScopeIcon,
+  MdDesignServices as DrawingIcon,
+  MdArchive as MaterialIcon,
+  MdBusiness as ProductionIcon,
+  MdKeyboardArrowUp as ProgressIcon,
+  MdCalendarToday as CalendarIcon
+} from 'react-icons/md';
 import connectionService from '../../../services/connectionService';
 
 const WorkflowDashboard = ({ 
@@ -202,9 +202,9 @@ const WorkflowDashboard = ({
               sx={{ 
                 height: 8, 
                 borderRadius: 4,
-                backgroundPalette: '#f0f0f0',
+                backgroundColor: '#f0f0f0',
                 '& .MuiLinearProgress-bar': {
-                  backgroundPalette: summary.canStartProduction ? '#4caf50' : '#ff9800'
+                  backgroundColor: summary.canStartProduction ? '#4caf50' : '#ff9800'
                 }
               }}
             />
@@ -272,7 +272,7 @@ const WorkflowDashboard = ({
                         label={deps.canStart ? "Can Start" : "Blocked"}
                         size="small"
                         sx={{
-                          backgroundPalette: deps.canStart ? '#4caf50' : '#ff9800',
+                          backgroundColor: deps.canStart ? '#4caf50' : '#ff9800',
                           color: 'white'
                         }}
                       />
@@ -286,7 +286,7 @@ const WorkflowDashboard = ({
                         height: 6, 
                         borderRadius: 3,
                         '& .MuiLinearProgress-bar': {
-                          backgroundPalette: group.color
+                          backgroundColor: group.color
                         }
                       }}
                     />

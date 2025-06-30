@@ -236,7 +236,7 @@ function GanttChart({ tasks = [], projects = [], scopeItems = [], teamMembers = 
             sx={{
               p: 2,
               borderLeft: `4px solid ${task.isOverdue ? '#e74c3c' : priorityPalettes[task.priority]}`,
-              backgroundPalette: task.status === 'completed' ? '#f8f9fa' : 
+              backgroundColor: task.status === 'completed' ? '#f8f9fa' : 
                              task.isOverdue ? '#fff5f5' : 'white',
               opacity: task.status === 'completed' ? 0.7 : 1
             }}
@@ -262,7 +262,7 @@ function GanttChart({ tasks = [], projects = [], scopeItems = [], teamMembers = 
                   label={task.priority}
                   size="small"
                   sx={{
-                    backgroundPalette: `${priorityPalettes[task.priority]}20`,
+                    backgroundColor: `${priorityPalettes[task.priority]}20`,
                     color: priorityPalettes[task.priority],
                     fontWeight: 'bold'
                   }}

@@ -32,13 +32,13 @@ const CleanPageLayout = ({
   return (
     <Box sx={{ 
       minHeight: '100vh',
-      backgroundPalette: colors.background,
+      backgroundColor: colors.background,
       display: 'flex',
       flexDirection: 'column'
     }}>
       {/* Page Header */}
       <Box sx={{ 
-        backgroundPalette: colors.cardBackground,
+        backgroundColor: colors.cardBackground,
         borderBottom: `1px solid ${colors.border}`,
         px: 3,
         py: 1.5
@@ -72,7 +72,7 @@ const CleanPageLayout = ({
                   sx={{
                     height: 24,
                     fontSize: '12px',
-                    backgroundPalette: `${colors.caramelEssence}20`,
+                    backgroundColor: `${colors.caramelEssence}20`,
                     color: colors.caramelEssence,
                     border: 'none',
                     fontWeight: 600
@@ -151,7 +151,7 @@ export const CleanTab = ({
         transition: 'all 0.2s ease',
         '&:hover': {
           color: colors.cosmicOdyssey,
-          backgroundPalette: 'rgba(246, 243, 231, 0.5)'
+          backgroundColor: 'rgba(246, 243, 231, 0.5)'
         }
       }}
     >
@@ -164,7 +164,7 @@ export const CleanTab = ({
           sx={{
             height: 16,
             fontSize: '10px',
-            backgroundPalette: colors.caramelEssence,
+            backgroundColor: colors.caramelEssence,
             color: 'white',
             '& .MuiChip-label': { px: 1 }
           }}

@@ -456,7 +456,7 @@ const UniversalFilters = ({
                 sx={{
                   cursor: 'pointer',
                   '&:hover': {
-                    backgroundPalette: 'primary.light',
+                    backgroundColor: 'primary.light',
                     color: 'primary.contrastText'
                   }
                 }}
@@ -575,7 +575,7 @@ const UniversalFilters = ({
             sx={{
               p: 3,
               mb: 3,
-              backgroundPalette: 'grey.50',
+              backgroundColor: 'grey.50',
               border: 1,
               borderPalette: 'divider',
               ...sx

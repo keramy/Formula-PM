@@ -26,17 +26,17 @@ import {
   Divider
 } from '@mui/material';
 import {
-  ZoomIn as ZoomInIcon,
-  ZoomOut as ZoomOutIcon,
-  Refresh as RefreshIcon,
-  ViewGrid as ViewModuleIcon,
-  List as ViewListIcon,
-  Filter as FilterIcon,
-  Settings as SettingsIcon,
-  Download as ExportIcon,
-  Plus as AddIcon,
-  Timeline as TimelineIcon
-} from 'iconoir-react';
+  MdZoomIn as ZoomInIcon,
+  MdZoomOut as ZoomOutIcon,
+  MdRefresh as RefreshIcon,
+  MdViewModule as ViewModuleIcon,
+  MdList as ViewListIcon,
+  MdFilterList as FilterIcon,
+  MdSettings as SettingsIcon,
+  MdDownload as ExportIcon,
+  MdAdd as AddIcon,
+  MdTimeline as TimelineIcon
+} from 'react-icons/md';
 // import { Gantt } from 'frappe-gantt';
 import { format, addDays, startOfWeek, endOfWeek, isSameDay } from 'date-fns';
 import connectionService from '../../services/connectionService';
@@ -617,7 +617,7 @@ const EnhancedGanttChart = ({
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
-            backgroundPalette: 'rgba(255,255,255,0.8)',
+            backgroundColor: 'rgba(255,255,255,0.8)',
             zIndex: 10
           }}>
             <Typography>Loading timeline...</Typography>

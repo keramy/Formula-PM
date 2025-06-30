@@ -1,7 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Paper } from '@mui/material';
-import { FaExclamationTriangle as ErrorOutlineIcon } from 'react-icons/fa';
+import {
+  MdWarning as ErrorOutlineIcon
+} from 'react-icons/md';
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -13,7 +15,7 @@ const NotFound = () => {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
-        backgroundPalette: 'background.default',
+        backgroundColor: 'background.default',
       }}
     >
       <Paper
@@ -23,13 +25,9 @@ const NotFound = () => {
           maxWidth: 400,
         }}
       >
-        <ErrorOutlineIcon
-          sx={{
-            fontSize: 80,
-            color: 'error.main',
-            mb: 2,
-          }}
-        />
+        <Box sx={{ mb: 2, color: 'error.main' }}>
+          <ErrorOutlineIcon size={80} />
+        </Box>
         <Typography variant="h1" sx={{ fontSize: '6rem', fontWeight: 'bold', mb: 1 }}>
           404
         </Typography>

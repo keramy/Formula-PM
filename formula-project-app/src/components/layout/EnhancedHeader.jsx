@@ -19,21 +19,23 @@ import {
   useMediaQuery
 } from '@mui/material';
 // Iconoir icons - ultra-safe verified icons only
-import { 
-  Search, 
-  Plus as Add, 
-  ShareAndroid as Share, 
-  Menu as MoreHoriz,
-  Star,
-  Star as StarBorder,
-  Home,
-  Building as Business,
-  HalfMoon as Brightness4, // Dark mode icon
-  SunLight as Brightness7, // Light mode icon
+import {
+  MdSearch as Search,
+  MdAdd as Add,
+  MdShare as Share,
+  MdMenu as MoreHoriz,
+  MdStar as Star,
+  MdStar as StarBorder,
+  MdHome as Home,
+  MdBusiness as Business,
+  MdHalfMoon as Brightness4,
+  MdSunLight as Brightness7,
+  Md// Light mode icon
+  Settings as // Light mode icon
   Settings,
-  User as User,
-  LogOut as Logout // LogOut icon
-} from 'iconoir-react';
+  MdPerson as User,
+  MdLogOut as Logout // LogOut icon
+} from 'react-icons/md';
 import FormulaLogo from '../branding/FormulaLogo';
 import { FormulaLogoCompact } from '../branding/LogoVariations';
 import { useTheme as useFormulaTheme } from '../../context/ThemeContext';
@@ -103,7 +105,7 @@ const EnhancedHeader = ({
 
   return (
     <Box sx={{ 
-      backgroundPalette: headerPalettes.background,
+      backgroundColor: headerPalettes.background,
       borderBottom: `1px solid ${headerPalettes.border}`,
       px: 4,
       py: 3,
@@ -151,10 +153,10 @@ const EnhancedHeader = ({
               onClick={toggleTheme}
               sx={{ 
                 color: theme.palette.text.primary,
-                backgroundPalette: theme.palette.action.hover,
+                backgroundColor: theme.palette.action.hover,
                 border: `1px solid ${theme.palette.divider}`,
                 '&:hover': {
-                  backgroundPalette: theme.palette.action.selected,
+                  backgroundColor: theme.palette.action.selected,
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                 },
                 transition: 'all 0.2s ease'
@@ -182,7 +184,7 @@ const EnhancedHeader = ({
                 sx={{
                   width: 36,
                   height: 36,
-                  backgroundPalette: darkMode ? theme.palette.formulaBrand.lightCream : theme.palette.formulaBrand.navy,
+                  backgroundColor: darkMode ? theme.palette.formulaBrand.lightCream : theme.palette.formulaBrand.navy,
                   color: darkMode ? theme.palette.formulaBrand.navy : theme.palette.formulaBrand.lightCream,
                   fontSize: '1rem',
                   fontWeight: 500,
@@ -290,7 +292,7 @@ const EnhancedHeader = ({
                   color: isStarred ? theme.palette.warning.main : headerPalettes.textSecondary,
                   '&:hover': {
                     color: isStarred ? theme.palette.warning.dark : theme.palette.warning.main,
-                    backgroundPalette: theme.palette.action.hover,
+                    backgroundColor: theme.palette.action.hover,
                     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                   },
                   transition: 'all 0.2s ease'
@@ -368,12 +370,12 @@ const EnhancedHeader = ({
                       height: 24,
                       fontSize: '0.75rem',
                       fontWeight: 600,
-                      backgroundPalette: theme.palette.action.hover,
+                      backgroundColor: theme.palette.action.hover,
                       color: theme.palette.text.primary,
                       cursor: 'pointer',
                       border: `1px solid ${theme.palette.divider}`,
                       '&:hover': {
-                        backgroundPalette: theme.palette.action.selected,
+                        backgroundColor: theme.palette.action.selected,
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                       },
                       transition: 'all 0.2s ease'
@@ -395,17 +397,17 @@ const EnhancedHeader = ({
               width: 240,
               height: 38,
               px: 1.5,
-              backgroundPalette: theme.palette.action.hover,
+              backgroundColor: theme.palette.action.hover,
               border: `1px solid ${theme.palette.divider}`,
               borderRadius: 2,
               boxShadow: 'none',
               transition: 'all 0.2s ease',
               '&:hover': {
-                backgroundPalette: theme.palette.action.selected,
+                backgroundColor: theme.palette.action.selected,
                 border: `1px solid ${theme.palette.primary.light}`
               },
               '&:focus-within': {
-                backgroundPalette: theme.palette.action.selected,
+                backgroundColor: theme.palette.action.selected,
                 border: `1px solid ${theme.palette.primary.main}`,
                 boxShadow: `0 0 0 3px ${theme.palette.action.focus}`
               }
@@ -437,14 +439,14 @@ const EnhancedHeader = ({
           <Tooltip title="Share">
             <IconButton 
               sx={{ 
-                backgroundPalette: theme.palette.action.hover,
+                backgroundColor: theme.palette.action.hover,
                 border: `1px solid ${theme.palette.divider}`,
                 borderRadius: 2,
                 width: 38,
                 height: 38,
                 color: theme.palette.text.primary,
                 '&:hover': { 
-                  backgroundPalette: theme.palette.action.selected,
+                  backgroundColor: theme.palette.action.selected,
                   border: `1px solid ${theme.palette.primary.light}`,
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                 },
@@ -464,7 +466,7 @@ const EnhancedHeader = ({
                 startIcon={<Add />}
                 onClick={onAdd}
                 sx={{
-                  backgroundPalette: theme.palette.primary.main,
+                  backgroundColor: theme.palette.primary.main,
                   color: theme.palette.primary.contrastText,
                   borderRadius: 2,
                   px: 3,
@@ -473,7 +475,7 @@ const EnhancedHeader = ({
                   fontSize: '0.875rem',
                   textTransform: 'none',
                   '&:hover': {
-                    backgroundPalette: theme.palette.primary.dark,
+                    backgroundColor: theme.palette.primary.dark,
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
                   },
                   transition: 'all 0.2s ease'
@@ -486,13 +488,13 @@ const EnhancedHeader = ({
                 <IconButton 
                   onClick={onAdd}
                   sx={{ 
-                    backgroundPalette: theme.palette.primary.main, 
+                    backgroundColor: theme.palette.primary.main, 
                     color: theme.palette.primary.contrastText,
                     borderRadius: 2,
                     width: 38,
                     height: 38,
                     '&:hover': { 
-                      backgroundPalette: theme.palette.primary.dark,
+                      backgroundColor: theme.palette.primary.dark,
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
                     },
                     transition: 'all 0.2s ease'
@@ -507,14 +509,14 @@ const EnhancedHeader = ({
           <Tooltip title="More options">
             <IconButton 
               sx={{ 
-                backgroundPalette: theme.palette.action.hover,
+                backgroundColor: theme.palette.action.hover,
                 border: `1px solid ${theme.palette.divider}`,
                 borderRadius: 2,
                 width: 38,
                 height: 38,
                 color: theme.palette.text.primary,
                 '&:hover': { 
-                  backgroundPalette: theme.palette.action.selected,
+                  backgroundColor: theme.palette.action.selected,
                   border: `1px solid ${theme.palette.primary.light}`,
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                 },
@@ -568,7 +570,7 @@ const EnhancedHeader = ({
           sx: {
             mt: 1.5,
             minWidth: 200,
-            backgroundPalette: theme.palette.background.paper,
+            backgroundColor: theme.palette.background.paper,
             border: `1px solid ${theme.palette.divider}`,
             borderRadius: 2,
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
@@ -578,7 +580,7 @@ const EnhancedHeader = ({
               mx: 1,
               my: 0.5,
               '&:hover': {
-                backgroundPalette: theme.palette.action.hover,
+                backgroundColor: theme.palette.action.hover,
               },
             },
           },

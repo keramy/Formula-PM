@@ -23,13 +23,13 @@ import {
   Slide
 } from '@mui/material';
 import {
-  Comment,
-  Send,
-  Close,
-  ChatBubble,
-  Visibility,
-  VisibilityOff
-} from 'iconoir-react';
+  MdComment as Comment,
+  MdSend as Send,
+  MdClose as Close,
+  MdChat as ChatBubble,
+  MdVisibility as Visibility,
+  MdVisibilityOff as VisibilityOff
+} from 'react-icons/md';
 import { formatDistanceToNow } from 'date-fns';
 import { useCollaborativeComments, usePresence } from '../../hooks/useRealTime';
 
@@ -292,7 +292,7 @@ export const CollaborativeCursors = ({
             width: 20,
             height: 20,
             borderRadius: '50%',
-            backgroundPalette: 'primary.main',
+            backgroundColor: 'primary.main',
             border: '2px solid white',
             boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
             zIndex: 9999,
@@ -308,7 +308,7 @@ export const CollaborativeCursors = ({
                 top: 25,
                 left: '50%',
                 transform: 'translateX(-50%)',
-                backgroundPalette: 'primary.main',
+                backgroundColor: 'primary.main',
                 color: 'white',
                 px: 1,
                 py: 0.5,
@@ -333,7 +333,7 @@ export const CollaborativeCursors = ({
             width: 16,
             height: 16,
             borderRadius: '50%',
-            backgroundPalette: 'success.main',
+            backgroundColor: 'success.main',
             border: '2px solid white',
             zIndex: 9998,
             pointerEvents: 'none',
@@ -361,7 +361,7 @@ export const LiveEditingIndicator = ({
         gap: 1, 
         py: 1,
         px: 2,
-        backgroundPalette: isEditing ? 'primary.light' : 'warning.light',
+        backgroundColor: isEditing ? 'primary.light' : 'warning.light',
         borderRadius: 1,
         mb: 2
       }}>
@@ -431,7 +431,7 @@ export const CollaborativeNotification = ({
           minWidth: 300,
           maxWidth: 400,
           zIndex: 1300,
-          backgroundPalette: 'background.paper',
+          backgroundColor: 'background.paper',
           boxShadow: 3
         }}
       >

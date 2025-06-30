@@ -12,17 +12,18 @@ import {
   LinearProgress
 } from '@mui/material';
 import {
-  Plus as Add,
-  FilterList,
-  List as ViewList,
-  ViewGrid as ViewModule,
-  User as PersonIcon,
-  Group as TeamIcon,
-  ArrowUp as ArrowUp,
-  ClipboardCheck as Task,
-  CheckCircle,
-  Clock as Calendar
-} from 'iconoir-react';
+  MdAdd as Add,
+  MdFilterList as FilterList,
+  MdList as ViewList,
+  MdViewModule as ViewModule,
+  MdPerson as PersonIcon,
+  MdGroup as TeamIcon,
+  MdKeyboardArrowUp as ArrowUp,
+  MdTask as Task,
+  MdCheck as Check,
+  MdCheckCircle as CheckCircle,
+  MdSchedule as Calendar
+} from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import TeamMembersList from '../features/team/components/TeamMembersList';
 import TeamPerformance from '../features/team/components/TeamPerformance';
@@ -221,7 +222,7 @@ const TeamPage = ({
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundPalette: `${color}20`,
+              backgroundColor: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -330,7 +331,7 @@ const TeamPage = ({
                 sx={{
                   mb: 1,
                   '& .MuiLinearProgress-bar': {
-                    backgroundPalette: completionRate >= 75 ? '#10B981' : completionRate >= 50 ? '#E3AF64' : '#516AC8'
+                    backgroundColor: completionRate >= 75 ? '#10B981' : completionRate >= 50 ? '#E3AF64' : '#516AC8'
                   }
                 }}
               />
@@ -444,7 +445,7 @@ const TeamPage = ({
         <Grid item xs={12} lg={4}>
           <Card className="clean-card">
             <Box className="clean-section-header">
-              <Box className="clean-section-indicator" sx={{ backgroundPalette: '#516AC8' }}></Box>
+              <Box className="clean-section-indicator" sx={{ backgroundColor: '#516AC8' }}></Box>
               <Typography className="clean-section-title">
                 Recent Hires
               </Typography>
@@ -458,7 +459,7 @@ const TeamPage = ({
                       p: 2,
                       borderBottom: index < recentHires.length - 1 ? '1px solid #E5E7EB' : 'none',
                       '&:hover': {
-                        backgroundPalette: '#F6F3E7'
+                        backgroundColor: '#F6F3E7'
                       }
                     }}
                   >

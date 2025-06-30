@@ -24,21 +24,22 @@ import {
   Divider
 } from '@mui/material';
 import {
-  Plus as Add,
-  FilterList,
-  List as ViewList,
-  ViewGrid as ViewModule,
-  Calendar as DateRange,
-  ClipboardCheck as Task,
-  CheckCircle,
-  Clock as PendingIcon,
-  Play as InProgressIcon,
-  User as PersonIcon,
-  Calendar as CalendarToday,
-  ArrowUp as ArrowUp,
-  WarningTriangle as Warning,
-  Trash as MoreVert
-} from 'iconoir-react';
+  MdAdd as Add,
+  MdFilterList as FilterList,
+  MdViewList as ViewList,
+  MdViewModule as ViewModule,
+  MdCalendarToday as DateRange,
+  MdAssignment as Task,
+  MdCheckCircle as CheckCircle,
+  MdSchedule as PendingIcon,
+  MdPlayArrow as InProgressIcon,
+  MdPerson as PersonIcon,
+  MdCalendarToday as CalendarToday,
+  MdKeyboardArrowUp as ArrowUp,
+  MdWarning as Warning,
+  MdMoreVert as MoreVert,
+  MdCheck as Check
+} from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import { TaskStatusChip, PriorityChip } from '../components/ui/StatusChip';
 
@@ -170,27 +171,27 @@ const TasksPage = ({
         label="My Tasks" 
         isActive={activeTab === 'my-tasks'}
         onClick={() => setActiveTab('my-tasks')}
-        icon={<Check sx={{ fontSize: 16 }} />}
+        icon={<Check size={16} />}
         badge={myTasks.length}
       />
       <CleanTab 
         label="All Tasks" 
         isActive={activeTab === 'all-tasks'}
         onClick={() => setActiveTab('all-tasks')}
-        icon={<ViewList sx={{ fontSize: 16 }} />}
+        icon={<ViewList size={16} />}
         badge={taskStats.total}
       />
       <CleanTab 
         label="Board" 
         isActive={activeTab === 'board'}
         onClick={() => setActiveTab('board')}
-        icon={<ViewModule sx={{ fontSize: 16 }} />}
+        icon={<ViewModule size={16} />}
       />
       <CleanTab 
         label="Calendar" 
         isActive={activeTab === 'calendar'}
         onClick={() => setActiveTab('calendar')}
-        icon={<DateRange sx={{ fontSize: 16 }} />}
+        icon={<DateRange size={16} />}
       />
     </>
   );
@@ -239,7 +240,7 @@ const TasksPage = ({
               width: 48,
               height: 48,
               borderRadius: 2,
-              backgroundPalette: `${color}20`,
+              backgroundColor: `${color}20`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -283,7 +284,7 @@ const TasksPage = ({
             </Typography>
           </Box>
           <IconButton size="small" sx={{ color: '#9CA3AF' }}>
-            <MoreVert sx={{ fontSize: 18 }} />
+            <MoreVert size={18} />
           </IconButton>
         </Box>
 
@@ -307,7 +308,7 @@ const TasksPage = ({
               className="clean-progress-bar"
               sx={{
                 '& .MuiLinearProgress-bar': {
-                  backgroundPalette: task.progress >= 75 ? '#10B981' : task.progress >= 50 ? '#E3AF64' : '#516AC8'
+                  backgroundColor: task.progress >= 75 ? '#10B981' : task.progress >= 50 ? '#E3AF64' : '#516AC8'
                 }
               }}
             />
@@ -316,7 +317,7 @@ const TasksPage = ({
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <CalendarToday sx={{ fontSize: 14, color: '#9CA3AF' }} />
+            <CalendarToday size={14} style={{ color: '#9CA3AF' }} />
             <Typography 
               variant="caption" 
               sx={{ 
@@ -333,7 +334,7 @@ const TasksPage = ({
               label="Overdue"
               size="small"
               sx={{
-                backgroundPalette: '#EF444420',
+                backgroundColor: '#EF444420',
                 color: '#EF4444',
                 fontSize: '10px'
               }}
@@ -422,7 +423,7 @@ const TasksPage = ({
           <Grid item xs={12}>
             <Card className="clean-card">
               <CardContent sx={{ p: 4, textAlign: 'center' }}>
-                <Check sx={{ fontSize: 64, color: '#9CA3AF', mb: 2 }} />
+                <Check size={64} style={{ color: '#9CA3AF', marginBottom: 16 }} />
                 <Typography variant="h6" sx={{ color: '#6B7280', mb: 1 }}>
                   No tasks assigned to you
                 </Typography>
@@ -457,14 +458,14 @@ const TasksPage = ({
             onClick={() => setViewMode('cards')}
             size="small"
           >
-            <ViewModule sx={{ fontSize: 18 }} />
+            <ViewModule size={18} />
           </IconButton>
           <IconButton
             className={viewMode === 'list' ? 'clean-button-primary' : 'clean-button-secondary'}
             onClick={() => setViewMode('list')}
             size="small"
           >
-            <ViewList sx={{ fontSize: 18 }} />
+            <ViewList size={18} />
           </IconButton>
         </Box>
       </Box>
@@ -575,11 +576,11 @@ const TasksPage = ({
                         color: 'var(--gray-400)',
                         '&:hover': {
                           color: 'var(--construction-500)',
-                          backgroundPalette: 'var(--construction-50)'
+                          backgroundColor: 'var(--construction-50)'
                         }
                       }}
                     >
-                      <MoreVert sx={{ fontSize: 16 }} />
+                      <MoreVert size={16} />
                     </IconButton>
                   </TableCell>
                 </TableRow>

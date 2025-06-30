@@ -1,120 +1,86 @@
 /**
- * Icon Mapping Service - Formula PM → Iconoir Migration
+ * Icon Mapping Service - Formula PM → React Icons/MD Migration
  * 
  * This service provides a centralized mapping from current icons
- * (Material-UI and React Icons) to Iconoir equivalents.
+ * (Material-UI and React Icons) to react-icons/md equivalents.
  */
 
 import {
-  // Navigation
-  Home,
-  Dashboard,
-  Menu,
-  Timeline,
-  Folder,
-  
-  // Actions
-  Plus,
-  Search,
-  Edit,
-  Trash,
-  FloppyDisk,
-  ArrowRight,
-  Filter,
-  
-  // Views  
-  ViewGrid,
-  Table,
-  List,
-  Calendar,
-  
-  // Status
-  CheckCircle,
-  Warning,
-  XmarkCircle,
-  InfoCircle,
-  Star,
-  
-  // Business
-  Building,
-  User,
-  Group,
-  Settings,
-  
-  // Navigation arrows
-  NavArrowUp,
-  NavArrowDown,
-  NavArrowLeft,
-  NavArrowRight,
-  
-  // File operations
-  Share,
-  Download,
-  Upload,
-  CloudUpload,
-  
-  // UI Controls
-  MoreHoriz,
-  MoreVert,
-  
-  // Additional icons
-  Eye,
-  EyeOff,
-  Bell,
-  Inbox,
-  Check,
-  Cancel,
-  
-  // PDF and documents
-  Page,
-  
-  // Charts and reports
-  StatsReport,
-  
-  // Linking and connections
-  Link,
-  
-  // Inventory and categorization
-  Archive,
-  TagOutline,
-  
-  // History and version control
-  HistoryCircle,
-  
-  // Expansion and collapse
-  ArrowDown,
-  ArrowUp,
-  
-  // Data and sheets
-  DataTransferDown,
-  DataTransferUp,
-  
-  // Additional icons for comprehensive mapping
-  ZoomIn,
-  ZoomOut,
-  Expand,
-  Printer,
-  RotateLeft,
-  RotateRight,
-  Cart,
-  Quote,
-  Delivery,
-  DollarCircle,
-  TrendingUp,
-  Color,
-  Copy,
-  Design2D,
-  Unlink,
-  Minus,
-  ShieldCheck,
-  Leaf,
-  Phone,
-  Mail,
-  Undo
-} from 'iconoir-react';
+  MdHome as Home,
+  MdDashboard as Dashboard,
+  MdMenu as Menu,
+  MdTimeline as Timeline,
+  MdFolder as Folder,
+  MdAdd as Plus,
+  MdSearch as Search,
+  MdEdit as Edit,
+  MdDelete as Trash,
+  MdSave as FloppyDisk,
+  MdArrowForward as ArrowRight,
+  MdFilterList as Filter,
+  MdViewModule as ViewGrid,
+  MdTableRows as Table,
+  MdList as List,
+  MdCalendarToday as Calendar,
+  MdCheckCircle as CheckCircle,
+  MdWarning as Warning,
+  MdError as XmarkCircle,
+  MdInfo as InfoCircle,
+  MdStar as Star,
+  MdBusiness as Building,
+  MdPerson as User,
+  MdGroup as Group,
+  MdSettings as Settings,
+  MdKeyboardArrowUp as NavArrowUp,
+  MdExpandMore as NavArrowDown,
+  MdArrowBack as NavArrowLeft,
+  MdArrowForward as NavArrowRight,
+  MdShare as Share,
+  MdDownload as Download,
+  MdCloudUpload as Upload,
+  MdCloudUpload as CloudUpload,
+  MdMoreHoriz as MoreHoriz,
+  MdMoreVert as MoreVert,
+  MdVisibility as Eye,
+  MdVisibilityOff as EyeOff,
+  MdNotifications as Bell,
+  MdInbox as Inbox,
+  MdCheck as Check,
+  MdCancel as Cancel,
+  MdDescription as Page,
+  MdAssessment as StatsReport,
+  MdLink as Link,
+  MdArchive as Archive,
+  MdLabel as TagOutline,
+  MdHistory as HistoryCircle,
+  MdKeyboardArrowDown as ArrowDown,
+  MdFileDownload as DataTransferDown,
+  MdFileUpload as DataTransferUp,
+  MdZoomIn as ZoomIn,
+  MdZoomOut as ZoomOut,
+  MdFullscreen as Expand,
+  MdPrint as Printer,
+  MdRotateLeft as RotateLeft,
+  MdRotateRight as RotateRight,
+  MdShoppingCart as Cart,
+  MdFormatQuote as Quote,
+  MdLocalShipping as Delivery,
+  MdAttachMoney as DollarCircle,
+  MdTrendingUp as TrendingUp,
+  MdPalette as Color,
+  MdContentCopy as Copy,
+  MdDesignServices as Design2D,
+  MdLinkOff as Unlink,
+  MdRemove as Minus,
+  MdSecurity as ShieldCheck,
+  MdEco as Leaf,
+  MdPhone as Phone,
+  MdEmail as Mail,
+  MdUndo as Undo
+} from 'react-icons/md';
 
 /**
- * Complete icon mapping from current icons to Iconoir equivalents
+ * Complete icon mapping from current icons to react-icons/md equivalents
  */
 export const iconMap = {
   // ===== MATERIAL-UI ICONS MAPPING =====
@@ -125,7 +91,7 @@ export const iconMap = {
   'Menu': Menu,
   'Timeline': Timeline,
   'Folder': Folder,
-  'FolderOpen': Folder, // Use same folder icon
+  'FolderOpen': Folder,
   
   // Actions
   'Add': Plus,
@@ -152,9 +118,9 @@ export const iconMap = {
   'Info': InfoCircle,
   
   // Business
-  'Engineering': Building, // Alternative for engineering
+  'Engineering': Building,
   'Business': Building,
-  'Assignment': Check, // Task assignment
+  'Assignment': Check,
   'Group': Group,
   'Person': User,
   
@@ -224,11 +190,7 @@ export const iconMap = {
   'Email': Mail,
   'Undo': Undo,
   'CalendarToday': Calendar,
-  'Person': User,
-  'Assignment': Check,
   'ArrowBack': NavArrowLeft,
-  'Visibility': Eye,
-  'VisibilityOff': EyeOff,
   
   // ===== REACT ICONS MAPPING =====
   
@@ -238,24 +200,24 @@ export const iconMap = {
   'FaShare': Share,
   'FaEllipsisH': MoreHoriz,
   'FaStar': Star,
-  'FaRegStar': Star, // Use same star icon
+  'FaRegStar': Star,
   'FaHome': Home,
   'FaBuilding': Building,
-  'FaMoon': Cancel, // Will need custom dark mode icon
-  'FaSun': Cancel, // Will need custom light mode icon  
+  'FaMoon': Cancel,
+  'FaSun': Cancel,
   'FaCog': Settings,
   'FaUser': User,
-  'FaSignOutAlt': Cancel, // Logout - use cancel as placeholder
-  'FaHardHat': Building, // Construction theme
-  'FaTools': Settings, // Tools icon alternative
-  'FaHammer': Building, // Construction tool
+  'FaSignOutAlt': Cancel,
+  'FaHardHat': Building,
+  'FaTools': Settings,
+  'FaHammer': Building,
   'FaFilter': Filter,
   'FaTimes': Cancel,
-  'FaSave': Save,
+  'FaSave': FloppyDisk,
   'FaCloudUploadAlt': Upload,
-  'FaPaperclip': Upload, // Attachment
-  'FaRedo': Cancel, // Refresh/redo
-  'FaBug': Warning, // Bug report
+  'FaPaperclip': Upload,
+  'FaRedo': Cancel,
+  'FaBug': Warning,
   'FaArrowUp': NavArrowUp,
   'FaArrowDown': NavArrowDown,
   'FaChevronUp': NavArrowUp,
@@ -263,8 +225,8 @@ export const iconMap = {
   'FaCalendarAlt': Calendar,
   'FaTachometerAlt': Dashboard,
   'FaExclamationTriangle': Warning,
-  'FaHistory': Cancel, // History - placeholder
-  'FaThumbtack': Cancel, // Pin - placeholder
+  'FaHistory': HistoryCircle,
+  'FaThumbtack': Cancel,
   
   // Ionic icons (react-icons/io5)
   'IoClose': Cancel,
@@ -274,23 +236,23 @@ export const iconMap = {
 };
 
 /**
- * Get Iconoir icon component by name
+ * Get react-icons/md icon component by name
  * @param {string} iconName - Original icon name
- * @returns {React.Component} Iconoir icon component
+ * @returns {React.Component} react-icons/md icon component
  */
 export const getIconoirIcon = (iconName) => {
   const IconComponent = iconMap[iconName];
   
   if (!IconComponent) {
-    console.warn(`⚠️ Icon "${iconName}" not found in Iconoir mapping. Using default.`);
-    return XmarkCircle; // Default fallback icon
+    console.warn(`⚠️ Icon "${iconName}" not found in react-icons/md mapping. Using default.`);
+    return XmarkCircle;
   }
   
   return IconComponent;
 };
 
 /**
- * Check if an icon has a direct Iconoir equivalent
+ * Check if an icon has a direct react-icons/md equivalent
  * @param {string} iconName - Original icon name
  * @returns {boolean} True if icon is mapped
  */
@@ -299,7 +261,7 @@ export const hasIconoirEquivalent = (iconName) => {
 };
 
 /**
- * Get all available Iconoir icons in this mapping
+ * Get all available react-icons/md icons in this mapping
  * @returns {string[]} Array of available icon names
  */
 export const getAvailableIcons = () => {
@@ -311,7 +273,7 @@ export const getAvailableIcons = () => {
  */
 export const logMissingIcons = () => {
   if (import.meta.env.MODE === 'development') {
-    console.log('📊 Iconoir Migration Status:', {
+    console.log('📊 react-icons/md Migration Status:', {
       totalMapped: Object.keys(iconMap).length,
       availableIcons: getAvailableIcons()
     });

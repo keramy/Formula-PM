@@ -136,7 +136,7 @@ const ProjectsFilters = ({
         <Box
           sx={{
             p: 2,
-            backgroundPalette: '#F8F9FA',
+            backgroundColor: '#F8F9FA',
             borderBottom: '1px solid #E9ECEF',
             display: 'flex',
             alignItems: 'center',
@@ -153,7 +153,7 @@ const ProjectsFilters = ({
                 label={`${getFilterCount()} active`}
                 size="small"
                 sx={{
-                  backgroundPalette: '#E67E22',
+                  backgroundColor: '#E67E22',
                   color: 'white',
                   fontWeight: 500
                 }}
@@ -192,7 +192,7 @@ const ProjectsFilters = ({
                     color: filter.color,
                     mb: 1,
                     '&:hover': {
-                      backgroundPalette: filter.color,
+                      backgroundColor: filter.color,
                       color: 'white'
                     }
                   }}
@@ -232,7 +232,7 @@ const ProjectsFilters = ({
                             width: 12,
                             height: 12,
                             borderRadius: '50%',
-                            backgroundPalette: option.color
+                            backgroundColor: option.color
                           }}
                         />
                         {option.label}
@@ -452,7 +452,7 @@ const ProjectsFilters = ({
 
           {/* Results Summary */}
           {hasActiveFilters && (
-            <Box sx={{ mt: 3, p: 2, backgroundPalette: '#F8F9FA', borderRadius: 1 }}>
+            <Box sx={{ mt: 3, p: 2, backgroundColor: '#F8F9FA', borderRadius: 1 }}>
               <Typography variant="body2" color="textSecondary">
                 <strong>{getFilterCount()}</strong> filter(s) applied. 
                 Click "Clear All" to reset all filters.

@@ -31,27 +31,27 @@ import {
   Grid
 } from '@mui/material';
 import {
-  ArrowRight as TimelineIcon,
-  Calendar as CalendarIcon,
-  Filter as FilterIcon,
-  ZoomIn,
-  ZoomOut,
-  ViewGrid,
-  ViewList,
-  Download,
-  Settings,
-  Play,
-  Pause,
-  SkipNext,
-  Group,
-  CheckCircle,
-  WarningCircle as AlertCircle,
-  Clock,
-  Edit,
-  Plus,
-  ArrowRight,
-  Calendar as CalendarPicker
-} from 'iconoir-react';
+  MdArrowForward as TimelineIcon,
+  MdCalendarToday as CalendarIcon,
+  MdFilterList as FilterIcon,
+  MdZoomIn as ZoomIn,
+  MdZoomOut as ZoomOut,
+  MdViewModule as ViewGrid,
+  MdViewList as ViewList,
+  MdDownload as Download,
+  MdSettings as Settings,
+  MdPlayArrow as Play,
+  MdPause as Pause,
+  MdSkipNext as SkipNext,
+  MdGroup as Group,
+  MdCheckCircle as CheckCircle,
+  MdWarning as AlertCircle,
+  MdSchedule as Clock,
+  MdEdit as Edit,
+  MdAdd as Plus,
+  MdArrowForward as ArrowRight,
+  MdCalendarToday as CalendarPicker
+} from 'react-icons/md';
 import { ComposedChart, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import apiService from '../services/api/apiService';
@@ -289,7 +289,7 @@ const TimelinePage = () => {
           <Button 
             variant="contained" 
             onClick={() => window.location.reload()}
-            sx={{ backgroundPalette: colors.sapphireDust }}
+            sx={{ backgroundColor: colors.sapphireDust }}
           >
             Retry
           </Button>
@@ -342,9 +342,9 @@ const TimelinePage = () => {
           onClick={() => handleViewChange('weekly')}
           variant={timelineView === 'weekly' ? 'contained' : 'outlined'}
           sx={{ 
-            backgroundPalette: timelineView === 'weekly' ? colors.caramelEssence : 'transparent',
+            backgroundColor: timelineView === 'weekly' ? colors.caramelEssence : 'transparent',
             color: timelineView === 'weekly' ? 'white' : colors.textSecondary,
-            '&:hover': { backgroundPalette: timelineView === 'weekly' ? colors.caramelEssence : colors.raptureLight }
+            '&:hover': { backgroundColor: timelineView === 'weekly' ? colors.caramelEssence : colors.raptureLight }
           }}
         >
           Weekly
@@ -353,9 +353,9 @@ const TimelinePage = () => {
           onClick={() => handleViewChange('monthly')}
           variant={timelineView === 'monthly' ? 'contained' : 'outlined'}
           sx={{ 
-            backgroundPalette: timelineView === 'monthly' ? colors.caramelEssence : 'transparent',
+            backgroundColor: timelineView === 'monthly' ? colors.caramelEssence : 'transparent',
             color: timelineView === 'monthly' ? 'white' : colors.textSecondary,
-            '&:hover': { backgroundPalette: timelineView === 'monthly' ? colors.caramelEssence : colors.raptureLight }
+            '&:hover': { backgroundColor: timelineView === 'monthly' ? colors.caramelEssence : colors.raptureLight }
           }}
         >
           Monthly
@@ -372,7 +372,7 @@ const TimelinePage = () => {
           }}
           sx={{ 
             color: colors.textSecondary,
-            '&:hover': { backgroundPalette: colors.raptureLight }
+            '&:hover': { backgroundColor: colors.raptureLight }
           }}
         >
           <CalendarPicker />
@@ -384,7 +384,7 @@ const TimelinePage = () => {
         onClick={handleFilterMenuOpen}
         sx={{ 
           color: colors.textSecondary,
-          '&:hover': { backgroundPalette: colors.raptureLight }
+          '&:hover': { backgroundColor: colors.raptureLight }
         }}
       >
         <FilterIcon />
@@ -396,7 +396,7 @@ const TimelinePage = () => {
           onClick={() => setQuickActions(true)}
           sx={{ 
             color: colors.textSecondary,
-            '&:hover': { backgroundPalette: colors.raptureLight }
+            '&:hover': { backgroundColor: colors.raptureLight }
           }}
         >
           <Settings />
@@ -411,7 +411,7 @@ const TimelinePage = () => {
         sx={{ 
           borderPalette: colors.border,
           color: colors.textSecondary,
-          '&:hover': { backgroundPalette: colors.raptureLight }
+          '&:hover': { backgroundColor: colors.raptureLight }
         }}
       >
         Export
@@ -638,7 +638,7 @@ const GanttChartView = ({
   return (
     <Box>
       {/* Timeline Chart */}
-      <Card sx={{ mb: 3, backgroundPalette: colors.cardBackground, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+      <Card sx={{ mb: 3, backgroundColor: colors.cardBackground, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
         <CardContent>
           <Typography variant="h6" sx={{ mb: 2, color: colors.textPrimary }}>
             Project Timeline - {timelineView === 'weekly' ? 'Weekly' : 'Monthly'} View
@@ -658,7 +658,7 @@ const GanttChartView = ({
                 />
                 <RechartsTooltip 
                   contentStyle={{
-                    backgroundPalette: colors.cardBackground,
+                    backgroundColor: colors.cardBackground,
                     border: `1px solid ${colors.border}`,
                     borderRadius: 8,
                     fontSize: 12
@@ -725,7 +725,7 @@ const ProjectTimelineRow = ({ project, tasks, colors, onTaskClick, onTaskDragSta
   };
   
   return (
-    <Card sx={{ backgroundPalette: colors.cardBackground, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+    <Card sx={{ backgroundColor: colors.cardBackground, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
       <CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box sx={{ flex: 1 }}>
@@ -737,7 +737,7 @@ const ProjectTimelineRow = ({ project, tasks, colors, onTaskClick, onTaskDragSta
                 label={project.status?.replace('-', ' ').toUpperCase() || 'ACTIVE'}
                 size="small"
                 sx={{
-                  backgroundPalette: `${getStatusPalette(project.status)}20`,
+                  backgroundColor: `${getStatusPalette(project.status)}20`,
                   color: getStatusPalette(project.status),
                   fontWeight: 600,
                   fontSize: '11px'
@@ -764,9 +764,9 @@ const ProjectTimelineRow = ({ project, tasks, colors, onTaskClick, onTaskDragSta
                 sx={{
                   height: 8,
                   borderRadius: 4,
-                  backgroundPalette: colors.border,
+                  backgroundColor: colors.border,
                   '& .MuiLinearProgress-bar': {
-                    backgroundPalette: colors.caramelEssence,
+                    backgroundColor: colors.caramelEssence,
                     borderRadius: 4
                   }
                 }}
@@ -801,7 +801,7 @@ const ProjectTimelineRow = ({ project, tasks, colors, onTaskClick, onTaskDragSta
                 onDragStart={() => onTaskDragStart && onTaskDragStart(task)}
                 icon={<Edit size={12} />}
                 sx={{
-                  backgroundPalette: task.status === 'completed' ? `${colors.success}20` :
+                  backgroundColor: task.status === 'completed' ? `${colors.success}20` :
                                   task.status === 'in-progress' ? `${colors.caramelEssence}20` :
                                   `${colors.sapphireDust}20`,
                   color: task.status === 'completed' ? colors.success :
@@ -812,7 +812,7 @@ const ProjectTimelineRow = ({ project, tasks, colors, onTaskClick, onTaskDragSta
                   opacity: draggedTask?.id === task.id ? 0.5 : 1,
                   border: draggedTask?.id === task.id ? `2px dashed ${colors.caramelEssence}` : 'none',
                   '&:hover': {
-                    backgroundPalette: task.status === 'completed' ? `${colors.success}30` :
+                    backgroundColor: task.status === 'completed' ? `${colors.success}30` :
                                     task.status === 'in-progress' ? `${colors.caramelEssence}30` :
                                     `${colors.sapphireDust}30`,
                     transform: 'scale(1.05)'
@@ -825,7 +825,7 @@ const ProjectTimelineRow = ({ project, tasks, colors, onTaskClick, onTaskDragSta
                 label={`+${tasks.length - 5} more`}
                 size="small"
                 sx={{
-                  backgroundPalette: colors.raptureLight,
+                  backgroundColor: colors.raptureLight,
                   color: colors.textSecondary,
                   fontSize: '11px'
                 }}
@@ -887,7 +887,7 @@ const MilestonesView = ({ projects, tasks, selectedProjects, colors }) => {
       </Typography>
       
       {milestones.length === 0 ? (
-        <Card sx={{ backgroundPalette: colors.cardBackground, textAlign: 'center', p: 4 }}>
+        <Card sx={{ backgroundColor: colors.cardBackground, textAlign: 'center', p: 4 }}>
           <CheckCircle size={48} color={colors.textMuted} />
           <Typography sx={{ mt: 2, color: colors.textSecondary }}>
             No milestones found for selected projects
@@ -896,7 +896,7 @@ const MilestonesView = ({ projects, tasks, selectedProjects, colors }) => {
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {milestones.map((milestone, index) => (
-            <Card key={milestone.id} sx={{ backgroundPalette: colors.cardBackground, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <Card key={milestone.id} sx={{ backgroundColor: colors.cardBackground, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                   <Box sx={{ mt: 0.5 }}>
@@ -918,7 +918,7 @@ const MilestonesView = ({ projects, tasks, selectedProjects, colors }) => {
                         label={milestone.type.toUpperCase()}
                         size="small"
                         sx={{
-                          backgroundPalette: milestone.type === 'project' ? `${colors.sapphireDust}20` : `${colors.caramelEssence}20`,
+                          backgroundColor: milestone.type === 'project' ? `${colors.sapphireDust}20` : `${colors.caramelEssence}20`,
                           color: milestone.type === 'project' ? colors.sapphireDust : colors.caramelEssence,
                           fontSize: '11px'
                         }}
@@ -927,7 +927,7 @@ const MilestonesView = ({ projects, tasks, selectedProjects, colors }) => {
                         label={milestone.status.replace('-', ' ').toUpperCase()}
                         size="small"
                         sx={{
-                          backgroundPalette: `${milestone.status === 'completed' ? colors.success : 
+                          backgroundColor: `${milestone.status === 'completed' ? colors.success : 
                                              milestone.status === 'in-progress' ? colors.caramelEssence : 
                                              colors.sapphireDust}20`,
                           color: milestone.status === 'completed' ? colors.success : 
@@ -991,7 +991,7 @@ const ResourcesView = ({ teamMembers, tasks, projects, selectedProjects, colors 
       </Typography>
       
       {resourceData.length === 0 ? (
-        <Card sx={{ backgroundPalette: colors.cardBackground, textAlign: 'center', p: 4 }}>
+        <Card sx={{ backgroundColor: colors.cardBackground, textAlign: 'center', p: 4 }}>
           <Group size={48} color={colors.textMuted} />
           <Typography sx={{ mt: 2, color: colors.textSecondary }}>
             No resource data available for selected projects
@@ -1000,12 +1000,12 @@ const ResourcesView = ({ teamMembers, tasks, projects, selectedProjects, colors 
       ) : (
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: 3 }}>
           {resourceData.map(member => (
-            <Card key={member.id} sx={{ backgroundPalette: colors.cardBackground, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <Card key={member.id} sx={{ backgroundColor: colors.cardBackground, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                   <Avatar 
                     src={member.avatar}
-                    sx={{ width: 48, height: 48, backgroundPalette: colors.caramelEssence }}
+                    sx={{ width: 48, height: 48, backgroundColor: colors.caramelEssence }}
                   >
                     {member.initials || (member.firstName?.[0] + member.lastName?.[0])}
                   </Avatar>
@@ -1023,7 +1023,7 @@ const ResourcesView = ({ teamMembers, tasks, projects, selectedProjects, colors 
                     label={`${member.efficiency}% efficiency`}
                     size="small"
                     sx={{
-                      backgroundPalette: member.efficiency >= 80 ? `${colors.success}20` :
+                      backgroundColor: member.efficiency >= 80 ? `${colors.success}20` :
                                       member.efficiency >= 60 ? `${colors.caramelEssence}20` :
                                       `${colors.warning}20`,
                       color: member.efficiency >= 80 ? colors.success :
@@ -1088,9 +1088,9 @@ const ResourcesView = ({ teamMembers, tasks, projects, selectedProjects, colors 
                     sx={{
                       height: 6,
                       borderRadius: 3,
-                      backgroundPalette: colors.border,
+                      backgroundColor: colors.border,
                       '& .MuiLinearProgress-bar': {
-                        backgroundPalette: member.workload > 80 ? colors.error :
+                        backgroundColor: member.workload > 80 ? colors.error :
                                         member.workload > 40 ? colors.caramelEssence :
                                         colors.success,
                         borderRadius: 3
@@ -1148,7 +1148,7 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
       </Typography>
       
       {criticalPathData.length === 0 ? (
-        <Card sx={{ backgroundPalette: colors.cardBackground, textAlign: 'center', p: 4 }}>
+        <Card sx={{ backgroundColor: colors.cardBackground, textAlign: 'center', p: 4 }}>
           <AlertCircle size={48} color={colors.textMuted} />
           <Typography sx={{ mt: 2, color: colors.textSecondary }}>
             No critical path data available for selected projects
@@ -1157,7 +1157,7 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {criticalPathData.map(project => (
-            <Card key={project.id} sx={{ backgroundPalette: colors.cardBackground, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <Card key={project.id} sx={{ backgroundColor: colors.cardBackground, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
               <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                   <Box sx={{ flex: 1 }}>
@@ -1170,7 +1170,7 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
                         label={`${project.risk.toUpperCase()} RISK`}
                         size="small"
                         sx={{
-                          backgroundPalette: `${getRiskPalette(project.risk)}20`,
+                          backgroundColor: `${getRiskPalette(project.risk)}20`,
                           color: getRiskPalette(project.risk),
                           fontWeight: 600,
                           fontSize: '11px'
@@ -1180,7 +1180,7 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
                         label={`Critical Score: ${project.criticalScore}`}
                         size="small"
                         sx={{
-                          backgroundPalette: colors.raptureLight,
+                          backgroundColor: colors.raptureLight,
                           color: colors.textSecondary,
                           fontSize: '11px'
                         }}
@@ -1215,7 +1215,7 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
                           justifyContent: 'space-between', 
                           alignItems: 'center',
                           p: 1,
-                          backgroundPalette: colors.raptureLight,
+                          backgroundColor: colors.raptureLight,
                           borderRadius: 1
                         }}>
                           <Typography variant="body2" sx={{ color: colors.textPrimary }}>
@@ -1226,7 +1226,7 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
                               label={task.priority.toUpperCase()}
                               size="small"
                               sx={{
-                                backgroundPalette: task.priority === 'urgent' ? `${colors.error}20` : `${colors.warning}20`,
+                                backgroundColor: task.priority === 'urgent' ? `${colors.error}20` : `${colors.warning}20`,
                                 color: task.priority === 'urgent' ? colors.error : colors.warning,
                                 fontSize: '10px',
                                 height: 20
@@ -1260,7 +1260,7 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
                           label={task.name || task.title}
                           size="small"
                           sx={{
-                            backgroundPalette: `${colors.error}20`,
+                            backgroundColor: `${colors.error}20`,
                             color: colors.error,
                             fontSize: '11px'
                           }}
@@ -1271,7 +1271,7 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
                           label={`+${project.overdueTasks.length - 4} more`}
                           size="small"
                           sx={{
-                            backgroundPalette: colors.border,
+                            backgroundColor: colors.border,
                             color: colors.textMuted,
                             fontSize: '11px'
                           }}
@@ -1421,7 +1421,7 @@ const TaskEditDialog = ({ open, task, onClose, onSave, colors, projects, teamMem
         <Button 
           onClick={handleSave} 
           variant="contained"
-          sx={{ backgroundPalette: colors.caramelEssence }}
+          sx={{ backgroundColor: colors.caramelEssence }}
         >
           Save Changes
         </Button>
@@ -1481,7 +1481,7 @@ const QuickActionsDialog = ({
                   sx={{
                     borderPalette: colors.border,
                     color: colors.textSecondary,
-                    '&:hover': { backgroundPalette: colors.raptureLight }
+                    '&:hover': { backgroundColor: colors.raptureLight }
                   }}
                 >
                   {range.label}
@@ -1499,7 +1499,7 @@ const QuickActionsDialog = ({
               variant={timelineView === 'weekly' ? 'contained' : 'outlined'}
               onClick={() => onViewChange('weekly')}
               sx={{
-                backgroundPalette: timelineView === 'weekly' ? colors.caramelEssence : 'transparent',
+                backgroundColor: timelineView === 'weekly' ? colors.caramelEssence : 'transparent',
                 color: timelineView === 'weekly' ? 'white' : colors.textSecondary
               }}
             >
@@ -1509,7 +1509,7 @@ const QuickActionsDialog = ({
               variant={timelineView === 'monthly' ? 'contained' : 'outlined'}
               onClick={() => onViewChange('monthly')}
               sx={{
-                backgroundPalette: timelineView === 'monthly' ? colors.caramelEssence : 'transparent',
+                backgroundColor: timelineView === 'monthly' ? colors.caramelEssence : 'transparent',
                 color: timelineView === 'monthly' ? 'white' : colors.textSecondary
               }}
             >
@@ -1554,7 +1554,7 @@ const QuickActionsDialog = ({
         <Button 
           onClick={handleDateRangeApply} 
           variant="contained"
-          sx={{ backgroundPalette: colors.caramelEssence }}
+          sx={{ backgroundColor: colors.caramelEssence }}
         >
           Apply Changes
         </Button>

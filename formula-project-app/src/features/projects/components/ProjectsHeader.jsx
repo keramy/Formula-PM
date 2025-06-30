@@ -11,14 +11,14 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  Search as SearchIcon,
-  Filter as FilterIcon,
-  Download as DownloadIcon,
-  Plus as AddIcon,
-  List as TableViewIcon,
-  ViewGrid as CardViewIcon,
-  Xmark as ClearIcon
-} from 'iconoir-react';
+  MdSearch as SearchIcon,
+  MdFilterList as FilterIcon,
+  MdDownload as DownloadIcon,
+  MdAdd as AddIcon,
+  MdList as TableViewIcon,
+  MdViewModule as CardViewIcon,
+  MdClose as ClearIcon
+} from 'react-icons/md';
 
 const ProjectsHeader = ({
   searchTerm,
@@ -110,7 +110,7 @@ const ProjectsHeader = ({
             sx={{ 
               minWidth: { xs: '100%', sm: '300px' },
               '& .MuiOutlinedInput-root': {
-                backgroundPalette: 'white'
+                backgroundColor: 'white'
               }
             }}
             InputProps={{
@@ -163,11 +163,11 @@ const ProjectsHeader = ({
               size="small"
               onClick={() => onViewModeChange('table')}
               sx={{
-                backgroundPalette: viewMode === 'table' ? '#E67E22' : 'transparent',
+                backgroundColor: viewMode === 'table' ? '#E67E22' : 'transparent',
                 color: viewMode === 'table' ? 'white' : '#666',
                 borderRadius: 0,
                 '&:hover': {
-                  backgroundPalette: viewMode === 'table' ? '#D35400' : '#f5f5f5'
+                  backgroundColor: viewMode === 'table' ? '#D35400' : '#f5f5f5'
                 }
               }}
             >
@@ -177,11 +177,11 @@ const ProjectsHeader = ({
               size="small"
               onClick={() => onViewModeChange('cards')}
               sx={{
-                backgroundPalette: viewMode === 'cards' ? '#E67E22' : 'transparent',
+                backgroundColor: viewMode === 'cards' ? '#E67E22' : 'transparent',
                 color: viewMode === 'cards' ? 'white' : '#666',
                 borderRadius: 0,
                 '&:hover': {
-                  backgroundPalette: viewMode === 'cards' ? '#D35400' : '#f5f5f5'
+                  backgroundColor: viewMode === 'cards' ? '#D35400' : '#f5f5f5'
                 }
               }}
             >
@@ -199,7 +199,7 @@ const ProjectsHeader = ({
                 color: '#27AE60',
                 borderPalette: '#27AE60',
                 '&:hover': {
-                  backgroundPalette: '#27AE60',
+                  backgroundColor: '#27AE60',
                   color: 'white'
                 }
               }}
@@ -214,9 +214,9 @@ const ProjectsHeader = ({
             startIcon={<AddIcon />}
             onClick={onCreateProject}
             sx={{
-              backgroundPalette: '#E67E22',
+              backgroundColor: '#E67E22',
               '&:hover': {
-                backgroundPalette: '#D35400'
+                backgroundColor: '#D35400'
               },
               borderRadius: 2,
               px: 3
@@ -241,7 +241,7 @@ const ProjectsHeader = ({
                 onDelete={() => onClearFilter(filter.key)}
                 size="small"
                 sx={{
-                  backgroundPalette: '#EBF3FD',
+                  backgroundColor: '#EBF3FD',
                   color: '#3498DB',
                   '& .MuiChip-deleteIcon': {
                     color: '#3498DB'

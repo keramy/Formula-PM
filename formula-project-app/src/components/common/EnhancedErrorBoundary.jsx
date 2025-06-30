@@ -18,13 +18,13 @@ import {
   Divider
 } from '@mui/material';
 import {
-  Refresh as RefreshIcon,
-  ArrowDown as ExpandMoreIcon,
-  ArrowUp as ExpandLessIcon,
-  WarningTriangle as BugIcon,
-  Home as HomeIcon,
-  WarningTriangle as WarningIcon
-} from 'iconoir-react';
+  MdRefresh as RefreshIcon,
+  MdKeyboardArrowDown as ExpandMoreIcon,
+  MdKeyboardArrowUp as ExpandLessIcon,
+  MdWarning as BugIcon,
+  MdHome as HomeIcon,
+  MdWarning as WarningIcon
+} from 'react-icons/md';
 
 class EnhancedErrorBoundary extends Component {
   constructor(props) {

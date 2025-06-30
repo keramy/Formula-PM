@@ -14,12 +14,12 @@ import {
   Divider
 } from '@mui/material';
 import {
-  Refresh as RefreshIcon,
-  Home as HomeIcon,
-  ArrowLeft as BackIcon,
-  HelpCircle as HelpIcon,
-  WarningTriangle as WarningIcon
-} from 'iconoir-react';
+  MdRefresh as RefreshIcon,
+  MdHome as HomeIcon,
+  MdArrowBack as BackIcon,
+  MdHelp as HelpIcon,
+  MdWarning as WarningIcon
+} from 'react-icons/md';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 /**
@@ -231,7 +231,7 @@ class RouteErrorBoundary extends React.Component {
       
       return (
         <Container maxWidth="md" sx={{ py: 4 }}>
-          <Card elevation={0} sx={{ border: '1px solid #ffcdd2', backgroundPalette: '#fef7f7' }}>
+          <Card elevation={0} sx={{ border: '1px solid #ffcdd2', backgroundColor: '#fef7f7' }}>
             <CardContent sx={{ p: 4 }}>
               <Box sx={{ textAlign: 'center', mb: 3 }}>
                 <WarningIcon 
@@ -355,7 +355,7 @@ class RouteErrorBoundary extends React.Component {
                   <Paper 
                     sx={{ 
                       p: 2, 
-                      backgroundPalette: '#f5f5f5', 
+                      backgroundColor: '#f5f5f5', 
                       fontFamily: 'monospace',
                       fontSize: '0.75rem',
                       overflow: 'auto',
