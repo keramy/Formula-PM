@@ -32,7 +32,7 @@ class SocketService {
       return null;
     }
 
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5014';
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5015';
     
     this.socket = io(socketUrl, {
       auth: {

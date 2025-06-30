@@ -22,11 +22,17 @@ import {
   MdTask as Task,
   MdCheck as Check,
   MdCheckCircle as CheckCircle,
-  MdSchedule as Calendar
+  MdSchedule as Calendar,
+  MdEdit as Edit,
+  MdDelete as Delete
 } from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import TeamMembersList from '../features/team/components/TeamMembersList';
 import TeamPerformance from '../features/team/components/TeamPerformance';
+import TeamMemberFormModal from '../components/forms/TeamMemberFormModal';
+import DeleteConfirmationDialog from '../components/forms/DeleteConfirmationDialog';
+import { useNotification } from '../context/NotificationContext';
+import ApiService from '../services/api/apiService';
 
 const TeamPage = ({ 
   teamMembers = [],
@@ -40,10 +46,152 @@ const TeamPage = ({
 }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [viewMode, setViewMode] = useState('cards');
+  
+  // CRUD Modal States
+  const [memberFormModal, setMemberFormModal] = useState({
+    open: false,
+    member: null,
+    loading: false,
+    error: null
+  });
+  
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
+    open: false,
+    member: null,
+    loading: false,
+    error: null
+  });
+  
+  const { showSuccess, showError } = useNotification();
 
+  // CRUD Handlers
   const handleAddMember = useCallback(() => {
-    onAddMember();
-  }, [onAddMember]);
+    setMemberFormModal({
+      open: true,
+      member: null,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleEditMember = useCallback((member) => {
+    setMemberFormModal({
+      open: true,
+      member,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleDeleteMember = useCallback((member) => {
+    const memberTasks = tasks.filter(t => t.assignedTo === member.id);
+    setDeleteConfirmation({
+      open: true,
+      member,
+      loading: false,
+      error: null,
+      consequences: memberTasks.length > 0 ? [
+        `Reassign ${memberTasks.length} active task${memberTasks.length === 1 ? '' : 's'}`,
+        'Update project team assignments',
+        'Archive team member access and permissions'
+      ] : []
+    });
+  }, [tasks]);
+
+  const handleMemberSubmit = useCallback(async (memberIdOrData, updateData = null) => {
+    setMemberFormModal(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      let result;
+      const isEdit = updateData !== null;
+      
+      if (isEdit) {
+        // Update existing member
+        result = await ApiService.updateTeamMember(memberIdOrData, updateData);
+        showSuccess('Team Member Updated', `${updateData.firstName} ${updateData.lastName} has been updated successfully.`);
+        if (onUpdateMember) onUpdateMember(memberIdOrData, result);
+      } else {
+        // Create new member
+        result = await ApiService.createTeamMember(memberIdOrData);
+        showSuccess('Team Member Added', `${memberIdOrData.firstName} ${memberIdOrData.lastName} has been added to the team.`);
+        if (onAddMember) onAddMember(result);
+      }
+      
+      // Close modal
+      setMemberFormModal({
+        open: false,
+        member: null,
+        loading: false,
+        error: null
+      });
+    } catch (error) {
+      console.error('Team member submission error:', error);
+      setMemberFormModal(prev => ({
+        ...prev,
+        loading: false,
+        error: error.message || 'Failed to save team member. Please try again.'
+      }));
+      showError(
+        isEdit ? 'Update Failed' : 'Creation Failed',
+        error.message || 'An error occurred while saving the team member.'
+      );
+    }
+  }, [onAddMember, onUpdateMember, showSuccess, showError]);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!deleteConfirmation.member) return;
+    
+    setDeleteConfirmation(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      await ApiService.deleteTeamMember(deleteConfirmation.member.id);
+      showSuccess(
+        'Team Member Removed',
+        `${deleteConfirmation.member.firstName} ${deleteConfirmation.member.lastName} has been removed from the team.`
+      );
+      
+      if (onDeleteMember) {
+        onDeleteMember(deleteConfirmation.member.id);
+      }
+      
+      // Close modal
+      setDeleteConfirmation({
+        open: false,
+        member: null,
+        loading: false,
+        error: null
+      });
+    } catch (error) {
+      console.error('Team member deletion error:', error);
+      setDeleteConfirmation(prev => ({
+        ...prev,
+        loading: false,
+        error: error.message || 'Failed to remove team member. Please try again.'
+      }));
+      showError(
+        'Removal Failed',
+        error.message || 'An error occurred while removing the team member.'
+      );
+    }
+  }, [deleteConfirmation.member, onDeleteMember, showSuccess, showError]);
+
+  const handleCloseMemberForm = useCallback(() => {
+    setMemberFormModal({
+      open: false,
+      member: null,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleCloseDeleteConfirmation = useCallback(() => {
+    setDeleteConfirmation({
+      open: false,
+      member: null,
+      loading: false,
+      error: null
+    });
+  }, []);
 
   // Calculate team statistics
   const teamStats = useMemo(() => {
@@ -242,8 +390,26 @@ const TeamPage = ({
     const completedTasks = memberTasks.filter(task => task.status === 'completed').length;
     const completionRate = memberTasks.length > 0 ? Math.round((completedTasks / memberTasks.length) * 100) : 0;
     
+    const handleCardClick = (e) => {
+      // Prevent card click when clicking on action buttons
+      if (e.target.closest('.member-actions')) {
+        return;
+      }
+      onViewMemberDetail && onViewMemberDetail(member);
+    };
+
+    const handleEditClick = (e) => {
+      e.stopPropagation();
+      handleEditMember(member);
+    };
+
+    const handleDeleteClick = (e) => {
+      e.stopPropagation();
+      handleDeleteMember(member);
+    };
+    
     return (
-      <Card className="clean-card" sx={{ height: '100%', cursor: 'pointer' }} onClick={() => onViewMemberDetail && onViewMemberDetail(member)}>
+      <Card className="clean-card" sx={{ height: '100%', cursor: 'pointer' }} onClick={handleCardClick}>
         <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Avatar
@@ -256,7 +422,7 @@ const TeamPage = ({
                 mr: 2
               }}
             >
-              {member.initials || member.fullName?.charAt(0) || '?'}
+              {member.initials || member.fullName?.charAt(0) || member.firstName?.charAt(0) || '?'}
             </Avatar>
             <Box sx={{ flex: 1 }}>
               <Typography 
@@ -269,7 +435,7 @@ const TeamPage = ({
                   lineHeight: 1.3
                 }}
               >
-                {member.fullName}
+                {member.fullName || `${member.firstName} ${member.lastName}`}
               </Typography>
               <Typography 
                 variant="body2" 
@@ -291,13 +457,39 @@ const TeamPage = ({
                 {getDepartmentName(member.department)}
               </Typography>
             </Box>
-            <Chip
-              label={member.status === 'active' ? 'Active' : 'Inactive'}
-              size="small"
-              className={`clean-chip ${
-                member.status === 'active' ? 'status-completed' : 'status-todo'
-              }`}
-            />
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+              <Chip
+                label={member.status === 'active' ? 'Active' : 'Inactive'}
+                size="small"
+                className={`clean-chip ${
+                  member.status === 'active' ? 'status-completed' : 'status-todo'
+                }`}
+              />
+              <Box className="member-actions" sx={{ display: 'flex', gap: 0.5 }}>
+                <IconButton 
+                  size="small" 
+                  sx={{ 
+                    color: '#9CA3AF',
+                    '&:hover': { color: '#E3AF64', bgcolor: '#FEF3E2' }
+                  }}
+                  onClick={handleEditClick}
+                  title="Edit Member"
+                >
+                  <Edit size={16} />
+                </IconButton>
+                <IconButton 
+                  size="small" 
+                  sx={{ 
+                    color: '#9CA3AF',
+                    '&:hover': { color: '#EF4444', bgcolor: '#FEF2F2' }
+                  }}
+                  onClick={handleDeleteClick}
+                  title="Remove Member"
+                >
+                  <Delete size={16} />
+                </IconButton>
+              </Box>
+            </Box>
           </Box>
 
           {showStats && (
@@ -573,20 +765,46 @@ const TeamPage = ({
   };
 
   return (
-    <CleanPageLayout
-      title="Team"
-      subtitle="Manage your team members, track performance, and optimize collaboration"
-      breadcrumbs={[
-        { label: 'Team Space', href: '/workspace' },
-        { label: 'Team', href: '/team' }
-      ]}
-      headerActions={headerActions}
-      tabs={tabs}
-    >
-      <Box className="clean-fade-in">
-        {renderTabContent()}
-      </Box>
-    </CleanPageLayout>
+    <>
+      <CleanPageLayout
+        title="Team"
+        subtitle="Manage your team members, track performance, and optimize collaboration"
+        breadcrumbs={[
+          { label: 'Team Space', href: '/workspace' },
+          { label: 'Team', href: '/team' }
+        ]}
+        headerActions={headerActions}
+        tabs={tabs}
+      >
+        <Box className="clean-fade-in">
+          {renderTabContent()}
+        </Box>
+      </CleanPageLayout>
+
+      {/* Team Member Form Modal */}
+      <TeamMemberFormModal
+        open={memberFormModal.open}
+        onClose={handleCloseMemberForm}
+        onSubmit={handleMemberSubmit}
+        teamMember={memberFormModal.member}
+        loading={memberFormModal.loading}
+        error={memberFormModal.error}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={deleteConfirmation.open}
+        onClose={handleCloseDeleteConfirmation}
+        onConfirm={handleDeleteConfirm}
+        title="Remove Team Member"
+        message="Are you sure you want to remove this team member? This action cannot be undone."
+        itemName={deleteConfirmation.member?.fullName || `${deleteConfirmation.member?.firstName} ${deleteConfirmation.member?.lastName}`}
+        itemType="team member"
+        loading={deleteConfirmation.loading}
+        error={deleteConfirmation.error}
+        consequences={deleteConfirmation.consequences || []}
+      />
+    </>
   );
 };
 

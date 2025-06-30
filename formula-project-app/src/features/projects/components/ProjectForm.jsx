@@ -272,10 +272,10 @@ function ProjectForm({ onSubmit, onCancel, clients = [], initialProject = null }
             onClick={onCancel}
             sx={{ 
               flex: 1,
-              borderPalette: '#dee2e6',
+              borderColor: '#dee2e6',
               color: '#6c757d',
               '&:hover': {
-                borderPalette: '#adb5bd',
+                borderColor: '#adb5bd',
                 backgroundColor: '#f8f9fa'
               }
             }}

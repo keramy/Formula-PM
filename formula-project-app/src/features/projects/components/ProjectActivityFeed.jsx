@@ -245,7 +245,7 @@ const ProjectActivityFeed = ({ project, projectId, tasks = [], teamMembers = [] 
               size="small"
               sx={{ 
                 cursor: 'pointer',
-                borderPalette: isDarkMode ? '#566BA3' : '#D1D8E6'
+                borderColor: isDarkMode ? '#566BA3' : '#D1D8E6'
               }}
             />
           ))}

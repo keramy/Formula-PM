@@ -244,7 +244,7 @@ const MasterHeader = ({
                     color: activeFiltersCount > 0 ? colors.primary : colors.textSecondary,
                     '&:hover': {
                       backgroundColor: theme.palette.action.hover,
-                      borderPalette: colors.primary
+                      borderColor: colors.primary
                     }
                   }}
                 >
@@ -267,7 +267,7 @@ const MasterHeader = ({
                       color: colors.textSecondary,
                       '&:hover': {
                         backgroundColor: theme.palette.action.hover,
-                        borderPalette: colors.primary
+                        borderColor: colors.primary
                       }
                     }}
                   >
@@ -300,7 +300,7 @@ const MasterHeader = ({
                     color: colors.textSecondary,
                     '&:hover': {
                       backgroundColor: theme.palette.action.hover,
-                      borderPalette: colors.primary
+                      borderColor: colors.primary
                     }
                   }}
                 >
@@ -371,7 +371,7 @@ const MasterHeader = ({
                     color: colors.textSecondary,
                     '&:hover': {
                       backgroundColor: theme.palette.action.hover,
-                      borderPalette: colors.primary
+                      borderColor: colors.primary
                     }
                   }}
                 >

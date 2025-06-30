@@ -450,7 +450,7 @@ const MyProjectsList = ({
             onChange={(e, newValue) => setActiveTab(newValue)}
             sx={{
               borderBottom: 1,
-              borderPalette: 'divider',
+              borderColor: 'divider',
               '& .MuiTab-root': {
                 textTransform: 'none',
                 fontWeight: 500,
@@ -593,7 +593,7 @@ const MyProjectsList = ({
                               minHeight: 180,
                               '&:hover': {
                                 transform: 'translateY(-2px)',
-                                borderPalette: taskOverdue ? '#e74c3c' : 'var(--caramel-essence)',
+                                borderColor: taskOverdue ? '#e74c3c' : 'var(--caramel-essence)',
                               }
                             }}
                           >
@@ -687,7 +687,7 @@ const MyProjectsList = ({
                                   <ActionTooltip title="Mark as completed" component="custom">
                                     <Button
                                       onClick={() => handleQuickStatusChange(task.id, 'completed')}
-                                      sx={{ color: '#27ae60', borderPalette: '#27ae60', minWidth: 'auto', px: 1 }}
+                                      sx={{ color: '#27ae60', borderColor: '#27ae60', minWidth: 'auto', px: 1 }}
                                     >
                                       <CompleteIcon fontSize="small" />
                                     </Button>
@@ -697,7 +697,7 @@ const MyProjectsList = ({
                                   <ActionTooltip title="Start working" component="custom">
                                     <Button
                                       onClick={() => handleQuickStatusChange(task.id, 'in-progress')}
-                                      sx={{ color: '#3498db', borderPalette: '#3498db', minWidth: 'auto', px: 1 }}
+                                      sx={{ color: '#3498db', borderColor: '#3498db', minWidth: 'auto', px: 1 }}
                                     >
                                       <PlayArrow fontSize="small" />
                                     </Button>
@@ -793,7 +793,7 @@ const MyProjectsList = ({
               </Typography>
               
               {/* View Mode Toggle */}
-              <Box sx={{ display: 'flex', border: 1, borderPalette: 'divider', borderRadius: 1 }}>
+              <Box sx={{ display: 'flex', border: 1, borderColor: 'divider', borderRadius: 1 }}>
                 <Button
                   size="small"
                   onClick={() => setViewMode('card')}

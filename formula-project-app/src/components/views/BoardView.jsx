@@ -395,7 +395,7 @@ const BoardView = ({ tasks = [], projects = [], teamMembers = [], clients = [], 
                     sx={{
                       height: 20,
                       fontSize: '0.7rem',
-                      borderPalette: task.progress === 100 ? '#27ae60' : '#3498db',
+                      borderColor: task.progress === 100 ? '#27ae60' : '#3498db',
                       color: task.progress === 100 ? '#27ae60' : '#3498db'
                     }}
                   />

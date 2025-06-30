@@ -63,7 +63,7 @@ const UnifiedHeader = ({
         
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
           {showViewToggle && (
-            <Box sx={{ display: 'flex', border: 1, borderPalette: 'divider', borderRadius: 1 }}>
+            <Box sx={{ display: 'flex', border: 1, borderColor: 'divider', borderRadius: 1 }}>
               <Tooltip title="Card View">
                 <IconButton
                   size="small"

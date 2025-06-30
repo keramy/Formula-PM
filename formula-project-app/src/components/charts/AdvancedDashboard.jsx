@@ -315,7 +315,7 @@ function AdvancedDashboard({ projects, tasks, teamMembers }) {
                         if (active && payload && payload.length) {
                           const data = payload[0].payload;
                           return (
-                            <Paper sx={{ p: 2, border: 1, borderPalette: 'divider' }}>
+                            <Paper sx={{ p: 2, border: 1, borderColor: 'divider' }}>
                               <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                                 {data.fullName}
                               </Typography>
@@ -356,7 +356,7 @@ function AdvancedDashboard({ projects, tasks, teamMembers }) {
               {upcomingDeadlines.length > 0 ? (
                 <List>
                   {upcomingDeadlines.map((task, index) => (
-                    <ListItem key={task.id} sx={{ border: 1, borderPalette: 'divider', borderRadius: 2, mb: 1 }}>
+                    <ListItem key={task.id} sx={{ border: 1, borderColor: 'divider', borderRadius: 2, mb: 1 }}>
                       <ListItemAvatar>
                         <Avatar sx={{ 
                           bgcolor: task.daysLeft < 0 ? COLORS.error : task.daysLeft <= 1 ? COLORS.warning : COLORS.primary,

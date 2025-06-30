@@ -177,13 +177,13 @@ const UniversalTabs = ({
         backgroundColor: theme.palette.background.paper,
         '&:hover': {
           backgroundColor: theme.palette.action.hover,
-          borderPalette: theme.palette.primary.light
+          borderColor: theme.palette.primary.light
         },
         '&.Mui-selected': {
           fontWeight: 600,
           backgroundColor: theme.palette.primary.main,
           color: theme.palette.primary.contrastText,
-          borderPalette: theme.palette.primary.main,
+          borderColor: theme.palette.primary.main,
           '&:hover': {
             backgroundColor: theme.palette.primary.dark
           }

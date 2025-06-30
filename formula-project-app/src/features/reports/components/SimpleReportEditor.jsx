@@ -27,7 +27,7 @@ import {
   MdArrowBack as FaArrowLeft,
   MdArrowForward as FaArrowRight,
   MdAdd as FaPlus,
-  MdMediaImage as FaImage,
+  MdImage as FaImage,
   MdVisibility as FaEye,
   MdFileDownload as FaFileExport,
   MdCancel as FaTimes,

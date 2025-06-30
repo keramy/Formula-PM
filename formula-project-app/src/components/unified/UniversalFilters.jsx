@@ -577,7 +577,7 @@ const UniversalFilters = ({
               mb: 3,
               backgroundColor: 'grey.50',
               border: 1,
-              borderPalette: 'divider',
+              borderColor: 'divider',
               ...sx
             }}
           >

@@ -77,7 +77,7 @@ const Breadcrumbs = ({
               color: colors.textSecondary,
               '&:hover': {
                 backgroundColor: colors.raptureLight,
-                borderPalette: colors.caramelEssence,
+                borderColor: colors.caramelEssence,
                 color: colors.textPrimary
               },
               '&:disabled': {
@@ -100,7 +100,7 @@ const Breadcrumbs = ({
               color: colors.textSecondary,
               '&:hover': {
                 backgroundColor: colors.raptureLight,
-                borderPalette: colors.caramelEssence,
+                borderColor: colors.caramelEssence,
                 color: colors.textPrimary
               },
               '&:disabled': {
@@ -166,7 +166,7 @@ const Breadcrumbs = ({
                     sx={{ 
                       height: 24, 
                       fontSize: '0.75rem',
-                      borderPalette: colors.caramelEssence,
+                      borderColor: colors.caramelEssence,
                       color: colors.caramelEssence,
                       backgroundColor: `${colors.caramelEssence}10`
                     }}
@@ -214,7 +214,7 @@ const Breadcrumbs = ({
                 color: colors.textSecondary,
                 '&:hover': {
                   backgroundColor: colors.raptureLight,
-                  borderPalette: colors.caramelEssence,
+                  borderColor: colors.caramelEssence,
                   color: colors.textPrimary
                 }
               }}
@@ -234,7 +234,7 @@ const Breadcrumbs = ({
                 color: colors.textSecondary,
                 '&:hover': {
                   backgroundColor: colors.raptureLight,
-                  borderPalette: colors.caramelEssence,
+                  borderColor: colors.caramelEssence,
                   color: colors.textPrimary
                 }
               }}

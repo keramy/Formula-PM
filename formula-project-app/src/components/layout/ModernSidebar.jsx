@@ -276,7 +276,7 @@ const ModernSidebar = ({ currentTab, onTabChange, isCollapsed, onToggleCollapse 
       {/* Bottom Section */}
       <Box sx={{ px: 2, pb: 3 }}>
         {!isCollapsed && (
-          <Divider sx={{ borderPalette: colors.border, mb: 2 }} />
+          <Divider sx={{ borderColor: colors.border, mb: 2 }} />
         )}
         <List sx={{ padding: 0 }}>
           {bottomItems.map((item) => (

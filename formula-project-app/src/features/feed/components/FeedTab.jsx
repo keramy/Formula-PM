@@ -282,13 +282,13 @@ const FeedTab = ({ onTabChange, projects = [], onNavigateToProject }) => {
                     height: 32,
                     backgroundColor: isDarkMode ? '#2C3966' : '#f8f9fa',
                     '& fieldset': {
-                      borderPalette: isDarkMode ? '#566BA3' : '#E9ECEF'
+                      borderColor: isDarkMode ? '#566BA3' : '#E9ECEF'
                     },
                     '&:hover fieldset': {
-                      borderPalette: isDarkMode ? '#A8B8D1' : '#1976d2'
+                      borderColor: isDarkMode ? '#A8B8D1' : '#1976d2'
                     },
                     '&.Mui-focused fieldset': {
-                      borderPalette: '#1976d2'
+                      borderColor: '#1976d2'
                     }
                   },
                   '& .MuiInputBase-input': {

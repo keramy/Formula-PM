@@ -1,327 +1,414 @@
 /**
- * Real-time Activity Feed
- * Shows live project activities and updates
+ * Real-Time Activity Feed Component
+ * Enhanced activity feed with Socket.IO integration and live updates
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Box,
   Card,
   CardContent,
+  CardHeader,
   Typography,
-  Avatar,
-  Chip,
-  Divider,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
-  ListItemSecondaryAction,
-  IconButton,
+  Avatar,
+  Chip,
+  Box,
+  Skeleton,
   Badge,
-  Fade,
-  Collapse
+  IconButton,
+  Stack,
+  Slide,
+  LinearProgress
 } from '@mui/material';
 import {
   MdTask as TaskIcon,
-  MdRefresh as UpdateIcon,
-  MdPerson as PersonIcon,
-  MdComment as CommentIcon,
-  MdDescription as FileIcon,
-  MdNotifications as NotificationIcon,
-  MdExpandMore as ExpandMoreIcon,
-  MdExpandLess as ExpandLessIcon,
-  MdCircle as CircleIcon
+  MdBusiness as BusinessIcon,
+  MdChat as CommentIcon,
+  MdRefresh as RefreshIcon,
+  MdAdd as AddIcon,
+  MdEdit as EditIcon,
+  MdDelete as DeleteIcon,
+  MdCheck as CheckIcon,
+  MdUpdate as UpdateIcon,
+  MdCircle as OnlineIcon
 } from 'react-icons/md';
-// import { useSocketEvent } from '../../hooks/useSocket';
 import { formatDistanceToNow } from 'date-fns';
+import { useSocket, useSocketEvent } from '../../hooks/useSocket';
+import apiService from '../../services/api/apiService';
 
-const RealtimeActivityFeed = ({ 
-  projectId, 
-  maxItems = 50,
-  showTimestamps = true,
-  compact = false 
-}) => {
-  const [activities, setActivities] = useState([]);
-  const [newActivityCount, setNewActivityCount] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [isVisible, setIsVisible] = useState(false);
-  const feedRef = useRef(null);
-  const lastViewedRef = useRef(Date.now());
-
-  // Auto-scroll to bottom when new activities arrive
-  const scrollToBottom = () => {
-    if (feedRef.current) {
-      feedRef.current.scrollTop = feedRef.current.scrollHeight;
-    }
+// Activity type icons mapping with real-time indicators
+const getActivityIcon = (type, action, isRealTime = false) => {
+  const iconMap = {
+    project: { created: <AddIcon color="primary" />, updated: <EditIcon color="info" />, deleted: <DeleteIcon color="error" /> },
+    task: { created: <CheckIcon color="primary" />, updated: <EditIcon color="info" />, completed: <CheckIcon color="success" /> },
+    client: { created: <BusinessIcon color="primary" />, updated: <EditIcon color="info" /> },
+    comment: { added: <CommentIcon color="info" /> },
+    user_presence: { online: <OnlineIcon color="success" />, offline: <OnlineIcon color="disabled" /> },
   };
 
-  // Add new activity to the feed
-  const addActivity = (activity) => {
-    const activityWithId = {
-      ...activity,
-      id: activity.id || Date.now() + Math.random(),
-      timestamp: activity.timestamp || new Date().toISOString(),
-      isNew: Date.now() - lastViewedRef.current < 1000
-    };
-
-    setActivities(prev => {
-      const updated = [activityWithId, ...prev.slice(0, maxItems - 1)];
-      return updated;
-    });
-
-    if (!isVisible) {
-      setNewActivityCount(count => count + 1);
-    }
-
-    // Auto-scroll if user is at bottom
-    setTimeout(() => {
-      if (feedRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } = feedRef.current;
-        const isAtBottom = scrollTop + clientHeight >= scrollHeight - 100;
-        if (isAtBottom) {
-          scrollToBottom();
-        }
-      }
-    }, 100);
-  };
-
-  // Subscribe to real-time events (mock implementation for development)
-  // Real socket events would be implemented here in production
-  useEffect(() => {
-    // Simulate real-time activity updates for development
-    const interval = setInterval(() => {
-      if (Math.random() > 0.7) { // 30% chance of new activity
-        const mockActivity = {
-          type: 'task_updated',
-          user: { name: 'Development User' },
-          description: 'Updated task status to in progress',
-          icon: TaskIcon,
-          color: 'info'
-        };
-        addActivity(mockActivity);
-      }
-    }, 10000); // Every 10 seconds
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Track visibility for new activity count
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-        if (entry.isIntersecting) {
-          setNewActivityCount(0);
-          lastViewedRef.current = Date.now();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (feedRef.current) {
-      observer.observe(feedRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  const getActivityIcon = (activity) => {
-    const IconComponent = activity.icon || UpdateIcon;
-    return <IconComponent color={activity.color || 'default'} />;
-  };
-
-  const getTimeAgo = (timestamp) => {
-    try {
-      return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
-    } catch {
-      return 'Just now';
-    }
-  };
-
-  if (compact) {
+  const icon = iconMap[type]?.[action] || <UpdateIcon color="info" />;
+  
+  if (isRealTime) {
     return (
-      <Box>
-        <Box 
-          display="flex" 
-          alignItems="center" 
-          justifyContent="space-between"
-          mb={1}
-        >
-          <Typography variant="subtitle2" color="textSecondary">
-            Live Activity
-          </Typography>
-          <Badge badgeContent={newActivityCount} color="error">
-            <IconButton 
-              size="small"
-              onClick={() => setIsExpanded(!isExpanded)}
-            >
-              {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
-          </Badge>
-        </Box>
-        
-        <Collapse in={isExpanded}>
-          <Box
-            ref={feedRef}
-            sx={{
-              maxHeight: 200,
-              overflowY: 'auto',
-              '&::-webkit-scrollbar': {
-                width: '4px'
-              },
-              '&::-webkit-scrollbar-thumb': {
-                backgroundColor: 'rgba(0,0,0,0.2)',
-                borderRadius: '2px'
-              }
-            }}
-          >
-            {activities.slice(0, 10).map((activity, index) => (
-              <Fade key={activity.id} in timeout={300}>
-                <Box 
-                  display="flex" 
-                  alignItems="center" 
-                  gap={1} 
-                  py={0.5}
-                  sx={{
-                    borderLeft: activity.isNew ? 2 : 0,
-                    borderPalette: 'primary.main',
-                    pl: activity.isNew ? 1 : 0,
-                    opacity: index > 5 ? 0.7 : 1
-                  }}
-                >
-                  <Avatar sx={{ width: 20, height: 20, bgcolor: 'primary.light' }}>
-                    {React.cloneElement(getActivityIcon(activity), { sx: { fontSize: 12 } })}
-                  </Avatar>
-                  <Box flex={1} minWidth={0}>
-                    <Typography 
-                      variant="caption" 
-                      noWrap
-                      sx={{ fontWeight: activity.isNew ? 600 : 400 }}
-                    >
-                      {activity.user?.name} {activity.description}
-                    </Typography>
-                    {showTimestamps && (
-                      <Typography variant="caption" color="textSecondary" display="block">
-                        {getTimeAgo(activity.timestamp)}
-                      </Typography>
-                    )}
-                  </Box>
-                </Box>
-              </Fade>
-            ))}
-          </Box>
-        </Collapse>
+      <Box sx={{ position: 'relative' }}>
+        {icon}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: -2,
+            right: -2,
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            bgcolor: 'success.main',
+            animation: 'pulse 2s infinite',
+            '@keyframes pulse': {
+              '0%': { transform: 'scale(1)', opacity: 1 },
+              '50%': { transform: 'scale(1.2)', opacity: 0.7 },
+              '100%': { transform: 'scale(1)', opacity: 1 },
+            }
+          }}
+        />
       </Box>
     );
   }
+  
+  return icon;
+};
+
+// Activity type colors
+const getActivityColor = (type, action) => {
+  const colorMap = {
+    project: { created: 'primary', updated: 'info', deleted: 'error' },
+    task: { created: 'primary', updated: 'info', completed: 'success' },
+    client: { created: 'primary', updated: 'info' },
+    comment: { added: 'info' },
+    user_presence: { online: 'success', offline: 'default' },
+  };
+
+  return colorMap[type]?.[action] || 'default';
+};
+
+// Enhanced activity description
+const getActivityDescription = (activity, isRealTime = false) => {
+  const { type, action, user, data, resourceId } = activity;
+  const userName = user?.firstName ? `${user.firstName} ${user.lastName}` : 'Someone';
+  const prefix = isRealTime ? '🔴 ' : '';
+  
+  switch (type) {
+    case 'project':
+      return `${prefix}${userName} ${action} project ${data?.name || resourceId}`;
+    case 'task':
+      return `${prefix}${userName} ${action} task ${data?.name || resourceId}`;
+    case 'client':
+      return `${prefix}${userName} ${action} client ${data?.name || resourceId}`;
+    case 'comment':
+      return `${prefix}${userName} added a comment`;
+    case 'user_presence':
+      return `${prefix}${userName} is now ${action}`;
+    default:
+      return `${prefix}${userName} ${action} ${type} ${resourceId}`;
+  }
+};
+
+// Individual activity item component
+const ActivityItem = ({ activity, isRealTime = false, onActivityClick }) => {
+  if (!activity || typeof activity !== 'object') {
+    return null;
+  }
+
+  const timestamp = activity.timestamp || new Date().toISOString();
+  const timeAgo = formatDistanceToNow(new Date(timestamp), { addSuffix: true });
+  const activityType = activity.type || 'unknown';
+  const activityAction = activity.action || 'updated';
+  const icon = getActivityIcon(activityType, activityAction, isRealTime);
+  const color = getActivityColor(activityType, activityAction);
+  const description = getActivityDescription(activity, isRealTime);
 
   return (
-    <Card>
-      <CardContent>
-        <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-          <Typography variant="h6">
-            Live Activity Feed
-          </Typography>
-          <Badge badgeContent={newActivityCount} color="error">
-            <NotificationIcon color="action" />
-          </Badge>
-        </Box>
-
-        <Box
-          ref={feedRef}
-          sx={{
-            maxHeight: 400,
-            overflowY: 'auto',
-            '&::-webkit-scrollbar': {
-              width: '8px'
-            },
-            '&::-webkit-scrollbar-thumb': {
-              backgroundColor: 'rgba(0,0,0,0.2)',
-              borderRadius: '4px'
-            }
-          }}
-        >
-          {activities.length === 0 ? (
-            <Box textAlign="center" py={4}>
-              <Typography color="textSecondary">
-                No recent activity
+    <Slide direction="down" in timeout={300}>
+      <ListItem
+        button={!!onActivityClick}
+        onClick={() => onActivityClick?.(activity)}
+        sx={{
+          borderBottom: '1px solid #f0f0f0',
+          '&:last-child': { borderBottom: 'none' },
+          py: 1.5,
+          backgroundColor: isRealTime ? 'action.hover' : 'transparent',
+          '&:hover': {
+            backgroundColor: isRealTime ? 'action.selected' : 'action.hover'
+          },
+          transition: 'background-color 0.3s ease'
+        }}
+      >
+        <ListItemAvatar>
+          <Avatar 
+            sx={{ 
+              bgcolor: `${color}.light`, 
+              color: `${color}.main`,
+              ...(isRealTime && {
+                boxShadow: `0 0 10px ${color === 'success' ? '#4caf50' : '#2196f3'}`,
+                animation: 'glow 2s ease-in-out infinite alternate',
+                '@keyframes glow': {
+                  from: { boxShadow: `0 0 5px ${color === 'success' ? '#4caf50' : '#2196f3'}` },
+                  to: { boxShadow: `0 0 15px ${color === 'success' ? '#4caf50' : '#2196f3'}` }
+                }
+              })
+            }}
+          >
+            {activity.user?.avatar ? (
+              <img src={activity.user.avatar} alt={activity.user.firstName} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+            ) : (
+              icon
+            )}
+          </Avatar>
+        </ListItemAvatar>
+        
+        <ListItemText
+          primary={
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Typography
+                variant="body2"
+                sx={{ 
+                  fontWeight: isRealTime ? 600 : 400,
+                  color: isRealTime ? 'primary.main' : 'text.primary'
+                }}
+              >
+                {description}
               </Typography>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                {isRealTime && (
+                  <Chip
+                    label="Live"
+                    size="small"
+                    color="success"
+                    variant="filled"
+                    sx={{ height: 18, fontSize: '0.65rem', fontWeight: 600 }}
+                  />
+                )}
+                <Chip
+                  label={activityType.replace('_', ' ')}
+                  size="small"
+                  variant="outlined"
+                  sx={{ 
+                    fontSize: '0.7rem',
+                    height: '20px',
+                    color: '#1976d2',
+                    borderColor: '#1976d2',
+                    backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                  }}
+                />
+              </Stack>
+            </Stack>
+          }
+          secondary={
+            <Typography variant="caption" color="textSecondary">
+              {timeAgo}
+            </Typography>
+          }
+        />
+      </ListItem>
+    </Slide>
+  );
+};
+
+// Activity skeleton loader
+const ActivitySkeleton = () => (
+  <ListItem>
+    <ListItemAvatar>
+      <Skeleton variant="circular" width={40} height={40} animation="wave" />
+    </ListItemAvatar>
+    <ListItemText
+      primary={<Skeleton variant="text" width="80%" animation="wave" />}
+      secondary={<Skeleton variant="text" width="60%" animation="wave" />}
+    />
+  </ListItem>
+);
+
+// Main real-time activity feed component
+const RealTimeActivityFeed = ({ 
+  limit = 20, 
+  showHeader = true, 
+  maxHeight = 500,
+  showBadge = true,
+  title = "Live Activity Feed",
+  projectId = null,
+  onActivityClick
+}) => {
+  const { isReady } = useSocket();
+  const [activities, setActivities] = useState([]);
+  const [realtimeActivities, setRealtimeActivities] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Load initial activities
+  useEffect(() => {
+    const loadActivities = async () => {
+      try {
+        setIsLoading(true);
+        const data = await apiService.getActivities(limit, 0);
+        setActivities(data.activities || []);
+      } catch (error) {
+        console.error('Failed to load activities:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadActivities();
+  }, [limit]);
+
+  // Handle real-time activity updates
+  useSocketEvent('activity_update', useCallback((newActivity) => {
+    console.log('Real-time activity received:', newActivity);
+    
+    setRealtimeActivities(prev => {
+      const filtered = prev.filter(a => a.id !== newActivity.id);
+      return [{ ...newActivity, isRealTime: true }, ...filtered].slice(0, 10);
+    });
+
+    // Move to main activities after delay
+    setTimeout(() => {
+      setActivities(prev => {
+        const exists = prev.find(a => a.id === newActivity.id);
+        if (exists) return prev;
+        return [newActivity, ...prev.slice(0, limit - 1)];
+      });
+      
+      setRealtimeActivities(prev => prev.filter(a => a.id !== newActivity.id));
+    }, 5000);
+
+  }, [limit]), [limit]);
+
+  // Handle global activity updates
+  useSocketEvent('global_activity_update', useCallback((activity) => {
+    if (!projectId || activity.projectId === projectId) {
+      setRealtimeActivities(prev => {
+        const exists = prev.find(a => a.id === activity.id);
+        if (exists) return prev;
+        return [{ ...activity, isRealTime: true }, ...prev.slice(0, 9)];
+      });
+    }
+  }, [projectId]), [projectId]);
+
+  // Manual refresh
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const data = await apiService.getActivities(limit, 0);
+      setActivities(data.activities || []);
+    } catch (error) {
+      console.error('Failed to refresh activities:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  // Combine real-time and regular activities
+  const combinedActivities = useMemo(() => {
+    const combined = [...realtimeActivities, ...activities];
+    
+    // Remove duplicates and sort by timestamp
+    const unique = combined.reduce((acc, activity) => {
+      if (!acc.find(a => a.id === activity.id)) {
+        acc.push(activity);
+      }
+      return acc;
+    }, []);
+    
+    return unique.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, limit);
+  }, [realtimeActivities, activities, limit]);
+
+  const totalActivities = combinedActivities.length;
+  const realtimeCount = realtimeActivities.length;
+
+  return (
+    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      {showHeader && (
+        <CardHeader
+          title={
+            <Stack direction="row" alignItems="center" spacing={1}>
+              {showBadge ? (
+                <Badge badgeContent={totalActivities} color="primary" max={99}>
+                  <Typography variant="h6">{title}</Typography>
+                </Badge>
+              ) : (
+                <Typography variant="h6">{title}</Typography>
+              )}
+              {isReady && (
+                <Chip 
+                  label={`Live • ${realtimeCount} new`}
+                  size="small" 
+                  color="success" 
+                  sx={{ height: 20, fontSize: '0.7rem', fontWeight: 600 }}
+                />
+              )}
+              {!isReady && (
+                <Chip 
+                  label="Connecting..."
+                  size="small" 
+                  color="warning" 
+                  sx={{ height: 20, fontSize: '0.7rem' }}
+                />
+              )}
+            </Stack>
+          }
+          action={
+            <IconButton 
+              size="small" 
+              onClick={handleRefresh}
+              disabled={refreshing}
+              sx={{
+                ...(refreshing && {
+                  animation: 'spin 1s linear infinite',
+                  '@keyframes spin': {
+                    '0%': { transform: 'rotate(0deg)' },
+                    '100%': { transform: 'rotate(360deg)' }
+                  }
+                })
+              }}
+            >
+              <RefreshIcon />
+            </IconButton>
+          }
+          sx={{ pb: 1 }}
+        />
+      )}
+      
+      <CardContent sx={{ flex: 1, pt: showHeader ? 0 : 2, overflow: 'hidden' }}>
+        {refreshing && <LinearProgress sx={{ mb: 1 }} />}
+        
+        <Box sx={{ height: maxHeight, overflow: 'auto' }}>
+          {isLoading ? (
+            <List>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <ActivitySkeleton key={index} />
+              ))}
+            </List>
+          ) : combinedActivities.length === 0 ? (
+            <Box sx={{ textAlign: 'center', py: 4 }}>
+              <UpdateIcon color="disabled" sx={{ fontSize: 48, mb: 1 }} />
+              <Typography variant="body2" color="textSecondary">
+                No recent activity found
+              </Typography>
+              {isReady && (
+                <Typography variant="caption" color="textSecondary">
+                  Real-time updates will appear here
+                </Typography>
+              )}
             </Box>
           ) : (
-            <List disablePadding>
-              {activities.map((activity, index) => (
-                <Fade key={activity.id} in timeout={300}>
-                  <Box>
-                    <ListItem
-                      sx={{
-                        borderLeft: activity.isNew ? 3 : 0,
-                        borderPalette: 'primary.main',
-                        backgroundColor: activity.isNew ? 'action.hover' : 'transparent',
-                        mb: 1,
-                        borderRadius: 1
-                      }}
-                    >
-                      <ListItemAvatar>
-                        <Avatar 
-                          src={activity.user?.avatar}
-                          sx={{ 
-                            bgcolor: `${activity.color || 'primary'}.light`,
-                            color: `${activity.color || 'primary'}.dark`
-                          }}
-                        >
-                          {activity.user?.name?.charAt(0) || React.cloneElement(getActivityIcon(activity), { sx: { fontSize: 16 } })}
-                        </Avatar>
-                      </ListItemAvatar>
-                      
-                      <ListItemText
-                        primary={
-                          <Box display="flex" alignItems="center" gap={1}>
-                            <Typography 
-                              variant="body2"
-                              sx={{ fontWeight: activity.isNew ? 600 : 400 }}
-                            >
-                              <strong>{activity.user?.name}</strong> {activity.description}
-                            </Typography>
-                            {activity.isNew && (
-                              <Chip 
-                                label="New" 
-                                size="small" 
-                                color="primary" 
-                                variant="outlined"
-                              />
-                            )}
-                          </Box>
-                        }
-                        secondary={
-                          <Box>
-                            {activity.subtitle && (
-                              <Typography variant="body2" color="textSecondary">
-                                {activity.subtitle}
-                              </Typography>
-                            )}
-                            {showTimestamps && (
-                              <Typography variant="caption" color="textSecondary">
-                                {getTimeAgo(activity.timestamp)}
-                              </Typography>
-                            )}
-                          </Box>
-                        }
-                      />
-                      
-                      <ListItemSecondaryAction>
-                        <CircleIcon 
-                          sx={{ 
-                            fontSize: 8,
-                            color: activity.isNew ? 'primary.main' : 'action.disabled'
-                          }} 
-                        />
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                    
-                    {index < activities.length - 1 && <Divider variant="inset" />}
-                  </Box>
-                </Fade>
+            <List sx={{ p: 0 }}>
+              {combinedActivities.map((activity) => (
+                <ActivityItem
+                  key={`${activity.id}-${activity.timestamp}`}
+                  activity={activity}
+                  isRealTime={activity.isRealTime || false}
+                  onActivityClick={onActivityClick}
+                />
               ))}
             </List>
           )}
@@ -331,4 +418,4 @@ const RealtimeActivityFeed = ({
   );
 };
 
-export default RealtimeActivityFeed;
+export default RealTimeActivityFeed;

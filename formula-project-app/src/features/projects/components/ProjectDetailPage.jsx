@@ -526,7 +526,7 @@ const ProjectDetailPage = ({
 
       <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
         {/* Tabs */}
-        <Box sx={{ borderBottom: 1, borderPalette: 'divider' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs 
             value={currentTab} 
             onChange={(e, newValue) => setCurrentTab(newValue)}

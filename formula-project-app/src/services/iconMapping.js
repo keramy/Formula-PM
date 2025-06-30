@@ -25,6 +25,7 @@ import {
   MdCheckCircle as CheckCircle,
   MdWarning as Warning,
   MdError as XmarkCircle,
+  MdCancel as Cancel,
   MdInfo as InfoCircle,
   MdStar as Star,
   MdBusiness as Building,
@@ -240,7 +241,7 @@ export const iconMap = {
  * @param {string} iconName - Original icon name
  * @returns {React.Component} react-icons/md icon component
  */
-export const getIconoirIcon = (iconName) => {
+export const getReactIcon = (iconName) => {
   const IconComponent = iconMap[iconName];
   
   if (!IconComponent) {
@@ -256,7 +257,7 @@ export const getIconoirIcon = (iconName) => {
  * @param {string} iconName - Original icon name
  * @returns {boolean} True if icon is mapped
  */
-export const hasIconoirEquivalent = (iconName) => {
+export const hasReactIconEquivalent = (iconName) => {
   return iconName in iconMap;
 };
 

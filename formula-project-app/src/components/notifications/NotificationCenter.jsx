@@ -228,7 +228,7 @@ const NotificationCenter = () => {
           horizontal: 'right'
         }}
       >
-        <Box sx={{ p: 2, borderBottom: '1px solid', borderPalette: 'divider' }}>
+        <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6">
               Notifications
@@ -278,7 +278,7 @@ const NotificationCenter = () => {
                       sx={{
                         backgroundColor: notification.read ? 'transparent' : 'action.hover',
                         borderLeft: notification.read ? 0 : 3,
-                        borderPalette: `${getNotificationPalette(notification.type, notification.priority)}.main`,
+                        borderColor: `${getNotificationPalette(notification.type, notification.priority)}.main`,
                         '&:hover': {
                           backgroundColor: 'action.selected'
                         }
@@ -363,7 +363,7 @@ const NotificationCenter = () => {
         </Box>
 
         {allNotifications.length > 10 && (
-          <Box sx={{ p: 1, borderTop: '1px solid', borderPalette: 'divider' }}>
+          <Box sx={{ p: 1, borderTop: '1px solid', borderColor: 'divider' }}>
             <Button fullWidth size="small" onClick={handleClose}>
               View All Notifications
             </Button>

@@ -14,7 +14,7 @@ const API_BASE_URL = (() => {
   }
   
   // In production, use full URL
-  return import.meta.env.VITE_API_URL || 'http://localhost:5014/api/v1';
+  return import.meta.env.VITE_API_URL || 'http://localhost:5015/api/v1';
 })();
 
 // Check if we should force demo mode (from env variable or localStorage)

@@ -38,10 +38,16 @@ import {
   MdKeyboardArrowUp as ArrowUp,
   MdWarning as Warning,
   MdMoreVert as MoreVert,
-  MdCheck as Check
+  MdCheck as Check,
+  MdEdit as Edit,
+  MdDelete as Delete
 } from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import { TaskStatusChip, PriorityChip } from '../components/ui/StatusChip';
+import TaskFormModal from '../components/forms/TaskFormModal';
+import DeleteConfirmationDialog from '../components/forms/DeleteConfirmationDialog';
+import { useNotification } from '../context/NotificationContext';
+import ApiService from '../services/api/apiService';
 
 const TasksPage = ({ 
   tasks = [],
@@ -55,10 +61,146 @@ const TasksPage = ({
 }) => {
   const [activeTab, setActiveTab] = useState('my-tasks');
   const [viewMode, setViewMode] = useState('cards');
+  
+  // CRUD Modal States
+  const [taskFormModal, setTaskFormModal] = useState({
+    open: false,
+    task: null,
+    loading: false,
+    error: null
+  });
+  
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
+    open: false,
+    task: null,
+    loading: false,
+    error: null
+  });
+  
+  const { showSuccess, showError } = useNotification();
 
+  // CRUD Handlers
   const handleAddTask = useCallback(() => {
-    onAddTask();
-  }, [onAddTask]);
+    setTaskFormModal({
+      open: true,
+      task: null,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleEditTask = useCallback((task) => {
+    setTaskFormModal({
+      open: true,
+      task,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleDeleteTask = useCallback((task) => {
+    setDeleteConfirmation({
+      open: true,
+      task,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleTaskSubmit = useCallback(async (taskIdOrData, updateData = null) => {
+    setTaskFormModal(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      let result;
+      const isEdit = updateData !== null;
+      
+      if (isEdit) {
+        // Update existing task
+        result = await ApiService.updateTask(taskIdOrData, updateData);
+        showSuccess('Task Updated', `Task "${updateData.name}" has been updated successfully.`);
+        if (onUpdateTask) onUpdateTask(taskIdOrData, result);
+      } else {
+        // Create new task
+        result = await ApiService.createTask(taskIdOrData);
+        showSuccess('Task Created', `Task "${taskIdOrData.name}" has been created successfully.`);
+        if (onAddTask) onAddTask(result);
+      }
+      
+      // Close modal
+      setTaskFormModal({
+        open: false,
+        task: null,
+        loading: false,
+        error: null
+      });
+    } catch (error) {
+      console.error('Task submission error:', error);
+      setTaskFormModal(prev => ({
+        ...prev,
+        loading: false,
+        error: error.message || 'Failed to save task. Please try again.'
+      }));
+      showError(
+        isEdit ? 'Update Failed' : 'Creation Failed',
+        error.message || 'An error occurred while saving the task.'
+      );
+    }
+  }, [onAddTask, onUpdateTask, showSuccess, showError]);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!deleteConfirmation.task) return;
+    
+    setDeleteConfirmation(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      await ApiService.deleteTask(deleteConfirmation.task.id);
+      showSuccess(
+        'Task Deleted',
+        `Task "${deleteConfirmation.task.name}" has been deleted successfully.`
+      );
+      
+      if (onDeleteTask) {
+        onDeleteTask(deleteConfirmation.task.id);
+      }
+      
+      // Close modal
+      setDeleteConfirmation({
+        open: false,
+        task: null,
+        loading: false,
+        error: null
+      });
+    } catch (error) {
+      console.error('Task deletion error:', error);
+      setDeleteConfirmation(prev => ({
+        ...prev,
+        loading: false,
+        error: error.message || 'Failed to delete task. Please try again.'
+      }));
+      showError(
+        'Deletion Failed',
+        error.message || 'An error occurred while deleting the task.'
+      );
+    }
+  }, [deleteConfirmation.task, onDeleteTask, showSuccess, showError]);
+
+  const handleCloseTaskForm = useCallback(() => {
+    setTaskFormModal({
+      open: false,
+      task: null,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleCloseDeleteConfirmation = useCallback(() => {
+    setDeleteConfirmation({
+      open: false,
+      task: null,
+      loading: false,
+      error: null
+    });
+  }, []);
 
   // Calculate task statistics
   const taskStats = useMemo(() => {
@@ -255,38 +397,78 @@ const TasksPage = ({
     </Card>
   );
 
-  const TaskCard = ({ task }) => (
-    <Card className="clean-card" sx={{ height: '100%', cursor: 'pointer' }} onClick={() => onViewTask && onViewTask(task)}>
-      <CardContent sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-          <Box sx={{ flex: 1 }}>
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                fontSize: '16px', 
-                fontWeight: 600, 
-                color: '#0F1939',
-                mb: 0.5,
-                lineHeight: 1.3
-              }}
-            >
-              {task.name}
-            </Typography>
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: '#6B7280', 
-                fontSize: '13px',
-                mb: 1
-              }}
-            >
-              {getProjectName(task.projectId)}
-            </Typography>
+  const TaskCard = ({ task }) => {
+    const handleCardClick = (e) => {
+      // Prevent card click when clicking on action buttons
+      if (e.target.closest('.task-actions')) {
+        return;
+      }
+      onViewTask && onViewTask(task);
+    };
+
+    const handleEditClick = (e) => {
+      e.stopPropagation();
+      handleEditTask(task);
+    };
+
+    const handleDeleteClick = (e) => {
+      e.stopPropagation();
+      handleDeleteTask(task);
+    };
+
+    return (
+      <Card className="clean-card" sx={{ height: '100%', cursor: 'pointer' }} onClick={handleCardClick}>
+        <CardContent sx={{ p: 3 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+            <Box sx={{ flex: 1 }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  fontSize: '16px', 
+                  fontWeight: 600, 
+                  color: '#0F1939',
+                  mb: 0.5,
+                  lineHeight: 1.3
+                }}
+              >
+                {task.name}
+              </Typography>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: '#6B7280', 
+                  fontSize: '13px',
+                  mb: 1
+                }}
+              >
+                {getProjectName(task.projectId)}
+              </Typography>
+            </Box>
+            <Box className="task-actions" sx={{ display: 'flex', gap: 0.5 }}>
+              <IconButton 
+                size="small" 
+                sx={{ 
+                  color: '#9CA3AF',
+                  '&:hover': { color: '#E3AF64', bgcolor: '#FEF3E2' }
+                }}
+                onClick={handleEditClick}
+                title="Edit Task"
+              >
+                <Edit size={16} />
+              </IconButton>
+              <IconButton 
+                size="small" 
+                sx={{ 
+                  color: '#9CA3AF',
+                  '&:hover': { color: '#EF4444', bgcolor: '#FEF2F2' }
+                }}
+                onClick={handleDeleteClick}
+                title="Delete Task"
+              >
+                <Delete size={16} />
+              </IconButton>
+            </Box>
           </Box>
-          <IconButton size="small" sx={{ color: '#9CA3AF' }}>
-            <MoreVert size={18} />
-          </IconButton>
-        </Box>
 
         <Box sx={{ mb: 2 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
@@ -366,9 +548,10 @@ const TasksPage = ({
             </Typography>
           </Box>
         )}
-      </CardContent>
-    </Card>
-  );
+        </CardContent>
+      </Card>
+    );
+  };
 
   const renderMyTasksContent = () => (
     <Box>
@@ -630,20 +813,47 @@ const TasksPage = ({
   };
 
   return (
-    <CleanPageLayout
-      title="Tasks"
-      subtitle="Manage and track all project tasks and assignments"
-      breadcrumbs={[
-        { label: 'Team Space', href: '/workspace' },
-        { label: 'Tasks', href: '/tasks' }
-      ]}
-      headerActions={headerActions}
-      tabs={tabs}
-    >
-      <Box className="clean-fade-in">
-        {renderTabContent()}
-      </Box>
-    </CleanPageLayout>
+    <>
+      <CleanPageLayout
+        title="Tasks"
+        subtitle="Manage and track all project tasks and assignments"
+        breadcrumbs={[
+          { label: 'Team Space', href: '/workspace' },
+          { label: 'Tasks', href: '/tasks' }
+        ]}
+        headerActions={headerActions}
+        tabs={tabs}
+      >
+        <Box className="clean-fade-in">
+          {renderTabContent()}
+        </Box>
+      </CleanPageLayout>
+
+      {/* Task Form Modal */}
+      <TaskFormModal
+        open={taskFormModal.open}
+        onClose={handleCloseTaskForm}
+        onSubmit={handleTaskSubmit}
+        task={taskFormModal.task}
+        projects={projects}
+        teamMembers={teamMembers}
+        loading={taskFormModal.loading}
+        error={taskFormModal.error}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={deleteConfirmation.open}
+        onClose={handleCloseDeleteConfirmation}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Task"
+        message="Are you sure you want to delete this task? This action cannot be undone."
+        itemName={deleteConfirmation.task?.name}
+        itemType="task"
+        loading={deleteConfirmation.loading}
+        error={deleteConfirmation.error}
+      />
+    </>
   );
 };
 

@@ -630,7 +630,7 @@ const UpdatesPage = () => {
       sx={{ 
         mb: 2,
         border: update.pinned ? '2px solid' : '1px solid',
-        borderPalette: update.pinned ? 'primary.main' : '#E5E7EB',
+        borderColor: update.pinned ? 'primary.main' : '#E5E7EB',
         backgroundColor: !update.read ? '#F9FAFB' : 'background.paper',
         transition: 'all 0.2s ease',
         '&:hover': {

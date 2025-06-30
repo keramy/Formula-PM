@@ -289,11 +289,11 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
               startIcon={<ExportIcon />}
               onClick={handleExportProjects}
               sx={{
-                borderPalette: '#27AE60',
+                borderColor: '#27AE60',
                 color: '#27AE60',
                 '&:hover': {
                   backgroundColor: 'rgba(39, 174, 96, 0.1)',
-                  borderPalette: '#229954'
+                  borderColor: '#229954'
                 }
               }}
             >
@@ -353,7 +353,7 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
               endIcon={sortDirection === 'asc' ? <ArrowUpIcon /> : <ArrowDownIcon />}
               onClick={handleSortClick}
               sx={{
-                borderPalette: '#E67E22',
+                borderColor: '#E67E22',
                 color: '#E67E22',
                 '&:hover': {
                   backgroundColor: 'rgba(230, 126, 34, 0.1)'
@@ -372,7 +372,7 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
                   variant={filter === filterOption ? 'contained' : 'outlined'}
                   sx={{
                     backgroundColor: filter === filterOption ? '#E67E22' : 'transparent',
-                    borderPalette: '#E67E22',
+                    borderColor: '#E67E22',
                     color: filter === filterOption ? 'white' : '#E67E22',
                     '&:hover': {
                       backgroundColor: filter === filterOption ? '#D35400' : 'rgba(230, 126, 34, 0.1)'

@@ -124,7 +124,7 @@ const ModernStatsCards = ({ projects = [], tasks = [], teamMembers = [] }) => {
               boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1))',
               '&:hover': {
                 boxShadow: 'var(--shadow-hover, 0 4px 20px rgba(0, 0, 0, 0.15))',
-                borderPalette: stat.color,
+                borderColor: stat.color,
                 transform: 'translateY(-2px)'
               }
             }}

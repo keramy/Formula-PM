@@ -18,29 +18,29 @@ import {
   useTheme as useMuiTheme,
   useMediaQuery
 } from '@mui/material';
-// Iconoir icons - ultra-safe verified icons only
+// React Icons MD - Material Design icons
 import {
   MdSearch as Search,
   MdAdd as Add,
   MdShare as Share,
   MdMenu as MoreHoriz,
   MdStar as Star,
-  MdStar as StarBorder,
+  MdStarBorder as StarBorder,
   MdHome as Home,
   MdBusiness as Business,
-  MdHalfMoon as Brightness4,
-  MdSunLight as Brightness7,
-  Md// Light mode icon
-  Settings as // Light mode icon
-  Settings,
+  MdDarkMode as Brightness4,
+  MdLightMode as Brightness7,
+  MdSettings as Settings,
   MdPerson as User,
-  MdLogOut as Logout // LogOut icon
+  MdPerson as Person,
+  MdLogOut as Logout
 } from 'react-icons/md';
 import FormulaLogo from '../branding/FormulaLogo';
 import { FormulaLogoCompact } from '../branding/LogoVariations';
 import { useTheme as useFormulaTheme } from '../../context/ThemeContext';
 import NotificationCenter from '../notifications/NotificationCenter';
-import PresenceIndicators from '../realtime/PresenceIndicators';
+import RealTimeNotificationBell from '../notifications/RealTimeNotificationBell';
+import { OnlineUsersList, PresenceIndicators } from '../realtime/PresenceIndicators';
 
 const EnhancedHeader = ({ 
   title, 
@@ -145,7 +145,7 @@ const EnhancedHeader = ({
         {/* User Controls */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {/* Notifications */}
-          <NotificationCenter />
+          <RealTimeNotificationBell />
 
           {/* Theme Toggle */}
           <Tooltip title={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
@@ -605,7 +605,7 @@ const EnhancedHeader = ({
           {darkMode ? 'Light Mode' : 'Dark Mode'}
         </MenuItem>
         <Divider sx={{ 
-          borderPalette: theme.palette.divider,
+          borderColor: theme.palette.divider,
           my: 1,
         }} />
         <MenuItem onClick={() => handleUserMenuItemClick('logout')}>

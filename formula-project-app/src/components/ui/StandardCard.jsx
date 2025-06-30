@@ -50,7 +50,7 @@ const StandardCard = ({
     boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1))',
     '&:hover': hoverable ? {
       boxShadow: 'var(--shadow-hover, 0 4px 20px rgba(0, 0, 0, 0.15))',
-      borderPalette: 'var(--caramel-essence, #E3AF64)',
+      borderColor: 'var(--caramel-essence, #E3AF64)',
       transform: 'translateY(-2px)',
     } : {},
     ...sx

@@ -156,7 +156,7 @@ const UnifiedFilters = ({
           mb: 3, 
           backgroundColor: 'grey.50',
           border: 1,
-          borderPalette: 'divider'
+          borderColor: 'divider'
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>

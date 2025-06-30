@@ -300,13 +300,13 @@ const UnifiedSearch = ({
             alignItems: 'center',
             backgroundColor: 'background.paper',
             border: 1,
-            borderPalette: isOpen ? 'primary.main' : 'divider',
+            borderColor: isOpen ? 'primary.main' : 'divider',
             borderRadius: 1,
             boxShadow: isOpen ? 1 : 0,
             transition: 'all 0.2s',
             ...variantStyles[variant],
             '&:hover': {
-              borderPalette: 'primary.light'
+              borderColor: 'primary.light'
             }
           }}
         >

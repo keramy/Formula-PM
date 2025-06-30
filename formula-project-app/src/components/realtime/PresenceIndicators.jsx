@@ -1,262 +1,303 @@
 /**
- * Real-time Presence Indicators
- * Shows who's currently online and active in projects
+ * Presence Indicators Component
+ * Real-time user presence, typing indicators, and collaborative features
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Avatar,
-  AvatarGroup,
-  Chip,
-  Tooltip,
   Box,
-  Typography,
-  Badge,
-  Paper,
+  Avatar,
+  Tooltip,
   Stack,
-  IconButton
+  Chip,
+  Typography,
+  Paper,
+  Badge,
+  AvatarGroup,
+  Fade,
+  Slide,
+  Zoom
 } from '@mui/material';
 import {
-  MdCircle as CircleIcon,
-  MdVisibility as VisibilityIcon,
-  MdEdit as EditIcon,
-  MdChat as ChatIcon
+  MdCircle as OnlineIcon,
+  MdEdit as TypingIcon,
+  MdRemoveRedEye as ViewingIcon,
+  MdPerson as PersonIcon
 } from 'react-icons/md';
-import { usePresence, useSocketEvent } from '../../hooks/useSocket';
+import { useSocket, useSocketEvent } from '../../hooks/useSocket';
 
-const PresenceIndicators = ({ 
-  projectId, 
-  location = 'project',
-  showDetails = false,
-  maxVisible = 5 
+// Individual user presence indicator
+const UserPresenceIndicator = ({ 
+  user, 
+  showName = false, 
+  size = 'medium',
+  showStatus = true,
+  onClick
 }) => {
-  const { onlineUsers, updateActivity } = usePresence(`${location}:${projectId}`);
-  const [activeUsers, setActiveUsers] = useState([]);
-  const [userActivities, setUserActivities] = useState({});
+  const [isOnline, setIsOnline] = useState(false);
+  const [lastSeen, setLastSeen] = useState(null);
+  const [activity, setActivity] = useState('');
 
-  // Filter users for current project/location
-  useEffect(() => {
-    if (onlineUsers && projectId) {
-      const projectUsers = onlineUsers.filter(user => 
-        user.location?.includes(projectId) || 
-        user.projectId === projectId
-      );
-      setActiveUsers(projectUsers);
+  // Listen for user presence updates
+  useSocketEvent('user_presence', useCallback((presenceData) => {
+    if (presenceData.userId === user?.id) {
+      setIsOnline(presenceData.status === 'online');
+      setLastSeen(new Date(presenceData.timestamp));
+      setActivity(presenceData.activity || '');
     }
-  }, [onlineUsers, projectId]);
+  }, [user?.id]), [user?.id]);
 
-  // Subscribe to user activity updates
-  useSocketEvent('collaboration:user_joined', (data) => {
-    if (data.projectId === projectId) {
-      updateActivity('joined_project');
+  if (!user) return null;
+
+  const getAvatarSize = () => {
+    switch (size) {
+      case 'small': return { width: 32, height: 32 };
+      case 'large': return { width: 56, height: 56 };
+      default: return { width: 40, height: 40 };
     }
-  });
+  };
 
-  useSocketEvent('collaboration:user_left', (data) => {
-    if (data.projectId === projectId) {
-      setActiveUsers(prev => prev.filter(user => user.id !== data.userId));
-    }
-  });
-
-  useSocketEvent('collaboration:typing', (data) => {
-    if (data.projectId === projectId) {
-      setUserActivities(prev => ({
-        ...prev,
-        [data.userId]: {
-          type: 'typing',
-          location: data.location,
-          timestamp: data.timestamp
-        }
-      }));
-
-      // Clear typing indicator after 3 seconds
-      setTimeout(() => {
-        setUserActivities(prev => {
-          const updated = { ...prev };
-          if (updated[data.userId]?.type === 'typing') {
-            delete updated[data.userId];
-          }
-          return updated;
-        });
-      }, 3000);
-    }
-  });
-
-  const getStatusPalette = (user) => {
-    const activity = userActivities[user.id];
-    if (activity?.type === 'typing') return 'warning';
+  const getStatusIcon = () => {
+    if (!showStatus) return null;
     
-    switch (user.status) {
-      case 'active': return 'success';
-      case 'idle': return 'warning';
-      case 'busy': return 'error';
-      default: return 'default';
-    }
-  };
-
-  const getStatusIcon = (user) => {
-    const activity = userActivities[user.id];
-    if (activity?.type === 'typing') return <EditIcon fontSize="small" />;
-    
-    switch (user.activity) {
-      case 'viewing': return <VisibilityIcon fontSize="small" />;
-      case 'editing': return <EditIcon fontSize="small" />;
-      case 'commenting': return <ChatIcon fontSize="small" />;
-      default: return <CircleIcon fontSize="small" />;
-    }
-  };
-
-  const getTooltipContent = (user) => {
-    const activity = userActivities[user.id];
-    const lastSeen = user.lastSeen ? new Date(user.lastSeen) : null;
-    const timeAgo = lastSeen ? getTimeAgo(lastSeen) : 'Unknown';
-
     return (
-      <Box>
-        <Typography variant="subtitle2">{user.name}</Typography>
-        <Typography variant="body2" color="textSecondary">
-          {user.role || 'Team Member'}
-        </Typography>
-        {activity && (
-          <Typography variant="body2" color="primary">
-            {activity.type === 'typing' ? 'Typing...' : user.activity}
-          </Typography>
-        )}
-        <Typography variant="caption" color="textSecondary">
-          Last seen: {timeAgo}
-        </Typography>
-      </Box>
-    );
-  };
-
-  const getTimeAgo = (date) => {
-    const now = new Date();
-    const diffMs = now - date;
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    return `${diffDays}d ago`;
-  };
-
-  if (!activeUsers.length) {
-    return (
-      <Chip
-        size="small"
-        icon={<CircleIcon />}
-        label="No one else here"
-        variant="outlined"
-        color="default"
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: 0,
+          right: 0,
+          width: size === 'small' ? 10 : 14,
+          height: size === 'small' ? 10 : 14,
+          borderRadius: '50%',
+          bgcolor: isOnline ? 'success.main' : 'grey.400',
+          border: '2px solid white',
+          ...(isOnline && {
+            animation: 'pulse 2s infinite',
+            '@keyframes pulse': {
+              '0%': { opacity: 1, transform: 'scale(1)' },
+              '50%': { opacity: 0.7, transform: 'scale(1.1)' },
+              '100%': { opacity: 1, transform: 'scale(1)' }
+            }
+          })
+        }}
       />
     );
-  }
+  };
 
-  if (showDetails) {
-    return (
-      <Paper elevation={1} sx={{ p: 2, maxWidth: 300 }}>
-        <Typography variant="subtitle2" gutterBottom>
-          Active Users ({activeUsers.length})
+  const getTooltipContent = () => {
+    const status = isOnline ? 'Online' : 'Offline';
+    const name = `${user.firstName} ${user.lastName}`;
+    const lastSeenText = lastSeen && !isOnline 
+      ? ` (last seen ${lastSeen.toLocaleTimeString()})`
+      : '';
+    const activityText = activity ? ` - ${activity}` : '';
+    
+    return `${name} - ${status}${lastSeenText}${activityText}`;
+  };
+
+  return (
+    <Tooltip title={getTooltipContent()} arrow>
+      <Box
+        sx={{
+          position: 'relative',
+          cursor: onClick ? 'pointer' : 'default',
+          display: 'flex',
+          alignItems: 'center',
+          gap: showName ? 1 : 0
+        }}
+        onClick={onClick}
+      >
+        <Avatar
+          src={user.avatar}
+          sx={{
+            ...getAvatarSize(),
+            transition: 'all 0.3s ease',
+            ...(onClick && {
+              '&:hover': {
+                transform: 'scale(1.1)'
+              }
+            })
+          }}
+        >
+          {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
+        </Avatar>
+        {getStatusIcon()}
+        
+        {showName && (
+          <Box>
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              {user.firstName} {user.lastName}
+            </Typography>
+            <Stack direction="row" alignItems="center" spacing={0.5}>
+              <OnlineIcon 
+                sx={{ 
+                  fontSize: 12, 
+                  color: isOnline ? 'success.main' : 'grey.400' 
+                }} 
+              />
+              <Typography variant="caption" color="textSecondary">
+                {isOnline ? 'Online' : 'Offline'}
+              </Typography>
+            </Stack>
+          </Box>
+        )}
+      </Box>
+    </Tooltip>
+  );
+};
+
+// Typing indicator component
+const TypingIndicator = ({ location, projectId }) => {
+  const [typingUsers, setTypingUsers] = useState([]);
+
+  // Listen for typing events
+  useSocketEvent('user_typing', useCallback((data) => {
+    if (data.location === location) {
+      setTypingUsers(prev => {
+        if (data.action === 'start') {
+          const exists = prev.find(u => u.userId === data.userId);
+          if (exists) return prev;
+          return [...prev, data];
+        } else {
+          return prev.filter(u => u.userId !== data.userId);
+        }
+      });
+    }
+  }, [location]), [location]);
+
+  // Clear typing indicators after 5 seconds of inactivity
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTypingUsers([]);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [typingUsers]);
+
+  if (typingUsers.length === 0) return null;
+
+  return (
+    <Fade in>
+      <Paper 
+        sx={{ 
+          p: 1, 
+          backgroundColor: 'action.hover',
+          borderRadius: 2,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
+        }}
+      >
+        <TypingIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+        <Typography variant="caption" color="textSecondary">
+          {typingUsers.length === 1 
+            ? `${typingUsers[0].user.firstName} is typing...`
+            : `${typingUsers.length} people are typing...`
+          }
         </Typography>
-        <Stack spacing={1}>
-          {activeUsers.map((user) => (
-            <Box key={user.id} display="flex" alignItems="center" gap={1}>
-              <Badge
-                overlap="circular"
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                badgeContent={
-                  <Box
-                    sx={{
-                      width: 12,
-                      height: 12,
-                      borderRadius: '50%',
-                      bgcolor: `${getStatusPalette(user)}.main`,
-                      border: '2px solid white'
-                    }}
-                  />
-                }
-              >
-                <Avatar
-                  src={user.avatar}
-                  alt={user.name}
-                  sx={{ width: 32, height: 32 }}
-                >
-                  {user.name?.charAt(0)}
-                </Avatar>
-              </Badge>
-              <Box flex={1}>
-                <Typography variant="body2" fontWeight="medium">
-                  {user.name}
-                </Typography>
-                <Box display="flex" alignItems="center" gap={0.5}>
-                  {getStatusIcon(user)}
-                  <Typography variant="caption" color="textSecondary">
-                    {userActivities[user.id]?.type === 'typing' 
-                      ? 'Typing...' 
-                      : user.activity || 'Active'
-                    }
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          ))}
-        </Stack>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: '2px',
+            '& > div': {
+              width: 4,
+              height: 4,
+              borderRadius: '50%',
+              backgroundColor: 'primary.main',
+              animation: 'bounce 1.4s ease-in-out infinite both',
+              '&:nth-of-type(1)': { animationDelay: '-0.32s' },
+              '&:nth-of-type(2)': { animationDelay: '-0.16s' }
+            },
+            '@keyframes bounce': {
+              '0%, 80%, 100%': { transform: 'scale(0)' },
+              '40%': { transform: 'scale(1)' }
+            }
+          }}
+        >
+          <div />
+          <div />
+          <div />
+        </Box>
       </Paper>
+    </Fade>
+  );
+};
+
+// Online users list component
+const OnlineUsersList = ({ 
+  projectId = null, 
+  maxUsers = 8, 
+  compact = false,
+  onUserClick
+}) => {
+  const [onlineUsers, setOnlineUsers] = useState([]);
+
+  // Listen for presence updates
+  useSocketEvent('user_presence', useCallback((presenceData) => {
+    setOnlineUsers(prev => {
+      if (presenceData.status === 'online') {
+        const exists = prev.find(u => u.id === presenceData.userId);
+        if (exists) return prev;
+        return [...prev, presenceData.user];
+      } else {
+        return prev.filter(u => u.id !== presenceData.userId);
+      }
+    });
+  }, []), []);
+
+  // Filter by project if specified
+  const filteredUsers = useMemo(() => {
+    return onlineUsers.slice(0, maxUsers);
+  }, [onlineUsers, maxUsers]);
+
+  if (filteredUsers.length === 0) return null;
+
+  if (compact) {
+    return (
+      <AvatarGroup max={maxUsers} sx={{ '& .MuiAvatar-root': { width: 32, height: 32 } }}>
+        {filteredUsers.map((user) => (
+          <UserPresenceIndicator
+            key={user.id}
+            user={user}
+            size="small"
+            onClick={() => onUserClick?.(user)}
+          />
+        ))}
+      </AvatarGroup>
     );
   }
 
   return (
-    <Box display="flex" alignItems="center" gap={1}>
-      <AvatarGroup max={maxVisible} total={activeUsers.length}>
-        {activeUsers.slice(0, maxVisible).map((user) => (
-          <Tooltip key={user.id} title={getTooltipContent(user)} arrow>
-            <Badge
-              overlap="circular"
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              badgeContent={
-                <Box
-                  sx={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    bgcolor: `${getStatusPalette(user)}.main`,
-                    border: '2px solid white'
-                  }}
-                />
-              }
-            >
-              <Avatar
-                src={user.avatar}
-                alt={user.name}
-                sx={{ 
-                  width: 32, 
-                  height: 32,
-                  cursor: 'pointer',
-                  '&:hover': {
-                    transform: 'scale(1.1)',
-                    transition: 'transform 0.2s'
-                  }
-                }}
-              >
-                {user.name?.charAt(0)}
-              </Avatar>
-            </Badge>
-          </Tooltip>
+    <Paper sx={{ p: 2 }}>
+      <Typography variant="subtitle2" sx={{ mb: 2 }}>
+        Online Now ({filteredUsers.length})
+      </Typography>
+      <Stack spacing={2}>
+        {filteredUsers.map((user) => (
+          <UserPresenceIndicator
+            key={user.id}
+            user={user}
+            showName
+            onClick={() => onUserClick?.(user)}
+          />
         ))}
-      </AvatarGroup>
-      
-      {activeUsers.length > 0 && (
-        <Typography variant="body2" color="textSecondary">
-          {activeUsers.length === 1 
-            ? `${activeUsers[0].name} is here`
-            : `${activeUsers.length} people here`
-          }
-        </Typography>
-      )}
-    </Box>
+      </Stack>
+    </Paper>
   );
+};
+
+// Export all components
+export {
+  UserPresenceIndicator,
+  TypingIndicator,
+  OnlineUsersList
+};
+
+// Main presence indicators component
+const PresenceIndicators = {
+  UserPresenceIndicator,
+  TypingIndicator,
+  OnlineUsersList
 };
 
 export default PresenceIndicators;

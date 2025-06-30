@@ -199,7 +199,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                       </Box>
                     </ListItem>
                     {index < recentTasks.length - 1 && (
-                      <Divider sx={{ borderPalette: 'var(--gray-100)' }} />
+                      <Divider sx={{ borderColor: 'var(--gray-100)' }} />
                     )}
                   </React.Fragment>
                 ))}
@@ -380,7 +380,7 @@ const ProjectOverview = ({ project, tasks = [], teamMembers = [], taskProgress =
                       />
                     </ListItem>
                     {index < assignedMembers.length - 1 && (
-                      <Divider sx={{ borderPalette: 'var(--gray-100)' }} />
+                      <Divider sx={{ borderColor: 'var(--gray-100)' }} />
                     )}
                   </React.Fragment>
                 ))}

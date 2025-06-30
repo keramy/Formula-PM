@@ -246,7 +246,7 @@ function FileUpload({ taskId, projectId, files = [], onFilesChange, maxFiles = 1
                   key={file.id}
                   sx={{
                     border: 1,
-                    borderPalette: 'divider',
+                    borderColor: 'divider',
                     borderRadius: 2,
                     mb: 1,
                     backgroundColor: 'background.paper'

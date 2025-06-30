@@ -29,10 +29,16 @@ import {
   MdGroup as Group,
   MdCalendarToday as Calendar,
   MdMoreVert as MoreVert,
-  MdCheck as Check
+  MdCheck as Check,
+  MdEdit as Edit,
+  MdDelete as Delete
 } from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import ErrorBoundary from '../components/common/ErrorBoundary';
+import ProjectFormModal from '../components/forms/ProjectFormModal';
+import DeleteConfirmationDialog from '../components/forms/DeleteConfirmationDialog';
+import { useNotification } from '../context/NotificationContext';
+import ApiService from '../services/api/apiService';
 import { 
   ProjectsTableView,
   ProjectsFilters,
@@ -70,10 +76,152 @@ const ProjectsPage = ({
 }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [viewMode, setViewMode] = useState('cards');
+  
+  // CRUD Modal States
+  const [projectFormModal, setProjectFormModal] = useState({
+    open: false,
+    project: null,
+    loading: false,
+    error: null
+  });
+  
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
+    open: false,
+    project: null,
+    loading: false,
+    error: null
+  });
+  
+  const { showSuccess, showError } = useNotification();
 
+  // CRUD Handlers
   const handleAddProject = useCallback(() => {
-    onAddProject();
-  }, [onAddProject]);
+    setProjectFormModal({
+      open: true,
+      project: null,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleEditProject = useCallback((project) => {
+    setProjectFormModal({
+      open: true,
+      project,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleDeleteProject = useCallback((project) => {
+    const projectTasks = tasks.filter(t => t.projectId === project.id);
+    setDeleteConfirmation({
+      open: true,
+      project,
+      loading: false,
+      error: null,
+      consequences: projectTasks.length > 0 ? [
+        `Delete ${projectTasks.length} associated task${projectTasks.length === 1 ? '' : 's'}`,
+        'Remove project from all reports and analytics',
+        'Archive all project-related documents'
+      ] : []
+    });
+  }, [tasks]);
+
+  const handleProjectSubmit = useCallback(async (projectIdOrData, updateData = null) => {
+    setProjectFormModal(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      let result;
+      const isEdit = updateData !== null;
+      
+      if (isEdit) {
+        // Update existing project
+        result = await ApiService.updateProject(projectIdOrData, updateData);
+        showSuccess('Project Updated', `Project "${updateData.name}" has been updated successfully.`);
+        if (onEditProject) onEditProject(projectIdOrData, result);
+      } else {
+        // Create new project
+        result = await ApiService.createProject(projectIdOrData);
+        showSuccess('Project Created', `Project "${projectIdOrData.name}" has been created successfully.`);
+        if (onAddProject) onAddProject(result);
+      }
+      
+      // Close modal
+      setProjectFormModal({
+        open: false,
+        project: null,
+        loading: false,
+        error: null
+      });
+    } catch (error) {
+      console.error('Project submission error:', error);
+      setProjectFormModal(prev => ({
+        ...prev,
+        loading: false,
+        error: error.message || 'Failed to save project. Please try again.'
+      }));
+      showError(
+        isEdit ? 'Update Failed' : 'Creation Failed',
+        error.message || 'An error occurred while saving the project.'
+      );
+    }
+  }, [onAddProject, onEditProject, showSuccess, showError]);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!deleteConfirmation.project) return;
+    
+    setDeleteConfirmation(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      await ApiService.deleteProject(deleteConfirmation.project.id);
+      showSuccess(
+        'Project Deleted',
+        `Project "${deleteConfirmation.project.name}" has been deleted successfully.`
+      );
+      
+      if (onDeleteProject) {
+        onDeleteProject(deleteConfirmation.project.id);
+      }
+      
+      // Close modal
+      setDeleteConfirmation({
+        open: false,
+        project: null,
+        loading: false,
+        error: null
+      });
+    } catch (error) {
+      console.error('Project deletion error:', error);
+      setDeleteConfirmation(prev => ({
+        ...prev,
+        loading: false,
+        error: error.message || 'Failed to delete project. Please try again.'
+      }));
+      showError(
+        'Deletion Failed',
+        error.message || 'An error occurred while deleting the project.'
+      );
+    }
+  }, [deleteConfirmation.project, onDeleteProject, showSuccess, showError]);
+
+  const handleCloseProjectForm = useCallback(() => {
+    setProjectFormModal({
+      open: false,
+      project: null,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleCloseDeleteConfirmation = useCallback(() => {
+    setDeleteConfirmation({
+      open: false,
+      project: null,
+      loading: false,
+      error: null
+    });
+  }, []);
 
   // Calculate project statistics
   const projectStats = useMemo(() => {
@@ -257,8 +405,26 @@ const ProjectsPage = ({
     const manager = getProjectManager(project.managerId);
     const progressPalette = project.progress >= 75 ? '#10B981' : project.progress >= 50 ? '#E3AF64' : '#516AC8';
     
+    const handleCardClick = (e) => {
+      // Prevent card click when clicking on action buttons
+      if (e.target.closest('.project-actions')) {
+        return;
+      }
+      onViewProject && onViewProject(project);
+    };
+
+    const handleEditClick = (e) => {
+      e.stopPropagation();
+      handleEditProject(project);
+    };
+
+    const handleDeleteClick = (e) => {
+      e.stopPropagation();
+      handleDeleteProject(project);
+    };
+    
     return (
-      <Card className="clean-card" sx={{ height: '100%', cursor: 'pointer' }} onClick={() => onViewProject && onViewProject(project)}>
+      <Card className="clean-card" sx={{ height: '100%', cursor: 'pointer' }} onClick={handleCardClick}>
         <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
             <Box sx={{ flex: 1 }}>
@@ -285,9 +451,30 @@ const ProjectsPage = ({
                 {getClientName(project.clientId)}
               </Typography>
             </Box>
-            <IconButton size="small" sx={{ color: '#9CA3AF' }}>
-              <MoreVert size={18} />
-            </IconButton>
+            <Box className="project-actions" sx={{ display: 'flex', gap: 0.5 }}>
+              <IconButton 
+                size="small" 
+                sx={{ 
+                  color: '#9CA3AF',
+                  '&:hover': { color: '#E3AF64', bgcolor: '#FEF3E2' }
+                }}
+                onClick={handleEditClick}
+                title="Edit Project"
+              >
+                <Edit size={16} />
+              </IconButton>
+              <IconButton 
+                size="small" 
+                sx={{ 
+                  color: '#9CA3AF',
+                  '&:hover': { color: '#EF4444', bgcolor: '#FEF2F2' }
+                }}
+                onClick={handleDeleteClick}
+                title="Delete Project"
+              >
+                <Delete size={16} />
+              </IconButton>
+            </Box>
           </Box>
 
           <Box sx={{ mb: 2 }}>
@@ -615,20 +802,48 @@ const ProjectsPage = ({
   };
 
   return (
-    <CleanPageLayout
-      title="Projects"
-      subtitle="Manage your construction and millwork projects with complete oversight"
-      breadcrumbs={[
-        { label: 'Team Space', href: '/workspace' },
-        { label: 'Projects', href: '/projects' }
-      ]}
-      headerActions={headerActions}
-      tabs={tabs}
-    >
-      <Box className="clean-fade-in">
-        {renderTabContent()}
-      </Box>
-    </CleanPageLayout>
+    <>
+      <CleanPageLayout
+        title="Projects"
+        subtitle="Manage your construction and millwork projects with complete oversight"
+        breadcrumbs={[
+          { label: 'Team Space', href: '/workspace' },
+          { label: 'Projects', href: '/projects' }
+        ]}
+        headerActions={headerActions}
+        tabs={tabs}
+      >
+        <Box className="clean-fade-in">
+          {renderTabContent()}
+        </Box>
+      </CleanPageLayout>
+
+      {/* Project Form Modal */}
+      <ProjectFormModal
+        open={projectFormModal.open}
+        onClose={handleCloseProjectForm}
+        onSubmit={handleProjectSubmit}
+        project={projectFormModal.project}
+        clients={clients}
+        teamMembers={teamMembers}
+        loading={projectFormModal.loading}
+        error={projectFormModal.error}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={deleteConfirmation.open}
+        onClose={handleCloseDeleteConfirmation}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Project"
+        message="Are you sure you want to delete this project? This action cannot be undone."
+        itemName={deleteConfirmation.project?.name}
+        itemType="project"
+        loading={deleteConfirmation.loading}
+        error={deleteConfirmation.error}
+        consequences={deleteConfirmation.consequences || []}
+      />
+    </>
   );
 };
 

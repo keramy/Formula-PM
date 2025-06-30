@@ -409,7 +409,7 @@ const TimelinePage = () => {
         startIcon={<Download />}
         size="small"
         sx={{ 
-          borderPalette: colors.border,
+          borderColor: colors.border,
           color: colors.textSecondary,
           '&:hover': { backgroundColor: colors.raptureLight }
         }}
@@ -1479,7 +1479,7 @@ const QuickActionsDialog = ({
                     setDateRange({ start, end });
                   }}
                   sx={{
-                    borderPalette: colors.border,
+                    borderColor: colors.border,
                     color: colors.textSecondary,
                     '&:hover': { backgroundColor: colors.raptureLight }
                   }}

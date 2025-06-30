@@ -275,7 +275,7 @@ const AutoReportGenerator = ({
                   sx={{ 
                     cursor: 'pointer',
                     border: selectedPhotos.find(p => p.id === photo.id) ? 2 : 0,
-                    borderPalette: 'primary.main'
+                    borderColor: 'primary.main'
                   }}
                   onClick={() => {
                     const isSelected = selectedPhotos.find(p => p.id === photo.id);

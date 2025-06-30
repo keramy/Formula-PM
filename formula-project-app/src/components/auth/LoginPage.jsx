@@ -206,13 +206,13 @@ const LoginPage = () => {
                     '& .MuiOutlinedInput-root': {
                       backgroundColor: colors.input,
                       '& fieldset': {
-                        borderPalette: colors.cardBorder,
+                        borderColor: colors.cardBorder,
                       },
                       '&:hover fieldset': {
-                        borderPalette: colors.text,
+                        borderColor: colors.text,
                       },
                       '&.Mui-focused fieldset': {
-                        borderPalette: colors.accent,
+                        borderColor: colors.accent,
                       },
                     },
                     '& .MuiInputLabel-root': {
@@ -244,13 +244,13 @@ const LoginPage = () => {
                     '& .MuiOutlinedInput-root': {
                       backgroundColor: colors.input,
                       '& fieldset': {
-                        borderPalette: colors.cardBorder,
+                        borderColor: colors.cardBorder,
                       },
                       '&:hover fieldset': {
-                        borderPalette: colors.text,
+                        borderColor: colors.text,
                       },
                       '&.Mui-focused fieldset': {
-                        borderPalette: colors.accent,
+                        borderColor: colors.accent,
                       },
                     },
                     '& .MuiInputLabel-root': {
@@ -356,7 +356,7 @@ const LoginPage = () => {
                     boxShadow: darkMode 
                       ? '0 8px 25px rgba(0, 0, 0, 0.2)'
                       : '0 8px 25px rgba(27, 41, 81, 0.1)',
-                    borderPalette: demo.color,
+                    borderColor: demo.color,
                     backgroundColor: darkMode ? 'rgba(245, 242, 232, 0.05)' : 'rgba(27, 41, 81, 0.05)',
                   }
                 }}

@@ -65,7 +65,7 @@ const getCardStyles = (theme, { selected, hoverable, variant, projectType }) => 
     boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1))',
     '&:hover': hoverable ? {
       boxShadow: 'var(--shadow-hover, 0 4px 20px rgba(0, 0, 0, 0.15))',
-      borderPalette: typeBorderPalettes[projectType] || 'var(--caramel-essence)',
+      borderColor: typeBorderPalettes[projectType] || 'var(--caramel-essence)',
       transform: 'translateY(-2px)',
     } : {},
     '&::before': {

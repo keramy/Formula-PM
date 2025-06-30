@@ -314,7 +314,7 @@ const PhotoSequenceViewer = ({
               sx={{ 
                 cursor: 'pointer',
                 border: currentPhotoIndex === index ? 2 : 0,
-                borderPalette: 'primary.main'
+                borderColor: 'primary.main'
               }}
               onClick={() => handlePhotoChange(index)}
             >

@@ -188,7 +188,7 @@ const ProjectsFilters = ({
                   startIcon={filter.icon}
                   onClick={() => handleQuickFilter(filter)}
                   sx={{
-                    borderPalette: filter.color,
+                    borderColor: filter.color,
                     color: filter.color,
                     mb: 1,
                     '&:hover': {

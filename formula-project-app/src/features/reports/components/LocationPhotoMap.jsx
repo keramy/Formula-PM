@@ -256,7 +256,7 @@ const LocationPhotoMap = ({
                     borderRadius: 1,
                     cursor: 'pointer',
                     border: '1px solid',
-                    borderPalette: 'divider'
+                    borderColor: 'divider'
                   }}
                   onClick={(e) => {
                     e.stopPropagation();

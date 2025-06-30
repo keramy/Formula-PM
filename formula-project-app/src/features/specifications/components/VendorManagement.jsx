@@ -244,7 +244,7 @@ const VendorManagement = ({
                 height: '100%',
                 cursor: onVendorSelect ? 'pointer' : 'default',
                 border: selectedVendor?.id === vendor.id ? '2px solid' : '1px solid',
-                borderPalette: selectedVendor?.id === vendor.id ? 'primary.main' : 'divider'
+                borderColor: selectedVendor?.id === vendor.id ? 'primary.main' : 'divider'
               }}
               onClick={() => onVendorSelect && onVendorSelect(vendor)}
             >

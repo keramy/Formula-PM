@@ -298,7 +298,7 @@ const UniversalBreadcrumb = ({
                   sx={{
                     height: 24,
                     fontSize: '0.75rem',
-                    borderPalette: '#D5DBDB',
+                    borderColor: '#D5DBDB',
                     color: '#7F8C8D'
                   }}
                 />

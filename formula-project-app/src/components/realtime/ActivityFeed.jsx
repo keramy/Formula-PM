@@ -236,7 +236,7 @@ const ActivityItem = ({ activity, onActivityClick, onProjectClick, onTaskClick, 
                 fontSize: '0.7rem',
                 height: '20px',
                 color: '#1976d2',
-                borderPalette: '#1976d2',
+                borderColor: '#1976d2',
                 backgroundColor: 'rgba(25, 118, 210, 0.08)',
                 '& .MuiChip-label': {
                   px: 1,

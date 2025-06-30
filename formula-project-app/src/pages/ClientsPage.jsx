@@ -20,10 +20,16 @@ import {
   MdKeyboardArrowUp as ArrowUp,
   MdTask as Task,
   MdCheckCircle as CheckCircle,
-  MdPerson as PersonIcon
+  MdPerson as PersonIcon,
+  MdEdit as Edit,
+  MdDelete as Delete
 } from 'react-icons/md';
 import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout';
 import ClientsList from '../features/clients/components/ClientsList';
+import ClientFormModal from '../components/forms/ClientFormModal';
+import DeleteConfirmationDialog from '../components/forms/DeleteConfirmationDialog';
+import { useNotification } from '../context/NotificationContext';
+import ApiService from '../services/api/apiService';
 
 const ClientsPage = ({ 
   clients = [],
@@ -34,10 +40,152 @@ const ClientsPage = ({
 }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [viewMode, setViewMode] = useState('cards');
+  
+  // CRUD Modal States
+  const [clientFormModal, setClientFormModal] = useState({
+    open: false,
+    client: null,
+    loading: false,
+    error: null
+  });
+  
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
+    open: false,
+    client: null,
+    loading: false,
+    error: null
+  });
+  
+  const { showSuccess, showError } = useNotification();
 
+  // CRUD Handlers
   const handleAddClient = useCallback(() => {
-    onAddClient();
-  }, [onAddClient]);
+    setClientFormModal({
+      open: true,
+      client: null,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleEditClient = useCallback((client) => {
+    setClientFormModal({
+      open: true,
+      client,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleDeleteClient = useCallback((client) => {
+    const clientProjects = projects.filter(p => p.clientId === client.id);
+    setDeleteConfirmation({
+      open: true,
+      client,
+      loading: false,
+      error: null,
+      consequences: clientProjects.length > 0 ? [
+        `Remove association with ${clientProjects.length} project${clientProjects.length === 1 ? '' : 's'}`,
+        'Archive all client communications',
+        'Update project records to reflect client removal'
+      ] : []
+    });
+  }, [projects]);
+
+  const handleClientSubmit = useCallback(async (clientIdOrData, updateData = null) => {
+    setClientFormModal(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      let result;
+      const isEdit = updateData !== null;
+      
+      if (isEdit) {
+        // Update existing client
+        result = await ApiService.updateClient(clientIdOrData, updateData);
+        showSuccess('Client Updated', `Client "${updateData.companyName || updateData.name}" has been updated successfully.`);
+        if (onUpdateClient) onUpdateClient(clientIdOrData, result);
+      } else {
+        // Create new client
+        result = await ApiService.createClient(clientIdOrData);
+        showSuccess('Client Added', `Client "${clientIdOrData.companyName || clientIdOrData.name}" has been added successfully.`);
+        if (onAddClient) onAddClient(result);
+      }
+      
+      // Close modal
+      setClientFormModal({
+        open: false,
+        client: null,
+        loading: false,
+        error: null
+      });
+    } catch (error) {
+      console.error('Client submission error:', error);
+      setClientFormModal(prev => ({
+        ...prev,
+        loading: false,
+        error: error.message || 'Failed to save client. Please try again.'
+      }));
+      showError(
+        isEdit ? 'Update Failed' : 'Creation Failed',
+        error.message || 'An error occurred while saving the client.'
+      );
+    }
+  }, [onAddClient, onUpdateClient, showSuccess, showError]);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!deleteConfirmation.client) return;
+    
+    setDeleteConfirmation(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      await ApiService.deleteClient(deleteConfirmation.client.id);
+      showSuccess(
+        'Client Deleted',
+        `Client "${deleteConfirmation.client.companyName || deleteConfirmation.client.name}" has been deleted successfully.`
+      );
+      
+      if (onDeleteClient) {
+        onDeleteClient(deleteConfirmation.client.id);
+      }
+      
+      // Close modal
+      setDeleteConfirmation({
+        open: false,
+        client: null,
+        loading: false,
+        error: null
+      });
+    } catch (error) {
+      console.error('Client deletion error:', error);
+      setDeleteConfirmation(prev => ({
+        ...prev,
+        loading: false,
+        error: error.message || 'Failed to delete client. Please try again.'
+      }));
+      showError(
+        'Deletion Failed',
+        error.message || 'An error occurred while deleting the client.'
+      );
+    }
+  }, [deleteConfirmation.client, onDeleteClient, showSuccess, showError]);
+
+  const handleCloseClientForm = useCallback(() => {
+    setClientFormModal({
+      open: false,
+      client: null,
+      loading: false,
+      error: null
+    });
+  }, []);
+
+  const handleCloseDeleteConfirmation = useCallback(() => {
+    setDeleteConfirmation({
+      open: false,
+      client: null,
+      loading: false,
+      error: null
+    });
+  }, []);
 
   // Calculate client statistics
   const clientStats = useMemo(() => {
@@ -210,61 +358,106 @@ const ClientsPage = ({
     </Card>
   );
 
-  const ClientCard = ({ client, showProjects = true }) => (
-    <Card className="clean-card" sx={{ height: '100%', cursor: 'pointer' }}>
-      <CardContent sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Avatar
-            sx={{
-              width: 48,
-              height: 48,
-              fontSize: '16px',
-              fontWeight: 600,
-              bgcolor: '#E67E22',
-              mr: 2
-            }}
-          >
-            {getCompanyInitials(client.companyName || client.name || 'C')}
-          </Avatar>
-          <Box sx={{ flex: 1 }}>
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                fontSize: '16px', 
-                fontWeight: 600, 
-                color: '#0F1939',
-                mb: 0.5,
-                lineHeight: 1.3
+  const ClientCard = ({ client, showProjects = true }) => {
+    const handleCardClick = (e) => {
+      // Prevent card click when clicking on action buttons
+      if (e.target.closest('.client-actions')) {
+        return;
+      }
+      // Add view client functionality here if needed
+    };
+
+    const handleEditClick = (e) => {
+      e.stopPropagation();
+      handleEditClient(client);
+    };
+
+    const handleDeleteClick = (e) => {
+      e.stopPropagation();
+      handleDeleteClient(client);
+    };
+
+    return (
+      <Card className="clean-card" sx={{ height: '100%', cursor: 'pointer' }} onClick={handleCardClick}>
+        <CardContent sx={{ p: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <Avatar
+              sx={{
+                width: 48,
+                height: 48,
+                fontSize: '16px',
+                fontWeight: 600,
+                bgcolor: '#E67E22',
+                mr: 2
               }}
             >
-              {client.companyName || client.name}
-            </Typography>
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: '#6B7280', 
-                fontSize: '13px',
-                mb: 0.5
-              }}
-            >
-              {client.contactPersonName || 'No contact'}
-            </Typography>
-            <Typography 
-              variant="caption" 
-              sx={{ 
-                color: '#9CA3AF', 
-                fontSize: '12px'
-              }}
-            >
-              {client.industry || 'Industry not specified'}
-            </Typography>
+              {getCompanyInitials(client.companyName || client.name || 'C')}
+            </Avatar>
+            <Box sx={{ flex: 1 }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  fontSize: '16px', 
+                  fontWeight: 600, 
+                  color: '#0F1939',
+                  mb: 0.5,
+                  lineHeight: 1.3
+                }}
+              >
+                {client.companyName || client.name}
+              </Typography>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: '#6B7280', 
+                  fontSize: '13px',
+                  mb: 0.5
+                }}
+              >
+                {client.contactPerson || 'No contact'}
+              </Typography>
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  color: '#9CA3AF', 
+                  fontSize: '12px'
+                }}
+              >
+                {client.industry || 'Industry not specified'}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+              <Chip
+                label={client.status || 'active'}
+                size="small"
+                className={`clean-chip ${getStatusChipClass(client.status)}`}
+              />
+              <Box className="client-actions" sx={{ display: 'flex', gap: 0.5 }}>
+                <IconButton 
+                  size="small" 
+                  sx={{ 
+                    color: '#9CA3AF',
+                    '&:hover': { color: '#E3AF64', bgcolor: '#FEF3E2' }
+                  }}
+                  onClick={handleEditClick}
+                  title="Edit Client"
+                >
+                  <Edit size={16} />
+                </IconButton>
+                <IconButton 
+                  size="small" 
+                  sx={{ 
+                    color: '#9CA3AF',
+                    '&:hover': { color: '#EF4444', bgcolor: '#FEF2F2' }
+                  }}
+                  onClick={handleDeleteClick}
+                  title="Delete Client"
+                >
+                  <Delete size={16} />
+                </IconButton>
+              </Box>
+            </Box>
           </Box>
-          <Chip
-            label={client.status || 'active'}
-            size="small"
-            className={`clean-chip ${getStatusChipClass(client.status)}`}
-          />
-        </Box>
 
         {showProjects && (
           <Box sx={{ mb: 2 }}>
@@ -318,9 +511,10 @@ const ClientsPage = ({
             </Typography>
           </Box>
         )}
-      </CardContent>
-    </Card>
-  );
+        </CardContent>
+      </Card>
+    );
+  };
 
   const renderOverviewContent = () => (
     <Box>
@@ -514,20 +708,46 @@ const ClientsPage = ({
   };
 
   return (
-    <CleanPageLayout
-      title="Clients"
-      subtitle="Manage your client relationships and track business development"
-      breadcrumbs={[
-        { label: 'Team Space', href: '/workspace' },
-        { label: 'Clients', href: '/clients' }
-      ]}
-      headerActions={headerActions}
-      tabs={tabs}
-    >
-      <Box className="clean-fade-in">
-        {renderTabContent()}
-      </Box>
-    </CleanPageLayout>
+    <>
+      <CleanPageLayout
+        title="Clients"
+        subtitle="Manage your client relationships and track business development"
+        breadcrumbs={[
+          { label: 'Team Space', href: '/workspace' },
+          { label: 'Clients', href: '/clients' }
+        ]}
+        headerActions={headerActions}
+        tabs={tabs}
+      >
+        <Box className="clean-fade-in">
+          {renderTabContent()}
+        </Box>
+      </CleanPageLayout>
+
+      {/* Client Form Modal */}
+      <ClientFormModal
+        open={clientFormModal.open}
+        onClose={handleCloseClientForm}
+        onSubmit={handleClientSubmit}
+        client={clientFormModal.client}
+        loading={clientFormModal.loading}
+        error={clientFormModal.error}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={deleteConfirmation.open}
+        onClose={handleCloseDeleteConfirmation}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Client"
+        message="Are you sure you want to delete this client? This action cannot be undone."
+        itemName={deleteConfirmation.client?.companyName || deleteConfirmation.client?.name}
+        itemType="client"
+        loading={deleteConfirmation.loading}
+        error={deleteConfirmation.error}
+        consequences={deleteConfirmation.consequences || []}
+      />
+    </>
   );
 };
 

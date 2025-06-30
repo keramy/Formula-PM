@@ -286,7 +286,7 @@ const MentionAutocomplete = ({
         p: 1, 
         bgcolor: 'grey.50', 
         borderTop: 1, 
-        borderPalette: 'divider' 
+        borderColor: 'divider' 
       }}>
         <Typography variant="caption" color="textSecondary">
           ↑↓ Navigate • Enter Select • Esc Close

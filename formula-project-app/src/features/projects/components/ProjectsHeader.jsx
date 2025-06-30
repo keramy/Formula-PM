@@ -197,7 +197,7 @@ const ProjectsHeader = ({
               onClick={handleExport}
               sx={{ 
                 color: '#27AE60',
-                borderPalette: '#27AE60',
+                borderColor: '#27AE60',
                 '&:hover': {
                   backgroundColor: '#27AE60',
                   color: 'white'

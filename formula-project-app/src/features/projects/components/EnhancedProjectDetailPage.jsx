@@ -240,7 +240,7 @@ const EnhancedProjectDetailPage = () => {
         <Grid item xs={12} lg={9}>
           {/* Project Tabs */}
           <Card>
-            <Box sx={{ borderBottom: 1, borderPalette: 'divider' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs value={activeTab} onChange={handleTabChange}>
                 <Tab 
                   icon={<TaskIcon />} 

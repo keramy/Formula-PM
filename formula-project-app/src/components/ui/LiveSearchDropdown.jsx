@@ -254,7 +254,7 @@ const LiveSearchDropdown = ({
             boxShadow: 'none',
             position: 'relative',
             ...(isOpen && {
-              borderPalette: '#2196F3',
+              borderColor: '#2196F3',
               borderBottomLeftRadius: 0,
               borderBottomRightRadius: 0,
             })

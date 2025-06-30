@@ -90,7 +90,7 @@ const EnhancedTabSystem = ({
   return (
     <Box sx={{ 
       borderBottom: 1, 
-      borderPalette: 'divider',
+      borderColor: 'divider',
       backgroundColor: 'white',
       px: 3,
       display: 'flex',
@@ -180,7 +180,7 @@ const EnhancedTabSystem = ({
               color: hasActiveFilters ? 'primary.main' : 'text.secondary',
               backgroundColor: hasActiveFilters ? 'primary.50' : 'transparent',
               border: '1px solid',
-              borderPalette: hasActiveFilters ? 'primary.main' : '#E9ECEF',
+              borderColor: hasActiveFilters ? 'primary.main' : '#E9ECEF',
               '&:hover': {
                 backgroundColor: hasActiveFilters ? 'primary.100' : '#F8F9FA'
               }

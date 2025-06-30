@@ -121,7 +121,7 @@ const TimelineView = ({
                             height: 40,
                             cursor: 'pointer',
                             border: isActive ? 2 : 1,
-                            borderPalette: isActive ? 'primary.main' : 'divider',
+                            borderColor: isActive ? 'primary.main' : 'divider',
                             '&:hover': { 
                               transform: 'scale(1.1)',
                               zIndex: 1

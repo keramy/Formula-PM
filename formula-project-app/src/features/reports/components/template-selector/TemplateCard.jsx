@@ -43,10 +43,10 @@ const TemplateCard = ({
         height: '100%',
         cursor: 'pointer',
         border: isSelected ? 2 : 1,
-        borderPalette: isSelected ? 'primary.main' : 'divider',
+        borderColor: isSelected ? 'primary.main' : 'divider',
         '&:hover': { 
           boxShadow: 3,
-          borderPalette: 'primary.light'
+          borderColor: 'primary.light'
         },
         position: 'relative'
       }}
