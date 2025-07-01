@@ -1,7 +1,7 @@
 import {
   __export,
   __name
-} from "./chunk-Z43UC6KN.js";
+} from "./chunk-JSWZH6GQ.js";
 
 // node_modules/engine.io-parser/build/esm/commons.js
 var PACKET_TYPES = /* @__PURE__ */ Object.create(null);

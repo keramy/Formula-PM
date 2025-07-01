@@ -1,6 +1,6 @@
 import {
   __name
-} from "./chunk-Z43UC6KN.js";
+} from "./chunk-JSWZH6GQ.js";
 
 // node_modules/html2canvas/dist/html2canvas.esm.js
 var extendStatics = /* @__PURE__ */ __name(function(d, b) {

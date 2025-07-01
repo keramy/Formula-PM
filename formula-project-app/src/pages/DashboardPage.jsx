@@ -21,6 +21,10 @@ const DashboardPage = () => {
   const handleViewProject = (project) => {
     navigate(`/projects/${project.id}`);
   };
+
+  const handleViewProjectTimeline = (project) => {
+    navigate(`/timeline?project=${project.id}`);
+  };
   return (
     <CleanPageLayout
       title="Dashboard"
@@ -43,6 +47,7 @@ const DashboardPage = () => {
               tasks={tasks} 
               teamMembers={teamMembers}
               onViewProject={handleViewProject}
+              onViewProjectTimeline={handleViewProjectTimeline}
             />
           </Suspense>
           <FinancialAnalytics 

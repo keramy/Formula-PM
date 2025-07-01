@@ -1,0 +1,153 @@
+/* Custom styles for SVAR Gantt to match Formula PM design */
+
+/* Override default Gantt colors */
+.wx-gantt {
+  --wx-gantt-background: #FBFAF8;
+  --wx-gantt-border: #E5E7EB;
+  --wx-gantt-text: #1A1A1A;
+  --wx-gantt-text-secondary: #6B7280;
+  --wx-gantt-header-background: #FFFFFF;
+  --wx-gantt-row-background: #FFFFFF;
+  --wx-gantt-row-hover: #F6F3E7;
+  --wx-gantt-task-background: #E3AF64;
+  --wx-gantt-task-progress: #516AC8;
+  --wx-gantt-milestone: #0F1939;
+  --wx-gantt-summary: #516AC8;
+  --wx-gantt-link: #516AC8;
+  font-family: inherit;
+}
+
+/* Grid styling */
+.wx-grid-header {
+  background-color: var(--wx-gantt-header-background) !important;
+  border-bottom: 1px solid var(--wx-gantt-border) !important;
+}
+
+.wx-grid-cell {
+  border-color: var(--wx-gantt-border) !important;
+  color: var(--wx-gantt-text) !important;
+}
+
+.wx-grid-row:hover {
+  background-color: var(--wx-gantt-row-hover) !important;
+}
+
+/* Task bar styling */
+.wx-task-bar {
+  background-color: var(--wx-gantt-task-background) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+
+.wx-task-bar.wx-task-progress {
+  background-color: var(--wx-gantt-task-progress) !important;
+}
+
+.wx-task-bar.wx-milestone {
+  background-color: var(--wx-gantt-milestone) !important;
+}
+
+.wx-task-bar.wx-summary {
+  background-color: var(--wx-gantt-summary) !important;
+}
+
+/* Progress bar styling */
+.wx-task-progress-bar {
+  background-color: var(--wx-gantt-task-progress) !important;
+  opacity: 0.7 !important;
+}
+
+/* Link styling */
+.wx-gantt-link {
+  stroke: var(--wx-gantt-link) !important;
+  stroke-width: 2px !important;
+}
+
+/* Tooltip styling */
+.wx-gantt-tooltip {
+  background-color: var(--wx-gantt-row-background) !important;
+  border: 1px solid var(--wx-gantt-border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  color: var(--wx-gantt-text) !important;
+  padding: 12px !important;
+}
+
+/* Scale headers */
+.wx-scale-cell {
+  background-color: var(--wx-gantt-header-background) !important;
+  border-color: var(--wx-gantt-border) !important;
+  color: var(--wx-gantt-text) !important;
+  font-weight: 500 !important;
+}
+
+/* Weekend cells */
+.wx-weekend {
+  background-color: #F9FAFB !important;
+}
+
+/* Today marker */
+.wx-today-marker {
+  background-color: #EF4444 !important;
+  width: 2px !important;
+}
+
+/* Scrollbar styling */
+.wx-gantt ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.wx-gantt ::-webkit-scrollbar-track {
+  background: var(--wx-gantt-background);
+}
+
+.wx-gantt ::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 4px;
+}
+
+.wx-gantt ::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* Task text */
+.wx-task-text {
+  color: white !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+}
+
+/* Grid column headers */
+.wx-grid-header-cell {
+  font-weight: 600 !important;
+  color: var(--wx-gantt-text) !important;
+  background-color: var(--wx-gantt-header-background) !important;
+  border-right: 1px solid var(--wx-gantt-border) !important;
+}
+
+/* Resize handle */
+.wx-resize-handle {
+  background-color: rgba(255,255,255,0.3) !important;
+  width: 8px !important;
+}
+
+/* Task selection */
+.wx-task-bar.wx-selected {
+  outline: 2px solid var(--wx-gantt-task-progress) !important;
+  outline-offset: 2px !important;
+}
+
+/* Custom task colors based on priority */
+.wx-task-bar[data-priority="high"] {
+  background-color: #F59E0B !important;
+}
+
+.wx-task-bar[data-priority="urgent"] {
+  background-color: #EF4444 !important;
+}
+
+.wx-task-bar[data-status="completed"] {
+  background-color: #10B981 !important;
+}

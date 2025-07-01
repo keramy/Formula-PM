@@ -26,12 +26,13 @@ import {
   MdKeyboardArrowUp as SortIcon,
   MdKeyboardArrowUp as ArrowUpIcon,
   MdKeyboardArrowDown as ArrowDownIcon,
-  MdDownload as ExportIcon
+  MdDownload as ExportIcon,
+  MdTimeline as TimelineIcon
 } from 'react-icons/md';
 import { format, differenceInDays, differenceInMonths } from 'date-fns';
 import { exportProjectsToExcel } from '../../../services/export/excelExport';
 
-const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], clients = [], onViewProject }) => {
+const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], clients = [], onViewProject, onViewProjectTimeline }) => {
   const [filter, setFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
@@ -423,12 +424,13 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
               <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Deadline</TableCell>
               <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Due</TableCell>
               <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Progress</TableCell>
+              <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredAndSortedProjects.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} sx={{ textAlign: 'center', py: 4 }}>
+                <TableCell colSpan={9} sx={{ textAlign: 'center', py: 4 }}>
                   <Typography variant="body1" color="text.secondary">
                     No projects match your search criteria
                   </Typography>
@@ -565,6 +567,26 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
                       >
                         {stats.completedTasks}/{stats.totalTasks} tasks
                       </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          startIcon={<TimelineIcon />}
+                          onClick={() => onViewProjectTimeline && onViewProjectTimeline(project)}
+                          sx={{
+                            borderColor: '#516AC8',
+                            color: '#516AC8',
+                            '&:hover': {
+                              backgroundColor: 'rgba(81, 106, 200, 0.1)',
+                              borderColor: '#3c5aa6'
+                            }
+                          }}
+                        >
+                          Timeline
+                        </Button>
+                      </Box>
                     </TableCell>
                   </TableRow>
                 );
