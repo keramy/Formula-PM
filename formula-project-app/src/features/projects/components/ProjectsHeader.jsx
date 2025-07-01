@@ -190,7 +190,7 @@ const ProjectsHeader = ({
           </Box>
 
           {/* Export Button */}
-          <Tooltip title="Export to Excel">
+          <Tooltip title="Export all visible projects as an Excel file with comprehensive data including budgets, timelines, and team assignments">
             <Button
               variant="outlined"
               startIcon={<DownloadIcon />}
@@ -204,7 +204,7 @@ const ProjectsHeader = ({
                 }
               }}
             >
-              Export
+              Export Project List as Excel
             </Button>
           </Tooltip>
 

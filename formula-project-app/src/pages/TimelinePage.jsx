@@ -62,10 +62,12 @@ import CleanPageLayout, { CleanTab } from '../components/layout/CleanPageLayout'
 import apiService from '../services/api/apiService';
 import { format, addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval, differenceInDays, parseISO, isWithinInterval } from 'date-fns';
 import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 
 const TimelinePage = () => {
   // Get data from context and URL parameters
   const { projects: contextProjects, tasks: contextTasks, teamMembers: contextTeamMembers } = useData();
+  const { user, canEditProject, getAccessibleProjects } = useAuth();
   const [searchParams] = useSearchParams();
   const projectIdFromUrl = searchParams.get('project');
   
@@ -95,6 +97,16 @@ const TimelinePage = () => {
   const [hoveredDate, setHoveredDate] = useState(null);
   const [quickActions, setQuickActions] = useState(false);
   
+  // Project-specific editing state
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [milestoneDialogOpen, setMilestoneDialogOpen] = useState(false);
+  const [commentDialogOpen, setCommentDialogOpen] = useState(false);
+  const [selectedTaskForComment, setSelectedTaskForComment] = useState(null);
+  const [milestones, setMilestones] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [criticalPath, setCriticalPath] = useState([]);
+  const [canEdit, setCanEdit] = useState(false);
+  
   // Palettes from the design system
   const colors = {
     background: '#FBFAF8',
@@ -115,18 +127,31 @@ const TimelinePage = () => {
 
   // Update state when context data changes
   useEffect(() => {
-    if (contextProjects) {
-      setProjects(contextProjects);
+    if (contextProjects && user) {
+      // Get only projects the user can access
+      const accessibleProjects = getAccessibleProjects(contextProjects);
+      setProjects(accessibleProjects);
       
-      // If project ID is in URL, select only that project
-      if (projectIdFromUrl && contextProjects.some(p => p.id === projectIdFromUrl)) {
+      // If project ID is in URL and user can access it, select only that project
+      if (projectIdFromUrl && accessibleProjects.some(p => p.id === projectIdFromUrl)) {
         setSelectedProjects([projectIdFromUrl]);
+        setSelectedProject(accessibleProjects.find(p => p.id === projectIdFromUrl));
+        setCanEdit(canEditProject(projectIdFromUrl));
       } else {
-        // Select all projects by default
-        setSelectedProjects(contextProjects.map(p => p.id));
+        // For non-admin users, default to first accessible project
+        if (user.role === 'project_manager' && accessibleProjects.length > 0) {
+          const firstProject = accessibleProjects[0];
+          setSelectedProjects([firstProject.id]);
+          setSelectedProject(firstProject);
+          setCanEdit(canEditProject(firstProject.id));
+        } else {
+          // Admin/co-founder can see all projects but editing is restricted
+          setSelectedProjects(accessibleProjects.map(p => p.id));
+          setCanEdit(false); // No editing when multiple projects are selected
+        }
       }
     }
-  }, [contextProjects, projectIdFromUrl]);
+  }, [contextProjects, projectIdFromUrl, user, getAccessibleProjects, canEditProject]);
 
   useEffect(() => {
     if (contextTasks) {
@@ -213,12 +238,22 @@ const TimelinePage = () => {
   }, []);
 
   const handleProjectToggle = useCallback((projectId) => {
-    setSelectedProjects(prev => 
-      prev.includes(projectId) 
-        ? prev.filter(id => id !== projectId)
-        : [...prev, projectId]
-    );
-  }, []);
+    // For project-specific editing, only allow single project selection
+    if (user?.role === 'project_manager') {
+      setSelectedProjects([projectId]);
+      const project = projects.find(p => p.id === projectId);
+      setSelectedProject(project);
+      setCanEdit(canEditProject(projectId));
+    } else {
+      // Admin/co-founder can toggle multiple projects but cannot edit
+      setSelectedProjects(prev => 
+        prev.includes(projectId) 
+          ? prev.filter(id => id !== projectId)
+          : [...prev, projectId]
+      );
+      setCanEdit(false); // Disable editing when multiple projects
+    }
+  }, [user, projects, canEditProject]);
 
   const handleFilterMenuOpen = useCallback((event) => {
     setFilterMenuAnchor(event.currentTarget);
@@ -235,15 +270,23 @@ const TimelinePage = () => {
   }, []);
 
   const handleTaskUpdate = useCallback(async (taskId, updates) => {
+    // Check if user can edit this task's project
+    const task = tasks.find(t => t.id === taskId);
+    if (!task || !canEditProject(task.projectId)) {
+      console.warn('User cannot edit this task');
+      return;
+    }
+    
     try {
       // Update local state optimistically
-      setTasks(prev => prev.map(task => 
-        task.id === taskId ? { ...task, ...updates } : task
+      setTasks(prev => prev.map(t => 
+        t.id === taskId ? { ...t, ...updates } : t
       ));
       
-      // Try to update through API (will fail in demo mode, but that's ok)
+      // Try to update through API
       try {
         await apiService.updateTask(taskId, updates);
+        console.log('✅ Task updated successfully via API');
       } catch (apiError) {
         console.log('API update failed (expected in demo mode):', apiError);
       }
@@ -253,7 +296,7 @@ const TimelinePage = () => {
     } catch (error) {
       console.error('Error updating task:', error);
     }
-  }, []);
+  }, [tasks, canEditProject]);
 
   const handleDateRangeChange = useCallback((start, end) => {
     setDateRange({ start, end });
@@ -264,12 +307,89 @@ const TimelinePage = () => {
   }, []);
 
   const handleTaskDrop = useCallback((date) => {
-    if (draggedTask) {
+    if (draggedTask && canEdit) {
       const newDueDate = format(date, 'yyyy-MM-dd');
       handleTaskUpdate(draggedTask.id, { dueDate: newDueDate });
       setDraggedTask(null);
     }
-  }, [draggedTask, handleTaskUpdate]);
+  }, [draggedTask, canEdit, handleTaskUpdate]);
+  
+  // Milestone management handlers
+  const handleCreateMilestone = useCallback(async (milestoneData) => {
+    if (!selectedProject || !canEdit) return;
+    
+    try {
+      const newMilestone = {
+        id: Date.now().toString(),
+        ...milestoneData,
+        projectId: selectedProject.id,
+        createdBy: user.id,
+        createdAt: new Date().toISOString()
+      };
+      
+      setMilestones(prev => [...prev, newMilestone]);
+      
+      // Try to save via API
+      try {
+        await apiService.createTask({ 
+          ...newMilestone, 
+          isMilestone: true,
+          name: milestoneData.title
+        });
+        console.log('✅ Milestone created successfully via API');
+      } catch (apiError) {
+        console.log('API creation failed (expected in demo mode):', apiError);
+      }
+      
+      setMilestoneDialogOpen(false);
+    } catch (error) {
+      console.error('Error creating milestone:', error);
+    }
+  }, [selectedProject, canEdit, user]);
+  
+  const handleDeleteMilestone = useCallback(async (milestoneId) => {
+    if (!canEdit) return;
+    
+    try {
+      setMilestones(prev => prev.filter(m => m.id !== milestoneId));
+      
+      // Try to delete via API
+      try {
+        await apiService.deleteTask(milestoneId);
+        console.log('✅ Milestone deleted successfully via API');
+      } catch (apiError) {
+        console.log('API deletion failed (expected in demo mode):', apiError);
+      }
+    } catch (error) {
+      console.error('Error deleting milestone:', error);
+    }
+  }, [canEdit]);
+  
+  // Comment management handlers
+  const handleAddComment = useCallback(async (taskId, commentText) => {
+    if (!user || !commentText.trim()) return;
+    
+    try {
+      const newComment = {
+        id: Date.now().toString(),
+        taskId,
+        text: commentText,
+        authorId: user.id,
+        authorName: user.name,
+        createdAt: new Date().toISOString()
+      };
+      
+      setComments(prev => [...prev, newComment]);
+      
+      // In a real implementation, this would be saved to the backend
+      console.log('Comment added locally:', newComment);
+      
+      setCommentDialogOpen(false);
+      setSelectedTaskForComment(null);
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
+  }, [user]);
 
   // Loading state
   if (loading) {
@@ -326,11 +446,11 @@ const TimelinePage = () => {
       onClick={() => handleTabChange('milestones')} 
     />,
     <CleanTab 
-      key="resources" 
-      label="Resources" 
-      icon={<Group />} 
-      isActive={activeTab === 'resources'} 
-      onClick={() => handleTabChange('resources')} 
+      key="comments" 
+      label="Comments" 
+      icon={<Edit />} 
+      isActive={activeTab === 'comments'} 
+      onClick={() => handleTabChange('comments')} 
     />,
     <CleanTab 
       key="critical-path" 
@@ -338,11 +458,52 @@ const TimelinePage = () => {
       icon={<AlertCircle />} 
       isActive={activeTab === 'critical-path'} 
       onClick={() => handleTabChange('critical-path')} 
+    />,
+    <CleanTab 
+      key="resources" 
+      label="Resources" 
+      icon={<Group />} 
+      isActive={activeTab === 'resources'} 
+      onClick={() => handleTabChange('resources')} 
     />
   ];
 
   const headerActions = (
     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+      {/* Project Selector for single-project editing */}
+      {user?.role === 'project_manager' && projects.length > 1 && (
+        <FormControl size="small" sx={{ minWidth: 200, mr: 2 }}>
+          <InputLabel>Select Project</InputLabel>
+          <Select
+            value={selectedProject?.id || ''}
+            onChange={(e) => {
+              const projectId = e.target.value;
+              handleProjectToggle(projectId);
+            }}
+            label="Select Project"
+          >
+            {projects.map(project => (
+              <MenuItem key={project.id} value={project.id}>
+                {project.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+      
+      {/* Current project indicator */}
+      {selectedProject && (
+        <Chip
+          label={`Editing: ${selectedProject.name}`}
+          size="small"
+          sx={{
+            backgroundColor: canEdit ? `${colors.caramelEssence}20` : `${colors.textMuted}20`,
+            color: canEdit ? colors.caramelEssence : colors.textMuted,
+            mr: 2
+          }}
+        />
+      )}
+      
       {/* Date Range Indicator */}
       <Typography variant="body2" sx={{ color: colors.textSecondary, mr: 1 }}>
         {format(dateRange.start, 'MMM dd')} - {format(dateRange.end, 'MMM dd, yyyy')}
@@ -402,6 +563,21 @@ const TimelinePage = () => {
         <FilterIcon />
       </IconButton>
       
+      {/* Add Milestone Button (only for editable projects) */}
+      {canEdit && (
+        <Tooltip title="Add Milestone">
+          <IconButton 
+            onClick={() => setMilestoneDialogOpen(true)}
+            sx={{ 
+              color: colors.caramelEssence,
+              '&:hover': { backgroundColor: colors.raptureLight }
+            }}
+          >
+            <Plus />
+          </IconButton>
+        </Tooltip>
+      )}
+      
       {/* Quick Actions */}
       <Tooltip title="Quick Actions">
         <IconButton 
@@ -446,14 +622,25 @@ const TimelinePage = () => {
         tasks={tasks}
         teamMembers={teamMembers}
         selectedProjects={selectedProjects}
+        selectedProject={selectedProject}
         timelineView={timelineView}
         showMilestones={showMilestones}
         showDependencies={showDependencies}
         colors={colors}
+        canEdit={canEdit}
+        user={user}
+        milestones={milestones}
+        comments={comments}
+        criticalPath={criticalPath}
         onProjectToggle={handleProjectToggle}
         onTaskClick={handleTaskClick}
         onTaskDragStart={handleTaskDragStart}
         onTaskDrop={handleTaskDrop}
+        onCommentClick={(task) => {
+          setSelectedTaskForComment(task);
+          setCommentDialogOpen(true);
+        }}
+        onMilestoneDelete={handleDeleteMilestone}
         draggedTask={draggedTask}
       />
       
@@ -538,6 +725,29 @@ const TimelinePage = () => {
         teamMembers={teamMembers}
       />
       
+      {/* Milestone Creation Dialog */}
+      <MilestoneDialog
+        open={milestoneDialogOpen}
+        onClose={() => setMilestoneDialogOpen(false)}
+        onSave={handleCreateMilestone}
+        colors={colors}
+        project={selectedProject}
+      />
+      
+      {/* Comment Dialog */}
+      <CommentDialog
+        open={commentDialogOpen}
+        task={selectedTaskForComment}
+        onClose={() => {
+          setCommentDialogOpen(false);
+          setSelectedTaskForComment(null);
+        }}
+        onSave={handleAddComment}
+        colors={colors}
+        user={user}
+        existingComments={comments.filter(c => c.taskId === selectedTaskForComment?.id)}
+      />
+      
       {/* Quick Actions Dialog */}
       <QuickActionsDialog
         open={quickActions}
@@ -559,15 +769,23 @@ const TimelineContent = ({
   projects, 
   tasks, 
   teamMembers, 
-  selectedProjects, 
+  selectedProjects,
+  selectedProject, 
   timelineView, 
   showMilestones, 
   showDependencies, 
   colors,
+  canEdit,
+  user,
+  milestones,
+  comments,
+  criticalPath,
   onProjectToggle,
   onTaskClick,
   onTaskDragStart,
   onTaskDrop,
+  onCommentClick,
+  onMilestoneDelete,
   draggedTask
 }) => {
   if (activeTab === 'gantt') {
@@ -578,9 +796,11 @@ const TimelineContent = ({
       selectedProjects={selectedProjects}
       timelineView={timelineView}
       colors={colors}
+      canEdit={canEdit}
       onTaskClick={onTaskClick}
       onTaskDragStart={onTaskDragStart}
       onTaskDrop={onTaskDrop}
+      onTaskUpdate={onTaskClick} // Reuse the task click handler for updates
       draggedTask={draggedTask}
     />;
   }
@@ -590,7 +810,35 @@ const TimelineContent = ({
       projects={projects}
       tasks={tasks}
       selectedProjects={selectedProjects}
+      selectedProject={selectedProject}
+      milestones={milestones}
       colors={colors}
+      canEdit={canEdit}
+      onMilestoneDelete={onMilestoneDelete}
+    />;
+  }
+  
+  if (activeTab === 'comments') {
+    return <CommentsView 
+      tasks={tasks}
+      selectedProjects={selectedProjects}
+      selectedProject={selectedProject}
+      comments={comments}
+      colors={colors}
+      canEdit={canEdit}
+      user={user}
+      onCommentClick={onCommentClick}
+    />;
+  }
+  
+  if (activeTab === 'critical-path') {
+    return <CriticalPathView 
+      projects={projects}
+      tasks={tasks}
+      selectedProjects={selectedProjects}
+      selectedProject={selectedProject}
+      colors={colors}
+      canEdit={canEdit}
     />;
   }
   
@@ -599,15 +847,6 @@ const TimelineContent = ({
       teamMembers={teamMembers}
       tasks={tasks}
       projects={projects}
-      selectedProjects={selectedProjects}
-      colors={colors}
-    />;
-  }
-  
-  if (activeTab === 'critical-path') {
-    return <CriticalPathView 
-      projects={projects}
-      tasks={tasks}
       selectedProjects={selectedProjects}
       colors={colors}
     />;
@@ -624,9 +863,11 @@ const GanttChartView = ({
   selectedProjects, 
   timelineView, 
   colors, 
+  canEdit,
   onTaskClick, 
   onTaskDragStart, 
-  onTaskDrop, 
+  onTaskDrop,
+  onTaskUpdate, 
   draggedTask 
 }) => {
   // Validate and prepare data for Gantt with robust error handling
@@ -756,7 +997,9 @@ const GanttChartView = ({
                 projects={projects.filter(p => selectedProjects.includes(p.id))}
                 tasks={tasks.filter(t => selectedProjects.includes(t.projectId))}
                 colors={colors}
+                canEdit={canEdit}
                 onTaskClick={onTaskClick}
+                onTaskUpdate={onTaskUpdate}
                 showError={true}
               />
             }>
@@ -969,8 +1212,8 @@ const ProjectTimelineRow = ({ project, tasks, colors, onTaskClick, onTaskDragSta
 };
 
 // Milestones View Component
-const MilestonesView = ({ projects, tasks, selectedProjects, colors }) => {
-  const milestones = useMemo(() => {
+const MilestonesView = ({ projects, tasks, selectedProjects, selectedProject, milestones, colors, canEdit, onMilestoneDelete }) => {
+  const allMilestones = useMemo(() => {
     const projectMilestones = projects
       .filter(p => selectedProjects.includes(p.id))
       .map(project => ({
@@ -980,11 +1223,12 @@ const MilestonesView = ({ projects, tasks, selectedProjects, colors }) => {
         type: 'project',
         status: project.status,
         project: project.name,
-        description: project.description
+        description: project.description,
+        isSystemMilestone: true
       }));
     
     const taskMilestones = tasks
-      .filter(t => selectedProjects.includes(t.projectId) && t.priority === 'high')
+      .filter(t => selectedProjects.includes(t.projectId) && (t.priority === 'high' || t.isMilestone))
       .map(task => {
         const project = projects.find(p => p.id === task.projectId);
         return {
@@ -994,13 +1238,24 @@ const MilestonesView = ({ projects, tasks, selectedProjects, colors }) => {
           type: 'task',
           status: task.status,
           project: project?.name || 'Unknown Project',
-          description: task.description
+          description: task.description,
+          isSystemMilestone: false
         };
       });
     
-    return [...projectMilestones, ...taskMilestones]
+    // Add custom milestones created by user
+    const customMilestones = (milestones || [])
+      .filter(m => selectedProjects.includes(m.projectId))
+      .map(milestone => ({
+        ...milestone,
+        type: 'milestone',
+        project: projects.find(p => p.id === milestone.projectId)?.name || 'Unknown Project',
+        isSystemMilestone: false
+      }));
+    
+    return [...projectMilestones, ...taskMilestones, ...customMilestones]
       .sort((a, b) => new Date(a.date) - new Date(b.date));
-  }, [projects, tasks, selectedProjects]);
+  }, [projects, tasks, selectedProjects, milestones]);
   
   const getStatusIcon = (status) => {
     switch (status) {
@@ -1016,16 +1271,21 @@ const MilestonesView = ({ projects, tasks, selectedProjects, colors }) => {
         Project Milestones
       </Typography>
       
-      {milestones.length === 0 ? (
+      {allMilestones.length === 0 ? (
         <Card sx={{ backgroundColor: colors.cardBackground, textAlign: 'center', p: 4 }}>
           <CheckCircle size={48} color={colors.textMuted} />
           <Typography sx={{ mt: 2, color: colors.textSecondary }}>
             No milestones found for selected projects
           </Typography>
+          {canEdit && (
+            <Typography variant="body2" sx={{ mt: 1, color: colors.textMuted }}>
+              Create your first milestone to track project progress
+            </Typography>
+          )}
         </Card>
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {milestones.map((milestone, index) => (
+          {allMilestones.map((milestone, index) => (
             <Card key={milestone.id} sx={{ backgroundColor: colors.cardBackground, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
@@ -1238,7 +1498,7 @@ const ResourcesView = ({ teamMembers, tasks, projects, selectedProjects, colors 
 };
 
 // Critical Path View Component
-const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
+const CriticalPathView = ({ projects, tasks, selectedProjects, selectedProject, colors, canEdit }) => {
   const criticalPathData = useMemo(() => {
     const filteredProjects = projects.filter(p => selectedProjects.includes(p.id));
     
@@ -1249,18 +1509,72 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
         const dueDate = parseISO(t.dueDate || '2024-12-31');
         return t.status !== 'completed' && dueDate < new Date();
       });
+      const blockedTasks = projectTasks.filter(t => t.status === 'on-hold' || t.blocked);
+      const dependentTasks = projectTasks.filter(t => t.dependencies && t.dependencies.length > 0);
       
-      const criticalScore = (highPriorityTasks.length * 2) + (overdueTasks.length * 3);
+      // Enhanced critical path calculation
+      const criticalScore = 
+        (highPriorityTasks.length * 2) + 
+        (overdueTasks.length * 3) + 
+        (blockedTasks.length * 2) +
+        (dependentTasks.length * 1);
+      
+      // Calculate project timeline impact
+      const totalTasks = projectTasks.length;
+      const completedTasks = projectTasks.filter(t => t.status === 'completed').length;
+      const progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+      
+      // Identify critical path tasks (simplified algorithm)
+      const criticalPathTasks = identifyCriticalPath(projectTasks);
       
       return {
         ...project,
         criticalTasks: highPriorityTasks,
         overdueTasks,
+        blockedTasks,
+        dependentTasks,
+        criticalPathTasks,
         criticalScore,
-        risk: criticalScore > 8 ? 'high' : criticalScore > 4 ? 'medium' : 'low'
+        progressPercentage,
+        risk: criticalScore > 8 ? 'high' : criticalScore > 4 ? 'medium' : 'low',
+        timelineImpact: calculateTimelineImpact(overdueTasks, blockedTasks)
       };
     }).sort((a, b) => b.criticalScore - a.criticalScore);
   }, [projects, tasks, selectedProjects]);
+  
+  // Simple critical path identification
+  const identifyCriticalPath = (projectTasks) => {
+    // This is a simplified critical path algorithm
+    // In a real implementation, this would use proper CPM calculations
+    return projectTasks
+      .filter(task => {
+        const isHighPriority = task.priority === 'high' || task.priority === 'urgent';
+        const hasNoDependents = !projectTasks.some(t => 
+          t.dependencies && t.dependencies.includes(task.id)
+        );
+        const isNotCompleted = task.status !== 'completed';
+        return isHighPriority || (!hasNoDependents && isNotCompleted);
+      })
+      .sort((a, b) => {
+        const priorityWeight = { urgent: 4, high: 3, medium: 2, low: 1 };
+        return (priorityWeight[b.priority] || 1) - (priorityWeight[a.priority] || 1);
+      });
+  };
+  
+  // Calculate timeline impact of delays
+  const calculateTimelineImpact = (overdueTasks, blockedTasks) => {
+    const totalDelayDays = overdueTasks.reduce((total, task) => {
+      const dueDate = parseISO(task.dueDate || '2024-12-31');
+      const today = new Date();
+      return total + Math.max(0, differenceInDays(today, dueDate));
+    }, 0);
+    
+    return {
+      delayDays: totalDelayDays,
+      blockedCount: blockedTasks.length,
+      severity: totalDelayDays > 30 ? 'critical' : totalDelayDays > 14 ? 'high' : 'medium'
+    };
+  };
   
   const getRiskPalette = (risk) => {
     switch (risk) {
@@ -1273,9 +1587,39 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
   
   return (
     <Box>
-      <Typography variant="h6" sx={{ mb: 3, color: colors.textPrimary }}>
-        Critical Path Analysis
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h6" sx={{ color: colors.textPrimary }}>
+          Critical Path Analysis
+          {selectedProject && (
+            <Typography component="span" variant="body2" sx={{ ml: 1, color: colors.textSecondary }}>
+              • {selectedProject.name}
+            </Typography>
+          )}
+        </Typography>
+        
+        {criticalPathData.length > 0 && (
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Chip 
+              label={`${criticalPathData.reduce((sum, p) => sum + p.criticalPathTasks.length, 0)} Critical Tasks`}
+              size="small"
+              sx={{
+                backgroundColor: `${colors.error}20`,
+                color: colors.error,
+                fontSize: '11px'
+              }}
+            />
+            <Chip 
+              label={`${criticalPathData.reduce((sum, p) => sum + p.overdueTasks.length, 0)} Overdue`}
+              size="small"
+              sx={{
+                backgroundColor: `${colors.warning}20`,
+                color: colors.warning,
+                fontSize: '11px'
+              }}
+            />
+          </Box>
+        )}
+      </Box>
       
       {criticalPathData.length === 0 ? (
         <Card sx={{ backgroundColor: colors.cardBackground, textAlign: 'center', p: 4 }}>
@@ -1317,9 +1661,36 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
                       />
                     </Box>
                     
-                    <Typography variant="body2" sx={{ color: colors.textSecondary }}>
-                      {project.criticalTasks.length} critical tasks • {project.overdueTasks.length} overdue tasks
-                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 3, mb: 1 }}>
+                      <Typography variant="body2" sx={{ color: colors.textSecondary }}>
+                        {project.criticalPathTasks.length} critical path tasks
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: colors.textSecondary }}>
+                        {project.overdueTasks.length} overdue
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: colors.textSecondary }}>
+                        {Math.round(project.progressPercentage)}% complete
+                      </Typography>
+                    </Box>
+                    
+                    {project.timelineImpact.delayDays > 0 && (
+                      <Box sx={{ 
+                        p: 1, 
+                        backgroundColor: `${colors.error}10`, 
+                        borderRadius: 1,
+                        border: `1px solid ${colors.error}30`,
+                        mb: 1
+                      }}>
+                        <Typography variant="body2" sx={{ color: colors.error, fontWeight: 600 }}>
+                          ⚠️ Timeline Impact: {project.timelineImpact.delayDays} days behind schedule
+                        </Typography>
+                        {project.timelineImpact.blockedCount > 0 && (
+                          <Typography variant="body2" sx={{ color: colors.error }}>
+                            {project.timelineImpact.blockedCount} blocked tasks affecting timeline
+                          </Typography>
+                        )}
+                      </Box>
+                    )}
                   </Box>
                   
                   <Box sx={{ textAlign: 'right' }}>
@@ -1332,25 +1703,33 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
                   </Box>
                 </Box>
                 
-                {/* Critical Tasks */}
-                {project.criticalTasks.length > 0 && (
+                {/* Critical Path Tasks */}
+                {project.criticalPathTasks.length > 0 && (
                   <Box sx={{ mt: 2 }}>
-                    <Typography variant="body2" sx={{ mb: 1, color: colors.textSecondary, fontWeight: 600 }}>
-                      Critical Tasks
+                    <Typography variant="body2" sx={{ mb: 1, color: colors.error, fontWeight: 600 }}>
+                      Critical Path Tasks (Impact on Timeline)
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      {project.criticalTasks.slice(0, 3).map(task => (
+                      {project.criticalPathTasks.slice(0, 4).map((task, index) => (
                         <Box key={task.id} sx={{ 
                           display: 'flex', 
                           justifyContent: 'space-between', 
                           alignItems: 'center',
-                          p: 1,
-                          backgroundColor: colors.raptureLight,
-                          borderRadius: 1
+                          p: 1.5,
+                          backgroundColor: index === 0 ? `${colors.error}15` : colors.raptureLight,
+                          borderRadius: 1,
+                          border: index === 0 ? `2px solid ${colors.error}30` : `1px solid ${colors.border}`
                         }}>
-                          <Typography variant="body2" sx={{ color: colors.textPrimary }}>
-                            {task.name || task.title}
-                          </Typography>
+                          <Box sx={{ flex: 1 }}>
+                            <Typography variant="body2" sx={{ color: colors.textPrimary, fontWeight: index === 0 ? 600 : 400 }}>
+                              {index === 0 && '🔥 '}{task.name || task.title}
+                            </Typography>
+                            {task.dependencies && task.dependencies.length > 0 && (
+                              <Typography variant="caption" sx={{ color: colors.textMuted }}>
+                                Depends on {task.dependencies.length} task(s)
+                              </Typography>
+                            )}
+                          </Box>
                           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                             <Chip 
                               label={task.priority.toUpperCase()}
@@ -1362,54 +1741,113 @@ const CriticalPathView = ({ projects, tasks, selectedProjects, colors }) => {
                                 height: 20
                               }}
                             />
+                            {task.status === 'on-hold' && (
+                              <Chip 
+                                label="BLOCKED"
+                                size="small"
+                                sx={{
+                                  backgroundColor: `${colors.error}20`,
+                                  color: colors.error,
+                                  fontSize: '10px',
+                                  height: 20
+                                }}
+                              />
+                            )}
                             <Typography variant="body2" sx={{ color: colors.textSecondary, fontSize: '12px' }}>
                               {format(parseISO(task.dueDate || '2024-12-31'), 'MMM dd')}
                             </Typography>
                           </Box>
                         </Box>
                       ))}
-                      {project.criticalTasks.length > 3 && (
+                      {project.criticalPathTasks.length > 4 && (
                         <Typography variant="body2" sx={{ color: colors.textMuted, fontSize: '12px', textAlign: 'center' }}>
-                          +{project.criticalTasks.length - 3} more critical tasks
+                          +{project.criticalPathTasks.length - 4} more critical path tasks
                         </Typography>
                       )}
                     </Box>
                   </Box>
                 )}
                 
-                {/* Overdue Tasks */}
+                {/* Overdue Tasks with Impact Analysis */}
                 {project.overdueTasks.length > 0 && (
                   <Box sx={{ mt: 2 }}>
                     <Typography variant="body2" sx={{ mb: 1, color: colors.error, fontWeight: 600 }}>
-                      Overdue Tasks ({project.overdueTasks.length})
+                      Overdue Tasks ({project.overdueTasks.length}) - Immediate Attention Needed
                     </Typography>
                     <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                      {project.overdueTasks.slice(0, 4).map(task => (
+                      {project.overdueTasks.slice(0, 3).map(task => {
+                        const daysOverdue = Math.max(0, differenceInDays(new Date(), parseISO(task.dueDate || '2024-12-31')));
+                        return (
+                          <Chip
+                            key={task.id}
+                            label={`${task.name || task.title} (${daysOverdue}d overdue)`}
+                            size="small"
+                            sx={{
+                              backgroundColor: `${colors.error}20`,
+                              color: colors.error,
+                              fontSize: '11px',
+                              fontWeight: daysOverdue > 7 ? 600 : 400
+                            }}
+                          />
+                        );
+                      })}
+                      {project.overdueTasks.length > 3 && (
                         <Chip
-                          key={task.id}
-                          label={task.name || task.title}
+                          label={`+${project.overdueTasks.length - 3} more overdue`}
                           size="small"
                           sx={{
-                            backgroundColor: `${colors.error}20`,
+                            backgroundColor: `${colors.error}30`,
                             color: colors.error,
-                            fontSize: '11px'
-                          }}
-                        />
-                      ))}
-                      {project.overdueTasks.length > 4 && (
-                        <Chip
-                          label={`+${project.overdueTasks.length - 4} more`}
-                          size="small"
-                          sx={{
-                            backgroundColor: colors.border,
-                            color: colors.textMuted,
-                            fontSize: '11px'
+                            fontSize: '11px',
+                            fontWeight: 600
                           }}
                         />
                       )}
                     </Box>
                   </Box>
                 )}
+                
+                {/* Project Health Score */}
+                <Box sx={{ mt: 2, p: 1, backgroundColor: colors.raptureLight, borderRadius: 1 }}>
+                  <Typography variant="body2" sx={{ color: colors.textSecondary, mb: 1 }}>
+                    Project Health Analysis
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <Box sx={{ flex: 1 }}>
+                      <LinearProgress 
+                        variant="determinate" 
+                        value={project.progressPercentage} 
+                        sx={{
+                          height: 6,
+                          borderRadius: 3,
+                          backgroundColor: colors.border,
+                          '& .MuiLinearProgress-bar': {
+                            backgroundColor: project.progressPercentage > 75 ? colors.success :
+                                            project.progressPercentage > 50 ? colors.caramelEssence :
+                                            colors.warning,
+                            borderRadius: 3
+                          }
+                        }}
+                      />
+                    </Box>
+                    <Typography variant="body2" sx={{ color: colors.textPrimary, fontWeight: 600, minWidth: 50 }}>
+                      {Math.round(project.progressPercentage)}%
+                    </Typography>
+                    <Chip 
+                      label={project.timelineImpact.severity.toUpperCase()}
+                      size="small"
+                      sx={{
+                        backgroundColor: project.timelineImpact.severity === 'critical' ? `${colors.error}20` :
+                                        project.timelineImpact.severity === 'high' ? `${colors.warning}20` :
+                                        `${colors.success}20`,
+                        color: project.timelineImpact.severity === 'critical' ? colors.error :
+                               project.timelineImpact.severity === 'high' ? colors.warning :
+                               colors.success,
+                        fontSize: '10px'
+                      }}
+                    />
+                  </Box>
+                </Box>
               </CardContent>
             </Card>
           ))}
@@ -1808,8 +2246,10 @@ const TimelineFallback = ({ timelineData, projects, tasks, colors, onTaskClick, 
             project={project}
             tasks={tasks.filter(t => t.projectId === project.id)}
             colors={colors}
+            canEdit={canEdit}
             onTaskClick={onTaskClick}
             onTaskDragStart={() => {}}
+            onTaskUpdate={onTaskUpdate || (() => {})}
             draggedTask={null}
           />
         ))}
@@ -1823,6 +2263,324 @@ const TimelineFallback = ({ timelineData, projects, tasks, colors, onTaskClick, 
         </Box>
       )}
     </Box>
+  );
+};
+
+// Comments View Component
+const CommentsView = ({ tasks, selectedProjects, selectedProject, comments, colors, canEdit, user, onCommentClick }) => {
+  const filteredTasks = tasks.filter(t => selectedProjects.includes(t.projectId));
+  const taskComments = comments || [];
+  
+  return (
+    <Box>
+      <Typography variant="h6" sx={{ mb: 3, color: colors.textPrimary }}>
+        Timeline Comments
+        {selectedProject && (
+          <Typography component="span" variant="body2" sx={{ ml: 1, color: colors.textSecondary }}>
+            • {selectedProject.name}
+          </Typography>
+        )}
+      </Typography>
+      
+      {filteredTasks.length === 0 ? (
+        <Card sx={{ backgroundColor: colors.cardBackground, textAlign: 'center', p: 4 }}>
+          <Edit size={48} color={colors.textMuted} />
+          <Typography sx={{ mt: 2, color: colors.textSecondary }}>
+            No tasks available for comments
+          </Typography>
+        </Card>
+      ) : (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {filteredTasks.map(task => {
+            const taskCommentsList = taskComments.filter(c => c.taskId === task.id);
+            
+            return (
+              <Card key={task.id} sx={{ backgroundColor: colors.cardBackground, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                <CardContent>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="h6" sx={{ color: colors.textPrimary, mb: 1 }}>
+                        {task.name || task.title}
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+                        <Chip 
+                          label={task.status?.replace('-', ' ').toUpperCase() || 'PENDING'}
+                          size="small"
+                          sx={{
+                            backgroundColor: task.status === 'completed' ? `${colors.success}20` :
+                                            task.status === 'in-progress' ? `${colors.caramelEssence}20` :
+                                            `${colors.sapphireDust}20`,
+                            color: task.status === 'completed' ? colors.success :
+                                   task.status === 'in-progress' ? colors.caramelEssence :
+                                   colors.sapphireDust,
+                            fontSize: '11px'
+                          }}
+                        />
+                        <Chip 
+                          label={`${taskCommentsList.length} comments`}
+                          size="small"
+                          sx={{
+                            backgroundColor: colors.raptureLight,
+                            color: colors.textSecondary,
+                            fontSize: '11px'
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                    
+                    <Button 
+                      variant="outlined"
+                      size="small"
+                      startIcon={<Edit />}
+                      onClick={() => onCommentClick(task)}
+                      disabled={!canEdit}
+                      sx={{
+                        borderColor: colors.caramelEssence,
+                        color: colors.caramelEssence,
+                        '&:hover': { backgroundColor: `${colors.caramelEssence}10` },
+                        '&.Mui-disabled': { opacity: 0.5 }
+                      }}
+                    >
+                      Add Comment
+                    </Button>
+                  </Box>
+                  
+                  {/* Comments List */}
+                  {taskCommentsList.length > 0 && (
+                    <Box sx={{ mt: 2 }}>
+                      <Typography variant="body2" sx={{ mb: 1, color: colors.textSecondary, fontWeight: 600 }}>
+                        Comments
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        {taskCommentsList.slice(0, 3).map(comment => (
+                          <Box key={comment.id} sx={{ 
+                            p: 2,
+                            backgroundColor: colors.raptureLight,
+                            borderRadius: 1,
+                            borderLeft: `3px solid ${colors.caramelEssence}`
+                          }}>
+                            <Typography variant="body2" sx={{ color: colors.textPrimary, mb: 1 }}>
+                              {comment.text}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: colors.textSecondary }}>
+                              {comment.authorName} • {format(parseISO(comment.createdAt), 'MMM dd, yyyy HH:mm')}
+                            </Typography>
+                          </Box>
+                        ))}
+                        {taskCommentsList.length > 3 && (
+                          <Typography variant="body2" sx={{ color: colors.textMuted, fontSize: '12px', textAlign: 'center' }}>
+                            +{taskCommentsList.length - 3} more comments
+                          </Typography>
+                        )}
+                      </Box>
+                    </Box>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+// Milestone Dialog Component
+const MilestoneDialog = ({ open, onClose, onSave, colors, project }) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    date: '',
+    priority: 'high'
+  });
+
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        title: '',
+        description: '',
+        date: '',
+        priority: 'high'
+      });
+    }
+  }, [open]);
+
+  const handleSave = () => {
+    if (formData.title && formData.date) {
+      onSave(formData);
+      setFormData({ title: '', description: '', date: '', priority: 'high' });
+    }
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle sx={{ color: colors.textPrimary }}>
+        Create Milestone
+        {project && (
+          <Typography component="span" variant="body2" sx={{ ml: 1, color: colors.textSecondary }}>
+            for {project.name}
+          </Typography>
+        )}
+      </DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          <Grid item xs={12}>
+            <TextField
+              label="Milestone Title"
+              fullWidth
+              value={formData.title}
+              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+              variant="outlined"
+              size="small"
+              required
+            />
+          </Grid>
+          
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Target Date"
+              type="date"
+              fullWidth
+              value={formData.date}
+              onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+              InputLabelProps={{ shrink: true }}
+              size="small"
+              required
+            />
+          </Grid>
+          
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth size="small">
+              <InputLabel>Priority</InputLabel>
+              <Select
+                value={formData.priority}
+                onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value }))}
+                label="Priority"
+              >
+                <MenuItem value="low">Low</MenuItem>
+                <MenuItem value="medium">Medium</MenuItem>
+                <MenuItem value="high">High</MenuItem>
+                <MenuItem value="urgent">Urgent</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          
+          <Grid item xs={12}>
+            <TextField
+              label="Description"
+              fullWidth
+              multiline
+              rows={3}
+              value={formData.description}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              variant="outlined"
+              size="small"
+            />
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="inherit">
+          Cancel
+        </Button>
+        <Button 
+          onClick={handleSave} 
+          variant="contained"
+          disabled={!formData.title || !formData.date}
+          sx={{ backgroundColor: colors.caramelEssence }}
+        >
+          Create Milestone
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+// Comment Dialog Component
+const CommentDialog = ({ open, task, onClose, onSave, colors, user, existingComments = [] }) => {
+  const [commentText, setCommentText] = useState('');
+
+  useEffect(() => {
+    if (open) {
+      setCommentText('');
+    }
+  }, [open]);
+
+  const handleSave = () => {
+    if (commentText.trim() && task) {
+      onSave(task.id, commentText);
+      setCommentText('');
+    }
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle sx={{ color: colors.textPrimary }}>
+        Add Comment to Task
+        {task && (
+          <Typography component="span" variant="body2" sx={{ ml: 1, color: colors.textSecondary }}>
+            • {task.name || task.title}
+          </Typography>
+        )}
+      </DialogTitle>
+      <DialogContent>
+        <Box sx={{ mt: 2 }}>
+          {/* Existing Comments */}
+          {existingComments.length > 0 && (
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" sx={{ mb: 2, color: colors.textPrimary }}>
+                Previous Comments ({existingComments.length})
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, maxHeight: 200, overflowY: 'auto' }}>
+                {existingComments.map(comment => (
+                  <Box key={comment.id} sx={{ 
+                    p: 2,
+                    backgroundColor: colors.raptureLight,
+                    borderRadius: 1
+                  }}>
+                    <Typography variant="body2" sx={{ color: colors.textPrimary, mb: 1 }}>
+                      {comment.text}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: colors.textSecondary }}>
+                      {comment.authorName} • {format(parseISO(comment.createdAt), 'MMM dd, yyyy HH:mm')}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )}
+          
+          {/* New Comment */}
+          <Typography variant="h6" sx={{ mb: 2, color: colors.textPrimary }}>
+            Add New Comment
+          </Typography>
+          <TextField
+            label="Your comment"
+            fullWidth
+            multiline
+            rows={4}
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            variant="outlined"
+            placeholder="Enter your comment about this task..."
+            helperText={`Writing as ${user?.name || 'Unknown User'}`}
+          />
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="inherit">
+          Cancel
+        </Button>
+        <Button 
+          onClick={handleSave} 
+          variant="contained"
+          disabled={!commentText.trim()}
+          sx={{ backgroundColor: colors.caramelEssence }}
+        >
+          Add Comment
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

@@ -406,6 +406,7 @@ function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, 
           viewMode={viewMode}
           onViewModeChange={setViewMode}
           onExport={handleExport}
+          exportButtonText="Export Task List as Excel"
           onAdd={onAddTask}
           addButtonText="Add Task"
           activeFilters={activeFilters}
@@ -434,6 +435,7 @@ function TasksList({ tasks = [], projects = [], teamMembers = [], onUpdateTask, 
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         onExport={handleExport}
+        exportButtonText="Export Task List as Excel"
         onAdd={onAddTask}
         addButtonText="Add Task"
         activeFilters={activeFilters}

@@ -1222,43 +1222,918 @@ export const demoShopDrawings = [
 
 // Project Scopes
 export const demoProjectScopes = [
+  // Westfield Shopping Center Renovation - 18 items across all categories
   {
     projectId: 'proj-1',
     items: [
-      { id: 'scope-1-1', description: 'Luxury retail storefront systems', quantity: 15, unit: 'units', unitPrice: 45000, total: 675000 },
-      { id: 'scope-1-2', description: 'Center court kiosks', quantity: 4, unit: 'units', unitPrice: 25000, total: 100000 },
-      { id: 'scope-1-3', description: 'Food court millwork package', quantity: 1, unit: 'lot', unitPrice: 180000, total: 180000 },
-      { id: 'scope-1-4', description: 'Mall directory displays', quantity: 6, unit: 'units', unitPrice: 8000, total: 48000 },
-      { id: 'scope-1-5', description: 'Service desk stations', quantity: 3, unit: 'units', unitPrice: 15000, total: 45000 }
+      // Construction Category
+      { 
+        id: 'scope-wsc-c001', 
+        itemCode: 'WSC-C001',
+        name: 'Foundation Work',
+        description: 'Concrete foundation and structural support for storefront installations', 
+        category: 'construction',
+        quantity: 15, 
+        unitPrice: 8500, 
+        totalPrice: 127500,
+        initialCost: 125000,
+        actualCost: 127500,
+        createdAt: '2024-01-15T10:00:00Z'
+      },
+      { 
+        id: 'scope-wsc-c002', 
+        itemCode: 'WSC-C002',
+        name: 'Flooring Installation',
+        description: 'Premium tile and hardwood flooring throughout shopping areas', 
+        category: 'construction',
+        quantity: 2500, 
+        unitPrice: 85, 
+        totalPrice: 212500,
+        initialCost: 200000,
+        actualCost: 212500,
+        createdAt: '2024-01-16T09:00:00Z'
+      },
+      { 
+        id: 'scope-wsc-c003', 
+        itemCode: 'WSC-C003',
+        name: 'Ceiling Systems',
+        description: 'Suspended ceiling grid and acoustic panels', 
+        category: 'construction',
+        quantity: 3200, 
+        unitPrice: 45, 
+        totalPrice: 144000,
+        initialCost: 150000,
+        actualCost: 144000,
+        createdAt: '2024-01-17T11:00:00Z'
+      },
+      { 
+        id: 'scope-wsc-c004', 
+        itemCode: 'WSC-C004',
+        name: 'Glass Partitions',
+        description: 'Tempered glass storefront partitions and doors', 
+        category: 'construction',
+        quantity: 25, 
+        unitPrice: 3200, 
+        totalPrice: 80000,
+        initialCost: 75000,
+        actualCost: 80000,
+        createdAt: '2024-01-18T14:00:00Z'
+      },
+
+      // Millwork Category
+      { 
+        id: 'scope-wsc-m001', 
+        itemCode: 'WSC-M001',
+        name: 'Luxury Storefront Systems',
+        description: 'Custom millwork for high-end retail storefronts with integrated lighting', 
+        category: 'millwork',
+        quantity: 15, 
+        unitPrice: 45000, 
+        totalPrice: 675000,
+        initialCost: 650000,
+        actualCost: 675000,
+        createdAt: '2024-01-20T10:00:00Z'
+      },
+      { 
+        id: 'scope-wsc-m002', 
+        itemCode: 'WSC-M002',
+        name: 'Center Court Kiosks',
+        description: 'Handcrafted kiosks with premium finishes and storage', 
+        category: 'millwork',
+        quantity: 4, 
+        unitPrice: 25000, 
+        totalPrice: 100000,
+        initialCost: 95000,
+        actualCost: 100000,
+        createdAt: '2024-01-21T11:00:00Z'
+      },
+      { 
+        id: 'scope-wsc-m003', 
+        itemCode: 'WSC-M003',
+        name: 'Food Court Package',
+        description: 'Complete millwork package for food court vendor spaces', 
+        category: 'millwork',
+        quantity: 1, 
+        unitPrice: 180000, 
+        totalPrice: 180000,
+        initialCost: 175000,
+        actualCost: 180000,
+        createdAt: '2024-01-22T09:00:00Z'
+      },
+      { 
+        id: 'scope-wsc-m004', 
+        itemCode: 'WSC-M004',
+        name: 'Directory Displays',
+        description: 'Digital mall directory housing with premium wood finishes', 
+        category: 'millwork',
+        quantity: 6, 
+        unitPrice: 8000, 
+        totalPrice: 48000,
+        initialCost: 50000,
+        actualCost: 48000,
+        createdAt: '2024-01-23T13:00:00Z'
+      },
+      { 
+        id: 'scope-wsc-m005', 
+        itemCode: 'WSC-M005',
+        name: 'Service Desk Stations',
+        description: 'Customer service and information desk stations', 
+        category: 'millwork',
+        quantity: 3, 
+        unitPrice: 15000, 
+        totalPrice: 45000,
+        initialCost: 42000,
+        actualCost: 45000,
+        createdAt: '2024-01-24T15:00:00Z'
+      },
+
+      // Electrical Category
+      { 
+        id: 'scope-wsc-e001', 
+        itemCode: 'WSC-E001',
+        name: 'LED Lighting System',
+        description: 'Energy-efficient LED lighting throughout shopping center', 
+        category: 'electrical',
+        quantity: 150, 
+        unitPrice: 420, 
+        totalPrice: 63000,
+        initialCost: 65000,
+        actualCost: 63000,
+        createdAt: '2024-01-25T10:00:00Z'
+      },
+      { 
+        id: 'scope-wsc-e002', 
+        itemCode: 'WSC-E002',
+        name: 'Power Distribution',
+        description: 'Electrical distribution panels and wiring for storefronts', 
+        category: 'electrical',
+        quantity: 15, 
+        unitPrice: 2800, 
+        totalPrice: 42000,
+        initialCost: 40000,
+        actualCost: 42000,
+        createdAt: '2024-01-26T11:00:00Z'
+      },
+      { 
+        id: 'scope-wsc-e003', 
+        itemCode: 'WSC-E003',
+        name: 'Security Systems',
+        description: 'CCTV cameras and access control systems', 
+        category: 'electrical',
+        quantity: 45, 
+        unitPrice: 850, 
+        totalPrice: 38250,
+        initialCost: 35000,
+        actualCost: 38250,
+        createdAt: '2024-01-27T12:00:00Z'
+      },
+
+      // Mechanical Category
+      { 
+        id: 'scope-wsc-mc001', 
+        itemCode: 'WSC-MC001',
+        name: 'HVAC Ductwork',
+        description: 'Air conditioning ductwork and ventilation systems', 
+        category: 'mechanical',
+        quantity: 2500, 
+        unitPrice: 35, 
+        totalPrice: 87500,
+        initialCost: 85000,
+        actualCost: 87500,
+        createdAt: '2024-01-28T09:00:00Z'
+      },
+      { 
+        id: 'scope-wsc-mc002', 
+        itemCode: 'WSC-MC002',
+        name: 'Air Handling Units',
+        description: 'Commercial air handling units for climate control', 
+        category: 'mechanical',
+        quantity: 8, 
+        unitPrice: 12500, 
+        totalPrice: 100000,
+        initialCost: 95000,
+        actualCost: 100000,
+        createdAt: '2024-01-29T14:00:00Z'
+      },
+      { 
+        id: 'scope-wsc-mc003', 
+        itemCode: 'WSC-MC003',
+        name: 'Fire Suppression',
+        description: 'Sprinkler system installation and safety equipment', 
+        category: 'mechanical',
+        quantity: 1, 
+        unitPrice: 75000, 
+        totalPrice: 75000,
+        initialCost: 70000,
+        actualCost: 75000,
+        createdAt: '2024-01-30T16:00:00Z'
+      }
     ]
   },
+
+  // Tech Campus Office Buildout - 14 items focused on modern office
   {
     projectId: 'proj-2',
     items: [
-      { id: 'scope-2-1', description: 'Open office workstations', quantity: 50, unit: 'units', unitPrice: 3500, total: 175000 },
-      { id: 'scope-2-2', description: 'Executive conference room', quantity: 1, unit: 'lot', unitPrice: 85000, total: 85000 },
-      { id: 'scope-2-3', description: 'Phone booths', quantity: 8, unit: 'units', unitPrice: 12000, total: 96000 },
-      { id: 'scope-2-4', description: 'Collaboration pods', quantity: 6, unit: 'units', unitPrice: 18000, total: 108000 }
+      // Construction Category
+      { 
+        id: 'scope-tcp-c001', 
+        itemCode: 'TCP-C001',
+        name: 'Office Partitions',
+        description: 'Glass and drywall partitions for open office layout', 
+        category: 'construction',
+        quantity: 25, 
+        unitPrice: 1200, 
+        totalPrice: 30000,
+        initialCost: 28000,
+        actualCost: 30000,
+        createdAt: '2024-02-20T10:00:00Z'
+      },
+      { 
+        id: 'scope-tcp-c002', 
+        itemCode: 'TCP-C002',
+        name: 'Raised Flooring',
+        description: 'Access floor system for cable management', 
+        category: 'construction',
+        quantity: 1200, 
+        unitPrice: 45, 
+        totalPrice: 54000,
+        initialCost: 50000,
+        actualCost: 54000,
+        createdAt: '2024-02-21T09:00:00Z'
+      },
+
+      // Millwork Category (Primary focus)
+      { 
+        id: 'scope-tcp-m001', 
+        itemCode: 'TCP-M001',
+        name: 'Open Office Workstations',
+        description: 'Modern workstation pods with integrated storage', 
+        category: 'millwork',
+        quantity: 50, 
+        unitPrice: 3500, 
+        totalPrice: 175000,
+        initialCost: 170000,
+        actualCost: 175000,
+        createdAt: '2024-02-22T11:00:00Z'
+      },
+      { 
+        id: 'scope-tcp-m002', 
+        itemCode: 'TCP-M002',
+        name: 'Executive Conference Room',
+        description: 'Premium conference table and built-in AV cabinetry', 
+        category: 'millwork',
+        quantity: 1, 
+        unitPrice: 85000, 
+        totalPrice: 85000,
+        initialCost: 80000,
+        actualCost: 85000,
+        createdAt: '2024-02-23T13:00:00Z'
+      },
+      { 
+        id: 'scope-tcp-m003', 
+        itemCode: 'TCP-M003',
+        name: 'Phone Booths',
+        description: 'Acoustic phone booth pods for private calls', 
+        category: 'millwork',
+        quantity: 8, 
+        unitPrice: 12000, 
+        totalPrice: 96000,
+        initialCost: 90000,
+        actualCost: 96000,
+        createdAt: '2024-02-24T14:00:00Z'
+      },
+      { 
+        id: 'scope-tcp-m004', 
+        itemCode: 'TCP-M004',
+        name: 'Collaboration Pods',
+        description: 'Casual meeting spaces with integrated technology', 
+        category: 'millwork',
+        quantity: 6, 
+        unitPrice: 18000, 
+        totalPrice: 108000,
+        initialCost: 105000,
+        actualCost: 108000,
+        createdAt: '2024-02-25T15:00:00Z'
+      },
+      { 
+        id: 'scope-tcp-m005', 
+        itemCode: 'TCP-M005',
+        name: 'Reception Desk',
+        description: 'Modern reception desk with visitor management system housing', 
+        category: 'millwork',
+        quantity: 1, 
+        unitPrice: 25000, 
+        totalPrice: 25000,
+        initialCost: 22000,
+        actualCost: 25000,
+        createdAt: '2024-02-26T10:00:00Z'
+      },
+      { 
+        id: 'scope-tcp-m006', 
+        itemCode: 'TCP-M006',
+        name: 'Kitchen Cabinetry',
+        description: 'Break room and kitchenette cabinetry with appliance housing', 
+        category: 'millwork',
+        quantity: 1, 
+        unitPrice: 35000, 
+        totalPrice: 35000,
+        initialCost: 32000,
+        actualCost: 35000,
+        createdAt: '2024-02-27T12:00:00Z'
+      },
+
+      // Electrical Category
+      { 
+        id: 'scope-tcp-e001', 
+        itemCode: 'TCP-E001',
+        name: 'Smart Lighting',
+        description: 'Automated LED lighting with occupancy sensors', 
+        category: 'electrical',
+        quantity: 80, 
+        unitPrice: 320, 
+        totalPrice: 25600,
+        initialCost: 24000,
+        actualCost: 25600,
+        createdAt: '2024-02-28T11:00:00Z'
+      },
+      { 
+        id: 'scope-tcp-e002', 
+        itemCode: 'TCP-E002',
+        name: 'Data Infrastructure',
+        description: 'Network cabling and data outlets for workstations', 
+        category: 'electrical',
+        quantity: 60, 
+        unitPrice: 180, 
+        totalPrice: 10800,
+        initialCost: 12000,
+        actualCost: 10800,
+        createdAt: '2024-03-01T09:00:00Z'
+      },
+
+      // Mechanical Category
+      { 
+        id: 'scope-tcp-mc001', 
+        itemCode: 'TCP-MC001',
+        name: 'Zone Control HVAC',
+        description: 'Individual zone climate control for flexible workspace', 
+        category: 'mechanical',
+        quantity: 12, 
+        unitPrice: 4500, 
+        totalPrice: 54000,
+        initialCost: 50000,
+        actualCost: 54000,
+        createdAt: '2024-03-02T10:00:00Z'
+      },
+      { 
+        id: 'scope-tcp-mc002', 
+        itemCode: 'TCP-MC002',
+        name: 'Air Quality Systems',
+        description: 'Advanced air filtration and monitoring systems', 
+        category: 'mechanical',
+        quantity: 6, 
+        unitPrice: 6800, 
+        totalPrice: 40800,
+        initialCost: 38000,
+        actualCost: 40800,
+        createdAt: '2024-03-03T14:00:00Z'
+      }
     ]
   },
+
+  // Medical Plaza Construction - 20 items with medical-specific requirements
   {
     projectId: 'proj-3',
     items: [
-      { id: 'scope-3-1', description: 'Nurse stations - Type A', quantity: 8, unit: 'units', unitPrice: 35000, total: 280000 },
-      { id: 'scope-3-2', description: 'Nurse stations - Type B', quantity: 4, unit: 'units', unitPrice: 28000, total: 112000 },
-      { id: 'scope-3-3', description: 'Patient room casework', quantity: 50, unit: 'rooms', unitPrice: 4500, total: 225000 },
-      { id: 'scope-3-4', description: 'Pharmacy millwork', quantity: 1, unit: 'lot', unitPrice: 125000, total: 125000 },
-      { id: 'scope-3-5', description: 'Laboratory casework', quantity: 1, unit: 'lot', unitPrice: 185000, total: 185000 }
+      // Construction Category
+      { 
+        id: 'scope-mpc-c001', 
+        itemCode: 'MPC-C001',
+        name: 'Medical Grade Flooring',
+        description: 'Non-slip, antimicrobial flooring for patient areas', 
+        category: 'construction',
+        quantity: 1800, 
+        unitPrice: 95, 
+        totalPrice: 171000,
+        initialCost: 165000,
+        actualCost: 171000,
+        createdAt: '2024-01-25T10:00:00Z'
+      },
+      { 
+        id: 'scope-mpc-c002', 
+        itemCode: 'MPC-C002',
+        name: 'Lead-Lined Walls',
+        description: 'X-ray room shielding and protective barriers', 
+        category: 'construction',
+        quantity: 8, 
+        unitPrice: 12500, 
+        totalPrice: 100000,
+        initialCost: 95000,
+        actualCost: 100000,
+        createdAt: '2024-01-26T11:00:00Z'
+      },
+      { 
+        id: 'scope-mpc-c003', 
+        itemCode: 'MPC-C003',
+        name: 'Clean Room Construction',
+        description: 'Sterile environment construction for surgical suites', 
+        category: 'construction',
+        quantity: 4, 
+        unitPrice: 45000, 
+        totalPrice: 180000,
+        initialCost: 175000,
+        actualCost: 180000,
+        createdAt: '2024-01-27T09:00:00Z'
+      },
+
+      // Millwork Category (Medical Casework)
+      { 
+        id: 'scope-mpc-m001', 
+        itemCode: 'MPC-M001',
+        name: 'Nurse Stations - Type A',
+        description: 'Central nurse stations with medication storage and charting areas', 
+        category: 'millwork',
+        quantity: 8, 
+        unitPrice: 35000, 
+        totalPrice: 280000,
+        initialCost: 275000,
+        actualCost: 280000,
+        createdAt: '2024-01-28T10:00:00Z'
+      },
+      { 
+        id: 'scope-mpc-m002', 
+        itemCode: 'MPC-M002',
+        name: 'Nurse Stations - Type B',
+        description: 'Satellite nurse stations for wing coverage', 
+        category: 'millwork',
+        quantity: 4, 
+        unitPrice: 28000, 
+        totalPrice: 112000,
+        initialCost: 110000,
+        actualCost: 112000,
+        createdAt: '2024-01-29T11:00:00Z'
+      },
+      { 
+        id: 'scope-mpc-m003', 
+        itemCode: 'MPC-M003',
+        name: 'Patient Room Casework',
+        description: 'Bedside casework with medical gas outlets and storage', 
+        category: 'millwork',
+        quantity: 50, 
+        unitPrice: 4500, 
+        totalPrice: 225000,
+        initialCost: 220000,
+        actualCost: 225000,
+        createdAt: '2024-01-30T12:00:00Z'
+      },
+      { 
+        id: 'scope-mpc-m004', 
+        itemCode: 'MPC-M004',
+        name: 'Pharmacy Millwork',
+        description: 'Secure pharmaceutical storage and dispensing stations', 
+        category: 'millwork',
+        quantity: 1, 
+        unitPrice: 125000, 
+        totalPrice: 125000,
+        initialCost: 120000,
+        actualCost: 125000,
+        createdAt: '2024-02-01T13:00:00Z'
+      },
+      { 
+        id: 'scope-mpc-m005', 
+        itemCode: 'MPC-M005',
+        name: 'Laboratory Casework',
+        description: 'Chemical-resistant lab benches and fume hoods', 
+        category: 'millwork',
+        quantity: 1, 
+        unitPrice: 185000, 
+        totalPrice: 185000,
+        initialCost: 180000,
+        actualCost: 185000,
+        createdAt: '2024-02-02T14:00:00Z'
+      },
+      { 
+        id: 'scope-mpc-m006', 
+        itemCode: 'MPC-M006',
+        name: 'Reception Desk',
+        description: 'Patient check-in desk with privacy screens', 
+        category: 'millwork',
+        quantity: 3, 
+        unitPrice: 18000, 
+        totalPrice: 54000,
+        initialCost: 52000,
+        actualCost: 54000,
+        createdAt: '2024-02-03T15:00:00Z'
+      },
+
+      // Electrical Category
+      { 
+        id: 'scope-mpc-e001', 
+        itemCode: 'MPC-E001',
+        name: 'Medical Equipment Power',
+        description: 'Isolated power systems for medical equipment', 
+        category: 'electrical',
+        quantity: 25, 
+        unitPrice: 2400, 
+        totalPrice: 60000,
+        initialCost: 58000,
+        actualCost: 60000,
+        createdAt: '2024-02-04T10:00:00Z'
+      },
+      { 
+        id: 'scope-mpc-e002', 
+        itemCode: 'MPC-E002',
+        name: 'Emergency Lighting',
+        description: 'Battery backup lighting for emergency procedures', 
+        category: 'electrical',
+        quantity: 40, 
+        unitPrice: 450, 
+        totalPrice: 18000,
+        initialCost: 17000,
+        actualCost: 18000,
+        createdAt: '2024-02-05T11:00:00Z'
+      },
+      { 
+        id: 'scope-mpc-e003', 
+        itemCode: 'MPC-E003',
+        name: 'Nurse Call Systems',
+        description: 'Patient communication and emergency alert systems', 
+        category: 'electrical',
+        quantity: 50, 
+        unitPrice: 680, 
+        totalPrice: 34000,
+        initialCost: 32000,
+        actualCost: 34000,
+        createdAt: '2024-02-06T12:00:00Z'
+      },
+
+      // Mechanical Category
+      { 
+        id: 'scope-mpc-mc001', 
+        itemCode: 'MPC-MC001',
+        name: 'Medical Gas Systems',
+        description: 'Oxygen, nitrogen, and vacuum gas distribution', 
+        category: 'mechanical',
+        quantity: 1, 
+        unitPrice: 150000, 
+        totalPrice: 150000,
+        initialCost: 145000,
+        actualCost: 150000,
+        createdAt: '2024-02-07T13:00:00Z'
+      },
+      { 
+        id: 'scope-mpc-mc002', 
+        itemCode: 'MPC-MC002',
+        name: 'HVAC Air Filtration',
+        description: 'HEPA filtration systems for sterile environments', 
+        category: 'mechanical',
+        quantity: 12, 
+        unitPrice: 8500, 
+        totalPrice: 102000,
+        initialCost: 100000,
+        actualCost: 102000,
+        createdAt: '2024-02-08T14:00:00Z'
+      },
+      { 
+        id: 'scope-mpc-mc003', 
+        itemCode: 'MPC-MC003',
+        name: 'Steam Sterilization',
+        description: 'Autoclave steam supply and condensate return', 
+        category: 'mechanical',
+        quantity: 6, 
+        unitPrice: 12000, 
+        totalPrice: 72000,
+        initialCost: 70000,
+        actualCost: 72000,
+        createdAt: '2024-02-09T15:00:00Z'
+      }
     ]
   },
+
+  // Downtown Hotel Lobby Renovation - 12 items focused on luxury finishes
+  {
+    projectId: 'proj-4',
+    items: [
+      // Construction Category
+      { 
+        id: 'scope-dhl-c001', 
+        itemCode: 'DHL-C001',
+        name: 'Marble Flooring',
+        description: 'Italian Carrara marble flooring installation', 
+        category: 'construction',
+        quantity: 800, 
+        unitPrice: 185, 
+        totalPrice: 148000,
+        initialCost: 145000,
+        actualCost: 148000,
+        createdAt: '2024-03-05T10:00:00Z'
+      },
+      { 
+        id: 'scope-dhl-c002', 
+        itemCode: 'DHL-C002',
+        name: 'Decorative Columns',
+        description: 'Ornate column wrapping with luxury finishes', 
+        category: 'construction',
+        quantity: 8, 
+        unitPrice: 8500, 
+        totalPrice: 68000,
+        initialCost: 65000,
+        actualCost: 68000,
+        createdAt: '2024-03-06T11:00:00Z'
+      },
+
+      // Millwork Category (Primary focus for hotel)
+      { 
+        id: 'scope-dhl-m001', 
+        itemCode: 'DHL-M001',
+        name: 'Reception Desk',
+        description: 'Grand mahogany reception desk with gold leaf accents', 
+        category: 'millwork',
+        quantity: 1, 
+        unitPrice: 95000, 
+        totalPrice: 95000,
+        initialCost: 90000,
+        actualCost: 95000,
+        createdAt: '2024-03-07T12:00:00Z'
+      },
+      { 
+        id: 'scope-dhl-m002', 
+        itemCode: 'DHL-M002',
+        name: 'Concierge Stations',
+        description: 'Luxury concierge service counters with leather inlays', 
+        category: 'millwork',
+        quantity: 2, 
+        unitPrice: 28000, 
+        totalPrice: 56000,
+        initialCost: 55000,
+        actualCost: 56000,
+        createdAt: '2024-03-08T13:00:00Z'
+      },
+      { 
+        id: 'scope-dhl-m003', 
+        itemCode: 'DHL-M003',
+        name: 'Decorative Wall Panels',
+        description: 'Hand-carved walnut wall paneling with artistic details', 
+        category: 'millwork',
+        quantity: 12, 
+        unitPrice: 15000, 
+        totalPrice: 180000,
+        initialCost: 175000,
+        actualCost: 180000,
+        createdAt: '2024-03-09T14:00:00Z'
+      },
+      { 
+        id: 'scope-dhl-m004', 
+        itemCode: 'DHL-M004',
+        name: 'Lounge Seating Built-ins',
+        description: 'Custom seating areas with integrated storage', 
+        category: 'millwork',
+        quantity: 6, 
+        unitPrice: 22000, 
+        totalPrice: 132000,
+        initialCost: 128000,
+        actualCost: 132000,
+        createdAt: '2024-03-10T15:00:00Z'
+      },
+
+      // Electrical Category
+      { 
+        id: 'scope-dhl-e001', 
+        itemCode: 'DHL-E001',
+        name: 'Chandelier Installation',
+        description: 'Crystal chandelier electrical and mounting systems', 
+        category: 'electrical',
+        quantity: 3, 
+        unitPrice: 8500, 
+        totalPrice: 25500,
+        initialCost: 24000,
+        actualCost: 25500,
+        createdAt: '2024-03-11T10:00:00Z'
+      },
+      { 
+        id: 'scope-dhl-e002', 
+        itemCode: 'DHL-E002',
+        name: 'Accent Lighting',
+        description: 'LED accent lighting for architectural features', 
+        category: 'electrical',
+        quantity: 45, 
+        unitPrice: 380, 
+        totalPrice: 17100,
+        initialCost: 16000,
+        actualCost: 17100,
+        createdAt: '2024-03-12T11:00:00Z'
+      },
+
+      // Mechanical Category
+      { 
+        id: 'scope-dhl-mc001', 
+        itemCode: 'DHL-MC001',
+        name: 'Climate Control',
+        description: 'Precision HVAC for guest comfort in lobby areas', 
+        category: 'mechanical',
+        quantity: 4, 
+        unitPrice: 18500, 
+        totalPrice: 74000,
+        initialCost: 72000,
+        actualCost: 74000,
+        createdAt: '2024-03-13T12:00:00Z'
+      },
+      { 
+        id: 'scope-dhl-mc002', 
+        itemCode: 'DHL-MC002',
+        name: 'Sound Systems',
+        description: 'Background music and public address systems', 
+        category: 'mechanical',
+        quantity: 1, 
+        unitPrice: 35000, 
+        totalPrice: 35000,
+        initialCost: 32000,
+        actualCost: 35000,
+        createdAt: '2024-03-14T13:00:00Z'
+      }
+    ]
+  },
+
+  // Corporate Headquarters Expansion - 16 items for executive spaces
   {
     projectId: 'proj-5',
     items: [
-      { id: 'scope-5-1', description: 'Boardroom table and seating', quantity: 1, unit: 'set', unitPrice: 120000, total: 120000 },
-      { id: 'scope-5-2', description: 'Executive office suites', quantity: 10, unit: 'offices', unitPrice: 45000, total: 450000 },
-      { id: 'scope-5-3', description: 'Reception area millwork', quantity: 1, unit: 'lot', unitPrice: 95000, total: 95000 },
-      { id: 'scope-5-4', description: 'Break room cabinetry', quantity: 2, unit: 'rooms', unitPrice: 25000, total: 50000 },
-      { id: 'scope-5-5', description: 'Storage systems', quantity: 1, unit: 'lot', unitPrice: 60000, total: 60000 }
+      // Construction Category
+      { 
+        id: 'scope-che-c001', 
+        itemCode: 'CHE-C001',
+        name: 'Executive Floor Build-out',
+        description: 'Premium construction for C-suite executive floor', 
+        category: 'construction',
+        quantity: 1, 
+        unitPrice: 285000, 
+        totalPrice: 285000,
+        initialCost: 275000,
+        actualCost: 285000,
+        createdAt: '2024-01-15T10:00:00Z'
+      },
+      { 
+        id: 'scope-che-c002', 
+        itemCode: 'CHE-C002',
+        name: 'Soundproof Partitions',
+        description: 'Acoustic partitions for executive privacy', 
+        category: 'construction',
+        quantity: 15, 
+        unitPrice: 3200, 
+        totalPrice: 48000,
+        initialCost: 45000,
+        actualCost: 48000,
+        createdAt: '2024-01-16T11:00:00Z'
+      },
+
+      // Millwork Category (Primary focus)
+      { 
+        id: 'scope-che-m001', 
+        itemCode: 'CHE-M001',
+        name: 'Boardroom Table',
+        description: '30-foot custom boardroom table with integrated technology wells', 
+        category: 'millwork',
+        quantity: 1, 
+        unitPrice: 120000, 
+        totalPrice: 120000,
+        initialCost: 115000,
+        actualCost: 120000,
+        createdAt: '2024-01-17T12:00:00Z'
+      },
+      { 
+        id: 'scope-che-m002', 
+        itemCode: 'CHE-M002',
+        name: 'Executive Office Suites',
+        description: 'Custom millwork for 10 executive offices with built-in storage', 
+        category: 'millwork',
+        quantity: 10, 
+        unitPrice: 45000, 
+        totalPrice: 450000,
+        initialCost: 440000,
+        actualCost: 450000,
+        createdAt: '2024-01-18T13:00:00Z'
+      },
+      { 
+        id: 'scope-che-m003', 
+        itemCode: 'CHE-M003',
+        name: 'Reception Area Millwork',
+        description: 'Grand reception desk and waiting area furniture', 
+        category: 'millwork',
+        quantity: 1, 
+        unitPrice: 95000, 
+        totalPrice: 95000,
+        initialCost: 90000,
+        actualCost: 95000,
+        createdAt: '2024-01-19T14:00:00Z'
+      },
+      { 
+        id: 'scope-che-m004', 
+        itemCode: 'CHE-M004',
+        name: 'Break Room Cabinetry',
+        description: 'Executive break room cabinetry with premium appliances housing', 
+        category: 'millwork',
+        quantity: 2, 
+        unitPrice: 25000, 
+        totalPrice: 50000,
+        initialCost: 48000,
+        actualCost: 50000,
+        createdAt: '2024-01-20T15:00:00Z'
+      },
+      { 
+        id: 'scope-che-m005', 
+        itemCode: 'CHE-M005',
+        name: 'Library Shelving',
+        description: 'Executive library with custom book shelving and reading areas', 
+        category: 'millwork',
+        quantity: 1, 
+        unitPrice: 85000, 
+        totalPrice: 85000,
+        initialCost: 80000,
+        actualCost: 85000,
+        createdAt: '2024-01-21T10:00:00Z'
+      },
+      { 
+        id: 'scope-che-m006', 
+        itemCode: 'CHE-M006',
+        name: 'Storage Systems',
+        description: 'Built-in storage solutions throughout executive areas', 
+        category: 'millwork',
+        quantity: 1, 
+        unitPrice: 60000, 
+        totalPrice: 60000,
+        initialCost: 58000,
+        actualCost: 60000,
+        createdAt: '2024-01-22T11:00:00Z'
+      },
+
+      // Electrical Category
+      { 
+        id: 'scope-che-e001', 
+        itemCode: 'CHE-E001',
+        name: 'Premium Lighting',
+        description: 'High-end lighting fixtures for executive spaces', 
+        category: 'electrical',
+        quantity: 35, 
+        unitPrice: 1200, 
+        totalPrice: 42000,
+        initialCost: 40000,
+        actualCost: 42000,
+        createdAt: '2024-01-23T12:00:00Z'
+      },
+      { 
+        id: 'scope-che-e002', 
+        itemCode: 'CHE-E002',
+        name: 'AV Integration',
+        description: 'Audio-visual systems for boardroom and offices', 
+        category: 'electrical',
+        quantity: 12, 
+        unitPrice: 4500, 
+        totalPrice: 54000,
+        initialCost: 50000,
+        actualCost: 54000,
+        createdAt: '2024-01-24T13:00:00Z'
+      },
+      { 
+        id: 'scope-che-e003', 
+        itemCode: 'CHE-E003',
+        name: 'Security Access',
+        description: 'Card access and biometric security systems', 
+        category: 'electrical',
+        quantity: 8, 
+        unitPrice: 2800, 
+        totalPrice: 22400,
+        initialCost: 20000,
+        actualCost: 22400,
+        createdAt: '2024-01-25T14:00:00Z'
+      },
+
+      // Mechanical Category
+      { 
+        id: 'scope-che-mc001', 
+        itemCode: 'CHE-MC001',
+        name: 'Executive HVAC',
+        description: 'Individual climate control for each executive office', 
+        category: 'mechanical',
+        quantity: 12, 
+        unitPrice: 6500, 
+        totalPrice: 78000,
+        initialCost: 75000,
+        actualCost: 78000,
+        createdAt: '2024-01-26T15:00:00Z'
+      },
+      { 
+        id: 'scope-che-mc002', 
+        itemCode: 'CHE-MC002',
+        name: 'Air Purification',
+        description: 'Premium air filtration and purification systems', 
+        category: 'mechanical',
+        quantity: 6, 
+        unitPrice: 8500, 
+        totalPrice: 51000,
+        initialCost: 48000,
+        actualCost: 51000,
+        createdAt: '2024-01-27T10:00:00Z'
+      }
     ]
   }
 ];

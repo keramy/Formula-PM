@@ -41,15 +41,12 @@ import DeleteConfirmationDialog from '../components/forms/DeleteConfirmationDial
 import { useNotification } from '../context/NotificationContext';
 import ApiService from '../services/api/apiService';
 import { 
-  ProjectsTableView,
   ProjectsFilters,
-  ProjectsList,
-  BoardView,
-  GanttChart,
   LoadingFallback,
-  ListSkeleton,
-  ProjectCardSkeleton
+  ListSkeleton
 } from '../components/lazy';
+import EnhancedProjectsTable from '../features/projects/components/EnhancedProjectsTable';
+import UserProjectsGantt from '../features/projects/components/UserProjectsGantt';
 
 const ProjectsPage = ({ 
   filteredProjects,
@@ -80,8 +77,7 @@ const ProjectsPage = ({
     clients: clients?.length || 'undefined'
   });
   
-  const [activeTab, setActiveTab] = useState('overview');
-  const [viewMode, setViewMode] = useState('cards');
+  const [activeTab, setActiveTab] = useState('projects');
   
   // CRUD Modal States
   const [projectFormModal, setProjectFormModal] = useState({
@@ -211,6 +207,60 @@ const ProjectsPage = ({
     }
   }, [deleteConfirmation.project, onDeleteProject, showSuccess, showError]);
 
+  // Enhanced action handlers for the new table
+  const handleDuplicateProject = useCallback(async (project) => {
+    try {
+      const duplicatedProject = {
+        ...project,
+        id: undefined,
+        name: `${project.name} (Copy)`,
+        status: 'planning'
+      };
+      const result = await ApiService.createProject(duplicatedProject);
+      showSuccess('Project Duplicated', `Project "${duplicatedProject.name}" has been created successfully.`);
+      if (onAddProject) onAddProject(result);
+    } catch (error) {
+      showError('Duplication Failed', error.message || 'Failed to duplicate project.');
+    }
+  }, [onAddProject, showSuccess, showError]);
+
+  const handleArchiveProject = useCallback(async (project) => {
+    try {
+      const newStatus = project.status === 'archived' ? 'active' : 'archived';
+      await ApiService.updateProject(project.id, { status: newStatus });
+      showSuccess(
+        newStatus === 'archived' ? 'Project Archived' : 'Project Activated',
+        `Project "${project.name}" has been ${newStatus === 'archived' ? 'archived' : 'activated'} successfully.`
+      );
+      if (onEditProject) onEditProject(project.id, { ...project, status: newStatus });
+    } catch (error) {
+      showError('Update Failed', error.message || 'Failed to update project status.');
+    }
+  }, [onEditProject, showSuccess, showError]);
+
+  const handleAssignTeam = useCallback((project) => {
+    // This would open a team assignment modal
+    console.log('Assign team to project:', project);
+    showSuccess('Feature Coming Soon', 'Team assignment feature will be available soon.');
+  }, [showSuccess]);
+
+  const handleViewTimeline = useCallback((project) => {
+    setActiveTab('timeline');
+    if (onViewProject) onViewProject(project);
+  }, [onViewProject]);
+
+  const handleExportProject = useCallback((project) => {
+    // This would export individual project data
+    console.log('Export project:', project);
+    showSuccess('Feature Coming Soon', 'Project export feature will be available soon.');
+  }, [showSuccess]);
+
+  const handleSetPriority = useCallback((project) => {
+    // This would open a priority setting modal
+    console.log('Set priority for project:', project);
+    showSuccess('Feature Coming Soon', 'Priority setting feature will be available soon.');
+  }, [showSuccess]);
+
   const handleCloseProjectForm = useCallback(() => {
     setProjectFormModal({
       open: false,
@@ -334,16 +384,10 @@ const ProjectsPage = ({
         badge={projectStats.total}
       />
       <CleanTab 
-        label="Timeline" 
+        label="My Timeline" 
         isActive={activeTab === 'timeline'}
         onClick={() => setActiveTab('timeline')}
         icon={<Timeline size={16} />}
-      />
-      <CleanTab 
-        label="Board" 
-        isActive={activeTab === 'board'}
-        onClick={() => setActiveTab('board')}
-        icon={<ViewModule size={16} />}
       />
     </>
   );
@@ -708,85 +752,33 @@ const ProjectsPage = ({
         />
       </Suspense>
 
-      {/* View Controls */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            fontSize: '18px', 
-            fontWeight: 600,
-            color: '#0F1939'
-          }}
-        >
-          All Projects ({projects.length})
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <IconButton
-            className={viewMode === 'cards' ? 'clean-button-primary' : 'clean-button-secondary'}
-            onClick={() => setViewMode('cards')}
-            size="small"
-          >
-            <ViewModule size={18} />
-          </IconButton>
-          <IconButton
-            className={viewMode === 'list' ? 'clean-button-primary' : 'clean-button-secondary'}
-            onClick={() => setViewMode('list')}
-            size="small"
-          >
-            <ViewList size={18} />
-          </IconButton>
-        </Box>
-      </Box>
-
-      {/* Projects Display */}
-      {viewMode === 'cards' ? (
-        <Grid container spacing={3}>
-          {(filteredProjects || projects).map((project) => (
-            <Grid item xs={12} sm={6} lg={4} key={project.id}>
-              <ProjectCard project={project} />
-            </Grid>
-          ))}
-        </Grid>
-      ) : (
-        <ErrorBoundary fallbackMessage="Failed to load projects list">
-          <Suspense fallback={<ListSkeleton SkeletonComponent={ProjectCardSkeleton} count={4} />}>
-            <ProjectsList 
-              projects={filteredProjects || projects}
-              tasks={tasks}
-              clients={clients}
-              teamMembers={teamMembers}
-              onDeleteProject={onDeleteProject}
-              onManageScope={onManageScope}
-              onViewProject={onViewProject}
-            />
-          </Suspense>
-        </ErrorBoundary>
-      )}
+      {/* Enhanced Projects Table */}
+      <ErrorBoundary fallbackMessage="Failed to load projects table">
+        <EnhancedProjectsTable
+          projects={filteredProjects || projects}
+          clients={clients}
+          teamMembers={teamMembers}
+          onViewProject={onViewProject}
+          onEditProject={handleEditProject}
+          onDuplicateProject={handleDuplicateProject}
+          onArchiveProject={handleArchiveProject}
+          onAssignTeam={handleAssignTeam}
+          onViewTimeline={handleViewTimeline}
+          onExportProject={handleExportProject}
+          onSetPriority={handleSetPriority}
+        />
+      </ErrorBoundary>
     </Box>
   );
 
   const renderTimelineContent = () => (
-    <ErrorBoundary fallbackMessage="Failed to load Gantt chart">
-      <Suspense fallback={<LoadingFallback message="Loading Gantt chart..." />}>
-        <GanttChart 
-          tasks={tasks}
+    <ErrorBoundary fallbackMessage="Failed to load timeline">
+      <Suspense fallback={<LoadingFallback message="Loading your project timeline..." />}>
+        <UserProjectsGantt 
           projects={projects}
-          teamMembers={teamMembers}
-        />
-      </Suspense>
-    </ErrorBoundary>
-  );
-
-  const renderBoardContent = () => (
-    <ErrorBoundary fallbackMessage="Failed to load board view">
-      <Suspense fallback={<LoadingFallback message="Loading board view..." />}>
-        <BoardView
           tasks={tasks}
-          projects={projects}
           teamMembers={teamMembers}
-          clients={clients}
           onProjectUpdate={onUpdateTask}
-          showProjects={true}
         />
       </Suspense>
     </ErrorBoundary>
@@ -800,10 +792,8 @@ const ProjectsPage = ({
         return renderProjectsContent();
       case 'timeline':
         return renderTimelineContent();
-      case 'board':
-        return renderBoardContent();
       default:
-        return renderOverviewContent();
+        return renderProjectsContent();
     }
   };
 

@@ -94,14 +94,16 @@ const UnifiedHeader = ({
           )}
           
           {showExport && (
-            <Button
-              variant="outlined"
-              startIcon={<ExportIcon />}
-              onClick={onExport}
-              size="small"
-            >
-              {exportButtonText}
-            </Button>
+            <Tooltip title="Export all visible items as an Excel file with comprehensive data">
+              <Button
+                variant="outlined"
+                startIcon={<ExportIcon />}
+                onClick={onExport}
+                size="small"
+              >
+                {exportButtonText}
+              </Button>
+            </Tooltip>
           )}
           
           {showAdd && (

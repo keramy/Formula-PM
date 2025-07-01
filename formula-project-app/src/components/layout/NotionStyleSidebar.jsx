@@ -38,7 +38,8 @@ import {
   MdMenu as MenuOpen,
   MdMenu as Menu,
   MdDescription as Description,
-  MdBusiness as Business
+  MdBusiness as Business,
+  MdInventory as Inventory
 } from 'react-icons/md';
 import FormulaLogo from '../branding/FormulaLogo';
 
@@ -90,6 +91,7 @@ const NotionStyleSidebar = ({ currentTab, onTabChange, user, isCollapsed, onTogg
 
   const workManagementItems = [
     { id: 3, label: 'Tasks', icon: <Task />, path: '/tasks' },
+    { id: 'scope', label: 'Scope', icon: <Inventory />, path: '/scope' },
     { id: 8, label: 'Shop Drawings', icon: <Engineering />, path: '/shop-drawings' },
     { id: 9, label: 'Material Specs', icon: <Description />, path: '/material-specs' },
     { id: 'reports', label: 'Reports', icon: <Folder />, path: '/reports' }

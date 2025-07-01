@@ -21,6 +21,7 @@ const UpdatesPage = lazy(() => import('../pages/UpdatesPage'));
 const InboxPage = lazy(() => import('../pages/InboxPage'));
 const MyWorkPage = lazy(() => import('../pages/MyWorkPage'));
 const TimelinePage = lazy(() => import('../pages/TimelinePage'));
+const ScopePage = lazy(() => import('../pages/ScopePage'));
 const ShopDrawingsPage = lazy(() => import('../pages/ShopDrawingsPage'));
 const MaterialSpecsPage = lazy(() => import('../pages/MaterialSpecsPage'));
 const ReportsPage = lazy(() => import('../pages/ReportsPage'));
@@ -182,6 +183,15 @@ const AppRouter = () => {
             element={
               <PageWrapper route="/timeline">
                 <TimelinePage />
+              </PageWrapper>
+            }
+          />
+          
+          <Route
+            path="scope"
+            element={
+              <PageWrapper route="/scope">
+                <ScopePage />
               </PageWrapper>
             }
           />

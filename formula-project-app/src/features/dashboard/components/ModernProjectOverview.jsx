@@ -8,6 +8,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
   Paper,
   Chip,
   Button,
@@ -17,13 +18,13 @@ import {
   InputAdornment,
   IconButton,
   Menu,
-  MenuItem
+  MenuItem,
+  Tooltip
 } from '@mui/material';
 // Iconoir icons - migrated dashboard icons
 import {
   MdSearch as SearchIcon,
   MdClose as ClearIcon,
-  MdKeyboardArrowUp as SortIcon,
   MdKeyboardArrowUp as ArrowUpIcon,
   MdKeyboardArrowDown as ArrowDownIcon,
   MdDownload as ExportIcon,
@@ -37,7 +38,6 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
   const [sortDirection, setSortDirection] = useState('asc');
-  const [sortAnchorEl, setSortAnchorEl] = useState(null);
 
   // Format currency
   const formatCurrency = (amount) => {
@@ -119,14 +119,17 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
   };
 
 
-  // Sort options
-  const sortOptions = [
-    { value: 'name', label: 'Project Name' },
-    { value: 'startDate', label: 'Start Date' },
-    { value: 'deadline', label: 'Deadline' },
-    { value: 'progress', label: 'Progress' },
-    { value: 'type', label: 'Type' },
-    { value: 'status', label: 'Status' }
+  // Column configuration for sortable headers
+  const columns = [
+    { id: 'name', label: 'Project Name', sortable: true },
+    { id: 'status', label: 'Status', sortable: true },
+    { id: 'type', label: 'Type', sortable: true },
+    { id: 'budget', label: 'Budget', sortable: false },
+    { id: 'startDate', label: 'Start Date', sortable: true },
+    { id: 'deadline', label: 'Deadline', sortable: true },
+    { id: 'due', label: 'Due', sortable: false },
+    { id: 'progress', label: 'Progress', sortable: true },
+    { id: 'actions', label: 'Actions', sortable: false }
   ];
 
   // Filter and sort projects
@@ -196,23 +199,14 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
     return filtered;
   }, [projects, filter, searchTerm, sortBy, sortDirection, tasks]);
 
-  // Handle sort menu
-  const handleSortClick = (event) => {
-    setSortAnchorEl(event.currentTarget);
-  };
-
-  const handleSortClose = () => {
-    setSortAnchorEl(null);
-  };
-
-  const handleSortSelect = (newSortBy) => {
-    if (sortBy === newSortBy) {
+  // Handle column sort
+  const handleSort = (columnId) => {
+    if (sortBy === columnId) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
-      setSortBy(newSortBy);
+      setSortBy(columnId);
       setSortDirection('asc');
     }
-    handleSortClose();
   };
 
   const clearAllFilters = () => {
@@ -284,22 +278,24 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
           
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {/* Export Button */}
-            <Button
-              size="small"
-              variant="outlined"
-              startIcon={<ExportIcon />}
-              onClick={handleExportProjects}
-              sx={{
-                borderColor: '#27AE60',
-                color: '#27AE60',
-                '&:hover': {
-                  backgroundColor: 'rgba(39, 174, 96, 0.1)',
-                  borderColor: '#229954'
-                }
-              }}
-            >
-              Export
-            </Button>
+            <Tooltip title="Export all visible projects as an Excel file with detailed information including progress, tasks, and deadlines">
+              <Button
+                size="small"
+                variant="outlined"
+                startIcon={<ExportIcon />}
+                onClick={handleExportProjects}
+                sx={{
+                  borderColor: '#27AE60',
+                  color: '#27AE60',
+                  '&:hover': {
+                    backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                    borderColor: '#229954'
+                  }
+                }}
+              >
+                Export Project List as Excel
+              </Button>
+            </Tooltip>
 
             {/* Clear Filters Button */}
             {(searchTerm || filter !== 'All') && (
@@ -344,26 +340,8 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
             sx={{ width: 300 }}
           />
           
-          {/* Controls Group: Sort + Quick Status Filters */}
+          {/* Controls Group: Quick Status Filters */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {/* Sort Button */}
-            <Button
-              size="small"
-              variant="outlined"
-              startIcon={<SortIcon />}
-              endIcon={sortDirection === 'asc' ? <ArrowUpIcon /> : <ArrowDownIcon />}
-              onClick={handleSortClick}
-              sx={{
-                borderColor: '#E67E22',
-                color: '#E67E22',
-                '&:hover': {
-                  backgroundColor: 'rgba(230, 126, 34, 0.1)'
-                }
-              }}
-            >
-              Sort by {sortOptions.find(opt => opt.value === sortBy)?.label}
-            </Button>
-
             {/* Quick Status Filters */}
             <ButtonGroup size="small" variant="outlined">
               {['All', 'Active', 'Completed'].map((filterOption) => (
@@ -389,42 +367,42 @@ const ModernProjectOverview = ({ projects = [], tasks = [], teamMembers = [], cl
 
       </Box>
 
-      {/* Sort Menu */}
-      <Menu
-        anchorEl={sortAnchorEl}
-        open={Boolean(sortAnchorEl)}
-        onClose={handleSortClose}
-      >
-        {sortOptions.map((option) => (
-          <MenuItem
-            key={option.value}
-            onClick={() => handleSortSelect(option.value)}
-            selected={sortBy === option.value}
-          >
-            {option.label}
-            {sortBy === option.value && (
-              <Box component="span" sx={{ ml: 1 }}>
-                {sortDirection === 'asc' ? <ArrowUpIcon fontSize="small" /> : <ArrowDownIcon fontSize="small" />}
-              </Box>
-            )}
-          </MenuItem>
-        ))}
-      </Menu>
 
       {/* Table */}
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: '#F8F9FA' }}>
-              <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Project Name</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Type</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Budget</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Start Date</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Deadline</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Due</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Progress</TableCell>
-              <TableCell sx={{ fontWeight: 600, color: '#7F8C8D' }}>Actions</TableCell>
+              {columns.map((column) => (
+                <TableCell 
+                  key={column.id}
+                  sx={{ fontWeight: 600, color: '#7F8C8D' }}
+                >
+                  {column.sortable ? (
+                    <TableSortLabel
+                      active={sortBy === column.id}
+                      direction={sortBy === column.id ? sortDirection : 'asc'}
+                      onClick={() => handleSort(column.id)}
+                      sx={{
+                        color: '#7F8C8D !important',
+                        '&:hover': {
+                          color: '#E3AF64 !important'
+                        },
+                        '&.Mui-active': {
+                          color: '#E3AF64 !important',
+                          '& .MuiTableSortLabel-icon': {
+                            color: '#E3AF64 !important'
+                          }
+                        }
+                      }}
+                    >
+                      {column.label}
+                    </TableSortLabel>
+                  ) : (
+                    column.label
+                  )}
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>

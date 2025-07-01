@@ -296,7 +296,7 @@ const ProjectsFilters = ({
                   <MenuItem value="">
                     <em>All Clients</em>
                   </MenuItem>
-                  {clients.map((client) => (
+                  {(clients || []).map((client) => (
                     <MenuItem key={client.id} value={client.id}>
                       {client.companyName}
                     </MenuItem>
@@ -327,8 +327,8 @@ const ProjectsFilters = ({
                   <MenuItem value="">
                     <em>All Managers</em>
                   </MenuItem>
-                  {teamMembers
-                    .filter(member => member.role === 'project_manager' || member.position.includes('Manager'))
+                  {(teamMembers || [])
+                    .filter(member => member && (member.role === 'project_manager' || (member.position && member.position.includes('Manager'))))
                     .map((manager) => (
                       <MenuItem key={manager.id} value={manager.id}>
                         {manager.fullName}
