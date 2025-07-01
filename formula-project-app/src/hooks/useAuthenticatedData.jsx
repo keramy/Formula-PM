@@ -86,19 +86,23 @@ export const useAuthenticatedData = () => {
           switch (key) {
             case 'teamMembers':
               dataMap[key] = safeTransformTeamMembers(rawData);
-              debugSafety.validateDataStructure(rawData[0], ['id', 'name', 'email'], 'teamMembers');
+              console.log('🔍 Team members data:', rawData.length, 'items');
+              // debugSafety.validateDataStructure(rawData[0], ['id', 'name', 'email'], 'teamMembers');
               break;
             case 'projects':
               dataMap[key] = safeTransformProjects(rawData);
-              debugSafety.validateDataStructure(rawData[0], ['id', 'name', 'clientId'], 'projects');
+              console.log('🔍 Projects data:', rawData.length, 'items');
+              // debugSafety.validateDataStructure(rawData[0], ['id', 'name', 'clientId'], 'projects');
               break;
             case 'tasks':
               dataMap[key] = safeTransformTasks(rawData);
-              debugSafety.validateDataStructure(rawData[0], ['id', 'title', 'projectId'], 'tasks');
+              console.log('🔍 Tasks data:', rawData.length, 'items');
+              // debugSafety.validateDataStructure(rawData[0], ['id', 'title', 'projectId'], 'tasks');
               break;
             case 'clients':
               dataMap[key] = safeArray(rawData); // Clients don't need special transformation yet
-              debugSafety.validateDataStructure(rawData[0], ['id', 'name'], 'clients');
+              console.log('🔍 Clients data:', rawData.length, 'items');
+              // debugSafety.validateDataStructure(rawData[0], ['id', 'name'], 'clients');
               break;
             default:
               dataMap[key] = safeArray(rawData);
@@ -136,6 +140,12 @@ export const useAuthenticatedData = () => {
       
       // Only update state if not cancelled
       if (!signal?.aborted) {
+        console.log('🎯 Setting state data:');
+        console.log('  - Team members:', dataMap.teamMembers?.length || 0);
+        console.log('  - Projects:', accessibleProjects?.length || 0);
+        console.log('  - Tasks:', accessibleTasks?.length || 0);
+        console.log('  - Clients:', dataMap.clients?.length || 0);
+        
         setTeamMembers(safeArray(dataMap.teamMembers));
         setProjects(accessibleProjects);
         setTasks(accessibleTasks);

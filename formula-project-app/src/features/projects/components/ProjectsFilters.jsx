@@ -29,7 +29,7 @@ import {
 
 const ProjectsFilters = ({
   open,
-  filters,
+  filters = {},
   onFiltersChange,
   onClearFilters,
   clients = [],
@@ -111,14 +111,14 @@ const ProjectsFilters = ({
     onFiltersChange(newFilters);
   };
 
-  const hasActiveFilters = Object.keys(filters).some(key => 
+  const hasActiveFilters = filters ? Object.keys(filters).some(key => 
     filters[key] && filters[key] !== ''
-  );
+  ) : false;
 
   const getFilterCount = () => {
-    return Object.keys(filters).filter(key => 
+    return filters ? Object.keys(filters).filter(key => 
       filters[key] && filters[key] !== ''
-    ).length;
+    ).length : 0;
   };
 
   return (
@@ -240,7 +240,7 @@ const ProjectsFilters = ({
                     </MenuItem>
                   ))}
                 </Select>
-                {filters.status && (
+                {filters?.status && (
                   <IconButton
                     size="small"
                     onClick={() => handleClearField('status')}
@@ -271,7 +271,7 @@ const ProjectsFilters = ({
                     </MenuItem>
                   ))}
                 </Select>
-                {filters.type && (
+                {filters?.type && (
                   <IconButton
                     size="small"
                     onClick={() => handleClearField('type')}
@@ -302,7 +302,7 @@ const ProjectsFilters = ({
                     </MenuItem>
                   ))}
                 </Select>
-                {filters.client && (
+                {filters?.client && (
                   <IconButton
                     size="small"
                     onClick={() => handleClearField('client')}
@@ -335,7 +335,7 @@ const ProjectsFilters = ({
                       </MenuItem>
                     ))}
                 </Select>
-                {filters.manager && (
+                {filters?.manager && (
                   <IconButton
                     size="small"
                     onClick={() => handleClearField('manager')}

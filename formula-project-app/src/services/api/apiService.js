@@ -3,18 +3,28 @@ import { demoProjects, demoTasks, demoTeamMembers, demoClients, demoShopDrawings
 
 // Configure API base URL for different environments
 const API_BASE_URL = (() => {
-  // Force demo mode if environment variable is set
-  if (import.meta.env.VITE_FORCE_DEMO_MODE === 'true') {
-    return null; // This will force all requests to use demo data
-  }
+  // TEMPORARILY FORCE API MODE FOR DEBUGGING
+  console.log('🔧 Environment check:', {
+    VITE_FORCE_DEMO_MODE: import.meta.env.VITE_FORCE_DEMO_MODE,
+    DEV: import.meta.env.DEV,
+    VITE_API_URL: import.meta.env.VITE_API_URL
+  });
   
-  // In development mode, use empty string to leverage Vite proxy
-  if (import.meta.env.DEV) {
-    return import.meta.env.VITE_API_URL || '';
-  }
+  // Force API calls to work - use empty string for Vite proxy
+  return '';
   
-  // In production, use full URL
-  return import.meta.env.VITE_API_URL || 'http://localhost:5015/api/v1';
+  // Original logic (commented for debugging):
+  // if (import.meta.env.VITE_FORCE_DEMO_MODE === 'true') {
+  //   return null; // This will force all requests to use demo data
+  // }
+  // 
+  // // In development mode, use empty string to leverage Vite proxy
+  // if (import.meta.env.DEV) {
+  //   return import.meta.env.VITE_API_URL || '';
+  // }
+  // 
+  // // In production, use full URL
+  // return import.meta.env.VITE_API_URL || 'http://localhost:5015/api/v1';
 })();
 
 // Check if we should force demo mode (from env variable or localStorage)
@@ -538,14 +548,16 @@ class ApiService {
 
   // Team Members API (now using /users endpoint)
   async getTeamMembers(signal) {
-    // Force demo mode if configured
-    if (FORCE_DEMO_MODE) {
-      console.info('🎭 Demo mode enabled - using demo team members');
-      return demoTeamMembers;
-    }
+    // TEMPORARILY BYPASS DEMO MODE FOR DEBUGGING
+    // if (FORCE_DEMO_MODE) {
+    //   console.info('🎭 Demo mode enabled - using demo team members');
+    //   return demoTeamMembers;
+    // }
     
     try {
-      const response = await this.request('/users', { signal });
+      console.log('🚀 Making API request to /api/users');
+      const response = await this.request('/api/users', { signal });
+      console.log('✅ API response received for users:', response?.data?.length || 0, 'users');
       return response.data || response;
     } catch (error) {
       // Handle both network errors and HTTP errors (like 500) as backend unavailable
@@ -582,21 +594,28 @@ class ApiService {
 
   // Projects API
   async getProjects(signal) {
-    // Force demo mode if configured
-    if (FORCE_DEMO_MODE) {
-      console.info('🎭 Demo mode enabled - using demo projects');
-      return demoProjects;
-    }
+    console.log('🔍 getProjects called - FORCE_DEMO_MODE:', FORCE_DEMO_MODE);
+    console.log('🔍 API_BASE_URL:', API_BASE_URL);
+    console.log('🔍 envDemoMode:', import.meta.env.VITE_FORCE_DEMO_MODE);
+    console.log('🔍 localStorage demo mode:', localStorage.getItem('vite_force_demo_mode'));
+    
+    // TEMPORARILY BYPASS DEMO MODE FOR DEBUGGING
+    // if (FORCE_DEMO_MODE) {
+    //   console.info('🎭 Demo mode enabled - using demo projects');
+    //   return demoProjects;
+    // }
     
     try {
-      const response = await this.request('/projects', { signal });
+      console.log('🚀 Making API request to /api/projects');
+      const response = await this.request('/api/projects', { signal });
+      console.log('✅ API response received:', response?.data?.length || 0, 'projects');
       return response.data || response;
     } catch (error) {
       // Handle both network errors and HTTP errors (like 500) as backend unavailable
       if (error.name === 'AbortError') {
         throw error; // Re-throw abort errors
       }
-      console.warn('Backend unavailable (network or server error), using demo data:', error.message);
+      console.warn('❌ Backend unavailable (network or server error), using demo data:', error.message);
       return demoProjects;
     }
   }
@@ -626,14 +645,17 @@ class ApiService {
 
   // Clients API
   async getClients(signal) {
-    // Force demo mode if configured
-    if (FORCE_DEMO_MODE) {
-      console.info('🎭 Demo mode enabled - using demo clients');
-      return demoClients;
-    }
+    // TEMPORARILY BYPASS DEMO MODE FOR DEBUGGING
+    // if (FORCE_DEMO_MODE) {
+    //   console.info('🎭 Demo mode enabled - using demo clients');
+    //   return demoClients;
+    // }
     
     try {
-      return await this.request('/clients', { signal });
+      console.log('🚀 Making API request to /api/clients');
+      const response = await this.request('/api/clients', { signal });
+      console.log('✅ API response received for clients:', response?.data?.length || 0, 'clients');
+      return response.data || response;
     } catch (error) {
       // Handle both network errors and HTTP errors (like 500) as backend unavailable
       if (error.name === 'AbortError') {
@@ -666,14 +688,17 @@ class ApiService {
 
   // Tasks API
   async getTasks(signal) {
-    // Force demo mode if configured
-    if (FORCE_DEMO_MODE) {
-      console.info('🎭 Demo mode enabled - using demo tasks');
-      return demoTasks;
-    }
+    // TEMPORARILY BYPASS DEMO MODE FOR DEBUGGING
+    // if (FORCE_DEMO_MODE) {
+    //   console.info('🎭 Demo mode enabled - using demo tasks');
+    //   return demoTasks;
+    // }
     
     try {
-      return await this.request('/tasks', { signal });
+      console.log('🚀 Making API request to /api/tasks');
+      const response = await this.request('/api/tasks', { signal });
+      console.log('✅ API response received for tasks:', response?.data?.length || 0, 'tasks');
+      return response.data || response;
     } catch (error) {
       // Handle both network errors and HTTP errors (like 500) as backend unavailable
       if (error.name === 'AbortError') {

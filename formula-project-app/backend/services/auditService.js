@@ -18,19 +18,32 @@ class AuditService {
       sensitiveFields: [
         'password', 'passwordHash', 'token', 'secret', 
         'apiKey', 'credentials', 'ssn', 'creditCard'
-      ]
+      ],
+      // Database connection settings
+      connectionRetryAttempts: 3,
+      connectionRetryDelay: 5000, // 5 seconds
+      enableFallbackLogging: true
     };
     
     // Batch processing for high-volume audit logs
     this.batchQueue = [];
     this.flushTimer = null;
     
+    // Database connection state
+    this.isDatabaseAvailable = false;
+    this.lastConnectionCheck = 0;
+    this.connectionCheckInterval = 60000; // 1 minute
+    this.connectionRetryCount = 0;
+    
     // Statistics
     this.stats = {
       logsCreated: 0,
       batchesProcessed: 0,
       errors: 0,
-      lastFlush: Date.now()
+      connectionErrors: 0,
+      fallbackLogs: 0,
+      lastFlush: Date.now(),
+      lastConnectionAttempt: 0
     };
     
     this.flushTimer = null;
@@ -45,6 +58,64 @@ class AuditService {
   }
 
   /**
+   * Check database connection availability with timeout
+   */
+  async checkDatabaseConnection(timeoutMs = 3000) {
+    if (!prisma) {
+      this.isDatabaseAvailable = false;
+      return false;
+    }
+
+    const now = Date.now();
+    
+    // Skip check if recently checked
+    if (now - this.lastConnectionCheck < this.connectionCheckInterval && this.isDatabaseAvailable) {
+      return this.isDatabaseAvailable;
+    }
+
+    try {
+      // Simple query to test connection with timeout
+      const connectionPromise = prisma.$queryRaw`SELECT 1`;
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Connection timeout')), timeoutMs)
+      );
+      
+      await Promise.race([connectionPromise, timeoutPromise]);
+      
+      if (!this.isDatabaseAvailable) {
+        console.log('✅ Database connection restored for audit service');
+      }
+      
+      this.isDatabaseAvailable = true;
+      this.lastConnectionCheck = now;
+      this.connectionRetryCount = 0;
+      this.stats.lastConnectionAttempt = now;
+      
+      return true;
+    } catch (error) {
+      const wasAvailable = this.isDatabaseAvailable;
+      this.isDatabaseAvailable = false;
+      this.lastConnectionCheck = now;
+      this.stats.connectionErrors++;
+      this.stats.lastConnectionAttempt = now;
+      this.connectionRetryCount++;
+
+      // Only log first connection failure or significant retry milestones
+      if (wasAvailable || this.connectionRetryCount === 1 || this.connectionRetryCount % 10 === 0) {
+        if (error.message === 'Connection timeout') {
+          console.log(`⚠️  Database connection timeout for audit service (${timeoutMs}ms) - continuing with fallback logging`);
+        } else if (error.code === 'P1001' || error.message.includes("Can't reach database")) {
+          console.log(`⚠️  Database unavailable for audit service (attempt ${this.connectionRetryCount}) - continuing with fallback logging`);
+        } else {
+          console.log(`⚠️  Database connection error for audit service: ${error.message}`);
+        }
+      }
+      
+      return false;
+    }
+  }
+
+  /**
    * Initialize service (called by ServiceRegistry)
    */
   async initialize() {
@@ -53,13 +124,23 @@ class AuditService {
     }
 
     if (!prisma) {
-      throw new Error('AuditService: Prisma client must be set before initialization');
+      console.log('⚠️  AuditService: No Prisma client available - running in fallback mode');
+      this.isDatabaseAvailable = false;
+    } else {
+      console.log('🔄 Checking database connection for audit service...');
+      // Use short timeout for initialization to prevent blocking
+      await this.checkDatabaseConnection(1000); // 1 second timeout
     }
     
-    console.log('Initializing audit service...');
+    console.log('🔄 Initializing audit service...');
     this.startBatchProcessor();
     this.isInitialized = true;
-    console.log('Audit service initialized successfully');
+    
+    if (this.isDatabaseAvailable) {
+      console.log('✅ Audit service initialized with database connection');
+    } else {
+      console.log('✅ Audit service initialized in fallback mode (no database)');
+    }
   }
 
   /**
@@ -243,6 +324,28 @@ class AuditService {
   }
 
   /**
+   * Fallback logging when database is unavailable
+   */
+  logToFallback(entries) {
+    if (!this.config.enableFallbackLogging) {
+      return;
+    }
+
+    for (const entry of entries) {
+      const timestamp = new Date().toISOString();
+      const logMessage = `[AUDIT-FALLBACK ${timestamp}] ${entry.action.toUpperCase()} ${entry.tableName}/${entry.recordId} by ${entry.userEmail || 'system'}`;
+      
+      if (entry.changedFields && entry.changedFields.length > 0) {
+        console.log(`${logMessage} - Changed: ${entry.changedFields.join(', ')}`);
+      } else {
+        console.log(logMessage);
+      }
+      
+      this.stats.fallbackLogs++;
+    }
+  }
+
+  /**
    * Flush batch queue to database
    */
   async flushBatch() {
@@ -252,6 +355,16 @@ class AuditService {
 
     const batch = [...this.batchQueue];
     this.batchQueue = [];
+
+    // Check database connection before attempting to write (short timeout for batching)
+    const dbAvailable = await this.checkDatabaseConnection(2000);
+    
+    if (!dbAvailable) {
+      // Use fallback logging
+      this.logToFallback(batch);
+      this.stats.lastFlush = Date.now();
+      return;
+    }
 
     try {
       await prisma.auditLog.createMany({
@@ -263,11 +376,18 @@ class AuditService {
       
       console.log(`✅ Audit batch flushed: ${batch.length} entries`);
     } catch (error) {
-      console.error('❌ Batch flush database error:', error);
-      this.stats.errors++;
-      
-      // Re-add failed entries to queue for retry
-      this.batchQueue.unshift(...batch);
+      // Handle Prisma-specific errors
+      if (error.code === 'P1001' || error.code === 'P1002' || error.message.includes("Can't reach database")) {
+        console.log(`⚠️  Database unavailable during audit flush - using fallback logging for ${batch.length} entries`);
+        this.isDatabaseAvailable = false;
+        this.logToFallback(batch);
+        this.stats.connectionErrors++;
+      } else {
+        console.error('❌ Batch flush database error:', error);
+        this.stats.errors++;
+        // Re-add failed entries to queue for retry
+        this.batchQueue.unshift(...batch);
+      }
     }
   }
 
@@ -287,6 +407,17 @@ class AuditService {
       orderBy = 'timestamp',
       orderDirection = 'desc'
     } = options;
+
+    // Check database availability first (short timeout for queries)
+    const dbAvailable = await this.checkDatabaseConnection(1500);
+    if (!dbAvailable) {
+      console.log('⚠️  Database unavailable for audit query - returning empty results');
+      return {
+        logs: [],
+        total: 0,
+        message: 'Database unavailable - audit logs cannot be queried'
+      };
+    }
 
     try {
       // Build cache key for frequent queries
@@ -648,6 +779,22 @@ class AuditService {
   }
 
   /**
+   * Get service health status
+   */
+  getHealthStatus() {
+    return {
+      healthy: this.isInitialized,
+      database: this.isDatabaseAvailable,
+      queueLength: this.batchQueue.length,
+      lastFlush: this.stats.lastFlush,
+      stats: {
+        ...this.stats,
+        uptime: Date.now() - (this.stats.lastFlush - 30000) // Approximate uptime
+      }
+    };
+  }
+
+  /**
    * Shutdown audit service
    */
   async shutdown() {
@@ -658,8 +805,20 @@ class AuditService {
       clearInterval(this.flushTimer);
     }
     
-    // Flush remaining batch
-    await this.flushBatch();
+    // Flush remaining batch with timeout to prevent hanging
+    try {
+      const flushPromise = this.flushBatch();
+      const timeoutPromise = new Promise((resolve) => 
+        setTimeout(() => {
+          console.log('⚠️  Audit service flush timeout during shutdown - proceeding');
+          resolve();
+        }, 3000)
+      );
+      
+      await Promise.race([flushPromise, timeoutPromise]);
+    } catch (error) {
+      console.log('⚠️  Error during audit service shutdown flush:', error.message);
+    }
     
     console.log('✅ Audit service shutdown complete');
   }

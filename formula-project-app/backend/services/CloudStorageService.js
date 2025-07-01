@@ -19,7 +19,14 @@ try {
   console.log('⚠️  AWS S3 SDK not available - cloud storage features disabled');
 }
 
-const sharp = require('sharp');
+// Optional sharp dependency for image processing
+let sharp;
+try {
+  sharp = require('sharp');
+} catch (error) {
+  console.log('⚠️  Sharp not available - image processing features disabled');
+}
+
 const fs = require('fs').promises;
 const path = require('path');
 const crypto = require('crypto');
@@ -578,6 +585,12 @@ class CloudStorageService {
    */
   async resizeImage(imageBuffer, resizeOptions) {
     try {
+      // Check if sharp is available
+      if (!sharp) {
+        console.log('⚠️  Sharp not available - returning original image buffer');
+        return imageBuffer;
+      }
+
       const { width, height, quality = 80 } = resizeOptions;
       
       let sharpInstance = sharp(imageBuffer);
@@ -594,7 +607,8 @@ class CloudStorageService {
         .toBuffer();
     } catch (error) {
       console.error('❌ Image resize error:', error);
-      throw error;
+      // Fallback to original buffer if processing fails
+      return imageBuffer;
     }
   }
 

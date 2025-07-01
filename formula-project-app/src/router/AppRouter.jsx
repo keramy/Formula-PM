@@ -9,6 +9,7 @@ import RouteErrorBoundary from '../components/common/RouteErrorBoundary';
 const DashboardPage = lazy(() => import('../pages/DashboardPage'));
 const ProjectsPage = lazy(() => import('../pages/ProjectsPage'));
 const ProjectDetail = lazy(() => import('../pages/ProjectDetail'));
+const EnhancedProjectDetailPage = lazy(() => import('../features/projects/components/EnhancedProjectDetailPage'));
 const TasksPage = lazy(() => import('../pages/TasksPage'));
 const TeamPage = lazy(() => import('../pages/TeamPage'));
 const ClientsPage = lazy(() => import('../pages/ClientsPage'));
@@ -117,7 +118,7 @@ const AppRouter = () => {
             path="projects/:projectId"
             element={
               <PageWrapper route="/projects/:projectId">
-                <ProjectDetail />
+                <EnhancedProjectDetailPage />
               </PageWrapper>
             }
           />

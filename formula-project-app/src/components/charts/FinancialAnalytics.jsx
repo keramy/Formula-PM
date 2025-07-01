@@ -218,63 +218,6 @@ const FinancialAnalytics = ({ projects = [] }) => {
         </Paper>
       </Grid>
 
-      {/* Project Types Financial Breakdown */}
-      <Grid item xs={12}>
-        <Paper
-          elevation={0}
-          sx={{
-            p: 3,
-            backgroundColor: theme.palette.background.paper,
-            border: `1px solid ${theme.palette.divider}`,
-            borderRadius: 3
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-            <Timeline sx={{ color: '#F39C12', mr: 1 }} />
-            <Typography variant="h6" fontWeight={600}>
-              Project Type Analysis
-            </Typography>
-          </Box>
-
-          <Grid container spacing={3}>
-            {Object.entries(projectTypes).map(([type, data], index) => {
-              const typeLabels = {
-                'management': 'Project Management',
-                'mep': 'MEP Systems',
-                'fit-out': 'Interior Fit-out',
-                'general-contractor': 'General Contracting'
-              };
-
-              return (
-                <Grid item xs={12} sm={6} md={3} key={index}>
-                  <Box
-                    sx={{
-                      p: 2,
-                      border: `1px solid ${theme.palette.divider}`,
-                      borderRadius: 2,
-                      textAlign: 'center',
-                      backgroundColor: theme.palette.background.default
-                    }}
-                  >
-                    <Typography variant="h6" fontWeight={600} sx={{ color: '#3498DB' }}>
-                      {formatCurrency(data.budget)}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                      {typeLabels[type] || type}
-                    </Typography>
-                    <Chip 
-                      label={`${data.count} project${data.count !== 1 ? 's' : ''}`}
-                      size="small"
-                      variant="outlined"
-                      sx={{ fontSize: '0.7rem' }}
-                    />
-                  </Box>
-                </Grid>
-              );
-            })}
-          </Grid>
-        </Paper>
-      </Grid>
     </Grid>
   );
 };

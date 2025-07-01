@@ -7,6 +7,7 @@ import { FormulaLoadingScreen } from '../components/ui/UnifiedLoading';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import DataErrorBoundary from '../components/common/DataErrorBoundary';
 import AppRouter from '../router/AppRouter';
+import { DataProvider } from '../context/DataContext';
 import './App.css';
 import '../styles/globals.css';
 import '../styles/modern-dashboard.css';
@@ -77,7 +78,9 @@ function AppWithProviders() {
     <>
       {/* React Router based navigation with data error handling */}
       <DataErrorBoundary fallbackMessage="Navigation system encountered an error. This might be due to data loading issues.">
-        <AppRouter />
+        <DataProvider data={{ projects, tasks, teamMembers, clients }}>
+          <AppRouter />
+        </DataProvider>
       </DataErrorBoundary>
       
       {/* Global components (notifications, performance monitor, etc.) */}

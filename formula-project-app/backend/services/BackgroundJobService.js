@@ -7,6 +7,9 @@ const Queue = require('bull');
 const cacheService = require('./cacheService');
 const auditService = require('./auditService');
 
+// Will be initialized with shared database service
+let prisma = null;
+
 class BackgroundJobService {
   constructor() {
     this.queues = new Map();

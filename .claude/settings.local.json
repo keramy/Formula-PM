@@ -138,7 +138,9 @@
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(claude mcp:*)",
       "Bash(use context7 to get current documentation and best practices for debugging Express.js service initialization hangs with Prisma ORM, specifically for service registry patterns, Prisma client initialization in service-based architectures, common causes of initialization timeouts, and debugging techniques)",
-      "Bash(use context7 to get current Vite 5.0.12 optimization strategies for React 18.3 applications including code splitting, bundle analysis, development server performance, build time optimization, tree-shaking configuration, and dynamic imports patterns for large applications with 50+ components and heavy libraries like Material-UI, React Query, recharts, jspdf, and html2canvas)"
+      "Bash(use context7 to get current Vite 5.0.12 optimization strategies for React 18.3 applications including code splitting, bundle analysis, development server performance, build time optimization, tree-shaking configuration, and dynamic imports patterns for large applications with 50+ components and heavy libraries like Material-UI, React Query, recharts, jspdf, and html2canvas)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs"
     ],
     "deny": []
   }

@@ -28,72 +28,45 @@ import {
   MdAnalytics as AnalyticsIcon,
   MdTimeline as TimelineIcon
 } from 'react-icons/md';
-import { useProjectRealtime } from '../../../hooks/useSocket';
-import PresenceIndicators from '../../../components/realtime/PresenceIndicators';
-import RealtimeActivityFeed from '../../../components/realtime/RealtimeActivityFeed';
-import EnhancedGlobalSearch from '../../../components/search/EnhancedGlobalSearch';
-import apiService from '../../../services/api/apiService';
+// Real-time features temporarily disabled
+// import { useProjectRealtime } from '../../../hooks/useSocket';
+// import PresenceIndicators from '../../../components/realtime/PresenceIndicators';
+// import RealtimeActivityFeed from '../../../components/realtime/RealtimeActivityFeed';
+// import EnhancedGlobalSearch from '../../../components/search/EnhancedGlobalSearch';
+import { useData } from '../../../context/DataContext';
 
 const EnhancedProjectDetailPage = () => {
   const { projectId } = useParams();
-  const [project, setProject] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { projects, tasks, teamMembers } = useData();
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
-  const [projectTeam, setProjectTeam] = useState([]);
-  const [analytics, setAnalytics] = useState(null);
   const [notification, setNotification] = useState(null);
 
-  // Real-time project updates
-  const { projectData, loading: realtimeLoading, isConnected } = useProjectRealtime(projectId);
+  // Find project from loaded data
+  const project = projects?.find(p => p.id === projectId);
+  const projectTasks = tasks?.filter(t => t.projectId === projectId) || [];
+  const projectTeam = teamMembers?.filter(m => 
+    project?.teamMembers?.includes(m.id)
+  ) || [];
 
-  // Load project data
+  // Check if project exists
   useEffect(() => {
-    const loadProject = async () => {
-      try {
-        setLoading(true);
-        
-        // Load project details
-        const projectResponse = await apiService.request(`/projects/${projectId}`);
-        const projectData = projectResponse.data || projectResponse;
-        setProject(projectData);
-
-        // Load project team
-        const teamResponse = await apiService.request(`/projects/${projectId}/team`);
-        const teamData = teamResponse.data || teamResponse;
-        setProjectTeam(teamData);
-
-        // Load project analytics
-        try {
-          const analyticsData = await apiService.getProjectAnalytics(projectId);
-          setAnalytics(analyticsData);
-        } catch (analyticsError) {
-          console.warn('Analytics not available:', analyticsError);
-        }
-
-      } catch (err) {
-        console.error('Failed to load project:', err);
-        setError('Failed to load project details');
-      } finally {
-        setLoading(false);
+    if (projectId && projects?.length > 0) {
+      if (!project) {
+        setError('Project not found');
       }
-    };
-
-    if (projectId) {
-      loadProject();
     }
-  }, [projectId]);
+  }, [projectId, projects, project]);
 
-  // Update project when real-time data changes
-  useEffect(() => {
-    if (projectData) {
-      setProject(prev => ({ ...prev, ...projectData }));
-      setNotification({
-        message: 'Project updated in real-time',
-        severity: 'info'
-      });
-    }
-  }, [projectData]);
+  // Calculate project analytics
+  const analytics = project ? {
+    taskCount: projectTasks.length,
+    completedTasks: projectTasks.filter(t => t.status === 'completed').length,
+    pendingTasks: projectTasks.filter(t => t.status === 'pending' || t.status === 'in_progress').length,
+    progressPercentage: projectTasks.length > 0 ? 
+      (projectTasks.filter(t => t.status === 'completed').length / projectTasks.length) * 100 : 0
+  } : null;
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -181,14 +154,6 @@ const EnhancedProjectDetailPage = () => {
           </Box>
 
           <Box display="flex" alignItems="center" gap={2}>
-            {/* Real-time connection indicator */}
-            <Chip
-              label={isConnected ? 'Live' : 'Offline'}
-              color={isConnected ? 'success' : 'default'}
-              size="small"
-              variant="outlined"
-            />
-            
             <Button variant="contained" color="primary">
               Edit Project
             </Button>
@@ -215,17 +180,12 @@ const EnhancedProjectDetailPage = () => {
             </AvatarGroup>
           </Box>
 
-          <PresenceIndicators 
-            projectId={projectId}
-            location="project_detail"
-            showDetails={false}
-            maxVisible={5}
-          />
+          {/* Real-time presence indicators disabled for now */}
         </Box>
       </Box>
 
-      {/* Enhanced Search */}
-      <Box mb={3}>
+      {/* Enhanced Search - Temporarily disabled */}
+      {/* <Box mb={3}>
         <EnhancedGlobalSearch
           placeholder={`Search in ${project.name}...`}
           width={400}
@@ -233,7 +193,7 @@ const EnhancedProjectDetailPage = () => {
             console.log('Search result clicked:', result);
           }}
         />
-      </Box>
+      </Box> */}
 
       {/* Main Content */}
       <Grid container spacing={3}>
@@ -275,11 +235,53 @@ const EnhancedProjectDetailPage = () => {
               {activeTab === 0 && (
                 <Box>
                   <Typography variant="h6" gutterBottom>
-                    Project Tasks
+                    Project Tasks ({projectTasks.length})
                   </Typography>
-                  <Typography color="textSecondary">
-                    Task management integration coming soon...
-                  </Typography>
+                  {projectTasks.length > 0 ? (
+                    <Box>
+                      {projectTasks.map((task) => (
+                        <Card key={task.id} variant="outlined" sx={{ mb: 2 }}>
+                          <CardContent>
+                            <Box display="flex" justifyContent="space-between" alignItems="start">
+                              <Box>
+                                <Typography variant="subtitle1" fontWeight="medium">
+                                  {task.title}
+                                </Typography>
+                                {task.description && (
+                                  <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                                    {task.description}
+                                  </Typography>
+                                )}
+                              </Box>
+                              <Chip
+                                label={task.status}
+                                size="small"
+                                color={
+                                  task.status === 'completed' ? 'success' :
+                                  task.status === 'in_progress' ? 'warning' : 'default'
+                                }
+                                sx={{ textTransform: 'capitalize' }}
+                              />
+                            </Box>
+                            {task.assignee && (
+                              <Box display="flex" alignItems="center" gap={1} sx={{ mt: 2 }}>
+                                <Typography variant="caption" color="textSecondary">
+                                  Assigned to:
+                                </Typography>
+                                <Typography variant="caption" fontWeight="medium">
+                                  {task.assignee}
+                                </Typography>
+                              </Box>
+                            )}
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </Box>
+                  ) : (
+                    <Typography color="textSecondary">
+                      No tasks assigned to this project yet.
+                    </Typography>
+                  )}
                 </Box>
               )}
 
@@ -288,40 +290,63 @@ const EnhancedProjectDetailPage = () => {
                   <Typography variant="h6" gutterBottom>
                     Project Files
                   </Typography>
-                  <Typography color="textSecondary">
-                    File management integration coming soon...
-                  </Typography>
+                  <Box sx={{ textAlign: 'center', py: 4 }}>
+                    <FileIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+                    <Typography variant="body1" color="textSecondary" gutterBottom>
+                      File management integration coming soon
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Upload and manage project documents, drawings, and specifications
+                    </Typography>
+                  </Box>
                 </Box>
               )}
 
               {activeTab === 2 && (
                 <Box>
                   <Typography variant="h6" gutterBottom>
-                    Team Management
+                    Team Management ({projectTeam.length})
                   </Typography>
-                  <Grid container spacing={2}>
-                    {projectTeam.map((member) => (
-                      <Grid item xs={12} sm={6} md={4} key={member.id}>
-                        <Card variant="outlined">
-                          <CardContent>
-                            <Box display="flex" alignItems="center" gap={2}>
-                              <Avatar src={member.avatar} alt={member.name}>
-                                {member.name?.charAt(0)}
-                              </Avatar>
-                              <Box>
-                                <Typography fontWeight="medium">
-                                  {member.name}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                  {member.role}
-                                </Typography>
+                  {projectTeam.length > 0 ? (
+                    <Grid container spacing={2}>
+                      {projectTeam.map((member) => (
+                        <Grid item xs={12} sm={6} md={4} key={member.id}>
+                          <Card variant="outlined">
+                            <CardContent>
+                              <Box display="flex" alignItems="center" gap={2}>
+                                <Avatar src={member.avatar} alt={member.name}>
+                                  {member.name?.charAt(0)}
+                                </Avatar>
+                                <Box>
+                                  <Typography fontWeight="medium">
+                                    {member.name}
+                                  </Typography>
+                                  <Typography variant="body2" color="textSecondary">
+                                    {member.role}
+                                  </Typography>
+                                  {member.email && (
+                                    <Typography variant="caption" color="textSecondary">
+                                      {member.email}
+                                    </Typography>
+                                  )}
+                                </Box>
                               </Box>
-                            </Box>
-                          </CardContent>
-                        </Card>
-                      </Grid>
-                    ))}
-                  </Grid>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  ) : (
+                    <Box sx={{ textAlign: 'center', py: 4 }}>
+                      <TeamIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+                      <Typography variant="body1" color="textSecondary" gutterBottom>
+                        No team members assigned
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        Add team members to collaborate on this project
+                      </Typography>
+                    </Box>
+                  )}
                 </Box>
               )}
 
@@ -394,9 +419,15 @@ const EnhancedProjectDetailPage = () => {
                   <Typography variant="h6" gutterBottom>
                     Project Timeline
                   </Typography>
-                  <Typography color="textSecondary">
-                    Timeline view integration coming soon...
-                  </Typography>
+                  <Box sx={{ textAlign: 'center', py: 4 }}>
+                    <TimelineIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+                    <Typography variant="body1" color="textSecondary" gutterBottom>
+                      Timeline view integration coming soon
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Visualize project milestones, deadlines, and progress over time
+                    </Typography>
+                  </Box>
                 </Box>
               )}
             </CardContent>
@@ -404,13 +435,73 @@ const EnhancedProjectDetailPage = () => {
         </Grid>
 
         <Grid item xs={12} lg={3}>
-          {/* Real-time Activity Feed */}
-          <RealtimeActivityFeed
-            projectId={projectId}
-            maxItems={20}
-            showTimestamps={true}
-            compact={false}
-          />
+          {/* Project Summary Card */}
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Project Summary
+              </Typography>
+              
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" color="textSecondary" gutterBottom>
+                  Status
+                </Typography>
+                <Chip
+                  label={project.status || 'Active'}
+                  color={getStatusPalette(project.status)}
+                  size="small"
+                />
+              </Box>
+
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" color="textSecondary" gutterBottom>
+                  Progress
+                </Typography>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <LinearProgress
+                    variant="determinate"
+                    value={analytics?.progressPercentage || 0}
+                    sx={{ flex: 1, height: 8, borderRadius: 4 }}
+                  />
+                  <Typography variant="body2" fontWeight="medium">
+                    {Math.round(analytics?.progressPercentage || 0)}%
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" color="textSecondary" gutterBottom>
+                  Team Size
+                </Typography>
+                <Typography variant="body2" fontWeight="medium">
+                  {projectTeam.length} members
+                </Typography>
+              </Box>
+
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" color="textSecondary" gutterBottom>
+                  Tasks
+                </Typography>
+                <Typography variant="body2" fontWeight="medium">
+                  {analytics?.completedTasks || 0} of {analytics?.taskCount || 0} completed
+                </Typography>
+              </Box>
+
+              {project.budget && (
+                <Box>
+                  <Typography variant="body2" color="textSecondary" gutterBottom>
+                    Budget
+                  </Typography>
+                  <Typography variant="body2" fontWeight="medium">
+                    {new Intl.NumberFormat('tr-TR', {
+                      style: 'currency',
+                      currency: 'TRY'
+                    }).format(project.budget)}
+                  </Typography>
+                </Box>
+              )}
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
 

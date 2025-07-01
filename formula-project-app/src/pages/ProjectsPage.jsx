@@ -1,4 +1,5 @@
 import React, { Suspense, useState, useCallback, useMemo } from 'react';
+import { useData } from '../context/DataContext';
 import {
   Box,
   Button,
@@ -51,10 +52,6 @@ import {
 } from '../components/lazy';
 
 const ProjectsPage = ({ 
-  projects = [],
-  tasks = [],
-  teamMembers = [],
-  clients = [],
   filteredProjects,
   projectsViewMode,
   projectsSearchTerm,
@@ -74,6 +71,15 @@ const ProjectsPage = ({
   onUpdateTask,
   onAddProject
 }) => {
+  const { projects = [], tasks = [], teamMembers = [], clients = [] } = useData();
+  
+  console.log('🔍 ProjectsPage received data:', { 
+    projects: projects?.length || 'undefined', 
+    tasks: tasks?.length || 'undefined', 
+    teamMembers: teamMembers?.length || 'undefined',
+    clients: clients?.length || 'undefined'
+  });
+  
   const [activeTab, setActiveTab] = useState('overview');
   const [viewMode, setViewMode] = useState('cards');
   
