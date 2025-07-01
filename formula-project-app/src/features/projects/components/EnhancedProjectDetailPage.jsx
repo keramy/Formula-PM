@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -34,7 +34,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Skeleton
+  Skeleton,
+  TextField
 } from '@mui/material';
 import {
   MdBusiness as OverviewIcon,
@@ -59,12 +60,16 @@ import {
   MdAdd,
   MdEdit,
   MdDelete,
-  MdInventory
+  MdInventory,
+  MdDescription as DrawingIcon,
+  MdLibraryBooks as SpecIcon,
+  MdLink as LinkIcon
 } from 'react-icons/md';
 import CleanPageLayout from '../../../components/layout/CleanPageLayout';
 import { useData } from '../../../context/DataContext';
 import { useAuth } from '../../../context/AuthContext';
 import { format, differenceInDays, parseISO, isValid } from 'date-fns';
+import apiService from '../../../services/api/apiService';
 
 // Date formatting helper function
 const safeFormatDate = (dateString, formatString = 'MMM dd, yyyy') => {
@@ -422,11 +427,45 @@ const OverviewTab = ({ project, tasks, teamMembers, clients }) => {
   );
 };
 
-// Scope Tab Component with 4 Categories
+// Scope Tab Component - Reorganized Layout
 const ScopeTab = ({ project, tasks, teamMembers, clients }) => {
-  const [activeCategory, setActiveCategory] = useState(0);
+  console.log('🚀 NEW SCOPE TAB COMPONENT LOADING!', { project: project?.id });
+  
   const [scopeItems, setScopeItems] = useState([]);
   const [addItemDialogOpen, setAddItemDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState(['construction', 'millwork', 'electrical', 'mechanical']);
+  const [selectedStatuses, setSelectedStatuses] = useState(['all']);
+
+  // Fetch scope items when component mounts or project changes
+  useEffect(() => {
+    const fetchScopeItems = async () => {
+      if (!project?.id) {
+        console.log('No project ID available');
+        return;
+      }
+      
+      console.log('Fetching scope items for project:', project.id);
+      
+      try {
+        setLoading(true);
+        setError(null);
+        const items = await apiService.getScopeItems(project.id);
+        console.log('Received scope items:', items);
+        setScopeItems(items || []);
+      } catch (error) {
+        console.error('Error fetching scope items:', error);
+        setError('Failed to load scope items');
+        setScopeItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchScopeItems();
+  }, [project?.id]);
 
   // Early return if project data is not available
   if (!project) {
@@ -452,59 +491,11 @@ const ScopeTab = ({ project, tasks, teamMembers, clients }) => {
     { id: 'mechanical', label: 'Mechanical', color: '#10B981', prefix: 'MC' }
   ];
 
-  // Mock scope items data (will be replaced with real data from backend)
-  const mockScopeItems = [
-    {
-      id: 'scope-1',
-      itemCode: `${project.name?.substring(0, 3).toUpperCase() || 'PRJ'}-C001`,
-      name: 'Concrete Foundation',
-      description: 'Pour concrete foundation for main structure',
-      category: 'construction',
-      quantity: 100,
-      unitPrice: 150,
-      totalPrice: 15000,
-      initialCost: 15000,
-      actualCost: 16500,
-      createdAt: '2024-06-01T10:00:00Z'
-    },
-    {
-      id: 'scope-2',
-      itemCode: `${project.name?.substring(0, 3).toUpperCase() || 'PRJ'}-M001`,
-      name: 'Custom Reception Desk',
-      description: 'Handcrafted reception desk with integrated storage',
-      category: 'millwork',
-      quantity: 1,
-      unitPrice: 8500,
-      totalPrice: 8500,
-      initialCost: 8000,
-      actualCost: 8500,
-      createdAt: '2024-06-01T11:00:00Z'
-    },
-    {
-      id: 'scope-3',
-      itemCode: `${project.name?.substring(0, 3).toUpperCase() || 'PRJ'}-E001`,
-      name: 'LED Lighting System',
-      description: 'Energy-efficient LED lighting throughout office space',
-      category: 'electrical',
-      quantity: 25,
-      unitPrice: 200,
-      totalPrice: 5000,
-      initialCost: 5000,
-      actualCost: 4800,
-      createdAt: '2024-06-01T12:00:00Z'
-    }
-  ];
-
-  // Filter items by active category
-  const filteredItems = mockScopeItems.filter(item => 
-    item.category === categories[activeCategory].id
-  );
-
   // Calculate budget statistics
   const getBudgetStats = (categoryId) => {
-    const categoryItems = mockScopeItems.filter(item => item.category === categoryId);
-    const totalBudget = categoryItems.reduce((sum, item) => sum + item.initialCost, 0);
-    const actualSpent = categoryItems.reduce((sum, item) => sum + item.actualCost, 0);
+    const categoryItems = scopeItems.filter(item => item.category === categoryId);
+    const totalBudget = categoryItems.reduce((sum, item) => sum + (item.initialCost || 0), 0);
+    const actualSpent = categoryItems.reduce((sum, item) => sum + (item.actualCost || 0), 0);
     const deviation = totalBudget > 0 ? ((actualSpent - totalBudget) / totalBudget * 100) : 0;
     
     return {
@@ -521,278 +512,399 @@ const ScopeTab = ({ project, tasks, teamMembers, clients }) => {
     return '#EF4444'; // Red (significantly over)
   };
 
-  const handleCategoryChange = (event, newValue) => {
-    setActiveCategory(newValue);
+  // Filter items based on selected categories, statuses, and search term
+  const filteredItems = scopeItems.filter(item => {
+    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(item.category);
+    const matchesSearch = searchTerm === '' || 
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.itemCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return matchesCategory && matchesSearch;
+  });
+
+  // Handle category filter changes
+  const handleCategoryFilter = (categoryId) => {
+    setSelectedCategories(prev => 
+      prev.includes(categoryId) 
+        ? prev.filter(c => c !== categoryId)
+        : [...prev, categoryId]
+    );
   };
 
-  return (
-    <Box>
-      {/* Budget Summary Cards */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        {categories.map((category, index) => {
-          const stats = getBudgetStats(category.id);
-          return (
-            <Grid item xs={12} sm={6} md={3} key={category.id}>
-              <Card sx={{ 
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                borderColor: activeCategory === index ? category.color : 'transparent',
-                borderWidth: 2,
-                borderStyle: 'solid',
-                '&:hover': {
-                  borderColor: category.color,
-                  transform: 'translateY(-2px)',
-                  boxShadow: 2
-                }
-              }}
-              onClick={() => setActiveCategory(index)}
-              >
-                <CardContent sx={{ p: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                    <Box sx={{ 
-                      width: 12, 
-                      height: 12, 
-                      borderRadius: '50%', 
-                      backgroundColor: category.color,
-                      mr: 1 
-                    }} />
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                      {category.label}
-                    </Typography>
-                  </Box>
-                  
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: category.color, mb: 0.5 }}>
-                    {stats.itemCount} items
-                  </Typography>
-                  
-                  <Typography variant="body2" sx={{ color: '#6B7280', mb: 1 }}>
-                    Budget: ₺{stats.totalBudget.toLocaleString()}
-                  </Typography>
-                  
-                  {stats.deviation !== 0 && (
-                    <Chip
-                      label={`${stats.deviation > 0 ? '+' : ''}${stats.deviation.toFixed(1)}%`}
-                      size="small"
-                      sx={{
-                        backgroundColor: getDeviationColor(stats.deviation) + '20',
-                        color: getDeviationColor(stats.deviation),
-                        fontWeight: 600,
-                        fontSize: '11px'
-                      }}
-                    />
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-          );
-        })}
-      </Grid>
-
-      {/* Category Tabs */}
-      <Paper elevation={0} sx={{ borderRadius: 2, mb: 3 }}>
-        <Tabs
-          value={activeCategory}
-          onChange={handleCategoryChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          sx={{
-            borderBottom: 1,
-            borderColor: 'divider',
-            '& .MuiTab-root': {
-              textTransform: 'none',
-              minWidth: 120,
-              fontWeight: 500,
-              color: '#6B7280',
-              '&.Mui-selected': {
-                color: categories[activeCategory].color,
-                fontWeight: 600
-              }
-            },
-            '& .MuiTabs-indicator': {
-              backgroundColor: categories[activeCategory].color,
-              height: 3
-            }
-          }}
-        >
-          {categories.map((category) => (
-            <Tab
-              key={category.id}
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ 
-                    width: 8, 
-                    height: 8, 
-                    borderRadius: '50%', 
-                    backgroundColor: category.color 
-                  }} />
-                  {category.label}
-                </Box>
-              }
-            />
-          ))}
-        </Tabs>
-      </Paper>
-
-      {/* Scope Items Content */}
+  // Show loading state
+  if (loading) {
+    return (
       <Card>
-        <CardContent sx={{ p: 0 }}>
-          {/* Header with Add Button */}
-          <Box sx={{ 
-            p: 3, 
-            pb: 0, 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center' 
-          }}>
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              {categories[activeCategory].label} Items
+        <CardContent>
+          <Box sx={{ p: 4, textAlign: 'center' }}>
+            <CircularProgress sx={{ mb: 2 }} />
+            <Typography variant="h6" sx={{ color: '#6B7280' }}>
+              Loading scope items...
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Card>
+        <CardContent>
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* Compact Category Stats - Horizontal Row */}
+      <Card sx={{ mb: 2 }}>
+        <CardContent sx={{ p: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, color: 'red' }}>
+              🚀 NEW REORGANIZED SCOPE OVERVIEW 🚀
             </Typography>
             <Button
               variant="contained"
               startIcon={<MdAdd />}
               onClick={() => setAddItemDialogOpen(true)}
-              sx={{ 
-                backgroundColor: categories[activeCategory].color,
-                '&:hover': {
-                  backgroundColor: categories[activeCategory].color,
-                  opacity: 0.9
-                }
-              }}
+              sx={{ backgroundColor: '#516AC8' }}
             >
               Add Item
             </Button>
           </Box>
-
-          {/* Scope Items Table */}
-          {filteredItems.length > 0 ? (
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: '#F8F9FA' }}>
-                    <TableCell sx={{ fontWeight: 600 }}>Item Code</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Description</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Qty</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Unit Price</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Total</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Budget Deviation</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredItems.map((item) => {
-                    const deviation = item.initialCost > 0 ? 
-                      ((item.actualCost - item.initialCost) / item.initialCost * 100) : 0;
-                    
-                    return (
-                      <TableRow key={item.id} hover>
-                        <TableCell>
-                          <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>
-                            {item.itemCode}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                            {item.name}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography 
-                            variant="body2" 
-                            sx={{ 
-                              color: '#6B7280',
-                              maxWidth: 200,
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap'
-                            }}
-                          >
-                            {item.description}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2">
-                            {item.quantity}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2">
-                            ₺{item.unitPrice.toLocaleString()}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                            ₺{item.totalPrice.toLocaleString()}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Chip
-                              label={`${deviation > 0 ? '+' : ''}${deviation.toFixed(1)}%`}
-                              size="small"
-                              sx={{
-                                backgroundColor: getDeviationColor(deviation) + '20',
-                                color: getDeviationColor(deviation),
-                                fontWeight: 600
-                              }}
-                            />
-                            <Typography variant="caption" sx={{ color: '#6B7280' }}>
-                              ₺{item.actualCost.toLocaleString()}
-                            </Typography>
-                          </Box>
-                        </TableCell>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', gap: 0.5 }}>
-                            <IconButton size="small" sx={{ color: '#516AC8' }}>
-                              <MdEdit fontSize="small" />
-                            </IconButton>
-                            <IconButton size="small" sx={{ color: '#EF4444' }}>
-                              <MdDelete fontSize="small" />
-                            </IconButton>
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : (
-            <Box sx={{ p: 4, textAlign: 'center' }}>
-              <Box sx={{ 
-                width: 64, 
-                height: 64, 
-                borderRadius: '50%', 
-                backgroundColor: categories[activeCategory].color + '20',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mx: 'auto',
-                mb: 2
-              }}>
-                <MdInventory sx={{ fontSize: 32, color: categories[activeCategory].color }} />
-              </Box>
-              <Typography variant="h6" sx={{ color: '#6B7280', mb: 1 }}>
-                No {categories[activeCategory].label.toLowerCase()} items
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#9CA3AF', mb: 2 }}>
-                Start by adding your first {categories[activeCategory].label.toLowerCase()} scope item
-              </Typography>
-              <Button
-                variant="outlined"
-                startIcon={<MdAdd />}
-                onClick={() => setAddItemDialogOpen(true)}
-                sx={{ 
-                  borderColor: categories[activeCategory].color,
-                  color: categories[activeCategory].color
-                }}
-              >
-                Add First Item
-              </Button>
-            </Box>
-          )}
+          
+          <Grid container spacing={2}>
+            {categories.map((category) => {
+              const stats = getBudgetStats(category.id);
+              return (
+                <Grid item xs={12} sm={6} md={3} key={category.id}>
+                  <Box sx={{ 
+                    p: 1.5,
+                    border: 1,
+                    borderColor: '#E5E7EB',
+                    borderRadius: 1,
+                    backgroundColor: '#FAFAFA',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Box sx={{ 
+                        width: 8, 
+                        height: 8, 
+                        borderRadius: '50%', 
+                        backgroundColor: category.color,
+                        mr: 1 
+                      }} />
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: '#374151' }}>
+                          {category.label}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '11px' }}>
+                          {stats.itemCount} items
+                        </Typography>
+                      </Box>
+                    </Box>
+                    {stats.deviation !== 0 && (
+                      <Chip
+                        label={`${stats.deviation > 0 ? '+' : ''}${stats.deviation.toFixed(0)}%`}
+                        size="small"
+                        sx={{
+                          backgroundColor: getDeviationColor(stats.deviation) + '20',
+                          color: getDeviationColor(stats.deviation),
+                          fontSize: '10px',
+                          height: '20px'
+                        }}
+                      />
+                    )}
+                  </Box>
+                </Grid>
+              );
+            })}
+          </Grid>
         </CardContent>
       </Card>
+
+      {/* Main Content - Sidebar + Table */}
+      <Box sx={{ display: 'flex', gap: 2, flexGrow: 1 }}>
+        {/* Filter Sidebar */}
+        <Card sx={{ width: 250, height: 'fit-content' }}>
+          <CardContent sx={{ p: 2 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
+              Filters
+            </Typography>
+
+            {/* Search */}
+            <TextField
+              fullWidth
+              placeholder="Search items..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              size="small"
+              sx={{ mb: 3 }}
+            />
+
+            {/* Category Filters */}
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+              Categories
+            </Typography>
+            <Box sx={{ mb: 3 }}>
+              {categories.map((category) => {
+                const stats = getBudgetStats(category.id);
+                const isSelected = selectedCategories.includes(category.id);
+                return (
+                  <Box 
+                    key={category.id}
+                    sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between',
+                      p: 1,
+                      cursor: 'pointer',
+                      borderRadius: 1,
+                      backgroundColor: isSelected ? category.color + '10' : 'transparent',
+                      '&:hover': { backgroundColor: category.color + '20' }
+                    }}
+                    onClick={() => handleCategoryFilter(category.id)}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Box sx={{ 
+                        width: 12, 
+                        height: 12, 
+                        borderRadius: 1,
+                        backgroundColor: isSelected ? category.color : '#E5E7EB',
+                        mr: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        {isSelected && (
+                          <Box sx={{ 
+                            width: 6, 
+                            height: 6, 
+                            borderRadius: '50%', 
+                            backgroundColor: 'white' 
+                          }} />
+                        )}
+                      </Box>
+                      <Typography variant="body2" sx={{ fontWeight: isSelected ? 600 : 400 }}>
+                        {category.label}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '11px' }}>
+                      {stats.itemCount}
+                    </Typography>
+                  </Box>
+                );
+              })}
+            </Box>
+
+            {/* Quick Actions */}
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+              Quick Actions
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Button 
+                size="small" 
+                variant="outlined" 
+                onClick={() => setSelectedCategories(['construction', 'millwork', 'electrical', 'mechanical'])}
+                sx={{ justifyContent: 'flex-start' }}
+              >
+                Show All
+              </Button>
+              <Button 
+                size="small" 
+                variant="outlined" 
+                onClick={() => setSelectedCategories([])}
+                sx={{ justifyContent: 'flex-start' }}
+              >
+                Clear Filters
+              </Button>
+            </Box>
+          </CardContent>
+        </Card>
+
+        {/* Main Scope Items Table */}
+        <Card sx={{ flexGrow: 1 }}>
+          <CardContent sx={{ p: 0 }}>
+            {/* Header */}
+            <Box sx={{ 
+              p: 2, 
+              borderBottom: 1, 
+              borderColor: 'divider',
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center' 
+            }}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                All Scope Items ({filteredItems.length})
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button size="small" variant="outlined" startIcon={<MdInventory />}>
+                  Export
+                </Button>
+                <Button 
+                  size="small" 
+                  variant="contained" 
+                  startIcon={<MdAdd />}
+                  onClick={() => setAddItemDialogOpen(true)}
+                  sx={{ backgroundColor: '#516AC8' }}
+                >
+                  Add Item
+                </Button>
+              </Box>
+            </Box>
+
+            {/* Scope Items Table */}
+            {filteredItems.length > 0 ? (
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ backgroundColor: '#F8F9FA' }}>
+                      <TableCell sx={{ fontWeight: 600 }}>Item Code</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Category</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Description</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Shop Drawings</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Material Specs</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Total Cost</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {filteredItems.map((item) => {
+                      const category = categories.find(c => c.id === item.category);
+                      const deviation = item.initialCost > 0 ? 
+                        ((item.actualCost - item.initialCost) / item.initialCost * 100) : 0;
+                      
+                      return (
+                        <TableRow key={item.id} hover>
+                          <TableCell>
+                            <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>
+                              {item.itemCode}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                              {item.name}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={category?.label || item.category}
+                              size="small"
+                              sx={{
+                                backgroundColor: category?.color + '20' || '#F3F4F6',
+                                color: category?.color || '#6B7280',
+                                fontWeight: 500,
+                                fontSize: '11px'
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Typography 
+                              variant="body2" 
+                              sx={{ 
+                                color: '#6B7280',
+                                maxWidth: 150,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                              }}
+                            >
+                              {item.description}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            {item.linkedDrawings && item.linkedDrawings.length > 0 ? (
+                              <Chip
+                                icon={<DrawingIcon fontSize="small" />}
+                                label={item.linkedDrawings.length}
+                                size="small"
+                                variant="outlined"
+                                sx={{
+                                  borderColor: '#516AC8',
+                                  color: '#516AC8',
+                                  '& .MuiChip-icon': { color: '#516AC8' }
+                                }}
+                              />
+                            ) : (
+                              <Typography variant="body2" sx={{ color: '#9CA3AF', fontSize: '12px' }}>
+                                None
+                              </Typography>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {item.linkedSpecs && item.linkedSpecs.length > 0 ? (
+                              <Chip
+                                icon={<SpecIcon fontSize="small" />}
+                                label={item.linkedSpecs.length}
+                                size="small"
+                                variant="outlined"
+                                sx={{
+                                  borderColor: '#E3AF64',
+                                  color: '#E3AF64',
+                                  '& .MuiChip-icon': { color: '#E3AF64' }
+                                }}
+                              />
+                            ) : (
+                              <Typography variant="body2" sx={{ color: '#9CA3AF', fontSize: '12px' }}>
+                                None
+                              </Typography>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                              ₺{item.totalPrice.toLocaleString()}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Box sx={{ display: 'flex', gap: 0.5 }}>
+                              <IconButton size="small" sx={{ color: '#516AC8' }}>
+                                <MdEdit fontSize="small" />
+                              </IconButton>
+                              <IconButton size="small" sx={{ color: '#EF4444' }}>
+                                <MdDelete fontSize="small" />
+                              </IconButton>
+                            </Box>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ) : (
+              <Box sx={{ p: 4, textAlign: 'center' }}>
+                <MdInventory sx={{ fontSize: 64, color: '#E3AF64', mb: 2, opacity: 0.5 }} />
+                <Typography variant="h6" sx={{ color: '#6B7280', mb: 1 }}>
+                  No scope items found
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#9CA3AF', mb: 2 }}>
+                  {searchTerm || selectedCategories.length === 0 
+                    ? 'Try adjusting your search criteria or filters' 
+                    : 'Add your first scope item to get started'}
+                </Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<MdAdd />}
+                  onClick={() => setAddItemDialogOpen(true)}
+                  sx={{ backgroundColor: '#516AC8' }}
+                >
+                  Add Scope Item
+                </Button>
+              </Box>
+            )}
+          </CardContent>
+        </Card>
+      </Box>
     </Box>
   );
 };
@@ -884,9 +996,29 @@ const ReportsTab = () => (
 const EnhancedProjectDetailPage = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { projects, tasks, teamMembers, clients, loading, error } = useData();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState(0);
+
+  // Handle tab parameter from URL
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam) {
+      const tabIndex = {
+        'overview': 0,
+        'scope': 1,
+        'shop-drawings': 2,
+        'material-specs': 3,
+        'activity': 4,
+        'reports': 5
+      }[tabParam];
+      
+      if (tabIndex !== undefined) {
+        setActiveTab(tabIndex);
+      }
+    }
+  }, [searchParams]);
 
   // Find the current project
   const project = useMemo(() => {
@@ -1059,16 +1191,12 @@ const EnhancedProjectDetailPage = () => {
         {/* Tab Panels */}
         {tabs.map((tab, index) => (
           <TabPanel key={index} value={activeTab} index={index}>
-            {index === 0 ? (
-              <tab.component 
-                project={project}
-                tasks={tasks}
-                teamMembers={teamMembers}
-                clients={clients}
-              />
-            ) : (
-              <tab.component />
-            )}
+            <tab.component 
+              project={project}
+              tasks={tasks}
+              teamMembers={teamMembers}
+              clients={clients}
+            />
           </TabPanel>
         ))}
       </Box>

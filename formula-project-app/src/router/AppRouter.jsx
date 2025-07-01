@@ -10,6 +10,7 @@ const DashboardPage = lazy(() => import('../pages/DashboardPage'));
 const ProjectsPage = lazy(() => import('../pages/ProjectsPage'));
 const ProjectDetail = lazy(() => import('../pages/ProjectDetail'));
 const EnhancedProjectDetailPage = lazy(() => import('../features/projects/components/EnhancedProjectDetailPage'));
+const ProjectScopeDetailPage = lazy(() => import('../pages/ProjectScopeDetailPage'));
 const TasksPage = lazy(() => import('../pages/TasksPage'));
 const TeamPage = lazy(() => import('../pages/TeamPage'));
 const ClientsPage = lazy(() => import('../pages/ClientsPage'));
@@ -120,6 +121,15 @@ const AppRouter = () => {
             element={
               <PageWrapper route="/projects/:projectId">
                 <EnhancedProjectDetailPage />
+              </PageWrapper>
+            }
+          />
+          
+          <Route
+            path="projects/:projectId/scope"
+            element={
+              <PageWrapper route="/projects/:projectId/scope">
+                <ProjectScopeDetailPage />
               </PageWrapper>
             }
           />

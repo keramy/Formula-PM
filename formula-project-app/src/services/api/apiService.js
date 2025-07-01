@@ -1,5 +1,5 @@
 import { PerformanceMonitor } from '../../utils/performance';
-import { demoProjects, demoTasks, demoTeamMembers, demoClients, demoShopDrawings, demoMaterialSpecs } from '../demoDataService';
+import { demoProjects, demoTasks, demoTeamMembers, demoClients, demoShopDrawings, demoMaterialSpecs, demoProjectScopes } from '../demoDataService';
 
 // Configure API base URL for different environments
 const API_BASE_URL = (() => {
@@ -758,13 +758,26 @@ class ApiService {
   }
 
   // Scope Items API methods
-  async getScopeItems(projectId) {
+  async getScopeItems(projectId, signal) {
     try {
-      const response = await this.request(`/projects/${projectId}/scope/items`);
+      console.log(`🚀 Making API request to /api/projects/${projectId}/scope/items`);
+      const response = await this.request(`/api/projects/${projectId}/scope/items`, { signal });
+      console.log('✅ API response received for scope items:', response?.data?.length || 0, 'items');
       return response.data || response;
     } catch (error) {
-      console.error('Error fetching scope items:', error);
-      // Fallback to localStorage
+      // Handle both network errors and HTTP errors (like 500) as backend unavailable
+      if (error.name === 'AbortError') {
+        throw error; // Re-throw abort errors
+      }
+      console.warn('Backend unavailable (network or server error), using demo data for scope items:', error.message);
+      
+      // Use demo data for the specific project
+      const projectScope = demoProjectScopes.find(ps => ps.projectId === projectId);
+      if (projectScope) {
+        return projectScope.items;
+      }
+      
+      // Fallback to localStorage as last resort
       const stored = localStorage.getItem(`scope_items_${projectId}`);
       return stored ? JSON.parse(stored) : [];
     }

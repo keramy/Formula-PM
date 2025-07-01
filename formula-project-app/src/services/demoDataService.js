@@ -1238,6 +1238,8 @@ export const demoProjectScopes = [
         totalPrice: 127500,
         initialCost: 125000,
         actualCost: 127500,
+        linkedDrawings: ['sd-1'],
+        linkedSpecs: ['spec-1'],
         createdAt: '2024-01-15T10:00:00Z'
       },
       { 
@@ -1251,6 +1253,8 @@ export const demoProjectScopes = [
         totalPrice: 212500,
         initialCost: 200000,
         actualCost: 212500,
+        linkedDrawings: [],
+        linkedSpecs: ['spec-1'],
         createdAt: '2024-01-16T09:00:00Z'
       },
       { 
@@ -1264,6 +1268,8 @@ export const demoProjectScopes = [
         totalPrice: 144000,
         initialCost: 150000,
         actualCost: 144000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-17T11:00:00Z'
       },
       { 
@@ -1277,6 +1283,8 @@ export const demoProjectScopes = [
         totalPrice: 80000,
         initialCost: 75000,
         actualCost: 80000,
+        linkedDrawings: ['sd-1'],
+        linkedSpecs: ['spec-1'],
         createdAt: '2024-01-18T14:00:00Z'
       },
 
@@ -1292,6 +1300,8 @@ export const demoProjectScopes = [
         totalPrice: 675000,
         initialCost: 650000,
         actualCost: 675000,
+        linkedDrawings: ['sd-1'],
+        linkedSpecs: ['spec-1'],
         createdAt: '2024-01-20T10:00:00Z'
       },
       { 
@@ -1305,6 +1315,8 @@ export const demoProjectScopes = [
         totalPrice: 100000,
         initialCost: 95000,
         actualCost: 100000,
+        linkedDrawings: ['sd-2'],
+        linkedSpecs: [],
         createdAt: '2024-01-21T11:00:00Z'
       },
       { 
@@ -1318,6 +1330,8 @@ export const demoProjectScopes = [
         totalPrice: 180000,
         initialCost: 175000,
         actualCost: 180000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-22T09:00:00Z'
       },
       { 
@@ -1331,6 +1345,8 @@ export const demoProjectScopes = [
         totalPrice: 48000,
         initialCost: 50000,
         actualCost: 48000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-23T13:00:00Z'
       },
       { 
@@ -1344,6 +1360,8 @@ export const demoProjectScopes = [
         totalPrice: 45000,
         initialCost: 42000,
         actualCost: 45000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-24T15:00:00Z'
       },
 
@@ -1359,6 +1377,8 @@ export const demoProjectScopes = [
         totalPrice: 63000,
         initialCost: 65000,
         actualCost: 63000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-25T10:00:00Z'
       },
       { 
@@ -1372,6 +1392,8 @@ export const demoProjectScopes = [
         totalPrice: 42000,
         initialCost: 40000,
         actualCost: 42000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-26T11:00:00Z'
       },
       { 
@@ -1385,6 +1407,8 @@ export const demoProjectScopes = [
         totalPrice: 38250,
         initialCost: 35000,
         actualCost: 38250,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-27T12:00:00Z'
       },
 
@@ -1400,6 +1424,8 @@ export const demoProjectScopes = [
         totalPrice: 87500,
         initialCost: 85000,
         actualCost: 87500,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-28T09:00:00Z'
       },
       { 
@@ -1413,6 +1439,8 @@ export const demoProjectScopes = [
         totalPrice: 100000,
         initialCost: 95000,
         actualCost: 100000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-29T14:00:00Z'
       },
       { 
@@ -1426,6 +1454,8 @@ export const demoProjectScopes = [
         totalPrice: 75000,
         initialCost: 70000,
         actualCost: 75000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-30T16:00:00Z'
       }
     ]
@@ -1447,6 +1477,8 @@ export const demoProjectScopes = [
         totalPrice: 30000,
         initialCost: 28000,
         actualCost: 30000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-02-20T10:00:00Z'
       },
       { 
@@ -1460,6 +1492,8 @@ export const demoProjectScopes = [
         totalPrice: 54000,
         initialCost: 50000,
         actualCost: 54000,
+        linkedDrawings: [],
+        linkedSpecs: ['spec-2'],
         createdAt: '2024-02-21T09:00:00Z'
       },
 
@@ -1475,6 +1509,8 @@ export const demoProjectScopes = [
         totalPrice: 175000,
         initialCost: 170000,
         actualCost: 175000,
+        linkedDrawings: ['sd-3'],
+        linkedSpecs: [],
         createdAt: '2024-02-22T11:00:00Z'
       },
       { 
@@ -1488,6 +1524,8 @@ export const demoProjectScopes = [
         totalPrice: 85000,
         initialCost: 80000,
         actualCost: 85000,
+        linkedDrawings: ['sd-3'],
+        linkedSpecs: [],
         createdAt: '2024-02-23T13:00:00Z'
       },
       { 
@@ -1501,6 +1539,8 @@ export const demoProjectScopes = [
         totalPrice: 96000,
         initialCost: 90000,
         actualCost: 96000,
+        linkedDrawings: [],
+        linkedSpecs: ['spec-2'],
         createdAt: '2024-02-24T14:00:00Z'
       },
       { 
@@ -1514,6 +1554,8 @@ export const demoProjectScopes = [
         totalPrice: 108000,
         initialCost: 105000,
         actualCost: 108000,
+        linkedDrawings: ['sd-3'],
+        linkedSpecs: [],
         createdAt: '2024-02-25T15:00:00Z'
       },
       { 
@@ -1527,6 +1569,8 @@ export const demoProjectScopes = [
         totalPrice: 25000,
         initialCost: 22000,
         actualCost: 25000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-02-26T10:00:00Z'
       },
       { 
@@ -1540,6 +1584,8 @@ export const demoProjectScopes = [
         totalPrice: 35000,
         initialCost: 32000,
         actualCost: 35000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-02-27T12:00:00Z'
       },
 
@@ -1555,6 +1601,8 @@ export const demoProjectScopes = [
         totalPrice: 25600,
         initialCost: 24000,
         actualCost: 25600,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-02-28T11:00:00Z'
       },
       { 
@@ -1568,6 +1616,8 @@ export const demoProjectScopes = [
         totalPrice: 10800,
         initialCost: 12000,
         actualCost: 10800,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-03-01T09:00:00Z'
       },
 
@@ -1583,6 +1633,8 @@ export const demoProjectScopes = [
         totalPrice: 54000,
         initialCost: 50000,
         actualCost: 54000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-03-02T10:00:00Z'
       },
       { 
@@ -1596,6 +1648,8 @@ export const demoProjectScopes = [
         totalPrice: 40800,
         initialCost: 38000,
         actualCost: 40800,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-03-03T14:00:00Z'
       }
     ]
@@ -1617,6 +1671,8 @@ export const demoProjectScopes = [
         totalPrice: 171000,
         initialCost: 165000,
         actualCost: 171000,
+        linkedDrawings: [],
+        linkedSpecs: ['spec-3'],
         createdAt: '2024-01-25T10:00:00Z'
       },
       { 
@@ -1630,6 +1686,8 @@ export const demoProjectScopes = [
         totalPrice: 100000,
         initialCost: 95000,
         actualCost: 100000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-26T11:00:00Z'
       },
       { 
@@ -1643,6 +1701,8 @@ export const demoProjectScopes = [
         totalPrice: 180000,
         initialCost: 175000,
         actualCost: 180000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-27T09:00:00Z'
       },
 
@@ -1658,6 +1718,8 @@ export const demoProjectScopes = [
         totalPrice: 280000,
         initialCost: 275000,
         actualCost: 280000,
+        linkedDrawings: ['sd-4'],
+        linkedSpecs: ['spec-3'],
         createdAt: '2024-01-28T10:00:00Z'
       },
       { 
@@ -1671,6 +1733,8 @@ export const demoProjectScopes = [
         totalPrice: 112000,
         initialCost: 110000,
         actualCost: 112000,
+        linkedDrawings: ['sd-4'],
+        linkedSpecs: ['spec-3'],
         createdAt: '2024-01-29T11:00:00Z'
       },
       { 
@@ -1684,6 +1748,8 @@ export const demoProjectScopes = [
         totalPrice: 225000,
         initialCost: 220000,
         actualCost: 225000,
+        linkedDrawings: [],
+        linkedSpecs: ['spec-3'],
         createdAt: '2024-01-30T12:00:00Z'
       },
       { 
@@ -1697,6 +1763,8 @@ export const demoProjectScopes = [
         totalPrice: 125000,
         initialCost: 120000,
         actualCost: 125000,
+        linkedDrawings: [],
+        linkedSpecs: ['spec-3'],
         createdAt: '2024-02-01T13:00:00Z'
       },
       { 
@@ -1710,6 +1778,8 @@ export const demoProjectScopes = [
         totalPrice: 185000,
         initialCost: 180000,
         actualCost: 185000,
+        linkedDrawings: [],
+        linkedSpecs: ['spec-3'],
         createdAt: '2024-02-02T14:00:00Z'
       },
       { 
@@ -1854,6 +1924,8 @@ export const demoProjectScopes = [
         totalPrice: 95000,
         initialCost: 90000,
         actualCost: 95000,
+        linkedDrawings: ['sd-5'],
+        linkedSpecs: ['spec-4'],
         createdAt: '2024-03-07T12:00:00Z'
       },
       { 
@@ -1867,6 +1939,8 @@ export const demoProjectScopes = [
         totalPrice: 56000,
         initialCost: 55000,
         actualCost: 56000,
+        linkedDrawings: ['sd-5'],
+        linkedSpecs: [],
         createdAt: '2024-03-08T13:00:00Z'
       },
       { 
@@ -1998,6 +2072,8 @@ export const demoProjectScopes = [
         totalPrice: 120000,
         initialCost: 115000,
         actualCost: 120000,
+        linkedDrawings: ['sd-6'],
+        linkedSpecs: ['spec-5'],
         createdAt: '2024-01-17T12:00:00Z'
       },
       { 
@@ -2011,6 +2087,8 @@ export const demoProjectScopes = [
         totalPrice: 450000,
         initialCost: 440000,
         actualCost: 450000,
+        linkedDrawings: ['sd-6'],
+        linkedSpecs: ['spec-5'],
         createdAt: '2024-01-18T13:00:00Z'
       },
       { 
@@ -2024,6 +2102,8 @@ export const demoProjectScopes = [
         totalPrice: 95000,
         initialCost: 90000,
         actualCost: 95000,
+        linkedDrawings: [],
+        linkedSpecs: [],
         createdAt: '2024-01-19T14:00:00Z'
       },
       { 

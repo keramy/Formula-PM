@@ -14,7 +14,6 @@ import {
   TableRow,
   Paper,
   Chip,
-  IconButton,
   TextField,
   InputAdornment
 } from '@mui/material';
@@ -22,59 +21,53 @@ import {
   MdSearch as SearchIcon,
   MdAdd as AddIcon,
   MdFilterList as FilterIcon,
-  MdVisibility as ViewIcon,
-  MdEdit as EditIcon,
   MdInventory as ScopeIcon,
   MdBusiness as ProjectIcon
 } from 'react-icons/md';
 import CleanPageLayout from '../components/layout/CleanPageLayout';
 import { useData } from '../context/DataContext';
 import { useNavigate } from 'react-router-dom';
+import { demoProjectScopes } from '../services/demoDataService';
 
 const ScopePage = () => {
   const { projects, loading, error } = useData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Filter projects that have scope items
-  const projectsWithScope = projects.filter(project => 
-    project.scopeItems && project.scopeItems > 0
-  );
+  // Get projects that have scope items in demoProjectScopes
+  const projectsWithScope = projects.filter(project => {
+    const scopeData = demoProjectScopes.find(ps => ps.projectId === project.id);
+    return scopeData && scopeData.items && scopeData.items.length > 0;
+  });
 
   // Search functionality
   const filteredProjects = projectsWithScope.filter(project =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.type?.toLowerCase().includes(searchTerm.toLowerCase())
+    project.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleViewProject = (projectId) => {
-    navigate(`/projects/${projectId}?tab=scope`);
+    navigate(`/projects/${projectId}/scope`);
   };
 
   const getProjectScopeStats = (project) => {
-    // This would normally come from scope items data
-    // For now, using demo values
+    const scopeData = demoProjectScopes.find(ps => ps.projectId === project.id);
+    
+    if (!scopeData || !scopeData.items) {
+      return {
+        totalItems: 0,
+        totalBudget: 0
+      };
+    }
+
+    const items = scopeData.items;
+    const totalBudget = items.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
+
     return {
-      totalItems: project.scopeItems || 0,
-      totalBudget: project.budget || 0,
-      categories: {
-        construction: Math.floor((project.scopeItems || 0) * 0.4),
-        millwork: Math.floor((project.scopeItems || 0) * 0.3),
-        electrical: Math.floor((project.scopeItems || 0) * 0.2),
-        mechanical: Math.floor((project.scopeItems || 0) * 0.1)
-      }
+      totalItems: items.length,
+      totalBudget
     };
   };
 
-  const getCategoryColor = (category) => {
-    const colors = {
-      construction: '#E3AF64', // Caramel
-      millwork: '#516AC8', // Sapphire
-      electrical: '#0F1939', // Cosmic
-      mechanical: '#10B981' // Green
-    };
-    return colors[category] || '#6B7280';
-  };
 
   if (loading) {
     return (
@@ -169,7 +162,7 @@ const ScopePage = () => {
                   </Typography>
                 </Box>
                 <Typography variant="h3" sx={{ fontWeight: 700, color: '#516AC8' }}>
-                  {projectsWithScope.reduce((sum, project) => sum + (project.scopeItems || 0), 0)}
+                  {projectsWithScope.reduce((sum, project) => sum + getProjectScopeStats(project).totalItems, 0)}
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#6B7280' }}>
                   Across all projects
@@ -185,7 +178,7 @@ const ScopePage = () => {
                   Total Budget
                 </Typography>
                 <Typography variant="h3" sx={{ fontWeight: 700, color: '#0F1939' }}>
-                  ₺{projectsWithScope.reduce((sum, project) => sum + (project.budget || 0), 0).toLocaleString()}
+                  ₺{projectsWithScope.reduce((sum, project) => sum + getProjectScopeStats(project).totalBudget, 0).toLocaleString()}
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#6B7280' }}>
                   Combined scope value
@@ -215,7 +208,7 @@ const ScopePage = () => {
         <Box sx={{ mb: 3 }}>
           <TextField
             fullWidth
-            placeholder="Search projects by name or type..."
+            placeholder="Search projects by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             InputProps={{
@@ -237,12 +230,8 @@ const ScopePage = () => {
                 <TableHead>
                   <TableRow sx={{ backgroundColor: '#F8F9FA' }}>
                     <TableCell sx={{ fontWeight: 600 }}>Project</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Type</TableCell>
                     <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
                     <TableCell sx={{ fontWeight: 600 }}>Scope Items</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Categories</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Budget</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -251,20 +240,30 @@ const ScopePage = () => {
                     return (
                       <TableRow key={project.id} hover>
                         <TableCell>
-                          <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                            {project.name}
-                          </Typography>
-                          <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                            {project.location}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Chip 
-                            label={project.type || 'General'} 
-                            size="small"
-                            variant="outlined"
-                            sx={{ borderColor: '#516AC8', color: '#516AC8' }}
-                          />
+                          <Button
+                            variant="text"
+                            onClick={() => handleViewProject(project.id)}
+                            sx={{
+                              textAlign: 'left',
+                              justifyContent: 'flex-start',
+                              p: 0,
+                              color: '#516AC8',
+                              textTransform: 'none',
+                              '&:hover': {
+                                backgroundColor: 'transparent',
+                                textDecoration: 'underline'
+                              }
+                            }}
+                          >
+                            <Box>
+                              <Typography variant="body1" sx={{ fontWeight: 500, color: '#516AC8' }}>
+                                {project.name}
+                              </Typography>
+                              <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                                {project.location}
+                              </Typography>
+                            </Box>
+                          </Button>
                         </TableCell>
                         <TableCell>
                           <Chip 
@@ -283,46 +282,6 @@ const ScopePage = () => {
                           <Typography variant="body2" sx={{ color: '#6B7280' }}>
                             items
                           </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                            {Object.entries(scopeStats.categories).map(([category, count]) => (
-                              count > 0 && (
-                                <Chip
-                                  key={category}
-                                  label={`${category.charAt(0).toUpperCase()}${category.slice(1)}: ${count}`}
-                                  size="small"
-                                  sx={{
-                                    backgroundColor: getCategoryColor(category) + '20',
-                                    color: getCategoryColor(category),
-                                    fontSize: '11px'
-                                  }}
-                                />
-                              )
-                            ))}
-                          </Box>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                            ₺{scopeStats.totalBudget.toLocaleString()}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', gap: 0.5 }}>
-                            <IconButton
-                              size="small"
-                              onClick={() => handleViewProject(project.id)}
-                              sx={{ color: '#516AC8' }}
-                            >
-                              <ViewIcon fontSize="small" />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              sx={{ color: '#E3AF64' }}
-                            >
-                              <EditIcon fontSize="small" />
-                            </IconButton>
-                          </Box>
                         </TableCell>
                       </TableRow>
                     );
